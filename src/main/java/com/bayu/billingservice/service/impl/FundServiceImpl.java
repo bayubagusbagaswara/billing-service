@@ -1,6 +1,6 @@
 package com.bayu.billingservice.service.impl;
 
-import com.bayu.billingservice.dto.BillingFundDTO;
+import com.bayu.billingservice.dto.fund.BillingFundDTO;
 import com.bayu.billingservice.dto.fund.FeeReportRequest;
 import com.bayu.billingservice.model.SkTransaction;
 import com.bayu.billingservice.service.FundService;
@@ -133,7 +133,7 @@ public class FundServiceImpl implements FundService {
         double taxFee = 0.11; // 11%
         log.info("Tax Fee : {}", taxFee);
 
-        BigDecimal amountDueTax = totalNominalBeforeTax.multiply(new BigDecimal(taxFee)).setScale(0, RoundingMode.HALF_UP);
+        BigDecimal amountDueTax = totalNominalBeforeTax.multiply(BigDecimal.valueOf(taxFee)).setScale(0, RoundingMode.HALF_UP);
         log.info("Amount Due Tax : {}", amountDueTax);
 
         Integer valueFrequencyKSEI = transactionCBESTTotal;
