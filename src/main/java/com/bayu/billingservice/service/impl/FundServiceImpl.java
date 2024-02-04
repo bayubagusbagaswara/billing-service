@@ -87,23 +87,22 @@ public class FundServiceImpl implements FundService {
     private BillingFundDTO filterTransactionsType(String portfolioCode, BigDecimal customerFee,
                                         String currentMonthName, int currentYear,
                                         List<SkTransaction> transactionList) {
-        // pisah antara transaction
         int transactionCBESTTotal = 0;
         int transactionBIS4Total = 0;
 
         for (SkTransaction skTransaction : transactionList) {
-            if (null != skTransaction.getSettlementSystem()) {
-                if ("CBEST".equalsIgnoreCase(skTransaction.getSettlementSystem())) {
-                    transactionCBESTTotal += 1;
-                } else if ("BI-SSSS".equalsIgnoreCase(skTransaction.getSettlementSystem())) {
-                    transactionBIS4Total += 1;
+            String settlementSystem = skTransaction.getSettlementSystem();
+            if (settlementSystem != null) {
+                if ("CBEST".equalsIgnoreCase(settlementSystem)) {
+                    transactionCBESTTotal++;
+                } else if ("BI-SSSS".equalsIgnoreCase(settlementSystem)) {
+                    transactionBIS4Total++;
                 }
             }
         }
         log.info("Total KSEI : {}", transactionCBESTTotal);
         log.info("Total BI-S4 : {}", transactionBIS4Total);
 
-        // panggil method calculate billing fund
         return calculateBillingFund(portfolioCode, customerFee,
                 currentMonthName, currentYear,
                 transactionCBESTTotal, transactionBIS4Total);
