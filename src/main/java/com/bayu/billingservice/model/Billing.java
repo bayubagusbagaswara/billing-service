@@ -22,13 +22,7 @@ public class Billing {
     private Long id;
 
     @Column(name = "period")
-    private LocalDate period;
-
-    @Column(name = "month")
-    private String month;
-
-    @Column(name = "year")
-    private Integer year;
+    private String period;
 
     @Column(name = "accrual_custodial_fee")
     private BigDecimal accrualCustodialFee;

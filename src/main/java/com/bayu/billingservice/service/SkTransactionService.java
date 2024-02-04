@@ -1,5 +1,6 @@
 package com.bayu.billingservice.service;
 
+import com.bayu.billingservice.dto.SkTransactionDTO;
 import com.bayu.billingservice.model.SkTransaction;
 import com.opencsv.exceptions.CsvException;
 
@@ -13,4 +14,5 @@ public interface SkTransactionService {
     List<SkTransaction> getAllByPortfolioCode(String portfolioCode);
     List<SkTransaction> getAllByPortfolioCodeAndSystem(String portfolioCode, String system);
 
+    List<SkTransactionDTO> getAllSettlementDate();
 }

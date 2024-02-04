@@ -1,5 +1,6 @@
 package com.bayu.billingservice.service.impl;
 
+import com.bayu.billingservice.dto.SkTransactionDTO;
 import com.bayu.billingservice.model.SkTransaction;
 import com.bayu.billingservice.repository.SkTransactionRepository;
 import com.bayu.billingservice.service.SkTransactionService;
@@ -14,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -56,9 +58,31 @@ public class SkTransactionServiceImpl implements SkTransactionService {
         return skTransactionRepository.findAllByPortfolioCodeAndSettlementSystem(portfolioCode, system);
     }
 
+    @Override
+    public List<SkTransactionDTO> getAllSettlementDate() {
+        return mapToDTOList(skTransactionRepository.findAll());
+    }
+
     private static List<String[]> readCsvFile(String filePath) throws IOException, CsvException {
         try (CSVReader csvReader = new CSVReader(new FileReader(filePath))) {
             return csvReader.readAll();
         }
+    }
+
+    private SkTransactionDTO mapToDTO(SkTransaction skTransaction) {
+        return SkTransactionDTO.builder()
+                .id(skTransaction.getId())
+                .portfolioCode(skTransaction.getPortfolioCode())
+                .tradeDate(skTransaction.getTradeDate())
+                .settlementDate(skTransaction.getSettlementDate())
+                .amount(skTransaction.getAmount())
+                .settlementSystem(skTransaction.getSettlementSystem())
+                .build();
+    }
+
+    private List<SkTransactionDTO> mapToDTOList(List<SkTransaction> skTransactionList) {
+        return skTransactionList.stream()
+                .map(this::mapToDTO)
+                .collect(Collectors.toList());
     }
 }

@@ -1,6 +1,7 @@
 package com.bayu.billingservice.controller;
 
 import com.bayu.billingservice.dto.ResponseDTO;
+import com.bayu.billingservice.dto.SkTransactionDTO;
 import com.bayu.billingservice.model.SkTransaction;
 import com.bayu.billingservice.service.SkTransactionService;
 import com.opencsv.exceptions.CsvException;
@@ -44,6 +45,18 @@ public class SkTransactionController {
                 .code(HttpStatus.OK.value())
                 .message(HttpStatus.OK.getReasonPhrase())
                 .payload(skTransactionList)
+                .build();
+
+        return ResponseEntity.ok().body(response);
+    }
+
+    @GetMapping(path = "/settlement")
+    public ResponseEntity<ResponseDTO<List<SkTransactionDTO>>> getAllSettlementDate() {
+        List<SkTransactionDTO> skTransactionDTOList = skTransactionService.getAllSettlementDate();
+        ResponseDTO<List<SkTransactionDTO>> response = ResponseDTO.<List<SkTransactionDTO>>builder()
+                .code(HttpStatus.OK.value())
+                .message(HttpStatus.OK.getReasonPhrase())
+                .payload(skTransactionDTOList)
                 .build();
 
         return ResponseEntity.ok().body(response);
