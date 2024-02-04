@@ -10,12 +10,12 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "sktran")
+@Table(name = "sk_trans")
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class SKTransaction {
+public class SkTransaction {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,11 +27,11 @@ public class SKTransaction {
     @Column(name = "portfolio_code")
     private String portfolioCode;
 
-    @Column(name = "type_security")
-    private String typeSecurity;
+    @Column(name = "security_type")
+    private String securityType;
 
-    @Column(name = "short_security_name")
-    private String shortSecurityName;
+    @Column(name = "security_short_name")
+    private String securityShortName;
 
     @Column(name = "security_name")
     private String securityName;
