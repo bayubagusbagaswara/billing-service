@@ -16,7 +16,7 @@ import java.util.List;
 @Slf4j
 public class CsvDataMapper {
 
-    private static final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MMM-yy");
+    private static final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("d-MMM-yy");
     private static final DateTimeFormatter dateTimeFormatter1 = DateTimeFormatter.ofPattern("d/M/yyyy");
 
     public static List<SkTransaction> mapCsvSkTransaction(List<String[]> rows) {
@@ -24,21 +24,25 @@ public class CsvDataMapper {
         log.info("[Start Map CSV] SKTran Rows : {}", rows.size());
 
         for (String[] row : rows) {
+            log.info("Row 12 : {}", row[12]);
+            log.info("Row 14 : {}", row[14]);
+            log.info("Row 15 : {}", row[15]);
+
             SkTransaction skTransaction = SkTransaction.builder()
-                    .tradeId(trimString(row[0]))
-                    .portfolioCode(trimString(row[1]))
-                    .securityType(trimString(row[2]))
-                    .securityShortName(trimString(row[3]))
-                    .securityName(trimString(row[4]))
-                    .type(trimString(row[5]))
+                    .tradeId(processString(row[0]))
+                    .portfolioCode(processString(row[1]))
+                    .securityType(processString(row[2]))
+                    .securityShortName(processString(row[3]))
+                    .securityName(processString(row[4]))
+                    .type(processString(row[5]))
                     .tradeDate(parseDateOrDefault(row[6], dateFormatter, null))
                     .settlementDate(parseDateOrDefault(row[7], dateFormatter, null))
-                    .amount(parseBigDecimalOrDefault(row[8].replaceAll(".", ""), null))
-                    .currency(trimString(row[9]))
-                    .deleteStatus(trimString(row[10]))
-                    .system(trimString(row[11]))
-                    .sid(trimString(row[12]))
-                    .remark(trimString(row[13]))
+                    .amount(parseBigDecimalOrDefault(row[8].replace(".", ""), null))
+                    .currency(processString(row[9]))
+                    .deleteStatus(processString(row[10]))
+                    .settlementSystem(processString(row[12]))
+                    .sid(processString(row[14]))
+                    .remark(removeWhitespaceBetweenCharacters(row[15]))
                     .build();
 
             skTransactionList.add(skTransaction);
@@ -55,8 +59,8 @@ public class CsvDataMapper {
             SfValRgDaily sfValRgDaily = SfValRgDaily.builder()
                     .batch(parseIntOrDefault(row[0]))
                     .date(parseDateOrDefault(row[1], dateTimeFormatter1, null))
-                    .aid(trimString(row[2]))
-                    .securityName(trimString(row[3]))
+                    .aid(processString(row[2]))
+                    .securityName(processString(row[3]))
                     .faceValue(parseBigDecimalOrDefault(row[4], null))
                     .marketPrice(row[5])
                     .marketValue(parseBigDecimalOrDefault(row[6], null))
@@ -77,8 +81,8 @@ public class CsvDataMapper {
             SfValRgMonthly sfValRgMonthly = SfValRgMonthly.builder()
                     .batch(parseIntOrDefault(row[0]))
                     .date(parseDateOrDefault(row[1], dateTimeFormatter1, null))
-                    .aid(trimString(row[2]))
-                    .securityName(trimString(row[3]))
+                    .aid(processString(row[2]))
+                    .securityName(processString(row[3]))
                     .faceValue(parseBigDecimalOrDefault(row[4], null))
                     .marketPrice(row[5])
                     .marketValue(parseBigDecimalOrDefault(row[6], null))
@@ -91,8 +95,19 @@ public class CsvDataMapper {
         return sfValRgMonthlyList;
     }
 
-    private static String trimString(String value) {
-        return value != null ? value.trim() : null;
+    private static String processString(String value) {
+        // Check if the value is null and return a default value if needed
+        String processedValue = !value.isEmpty() ? value : "";
+
+        // Trim the string if it is not null
+        processedValue = processedValue.trim();
+
+        return processedValue;
+    }
+
+    private static String removeWhitespaceBetweenCharacters(String input) {
+        // Replace all whitespace between characters with an empty string
+        return input.replaceAll("\\s+", "").trim();
     }
 
     private static Integer parseIntOrDefault(String value) {

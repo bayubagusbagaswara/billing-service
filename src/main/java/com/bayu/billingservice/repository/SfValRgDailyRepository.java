@@ -11,10 +11,10 @@ import java.util.List;
 @Repository
 public interface SfValRgDailyRepository extends JpaRepository<SfValRgDaily, Long> {
 
-    @Query(value = "SELECT * FROM sf_val_rg_daily WHERE aid = :aid", nativeQuery = true)
-    List<SfValRgDaily> findAllByAid(@Param("aid") String aid);
+//    @Query(value = "SELECT * FROM sf_val_rg_daily WHERE aid = :aid", nativeQuery = true)
+//    List<SfValRgDaily> findAllByAid(@Param("aid") String aid);
 
-    List<SfValRgDaily> findAllByAidAndSecurityName();
+//    List<SfValRgDaily> findAllByAidAndSecurityName();
 
-    List<SfValRgDaily> findAllByAidAndDate();
+//    List<SfValRgDaily> findAllByAidAndDate();
 }

@@ -10,6 +10,6 @@ import java.util.List;
 public interface SkTransactionRepository extends JpaRepository<SkTransaction, Long> {
 
     List<SkTransaction> findAllByPortfolioCode(String portfolioCode);
-    List<SkTransaction> findAllByPortfolioCodeAndSystem(String portfolioCode, String system);
+    List<SkTransaction> findAllByPortfolioCodeAndSettlementSystem(String portfolioCode, String settlementSystem);
 
 }

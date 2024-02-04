@@ -54,8 +54,8 @@ public class SkTransaction {
     @Column(name = "delete_status")
     private String deleteStatus;
 
-    @Column(name = "system")
-    private String system;
+    @Column(name = "settlement_system")
+    private String settlementSystem;
 
     @Column(name = "sid")
     private String sid;

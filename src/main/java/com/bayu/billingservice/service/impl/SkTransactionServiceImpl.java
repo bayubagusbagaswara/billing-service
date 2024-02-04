@@ -9,6 +9,7 @@ import com.opencsv.exceptions.CsvException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.FileReader;
 import java.io.IOException;
@@ -21,15 +22,22 @@ public class SkTransactionServiceImpl implements SkTransactionService {
 
     private final SkTransactionRepository skTransactionRepository;
 
+    @Transactional
     @Override
-    public List<SkTransaction> readFileAndInsertToDB(String filePath) throws IOException, CsvException {
+    public String readFileAndInsertToDB(String filePath) throws IOException, CsvException {
         log.info("Start read and insert SkTransaction to the database : {}", filePath);
-        try (CSVReader reader = new CSVReader(new FileReader(filePath))) {
-            List<String[]> rows = reader.readAll();
+        try {
+            List<String[]> rows = readCsvFile(filePath);
 
             List<SkTransaction> skTransactionList = CsvDataMapper.mapCsvSkTransaction(rows);
 
-            return skTransactionRepository.saveAll(skTransactionList);
+            for (SkTransaction skTransaction : skTransactionList) {
+                skTransactionRepository.save(skTransaction);
+            }
+
+            return "CSV data processed and saved successfully";
+        } catch (IOException | CsvException e) {
+            return "Failed to process CSV file: " + e.getMessage();
         }
     }
 
@@ -40,7 +48,12 @@ public class SkTransactionServiceImpl implements SkTransactionService {
 
     @Override
     public List<SkTransaction> getAllByPortfolioCodeAndSystem(String portfolioCode, String system) {
-        return skTransactionRepository.findAllByPortfolioCodeAndSystem(portfolioCode, system);
+        return skTransactionRepository.findAllByPortfolioCodeAndSettlementSystem(portfolioCode, system);
     }
 
+    private static List<String[]> readCsvFile(String filePath) throws IOException, CsvException {
+        try (CSVReader csvReader = new CSVReader(new FileReader(filePath))) {
+            return csvReader.readAll();
+        }
+    }
 }

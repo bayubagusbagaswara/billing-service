@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface SkTransactionService {
 
-    List<SkTransaction> readFileAndInsertToDB(String filePath) throws IOException, CsvException;
+    String readFileAndInsertToDB(String filePath) throws IOException, CsvException;
     List<SkTransaction> getAllByPortfolioCode(String portfolioCode);
     List<SkTransaction> getAllByPortfolioCodeAndSystem(String portfolioCode, String system);
 

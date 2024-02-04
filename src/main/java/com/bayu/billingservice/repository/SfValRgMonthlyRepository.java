@@ -9,5 +9,5 @@ import java.util.List;
 @Repository
 public interface SfValRgMonthlyRepository extends JpaRepository<SfValRgMonthly, Long> {
 
-    List<SfValRgMonthly> findAllByAid();
+//    List<SfValRgMonthly> findAllByAid();
 }
