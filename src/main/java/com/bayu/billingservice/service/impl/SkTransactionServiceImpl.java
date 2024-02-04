@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class SKTransactionServiceImpl {
+public class SkTransactionServiceImpl {
 
     private final SkTransactionRepository skTransactionRepository;
 }
