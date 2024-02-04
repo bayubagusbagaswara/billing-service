@@ -42,6 +42,11 @@ public class SkTransactionServiceImpl implements SkTransactionService {
     }
 
     @Override
+    public List<SkTransaction> getAll() {
+        return skTransactionRepository.findAll();
+    }
+
+    @Override
     public List<SkTransaction> getAllByPortfolioCode(String portfolioCode) {
         return skTransactionRepository.findAllByPortfolioCode(portfolioCode);
     }
