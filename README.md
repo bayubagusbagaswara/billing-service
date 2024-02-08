@@ -28,3 +28,16 @@ List<Transaction> findTransactionsForCurrentMonth();
                         settlementDate.getDayOfMonth() >= 1 && settlementDate.getDayOfMonth() <= 30;
             })
             .collect(Collectors.toList());
+
+# Billing Fund Generate Process
+
+- User akan mengupload file Fee Report, beserta Period nya
+- Dari front fee report ini akan di breakdown menjadi data List JSON, lalu akan dikirim ke belakang
+- Perlu catatan: di belakang juga harus cek apakah file SKTRAN, RG Daily, RG Monthly pada bulan tahun (dari inputan depan) tersebut tersedia
+
+# Billing Core Generate Process
+- SK Transaction, RG Daily dan RG Monthly sudah ada di folder server
+
+
+# Perlu dipertanyakan?
+- Apakah semua nasabah akan di generate billingnya? meskipun tidak ada di file upload nya
