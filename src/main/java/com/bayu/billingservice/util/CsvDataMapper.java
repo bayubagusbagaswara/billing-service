@@ -24,10 +24,6 @@ public class CsvDataMapper {
         log.info("[Start Map CSV] SKTran Rows : {}", rows.size());
 
         for (String[] row : rows) {
-            log.info("Row 12 : {}", row[12]);
-            log.info("Row 14 : {}", row[14]);
-            log.info("Row 15 : {}", row[15]);
-
             SkTransaction skTransaction = SkTransaction.builder()
                     .tradeId(processString(row[0]))
                     .portfolioCode(processString(row[1]))
