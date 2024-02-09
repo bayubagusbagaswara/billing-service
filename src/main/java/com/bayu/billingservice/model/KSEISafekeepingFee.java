@@ -27,8 +27,8 @@ public class KSEISafekeepingFee {
     @Column(name = "fee_description")
     private String feeDescription;
 
-    @Column(name = "aid_4_digit")
-    private String aid4Digit;
+    @Column(name = "fee_account")
+    private String feeAccount;
 
     @Column(name = "amount_fee")
     private BigDecimal amountFee;
