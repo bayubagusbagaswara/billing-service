@@ -12,5 +12,6 @@ public interface KSEISafekeepingFeeService {
 
     List<KSEISafekeepingFee> getAll();
 
+    KSEISafekeepingFee getByFeeAccount();
 
 }
