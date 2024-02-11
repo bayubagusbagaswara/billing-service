@@ -8,10 +8,10 @@ import java.util.List;
 
 public interface KSEISafekeepingFeeService {
 
-    List<KSEISafekeepingFee> readAndInsert(String filePath) throws IOException, CsvException;
+    String readAndInsertToDB(String filePath);
 
     List<KSEISafekeepingFee> getAll();
 
-    KSEISafekeepingFee getByFeeAccount();
+    KSEISafekeepingFee getByFeeAccount(String feeAccount);
 
 }
