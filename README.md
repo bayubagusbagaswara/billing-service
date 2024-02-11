@@ -38,6 +38,12 @@ List<Transaction> findTransactionsForCurrentMonth();
 # Billing Core Generate Process
 - SK Transaction, RG Daily dan RG Monthly sudah ada di folder server
 
-
 # Perlu dipertanyakan?
 - Apakah semua nasabah akan di generate billingnya? meskipun tidak ada di file upload nya
+
+```csv
+1,Safekeeping fee for account BDMN123456789
+2,Return liquidity to BI Fee
+3,Safekeeping fee for account BDMN12345678
+4,Instruction fee - RECEIPT BOND
+```
