@@ -27,4 +27,12 @@ class BillingServiceApplicationTests {
 		String fullMonthName = month.getDisplayName(TextStyle.FULL, Locale.ENGLISH);
 		System.out.println("Full Month Name: " + fullMonthName);
 	}
+
+	@Test
+	void testToUpperCase() {
+		String type1 = "Type 1";
+		String upperCase = type1.replaceAll("\\s", "_").toUpperCase();
+
+		System.out.println(upperCase);
+	}
 }
