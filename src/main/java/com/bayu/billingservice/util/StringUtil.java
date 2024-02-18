@@ -21,4 +21,9 @@ public class StringUtil {
         // Replace all whitespace between characters with an empty string
         return input.replaceAll("\\s+", "").trim();
     }
+
+    public static String replaceBlanksWithUnderscores(String input) {
+        // Replace blank characters with an underscore
+        return input.replaceAll("\\s", "_");
+    }
 }
