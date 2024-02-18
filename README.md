@@ -47,3 +47,6 @@ List<Transaction> findTransactionsForCurrentMonth();
 3,Safekeeping fee for account BDMN12345678
 4,Instruction fee - RECEIPT BOND
 ```
+
+- cari method untuk mengambil tanggal terakhir pada bulan sekarang
+- cari method untuk mengambil tanggal awal pada bulan sekarang
