@@ -18,5 +18,15 @@ public class Kyc {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // bdmn
+    @Column(name = "aid")
+    private String aid; // portfolio_code
+
+    @Column(name = "ksei_safe_code")
+    private String kseiSafeCode;
+
+    @Column(name = "billing_category")
+    private String billingCategory;
+
+    @Column(name = "billing_type")
+    private String billingType;
 }
