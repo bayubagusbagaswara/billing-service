@@ -27,6 +27,12 @@ public class SfValRgMonthly {
     @Column(name = "date")
     private LocalDate date;
 
+    @Column(name = "month")
+    private String month;
+
+    @Column(name = "year")
+    private Integer year;
+
     @Column(name = "aid")
     private String aid; // or portfolio code
 
