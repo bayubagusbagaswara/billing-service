@@ -45,6 +45,12 @@ public class SkTransaction {
     @Column(name = "settlement_date")
     private LocalDate settlementDate;
 
+    @Column(name = "month")
+    private String month;
+
+    @Column(name = "year")
+    private Integer year;
+
     @Column(name = "amount")
     private BigDecimal amount;
 
