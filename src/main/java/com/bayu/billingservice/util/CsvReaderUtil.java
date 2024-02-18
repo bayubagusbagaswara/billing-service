@@ -11,7 +11,7 @@ import java.util.List;
 
 @Slf4j
 @UtilityClass
-public class CsvReader {
+public class CsvReaderUtil {
 
     public static List<String[]> readCsvFile(String filePath) throws IOException, CsvException {
         try (CSVReader csvReader = new CSVReader(new FileReader(filePath))) {
