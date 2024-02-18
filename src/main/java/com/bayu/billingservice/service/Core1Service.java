@@ -10,6 +10,6 @@ public interface Core1Service {
     List<Core1DTO> calculate(String category, String type, String monthYear);
 
     // Response message status
-    String calculate1();
+    String calculate1(String category, String type, String monthYear);
 
 }
