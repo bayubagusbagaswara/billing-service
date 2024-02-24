@@ -1,17 +1,17 @@
 package com.bayu.billingservice.repository;
 
-import com.bayu.billingservice.model.Kyc;
+import com.bayu.billingservice.model.KycCustomer;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
 @Repository
-public interface KycRepository extends JpaRepository<Kyc, Long> {
+public interface KycRepository extends JpaRepository<KycCustomer, Long> {
 
-    Optional<Kyc> findByAid(String aid);
+    Optional<KycCustomer> findByAid(String aid);
 
-    Optional<Kyc> findByKseiSafeCode(String kseiSafeCode);
+    Optional<KycCustomer> findByKseiSafeCode(String kseiSafeCode);
 
-    Optional<Kyc> findByBillingCategoryAndBillingType(String billingCategory, String billingType);
+    Optional<KycCustomer> findByBillingCategoryAndBillingType(String billingCategory, String billingType);
 }

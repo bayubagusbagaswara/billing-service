@@ -7,12 +7,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "kyc")
+@Table(name = "kyc_customer")
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Kyc {
+public class KycCustomer {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
