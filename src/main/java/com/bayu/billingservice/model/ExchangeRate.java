@@ -21,6 +21,9 @@ public class ExchangeRate {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "date")
+    private LocalDate date;
+
     @Column(name = "currency")
     private String currency;
 
