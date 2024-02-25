@@ -3,7 +3,7 @@ package com.bayu.billingservice.service;
 import com.bayu.billingservice.dto.kyc.CreateKycRequest;
 import com.bayu.billingservice.model.KycCustomer;
 
-public interface KycService {
+public interface KycCustomerService {
 
     // create data Kyc
     KycCustomer create(CreateKycRequest request);

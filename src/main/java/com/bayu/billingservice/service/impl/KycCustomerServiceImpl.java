@@ -4,17 +4,17 @@ import com.bayu.billingservice.dto.kyc.CreateKycRequest;
 import com.bayu.billingservice.exception.DataNotFoundException;
 import com.bayu.billingservice.model.KycCustomer;
 import com.bayu.billingservice.repository.KycRepository;
-import com.bayu.billingservice.service.KycService;
+import com.bayu.billingservice.service.KycCustomerService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
-public class KycServiceImpl implements KycService {
+public class KycCustomerServiceImpl implements KycCustomerService {
 
     private final KycRepository kycRepository;
 
-    public KycServiceImpl(KycRepository kycRepository) {
+    public KycCustomerServiceImpl(KycRepository kycRepository) {
         this.kycRepository = kycRepository;
     }
 
