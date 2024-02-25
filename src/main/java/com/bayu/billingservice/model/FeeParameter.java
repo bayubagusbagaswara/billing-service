@@ -27,6 +27,6 @@ public class FeeParameter {
     private String description;
 
     @Column(name = "value")
-    private Double value;
+    private double value;
 
 }
