@@ -15,7 +15,14 @@ public class CreateKycRequest {
 
     private String kseiSafeCode;
 
+    private String minimumFee;
+
+    private String customerSafekeepingFee;
+
+    private String journal;
+
     private String billingCategory;
 
     private String billingType;
+
 }
