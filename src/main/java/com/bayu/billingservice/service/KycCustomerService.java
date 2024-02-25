@@ -1,11 +1,11 @@
 package com.bayu.billingservice.service;
 
 import com.bayu.billingservice.dto.kyc.CreateKycRequest;
-import com.bayu.billingservice.model.KycCustomer;
+import com.bayu.billingservice.dto.kyc.KycCustomerDTO;
 
 public interface KycCustomerService {
 
-    KycCustomer create(CreateKycRequest request);
+    KycCustomerDTO create(CreateKycRequest request);
 
-    KycCustomer getByBillingCategoryAndBillingType(String billingCategory, String billingType);
+    KycCustomerDTO getByBillingCategoryAndBillingType(String billingCategory, String billingType);
 }
