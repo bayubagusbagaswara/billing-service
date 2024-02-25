@@ -156,3 +156,41 @@ String content = pdfRequest.getContent();
         String formattedDate = dateFormat.format(new Date());
         return "PDF_" + formattedDate + ".pdf";
     }
+
+
+## JUnit Java 8
+
+<dependency>
+    <groupId>org.junit.jupiter</groupId>
+    <artifactId>junit-jupiter-api</artifactId>
+    <version>5.8.2</version> <!-- Sesuaikan versi dengan yang terbaru -->
+    <scope>test</scope>
+</dependency>
+
+<build>
+    <plugins>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <version>3.0.0-M5</version> <!-- Sesuaikan versi dengan yang terbaru -->
+            <dependencies>
+                <dependency>
+                    <groupId>org.junit.platform</groupId>
+                    <artifactId>junit-platform-surefire-provider</artifactId>
+                    <version>1.8.2</version> <!-- Sesuaikan versi dengan yang terbaru -->
+                </dependency>
+            </dependencies>
+        </plugin>
+    </plugins>
+</build>
+
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+public class MyTest {
+
+    @Test
+    void testSum() {
+        assertEquals(4, 2 + 2, "2 + 2 should equal 4");
+    }
+}
