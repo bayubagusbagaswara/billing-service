@@ -1,14 +1,76 @@
 package com.bayu.billingservice;
 
+import com.bayu.billingservice.dto.feeparameter.CreateFeeParameterRequest;
+import com.bayu.billingservice.dto.feeparameter.FeeParameterDTO;
+import com.bayu.billingservice.repository.FeeParameterRepository;
+import com.bayu.billingservice.service.FeeParameterService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 @SpringBootTest
-public class FeeParameterTest {
+class FeeParameterTest {
+
+    @Autowired
+    FeeParameterService feeParameterService;
+
+    @Autowired
+    FeeParameterRepository feeParameterRepository;
+
+    @BeforeEach
+    void cleanUpAndInsertData()  {
+        feeParameterRepository.deleteAll();
+    }
 
     @Test
-    void name() {
+    void insertData() {
+        // Define test data
+        String[][] testData = {
+                {"TRANSACTION_HANDLING", "Transaction Handling Fee", "5000"},
+                {"KSEI", "KSEI Fee", "22200"},
+                {"BIS4", "BI-SSSS Fee", "23000"},
+                {"VAT", "PPN (VAT) Fee", "0.11"}
+        };
 
+        // Run test for each set of data
+        for (String[] data : testData) {
+            String name = data[0];
+            String description = data[1];
+            String value = data[2];
+
+            CreateFeeParameterRequest request = CreateFeeParameterRequest.builder()
+                    .name(name)
+                    .description(description)
+                    .value(value)
+                    .build();
+
+            FeeParameterDTO feeParameterDTO = feeParameterService.create(request);
+            assertNotNull(feeParameterDTO.getId());
+            assertEquals(request.getName(), feeParameterDTO.getName());
+        }
     }
+
+    //    @ParameterizedTest
+//    @CsvSource({
+//            "TRANSACTION_HANDLING, Transaction Handling Fee, 5000",
+//            "KSEI, KSEI Fee, 22200",
+//            "BIS4, BI-SSSS Fee, 23000",
+//            "VAT, PPN (VAT) Fee, 0.11"
+//    })
+//    void createExchangeRate(String name, String description, String value) {
+//        CreateFeeParameterRequest request = CreateFeeParameterRequest.builder()
+//                .name(name)
+//                .description(description)
+//                .value(value)
+//                .build();
+//
+//        FeeParameterDTO feeParameterDTO = feeParameterService.create(request);
+//        assertNotNull(feeParameterDTO.getId());
+//        assertEquals(feeParameterDTO.getName(), request.getName());
+//    }
 
 }
