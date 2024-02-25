@@ -13,5 +13,4 @@ public interface UserRepository {
     // Tambahkan metode CRUD kustom lainnya jika diperlukan
     // ...
 
-    List<UserDTO> findAll1();
 }

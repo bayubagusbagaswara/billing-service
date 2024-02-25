@@ -4,7 +4,7 @@ import com.bayu.billingservice.dto.kyc.CreateKycRequest;
 import com.bayu.billingservice.dto.kyc.KycCustomerDTO;
 import com.bayu.billingservice.exception.DataNotFoundException;
 import com.bayu.billingservice.model.KycCustomer;
-import com.bayu.billingservice.repository.KycRepository;
+import com.bayu.billingservice.repository.KycCustomerRepository;
 import com.bayu.billingservice.service.KycCustomerService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -15,10 +15,10 @@ import java.util.List;
 @Service
 public class KycCustomerServiceImpl implements KycCustomerService {
 
-    private final KycRepository kycRepository;
+    private final KycCustomerRepository kycCustomerRepository;
 
-    public KycCustomerServiceImpl(KycRepository kycRepository) {
-        this.kycRepository = kycRepository;
+    public KycCustomerServiceImpl(KycCustomerRepository kycCustomerRepository) {
+        this.kycCustomerRepository = kycCustomerRepository;
     }
 
     @Override
@@ -34,17 +34,17 @@ public class KycCustomerServiceImpl implements KycCustomerService {
                 .billingType(request.getBillingType())
                 .build();
 
-        return mapToDTO(kycRepository.save(kycCustomer));
+        return mapToDTO(kycCustomerRepository.save(kycCustomer));
     }
 
     @Override
     public List<KycCustomerDTO> getAll() {
-        return mapToDTOList(kycRepository.findAll());
+        return mapToDTOList(kycCustomerRepository.findAll());
     }
 
     @Override
     public KycCustomerDTO getByBillingCategoryAndBillingType(String billingCategory, String billingType) {
-        KycCustomer kycCustomer = kycRepository.findByBillingCategoryAndBillingType(billingCategory, billingType)
+        KycCustomer kycCustomer = kycCustomerRepository.findByBillingCategoryAndBillingType(billingCategory, billingType)
                 .orElseThrow(() -> new DataNotFoundException("Kyc not found with billing category : " + billingCategory + ", and billing type : " + billingType));
         return mapToDTO(kycCustomer);
     }

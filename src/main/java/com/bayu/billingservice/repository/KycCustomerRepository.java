@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface KycRepository extends JpaRepository<KycCustomer, Long> {
+public interface KycCustomerRepository extends JpaRepository<KycCustomer, Long> {
 
     Optional<KycCustomer> findByAid(String aid);
 

@@ -4,8 +4,6 @@ import com.bayu.billingservice.dto.user.UserDTO;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.query.NativeQuery;
-import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Repository;
 
 import java.util.Arrays;
@@ -65,13 +63,4 @@ public class UserRepositoryImpl implements UserRepository {
                 .toList();
     }
 
-    @SuppressWarnings("unchecked")
-    @Override
-    public List<UserDTO> findAll1() {
-        String nativeQuery = "SELECT * FROM user";
-        return entityManager.createNativeQuery(nativeQuery, UserDTO.class)
-                .unwrap(NativeQuery.class)
-                .setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP)
-                .getResultList();
-    }
 }
