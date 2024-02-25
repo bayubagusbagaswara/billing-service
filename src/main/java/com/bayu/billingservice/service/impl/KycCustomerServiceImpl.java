@@ -27,11 +27,19 @@ public class KycCustomerServiceImpl implements KycCustomerService {
         KycCustomer kycCustomer = KycCustomer.builder()
                 .aid(request.getAid())
                 .kseiSafeCode(request.getKseiSafeCode())
+                .minimumFee(Double.parseDouble(request.getMinimumFee()))
+                .customerSafekeepingFee(Double.parseDouble(request.getCustomerSafekeepingFee()))
+                .journal(request.getJournal())
                 .billingCategory(request.getBillingCategory())
                 .billingType(request.getBillingType())
                 .build();
 
         return mapToDTO(kycRepository.save(kycCustomer));
+    }
+
+    @Override
+    public List<KycCustomerDTO> getAll() {
+        return mapToDTOList(kycRepository.findAll());
     }
 
     @Override
