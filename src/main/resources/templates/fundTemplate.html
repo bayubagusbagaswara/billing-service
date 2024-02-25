@@ -1,10 +1,87 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Fund Template</title>
+    <style>
+        .table-container {
+            width: 700px;
+            border-collapse: collapse;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .currency-label {
+            display: inline-block;
+            width: 100px;
+            text-align: left;
+            font-family: 'Times New Roman', sans-serif;
+        }
+
+        .cell {
+            text-align: right;
+            height: 25px;
+            font-family: 'Times New Roman', serif;
+            border: 1px solid black; /* Add border to tbody cells */
+            padding: 8px; /* Adjust padding as needed */
+        }
+
+        .cell-center {
+            text-align: center;
+            height: 25px;
+            font-family: 'Times New Roman', serif;
+            border: 1px solid black; /* Add border to tbody cells */
+            padding: 8px; /* Adjust padding as needed */
+        }
+
+        .cell1, .cell4 {
+            width: 320px;
+            text-align: left;
+        }
+
+        .cell5, .cell6 {
+            width: 200px;
+            text-align: right;
+        }
+
+        /* Style for thead borders */
+        .table-container th {
+            border: 1px solid black;
+            padding: 8px; /* Adjust padding as needed */
+        }
+    </style>
 </head>
 <body>
+
+<h3 th:text="${billingNumber}"></h3>
+
+<table class="table-container">
+    <thead>
+    <tr>
+        <th>Transaction Type</th>
+        <th>Value Frequency</th>
+        <th>Fee</th>
+        <th>Amount Due</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td class="cell cell1" th:text="${usdCell1}">USD Cell 1</td>
+        <td class="cell" th:text="${rpCell2}">Cell 2</td>
+        <td class="cell" th:text="${cell3}">Cell 3</td>
+        <td class="cell" th:text="${cell3}">Cell 3</td>
+    </tr>
+    <tr>
+        <td class="cell cell4" th:text="${usdCell4}">USD Cell 4</td>
+        <td class="cell cell5" th:text="${cell5}"><span class="currency-label">Rp.</span>Cell 5</td>
+        <td class="cell cell6" th:text="${cell6}"><span class="currency-label">Rp.</span>Cell 6</td>
+        <td class="cell cell6" th:text="${cell6}"><span class="currency-label">Rp.</span>Cell 6</td>
+    </tr>
+    <tr>
+        <td class="cell-center" colspan="3"><b><i th:text="${subTotal}">Sub Total</i></b></td>
+        <td class="cell cell6" th:text="${rpCell9}"><span class="currency-label">Rp.</span>Cell 9</td>
+    </tr>
+    </tbody>
+</table>
 
 </body>
 </html>
