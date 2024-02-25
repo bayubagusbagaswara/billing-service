@@ -5,9 +5,7 @@ import com.bayu.billingservice.model.KycCustomer;
 
 public interface KycCustomerService {
 
-    // create data Kyc
     KycCustomer create(CreateKycRequest request);
 
-    // get data Kyc by category billing and type billing
     KycCustomer getByBillingCategoryAndBillingType(String billingCategory, String billingType);
 }
