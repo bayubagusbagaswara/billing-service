@@ -1,10 +1,17 @@
 package com.bayu.billingservice.service;
 
+import com.bayu.billingservice.dto.exchangerate.CreateExchangeRateRequest;
+import com.bayu.billingservice.dto.exchangerate.ExchangeRateDTO;
+
+import java.util.List;
+
 public interface ExchangeRateService {
 
-    // create
+    ExchangeRateDTO create(CreateExchangeRateRequest request);
 
-    // get all
+    List<ExchangeRateDTO> getAll();
 
-    // get by name
+    ExchangeRateDTO getLatestDataByCurrency(String currency);
+
+    ExchangeRateDTO getLatestData();
 }
