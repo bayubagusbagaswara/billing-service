@@ -24,7 +24,7 @@ class KycCustomerTest {
                 .aid("15PCAP")
                 .kseiSafeCode("")
                 .minimumFee("")
-                .customerSafekeepingFee("0.03")
+                .customerFee("0.03")
                 .journal("")
                 .billingCategory("CORE")
                 .billingType("TYPE_1")
@@ -45,7 +45,7 @@ class KycCustomerTest {
                 .aid("16NUII")
                 .kseiSafeCode("")
                 .minimumFee("500000")
-                .customerSafekeepingFee("")
+                .customerFee("")
                 .journal("")
                 .billingCategory("CORE")
                 .billingType("TYPE_2")
@@ -66,7 +66,7 @@ class KycCustomerTest {
                 .aid("14GIGC")
                 .kseiSafeCode("")
                 .minimumFee("")
-                .customerSafekeepingFee("")
+                .customerFee("")
                 .journal("GL 713017 CC 9207")
                 .billingCategory("CORE")
                 .billingType("TYPE_3")
@@ -88,10 +88,11 @@ class KycCustomerTest {
                 .aid("17OBAL")
                 .kseiSafeCode("BDMN2OBAL00119")
                 .minimumFee("")
-                .customerSafekeepingFee("0.03")
+                .customerFee("0.03")
                 .journal("")
                 .billingCategory("CORE")
-                .billingType("TYPE_4A")
+                .billingType("TYPE_4")
+                .billingTemplate("TEMPLATE_4A")
                 .build();
 
         KycCustomerDTO kycCustomerDTO = kycCustomerService.create(request);
@@ -104,16 +105,16 @@ class KycCustomerTest {
 
     @Test
     @DisplayName("4B is EB without VAT")
-    @Order(5)
     void createKycCustomerCoreType4B() {
         CreateKycRequest request = CreateKycRequest.builder()
                 .aid("17OBAL")
                 .kseiSafeCode("BDMN2OBAL00119")
                 .minimumFee("")
-                .customerSafekeepingFee("0.03")
+                .customerFee("0.03")
                 .journal("")
                 .billingCategory("CORE")
-                .billingType("TYPE_4B")
+                .billingType("TYPE_4")
+                .billingTemplate("TEMPLATE_4B")
                 .build();
 
         KycCustomerDTO kycCustomerDTO = kycCustomerService.create(request);
@@ -125,13 +126,13 @@ class KycCustomerTest {
     }
 
     @Test
-    @Order(6)
+    @Order(5)
     void createKycCustomerCoreType5() {
         CreateKycRequest request = CreateKycRequest.builder()
                 .aid("14ZDEY")
                 .kseiSafeCode("BDMN2ZDEY00134")
                 .minimumFee("")
-                .customerSafekeepingFee("0.05")
+                .customerFee("0.05")
                 .journal("")
                 .billingCategory("CORE")
                 .billingType("TYPE_5")
@@ -146,13 +147,13 @@ class KycCustomerTest {
     }
 
     @Test
-    @Order(7)
+    @Order(6)
     void createKycCustomerCoreType6() {
         CreateKycRequest request = CreateKycRequest.builder()
                 .aid("14AJUT")
                 .kseiSafeCode("BDMN2AJUT00157")
                 .minimumFee("")
-                .customerSafekeepingFee("0.05")
+                .customerFee("0.05")
                 .journal("")
                 .billingCategory("CORE")
                 .billingType("TYPE_6")
@@ -168,13 +169,13 @@ class KycCustomerTest {
 
     @Test
     @DisplayName("7A is MUFG with aid 12MUFG")
-    @Order(8)
+    @Order(7)
     void createKycCustomerCoreType7A() {
         CreateKycRequest request = CreateKycRequest.builder()
                 .aid("12MUFG")
                 .kseiSafeCode("")
                 .minimumFee("")
-                .customerSafekeepingFee("")
+                .customerFee("")
                 .journal("")
                 .billingCategory("CORE")
                 .billingType("TYPE_7")
@@ -190,13 +191,13 @@ class KycCustomerTest {
 
     @Test
     @DisplayName("7B is GUDH with aid 17GUDH")
-    @Order(9)
+    @Order(8)
     void createKycCustomerCoreType7B() {
         CreateKycRequest request = CreateKycRequest.builder()
                 .aid("17GUDH")
                 .kseiSafeCode("")
                 .minimumFee("")
-                .customerSafekeepingFee("")
+                .customerFee("")
                 .journal("")
                 .billingCategory("CORE")
                 .billingType("TYPE_7")
@@ -212,13 +213,13 @@ class KycCustomerTest {
 
     @Test
     @DisplayName("Alam Manunggal")
-    @Order(10)
+    @Order(9)
     void createKycCustomerCoreType8A() {
         CreateKycRequest request = CreateKycRequest.builder()
                 .aid("ALMAN")
                 .kseiSafeCode("")
                 .minimumFee("")
-                .customerSafekeepingFee("")
+                .customerFee("")
                 .journal("")
                 .billingCategory("CORE")
                 .billingType("TYPE_8")
@@ -234,13 +235,13 @@ class KycCustomerTest {
 
     @Test
     @DisplayName("Indo Infrastruktur")
-    @Order(11)
+    @Order(10)
     void createKycCustomerCoreType8B() {
         CreateKycRequest request = CreateKycRequest.builder()
                 .aid("INFRAS")
                 .kseiSafeCode("")
                 .minimumFee("")
-                .customerSafekeepingFee("")
+                .customerFee("")
                 .journal("")
                 .billingCategory("CORE")
                 .billingType("TYPE_8")
@@ -256,13 +257,13 @@ class KycCustomerTest {
 
     @Test
     @DisplayName("Mandala Kapital")
-    @Order(12)
+    @Order(11)
     void createKycCustomerCoreType8C() {
         CreateKycRequest request = CreateKycRequest.builder()
                 .aid("MANKAP")
                 .kseiSafeCode("")
                 .minimumFee("")
-                .customerSafekeepingFee("")
+                .customerFee("")
                 .journal("")
                 .billingCategory("CORE")
                 .billingType("TYPE_8")
@@ -277,13 +278,13 @@ class KycCustomerTest {
     }
 
     @Test
-    @Order(13)
+    @Order(12)
     void createKycCustomerCoreType9() {
         CreateKycRequest request = CreateKycRequest.builder()
                 .aid("13KONI")
                 .kseiSafeCode("BDMN2KONI00111")
                 .minimumFee("")
-                .customerSafekeepingFee("0.05")
+                .customerFee("0.05")
                 .journal("")
                 .billingCategory("CORE")
                 .billingType("TYPE_9")
@@ -298,13 +299,13 @@ class KycCustomerTest {
     }
 
     @Test
-    @Order(14)
+    @Order(13)
     void createKycCustomerCoreType10() {
         CreateKycRequest request = CreateKycRequest.builder()
                 .aid("00NOIC")
                 .kseiSafeCode("")
                 .minimumFee("")
-                .customerSafekeepingFee("0.02")
+                .customerFee("0.02")
                 .journal("")
                 .billingCategory("CORE")
                 .billingType("TYPE_10")
@@ -320,13 +321,13 @@ class KycCustomerTest {
 
     @Test
     @DisplayName("Visiku")
-    @Order(15)
+    @Order(14)
     void createKycCustomerCoreType11A() {
         CreateKycRequest request = CreateKycRequest.builder()
                 .aid("VISIKU")
                 .kseiSafeCode("")
                 .minimumFee("5000000")
-                .customerSafekeepingFee("0.35")
+                .customerFee("0.35")
                 .journal("")
                 .billingCategory("CORE")
                 .billingType("TYPE_11")
@@ -342,13 +343,13 @@ class KycCustomerTest {
 
     @Test
     @DisplayName("Fulus")
-    @Order(16)
+    @Order(15)
     void createKycCustomerCoreTyp11B() {
         CreateKycRequest request = CreateKycRequest.builder()
                 .aid("FULUS")
                 .kseiSafeCode("")
                 .minimumFee("5000000")
-                .customerSafekeepingFee("0.35")
+                .customerFee("0.35")
                 .journal("")
                 .billingCategory("CORE")
                 .billingType("TYPE_11")
@@ -364,13 +365,13 @@ class KycCustomerTest {
 
     @Test
     @DisplayName("Frtaec")
-    @Order(17)
+    @Order(16)
     void createKycCustomerCoreType11C() {
         CreateKycRequest request = CreateKycRequest.builder()
                 .aid("FRTAEC")
                 .kseiSafeCode("")
                 .minimumFee("5000000")
-                .customerSafekeepingFee("0.35")
+                .customerFee("0.35")
                 .journal("")
                 .billingCategory("CORE")
                 .billingType("TYPE_11")
