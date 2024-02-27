@@ -33,8 +33,4 @@ public class Core1ServiceImpl implements Core1Service {
         return null;
     }
 
-    @Override
-    public String calculate1(String category, String type, String monthYear) {
-        return null;
-    }
 }
