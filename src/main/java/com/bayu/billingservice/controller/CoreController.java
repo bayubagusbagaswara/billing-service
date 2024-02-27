@@ -41,7 +41,7 @@ public class CoreController {
 
         if (categoryUpperCase.equalsIgnoreCase(BillingTypeConstant.CORE_CATEGORY)) {
             if (BillingTypeConstant.CORE_TYPE_1.equalsIgnoreCase(typeUppercase)) {
-                core1Service.calculate1(categoryUpperCase, typeUppercase, monthYear);
+                core1Service.calculate(categoryUpperCase, typeUppercase, monthYear);
             } else if (BillingTypeConstant.CORE_TYPE_2.equalsIgnoreCase(typeUppercase)) {
                 core2Service.calculate(categoryUpperCase, typeUppercase, monthYear);
             } else {
