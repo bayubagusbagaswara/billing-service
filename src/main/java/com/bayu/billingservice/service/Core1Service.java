@@ -6,10 +6,8 @@ import java.util.List;
 
 public interface Core1Service {
 
-    // response data
     List<Core1DTO> calculate(String category, String type, String monthYear);
 
-    // Response message status
-    String calculate1(String category, String type, String monthYear);
+
 
 }
