@@ -17,12 +17,14 @@ public class CreateKycRequest {
 
     private String minimumFee;
 
-    private String customerSafekeepingFee;
+    private String customerFee;
 
     private String journal;
 
     private String billingCategory;
 
     private String billingType;
+
+    private String billingTemplate;
 
 }

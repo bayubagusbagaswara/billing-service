@@ -9,6 +9,7 @@ import com.bayu.billingservice.service.KycCustomerService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Slf4j
@@ -24,14 +25,19 @@ public class KycCustomerServiceImpl implements KycCustomerService {
     @Override
     public KycCustomerDTO create(CreateKycRequest request) {
         log.info("Create Kyc : {}", request);
+
+        BigDecimal minimumFee = request.getMinimumFee().isEmpty() ? BigDecimal.ZERO : new BigDecimal(request.getMinimumFee());
+        double customerFee = request.getCustomerFee().isEmpty() ? 0 : Double.parseDouble(request.getCustomerFee());
+
         KycCustomer kycCustomer = KycCustomer.builder()
                 .aid(request.getAid())
                 .kseiSafeCode(request.getKseiSafeCode())
-                .minimumFee(Double.parseDouble(request.getMinimumFee()))
-                .customerSafekeepingFee(Double.parseDouble(request.getCustomerSafekeepingFee()))
+                .minimumFee(minimumFee)
+                .customerFee(customerFee)
                 .journal(request.getJournal())
                 .billingCategory(request.getBillingCategory())
                 .billingType(request.getBillingType())
+                .billingTemplate(request.getBillingTemplate())
                 .build();
 
         return mapToDTO(kycCustomerRepository.save(kycCustomer));
@@ -55,7 +61,7 @@ public class KycCustomerServiceImpl implements KycCustomerService {
                 .aid(kycCustomer.getAid())
                 .kseiSafeCode(kycCustomer.getKseiSafeCode())
                 .minimumFee(kycCustomer.getMinimumFee())
-                .customerSafekeepingFee(kycCustomer.getCustomerSafekeepingFee())
+                .customerFee(kycCustomer.getCustomerFee())
                 .journal(kycCustomer.getJournal())
                 .billingCategory(kycCustomer.getBillingCategory())
                 .billingType(kycCustomer.getBillingType())

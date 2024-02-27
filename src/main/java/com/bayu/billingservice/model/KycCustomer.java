@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+
 @Entity
 @Table(name = "kyc_customer")
 @Data
@@ -25,10 +27,10 @@ public class KycCustomer {
     private String kseiSafeCode;
 
     @Column(name = "minimum_fee")
-    private double minimumFee;
+    private BigDecimal minimumFee;
 
-    @Column(name = "customer_safekeeping_fee")
-    private double customerSafekeepingFee;
+    @Column(name = "customer_fee")
+    private double customerFee;
 
     @Column(name = "journal")
     private String journal;
@@ -38,5 +40,8 @@ public class KycCustomer {
 
     @Column(name = "billing_type")
     private String billingType;
+
+    @Column(name = "billing_template")
+    private String billingTemplate;
 
 }

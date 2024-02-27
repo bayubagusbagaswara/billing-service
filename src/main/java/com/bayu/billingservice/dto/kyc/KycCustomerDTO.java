@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -17,9 +19,9 @@ public class KycCustomerDTO {
 
     private String kseiSafeCode;
 
-    private double minimumFee;
+    private BigDecimal minimumFee;
 
-    private double customerSafekeepingFee;
+    private double customerFee;
 
     private String journal;
 
@@ -27,4 +29,5 @@ public class KycCustomerDTO {
 
     private String billingType;
 
+    private String billingTemplate;
 }
