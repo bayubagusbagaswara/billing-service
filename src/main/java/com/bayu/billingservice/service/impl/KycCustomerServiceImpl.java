@@ -2,7 +2,6 @@ package com.bayu.billingservice.service.impl;
 
 import com.bayu.billingservice.dto.kyc.CreateKycRequest;
 import com.bayu.billingservice.dto.kyc.KycCustomerDTO;
-import com.bayu.billingservice.exception.DataNotFoundException;
 import com.bayu.billingservice.model.KycCustomer;
 import com.bayu.billingservice.repository.KycCustomerRepository;
 import com.bayu.billingservice.service.KycCustomerService;
@@ -49,10 +48,9 @@ public class KycCustomerServiceImpl implements KycCustomerService {
     }
 
     @Override
-    public KycCustomerDTO getByBillingCategoryAndBillingType(String billingCategory, String billingType) {
-        KycCustomer kycCustomer = kycCustomerRepository.findByBillingCategoryAndBillingType(billingCategory, billingType)
-                .orElseThrow(() -> new DataNotFoundException("Kyc not found with billing category : " + billingCategory + ", and billing type : " + billingType));
-        return mapToDTO(kycCustomer);
+    public List<KycCustomerDTO> getByBillingCategoryAndBillingType(String billingCategory, String billingType) {
+        List<KycCustomer> kycCustomerList = kycCustomerRepository.findByBillingCategoryAndBillingType(billingCategory, billingType);
+        return mapToDTOList(kycCustomerList);
     }
 
     private static KycCustomerDTO mapToDTO(KycCustomer kycCustomer) {

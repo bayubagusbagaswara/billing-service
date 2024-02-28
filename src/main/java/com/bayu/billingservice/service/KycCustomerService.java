@@ -11,5 +11,5 @@ public interface KycCustomerService {
 
     List<KycCustomerDTO> getAll();
 
-    KycCustomerDTO getByBillingCategoryAndBillingType(String billingCategory, String billingType);
+    List<KycCustomerDTO> getByBillingCategoryAndBillingType(String billingCategory, String billingType);
 }
