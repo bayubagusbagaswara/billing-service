@@ -1,9 +1,9 @@
 package com.bayu.billingservice.service.impl;
 
 import com.bayu.billingservice.exception.CsvProcessingException;
-import com.bayu.billingservice.model.KSEISafekeepingFee;
-import com.bayu.billingservice.repository.KSEISafekeepingFeeRepository;
-import com.bayu.billingservice.service.KSEISafekeepingFeeService;
+import com.bayu.billingservice.model.KseiSafekeepingFee;
+import com.bayu.billingservice.repository.KseiSafekeepingFeeRepository;
+import com.bayu.billingservice.service.KseiSafekeepingFeeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.*;
@@ -22,17 +22,17 @@ import java.util.List;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class KSEISafekeepingFeeServiceImpl implements KSEISafekeepingFeeService {
+public class KseiSafekeepingFeeServiceImpl implements KseiSafekeepingFeeService {
 
     private static final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MMM-yyyy");
 
-    private final KSEISafekeepingFeeRepository kseiSafekeepingFeeRepository;
+    private final KseiSafekeepingFeeRepository kseiSafekeepingFeeRepository;
 
     @Override
     public String readAndInsertToDB(String filePath) {
         log.info("File Path: {}", filePath);
 
-        List<KSEISafekeepingFee> kseiSafekeepingFeeList = new ArrayList<>();
+        List<KseiSafekeepingFee> kseiSafekeepingFeeList = new ArrayList<>();
 
         try (Workbook workbook = WorkbookFactory.create(new FileInputStream(new File(filePath)))) {
             processSheets(workbook, kseiSafekeepingFeeList);
@@ -47,7 +47,7 @@ public class KSEISafekeepingFeeServiceImpl implements KSEISafekeepingFeeService 
         }
     }
 
-    private void processSheets(Workbook workbook, List<KSEISafekeepingFee> kseiSafekeepingFeeList) {
+    private void processSheets(Workbook workbook, List<KseiSafekeepingFee> kseiSafekeepingFeeList) {
         Iterator<Sheet> sheetIterator = workbook.sheetIterator();
 
         while (sheetIterator.hasNext()) {
@@ -56,7 +56,7 @@ public class KSEISafekeepingFeeServiceImpl implements KSEISafekeepingFeeService 
         }
     }
 
-    private void processRows(Sheet sheet, List<KSEISafekeepingFee> kseiSafekeepingFeeList) {
+    private void processRows(Sheet sheet, List<KseiSafekeepingFee> kseiSafekeepingFeeList) {
         Iterator<Row> rowIterator = sheet.rowIterator();
 
         // Skip the first row (header)
@@ -67,7 +67,7 @@ public class KSEISafekeepingFeeServiceImpl implements KSEISafekeepingFeeService 
         while (rowIterator.hasNext()) {
             try {
                 Row row = rowIterator.next();
-                KSEISafekeepingFee kseiSafekeepingFee = createEntityFromRow(row);
+                KseiSafekeepingFee kseiSafekeepingFee = createEntityFromRow(row);
                 kseiSafekeepingFeeList.add(kseiSafekeepingFee);
             } catch (Exception e) {
                 log.error("Error processing a row: {}", e.getMessage());
@@ -77,8 +77,8 @@ public class KSEISafekeepingFeeServiceImpl implements KSEISafekeepingFeeService 
         }
     }
 
-    private KSEISafekeepingFee createEntityFromRow(Row row) {
-        KSEISafekeepingFee kseiSafekeepingFee = new KSEISafekeepingFee();
+    private KseiSafekeepingFee createEntityFromRow(Row row) {
+        KseiSafekeepingFee kseiSafekeepingFee = new KseiSafekeepingFee();
         Cell cell3 = row.getCell(2);
         kseiSafekeepingFee.setCreatedDate(parseDateOrDefault(cell3.toString(), dateFormatter));
         log.info("Created Date : {}", cell3.toString());
@@ -100,12 +100,12 @@ public class KSEISafekeepingFeeServiceImpl implements KSEISafekeepingFeeService 
     }
 
     @Override
-    public List<KSEISafekeepingFee> getAll() {
+    public List<KseiSafekeepingFee> getAll() {
         return kseiSafekeepingFeeRepository.findAll();
     }
 
     @Override
-    public KSEISafekeepingFee getByFeeAccount(String feeAccount) {
+    public KseiSafekeepingFee getByFeeAccount(String feeAccount) {
         return kseiSafekeepingFeeRepository.findByFeeAccount(feeAccount)
                 .orElseThrow(() -> new RuntimeException("Data not found"));
     }

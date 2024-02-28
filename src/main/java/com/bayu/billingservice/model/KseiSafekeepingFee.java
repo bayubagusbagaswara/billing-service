@@ -15,7 +15,7 @@ import java.time.LocalDate;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class KSEISafekeepingFee {
+public class KseiSafekeepingFee {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

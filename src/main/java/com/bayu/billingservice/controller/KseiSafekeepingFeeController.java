@@ -1,8 +1,8 @@
 package com.bayu.billingservice.controller;
 
 import com.bayu.billingservice.dto.ResponseDTO;
-import com.bayu.billingservice.model.KSEISafekeepingFee;
-import com.bayu.billingservice.service.KSEISafekeepingFeeService;
+import com.bayu.billingservice.model.KseiSafekeepingFee;
+import com.bayu.billingservice.service.KseiSafekeepingFeeService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -16,14 +16,14 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping(path = "/api/ksei-safe")
-public class KSEISafekeepingFeeController {
+public class KseiSafekeepingFeeController {
 
     @Value("${file.path.ksei-safe}")
     private String filePath;
 
-    private final KSEISafekeepingFeeService kseiSafekeepingFeeService;
+    private final KseiSafekeepingFeeService kseiSafekeepingFeeService;
 
-    public KSEISafekeepingFeeController(KSEISafekeepingFeeService kseiSafekeepingFeeService) {
+    public KseiSafekeepingFeeController(KseiSafekeepingFeeService kseiSafekeepingFeeService) {
         this.kseiSafekeepingFeeService = kseiSafekeepingFeeService;
     }
 
@@ -43,10 +43,10 @@ public class KSEISafekeepingFeeController {
     }
 
     @GetMapping(path = "/all")
-    public ResponseEntity<ResponseDTO<List<KSEISafekeepingFee>>> getAll() {
-        List<KSEISafekeepingFee> kseiSafekeepingFeeList = kseiSafekeepingFeeService.getAll();
+    public ResponseEntity<ResponseDTO<List<KseiSafekeepingFee>>> getAll() {
+        List<KseiSafekeepingFee> kseiSafekeepingFeeList = kseiSafekeepingFeeService.getAll();
 
-        ResponseDTO<List<KSEISafekeepingFee>> response = ResponseDTO.<List<KSEISafekeepingFee>>builder()
+        ResponseDTO<List<KseiSafekeepingFee>> response = ResponseDTO.<List<KseiSafekeepingFee>>builder()
                 .code(HttpStatus.OK.value())
                 .message(HttpStatus.OK.getReasonPhrase())
                 .payload(kseiSafekeepingFeeList)
