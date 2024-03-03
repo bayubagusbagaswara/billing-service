@@ -12,9 +12,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -58,21 +59,33 @@ public class FeeParameterServiceImpl implements FeeParameterService {
     @Override
     public List<FeeParameterDTO> getByNameList(List<String> nameList) {
         List<FeeParameter> feeParameterList = feeParameterRepository.findFeeParameterByNameList(nameList);
+        // Check if all names are present in the feeParameterList
+        for (String name : nameList) {
+            Optional<FeeParameter> foundParameter = feeParameterList.stream()
+                    .filter(parameter -> parameter.getName().equals(name))
+                    .findFirst();
+
+            if (foundParameter.isEmpty()) {
+                // If a name is not found, you can throw a custom exception or handle it as needed
+                throw new DataNotFoundException("FeeParameter with name '" + name + "' not found");
+            }
+        }
+
         return mapToDTOList(feeParameterList);
     }
 
     @Override
     public Map<String, BigDecimal> getValueByNameList(List<String> nameList) {
-        Map<String, BigDecimal> dataMap = new HashMap<>();
-
         List<FeeParameter> feeParameterList = feeParameterRepository.findFeeParameterByNameList(nameList);
 
+        Map<String, BigDecimal> dataMap = feeParameterList.stream()
+                .collect(Collectors.toMap(FeeParameter::getName, FeeParameter::getValue));
+
+        // Check if all names are present in the dataMap
         for (String name : nameList) {
-            for (FeeParameter feeParameter : feeParameterList) {
-                if (feeParameter.getName().equals(name)) {
-                    dataMap.put(feeParameter.getName(), feeParameter.getValue());
-                    break; // Optional: Exit the inner loop if a match is found
-                }
+            if (!dataMap.containsKey(name)) {
+                // If a name is not found, you can throw a custom exception or handle it as needed
+                throw new DataNotFoundException("FeeParameter with name '" + name + "' not found");
             }
         }
 
