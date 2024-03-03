@@ -1,6 +1,7 @@
 package com.bayu.billingservice.controller;
 
 import com.bayu.billingservice.dto.ResponseDTO;
+import com.bayu.billingservice.dto.kseisafe.CreateKseiSafeRequest;
 import com.bayu.billingservice.model.KseiSafekeepingFee;
 import com.bayu.billingservice.service.KseiSafekeepingFeeService;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +25,19 @@ public class KseiSafekeepingFeeController {
 
     public KseiSafekeepingFeeController(KseiSafekeepingFeeService kseiSafekeepingFeeService) {
         this.kseiSafekeepingFeeService = kseiSafekeepingFeeService;
+    }
+
+    @PostMapping
+    public ResponseEntity<ResponseDTO<List<KseiSafekeepingFee>>> create(@RequestBody List<CreateKseiSafeRequest> requestList) {
+        List<KseiSafekeepingFee> kseiSafekeepingFeeList = kseiSafekeepingFeeService.create(requestList);
+
+        ResponseDTO<List<KseiSafekeepingFee>> response = ResponseDTO.<List<KseiSafekeepingFee>>builder()
+                .code(HttpStatus.OK.value())
+                .message(HttpStatus.OK.getReasonPhrase())
+                .payload(kseiSafekeepingFeeList)
+                .build();
+
+        return ResponseEntity.ok().body(response);
     }
 
     @GetMapping(path = "/read-insert")
@@ -54,6 +68,17 @@ public class KseiSafekeepingFeeController {
         return ResponseEntity.ok().body(response);
     }
 
+    @GetMapping(path = "/customer-code")
+    public ResponseEntity<ResponseDTO<List<KseiSafekeepingFee>>> getAllByName(@RequestParam("customerCode") String customerCode) {
+        List<KseiSafekeepingFee> kseiSafekeepingFeeList = kseiSafekeepingFeeService.getByCustomerCode(customerCode);
+        ResponseDTO<List<KseiSafekeepingFee>> response = ResponseDTO.<List<KseiSafekeepingFee>>builder()
+                .code(HttpStatus.OK.value())
+                .message(HttpStatus.OK.getReasonPhrase())
+                .payload(kseiSafekeepingFeeList)
+                .build();
+        return ResponseEntity.ok().body(response);
+    }
+
     @GetMapping(path = "/calculate")
     public ResponseEntity<ResponseDTO<BigDecimal>> calculateAmountFeeByCustomerCodeAndMonthAndYear(
             @RequestParam("customerCode") String customerCode,
@@ -71,7 +96,7 @@ public class KseiSafekeepingFeeController {
         return ResponseEntity.ok().body(response);
     }
 
-    @PostMapping(path = "/calculate/3month")
+    @GetMapping(path = "/calculate/3month")
     public ResponseEntity<ResponseDTO<BigDecimal>> calculateAmountFeeForLast3Months(
             @RequestParam("customerCode") String customerCode,
             @RequestParam("month") String month,
