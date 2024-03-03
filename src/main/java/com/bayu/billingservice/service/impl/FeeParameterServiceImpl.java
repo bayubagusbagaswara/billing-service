@@ -10,7 +10,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -21,10 +24,13 @@ public class FeeParameterServiceImpl implements FeeParameterService {
 
     @Override
     public FeeParameterDTO create(CreateFeeParameterRequest request) {
+
+        BigDecimal value = request.getValue().isEmpty() ? BigDecimal.ZERO :  new BigDecimal(request.getValue());
+
         FeeParameter feeParameter = FeeParameter.builder()
                 .name(request.getName())
                 .description(request.getDescription())
-                .value(Double.parseDouble(request.getValue()))
+                .value(value)
                 .build();
 
         return mapToDTO(feeParameterRepository.save(feeParameter));
@@ -42,10 +48,34 @@ public class FeeParameterServiceImpl implements FeeParameterService {
     }
 
     @Override
-    public double getValueByName(String name) {
+    public BigDecimal getValueByName(String name) {
         FeeParameter feeParameter = feeParameterRepository.findByName(name)
                 .orElseThrow(() -> new DataNotFoundException("Fee Parameter not found with name : " + name));
         return feeParameter.getValue();
+    }
+
+    @Override
+    public List<FeeParameterDTO> getByNameList(List<String> nameList) {
+        List<FeeParameter> feeParameterList = feeParameterRepository.findFeeParameterByNameList(nameList);
+        return mapToDTOList(feeParameterList);
+    }
+
+    @Override
+    public Map<String, BigDecimal> getValueByNameList(List<String> nameList) {
+        Map<String, BigDecimal> dataMap = new HashMap<>();
+
+        List<FeeParameter> feeParameterList = feeParameterRepository.findFeeParameterByNameList(nameList);
+
+        for (String name : nameList) {
+            for (FeeParameter feeParameter : feeParameterList) {
+                if (feeParameter.getName().equals(name)) {
+                    dataMap.put(feeParameter.getName(), feeParameter.getValue());
+                    break; // Optional: Exit the inner loop if a match is found
+                }
+            }
+        }
+
+        return dataMap;
     }
 
     private static FeeParameterDTO mapToDTO(FeeParameter feeParameter) {
