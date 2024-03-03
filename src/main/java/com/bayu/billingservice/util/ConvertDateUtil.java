@@ -30,7 +30,7 @@ public class ConvertDateUtil {
     public static LocalDate getLatestDateOfMonthYear(String monthYear) {
         DateTimeFormatter formatter = new DateTimeFormatterBuilder()
                 .parseCaseInsensitive()
-                .appendPattern("MMM yyyy")
+                .appendPattern("[MMM ][MMMM ]yyyy")
                 .toFormatter(Locale.ENGLISH);
 
         TemporalAccessor temporalAccessor = formatter.parse(monthYear);
@@ -40,6 +40,21 @@ public class ConvertDateUtil {
         log.info("Latest Date of Month Year : {}", latestDateOfMonth);
 
         return latestDateOfMonth;
+    }
+
+    public static LocalDate getFirstDateOfMonthYear(String monthYear) {
+        DateTimeFormatter formatter = new DateTimeFormatterBuilder()
+                .parseCaseInsensitive()
+                .appendPattern("[MMM ][MMMM ]yyyy")
+                .toFormatter(Locale.ENGLISH);
+
+        TemporalAccessor temporalAccessor = formatter.parse(monthYear);
+        LocalDate parsedDate = LocalDate.from(new MonthYearQuery().queryFrom(temporalAccessor));
+
+        LocalDate firstDateOfMonth = parsedDate.with(TemporalAdjusters.firstDayOfMonth());
+        log.info("First Date of Month Year : {}", firstDateOfMonth);
+
+        return firstDateOfMonth;
     }
 
     public static Map<String, String> extractMonthYearInformation(String monthYear) {
