@@ -21,6 +21,7 @@ import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.TextStyle;
+import java.time.temporal.TemporalAdjusters;
 import java.util.*;
 
 @Slf4j
@@ -34,21 +35,28 @@ public class KseiSafekeepingFeeServiceImpl implements KseiSafekeepingFeeService 
     private final FeeParameterService feeParameterService;
 
     @Override
-    public KseiSafekeepingFee create(CreateKseiSafeRequest request) {
-        LocalDate localDate = LocalDate.parse(request.getCreatedDate());
-        int year = localDate.getYear();
-        String monthName = localDate.getMonth().getDisplayName(TextStyle.FULL, Locale.ENGLISH);
+    public List<KseiSafekeepingFee> create(List<CreateKseiSafeRequest> requestList) {
 
-        KseiSafekeepingFee kseiSafekeepingFee = KseiSafekeepingFee.builder()
-                .createdDate(localDate)
-                .month(monthName)
-                .year(year)
-                .feeDescription(request.getFeeDescription())
-                .customerCode(request.getCustomerCode())
-                .amountFee(new BigDecimal(request.getAmountFee()))
-                .build();
+        List<KseiSafekeepingFee> kseiSafekeepingFeeList = new ArrayList<>();
 
-        return kseiSafekeepingFeeRepository.save(kseiSafekeepingFee);
+        for (CreateKseiSafeRequest request : requestList) {
+            LocalDate localDate = LocalDate.parse(request.getCreatedDate());
+            int year = localDate.getYear();
+            String monthName = localDate.getMonth().getDisplayName(TextStyle.FULL, Locale.ENGLISH);
+
+            KseiSafekeepingFee kseiSafekeepingFee = KseiSafekeepingFee.builder()
+                    .createdDate(localDate)
+                    .month(monthName)
+                    .year(year)
+                    .feeDescription(request.getFeeDescription())
+                    .customerCode(request.getCustomerCode())
+                    .amountFee(new BigDecimal(request.getAmountFee()))
+                    .build();
+
+            kseiSafekeepingFeeList.add(kseiSafekeepingFee);
+        }
+
+        return kseiSafekeepingFeeRepository.saveAll(kseiSafekeepingFeeList);
     }
 
     @Override
@@ -80,9 +88,8 @@ public class KseiSafekeepingFeeServiceImpl implements KseiSafekeepingFeeService 
     }
 
     @Override
-    public KseiSafekeepingFee getByCustomerCode(String customerCode) {
-        return kseiSafekeepingFeeRepository.findByCustomerCodeContainingIgnoreCase(customerCode)
-                .orElseThrow(() -> new DataNotFoundException("KSEI Safe with customer code '" + customerCode + "' not found."));
+    public List<KseiSafekeepingFee> getByCustomerCode(String customerCode) {
+        return kseiSafekeepingFeeRepository.findByCustomerCodeContainingIgnoreCase(customerCode);
     }
 
     @Override
@@ -107,8 +114,11 @@ public class KseiSafekeepingFeeServiceImpl implements KseiSafekeepingFeeService 
 
     @Override
     public BigDecimal calculateAmountFeeForLast3Months(String customerCode, String month, int year) {
-        LocalDate endDate = LocalDate.now().withDayOfMonth(1).minusDays(1);
-        LocalDate startDate = endDate.minusMonths(2);
+        String monthYear = month + " " + year;
+        LocalDate firstDateOfMonthYear = ConvertDateUtil.getFirstDateOfMonthYear(monthYear);
+
+        LocalDate endDate = firstDateOfMonthYear.with(TemporalAdjusters.lastDayOfMonth());
+        LocalDate startDate = endDate.minusMonths(2).with(TemporalAdjusters.lastDayOfMonth()); // 3 bulan kebelakang
         log.info("Start Date : {}, and End Date : {}", startDate, endDate);
 
         List<KseiSafekeepingFee> filteredData = kseiSafekeepingFeeRepository.findByCustomerCodeAndDateBetweenNative(customerCode, startDate, endDate);
