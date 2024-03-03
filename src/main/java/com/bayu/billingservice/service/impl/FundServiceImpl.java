@@ -5,24 +5,13 @@ import com.bayu.billingservice.dto.fund.FeeReportRequest;
 import com.bayu.billingservice.model.SkTransaction;
 import com.bayu.billingservice.service.FundService;
 import com.bayu.billingservice.service.SkTransactionService;
-import com.bayu.billingservice.util.ConvertDateUtil;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.time.LocalDate;
-import java.time.Month;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeFormatterBuilder;
-import java.time.format.TextStyle;
-import java.time.temporal.ChronoField;
-import java.time.temporal.TemporalAccessor;
-import java.time.temporal.TemporalQuery;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 @Slf4j
 @Service
@@ -39,33 +28,16 @@ public class FundServiceImpl implements FundService {
         List<BillingFundDTO> billingFundDTOList = new ArrayList<>();
 
         for (FeeReportRequest feeReportRequest : request) {
-            String portfolioCode = feeReportRequest.getPortfolioCode();
+            String aid = feeReportRequest.getPortfolioCode();
             BigDecimal customerFee = feeReportRequest.getCustomerFee();
 
-            List<SkTransaction> skTransactionList = skTransactionService.getAllByPortfolioCode(portfolioCode);
+            List<SkTransaction> skTransactionList = skTransactionService.getAllByAidAndMonthAndYear(aid, month, year);
 
-            // Filter transactions for the current month
-            List<SkTransaction> filteredTransactions = skTransactionList.stream()
-                    .filter(skTransaction -> skTransaction.getSettlementDate().getYear() == year &&
-                            skTransaction.getSettlementDate().getMonth().name() == month)
-                    .toList();
-
-            BillingFundDTO billingFundDTO = filterTransactionsType(portfolioCode, customerFee,
-                    month, year,
-                    filteredTransactions);
+            BillingFundDTO billingFundDTO = filterTransactionsType(aid, customerFee, month, year, skTransactionList);
 
             billingFundDTOList.add(billingFundDTO);
         }
         return billingFundDTOList;
-    }
-
-    static class MonthYearQuery implements TemporalQuery<LocalDate> {
-        @Override
-        public LocalDate queryFrom(TemporalAccessor temporalAccessor) {
-            int year = temporalAccessor.get(ChronoField.YEAR);
-            int month = temporalAccessor.get(ChronoField.MONTH_OF_YEAR);
-            return LocalDate.of(year, month, 1); // Day set to 1 for the first day of the month
-        }
     }
 
     private BillingFundDTO filterTransactionsType(String portfolioCode, BigDecimal customerFee, String currentMonthName, int currentYear, List<SkTransaction> transactionList) {
@@ -95,7 +67,7 @@ public class FundServiceImpl implements FundService {
                                                 int transactionCBESTTotal, int transactionBIS4Total) {
 
         BigDecimal accrualCustodialFee = customerFee
-                        .divide(BigDecimal.valueOf(1.11), 4, RoundingMode.CEILING)  // Divide by 1.11 with 4 decimal places, rounding up
+                        .divide(BigDecimal.valueOf(1.11), 4, RoundingMode.HALF_UP)  // Divide by 1.11 with 4 decimal places, rounding up
                         .setScale(0, RoundingMode.HALF_UP);
         log.info("Accrual Custodial Fee : {}", accrualCustodialFee);
 
