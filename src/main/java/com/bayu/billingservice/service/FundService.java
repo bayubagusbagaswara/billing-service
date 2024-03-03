@@ -7,7 +7,6 @@ import java.util.List;
 
 public interface FundService {
 
-    // semua request list dari depan (Fee Report) harus otomatis ter-generate billing nya
+    List<BillingFundDTO> calculate(List<FeeReportRequest> request, String date);
 
-    List<BillingFundDTO> generateBillingFund(List<FeeReportRequest> request, String date);
 }
