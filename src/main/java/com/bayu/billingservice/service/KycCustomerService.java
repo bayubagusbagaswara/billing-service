@@ -12,4 +12,6 @@ public interface KycCustomerService {
     List<KycCustomerDTO> getAll();
 
     List<KycCustomerDTO> getByBillingCategoryAndBillingType(String billingCategory, String billingType);
+
+    String deleteAll();
 }

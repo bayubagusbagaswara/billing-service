@@ -2,6 +2,7 @@ package com.bayu.billingservice.service.impl;
 
 import com.bayu.billingservice.dto.kyc.CreateKycRequest;
 import com.bayu.billingservice.dto.kyc.KycCustomerDTO;
+import com.bayu.billingservice.exception.ConnectionDatabaseException;
 import com.bayu.billingservice.model.KycCustomer;
 import com.bayu.billingservice.repository.KycCustomerRepository;
 import com.bayu.billingservice.service.KycCustomerService;
@@ -51,6 +52,17 @@ public class KycCustomerServiceImpl implements KycCustomerService {
     public List<KycCustomerDTO> getByBillingCategoryAndBillingType(String billingCategory, String billingType) {
         List<KycCustomer> kycCustomerList = kycCustomerRepository.findByBillingCategoryAndBillingType(billingCategory, billingType);
         return mapToDTOList(kycCustomerList);
+    }
+
+    @Override
+    public String deleteAll() {
+        try {
+            kycCustomerRepository.deleteAll();
+            return "Successfully deleted all Mock Kyc Customer";
+        } catch (Exception e) {
+            log.error("Error when delete all Mock Kyc Customer : " + e.getMessage());
+            throw new ConnectionDatabaseException("Error when delete all Mock Kyc Customer");
+        }
     }
 
     private static KycCustomerDTO mapToDTO(KycCustomer kycCustomer) {
