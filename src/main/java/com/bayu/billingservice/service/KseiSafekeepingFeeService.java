@@ -1,12 +1,14 @@
 package com.bayu.billingservice.service;
 
+import com.bayu.billingservice.dto.kseisafe.CreateKseiSafeRequest;
 import com.bayu.billingservice.model.KseiSafekeepingFee;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.List;
 
 public interface KseiSafekeepingFeeService {
+
+    KseiSafekeepingFee create(CreateKseiSafeRequest request);
 
     String readAndInsertToDB(String filePath);
 

@@ -1,6 +1,7 @@
 package com.bayu.billingservice.service.impl;
 
 import com.bayu.billingservice.constant.FeeParameterNameConstant;
+import com.bayu.billingservice.dto.kseisafe.CreateKseiSafeRequest;
 import com.bayu.billingservice.exception.*;
 import com.bayu.billingservice.model.KseiSafekeepingFee;
 import com.bayu.billingservice.repository.KseiSafekeepingFeeRepository;
@@ -31,6 +32,24 @@ public class KseiSafekeepingFeeServiceImpl implements KseiSafekeepingFeeService 
 
     private final KseiSafekeepingFeeRepository kseiSafekeepingFeeRepository;
     private final FeeParameterService feeParameterService;
+
+    @Override
+    public KseiSafekeepingFee create(CreateKseiSafeRequest request) {
+        LocalDate localDate = LocalDate.parse(request.getCreatedDate());
+        int year = localDate.getYear();
+        String monthName = localDate.getMonth().getDisplayName(TextStyle.FULL, Locale.ENGLISH);
+
+        KseiSafekeepingFee kseiSafekeepingFee = KseiSafekeepingFee.builder()
+                .createdDate(localDate)
+                .month(monthName)
+                .year(year)
+                .feeDescription(request.getFeeDescription())
+                .customerCode(request.getCustomerCode())
+                .amountFee(new BigDecimal(request.getAmountFee()))
+                .build();
+
+        return kseiSafekeepingFeeRepository.save(kseiSafekeepingFee);
+    }
 
     @Override
     public String readAndInsertToDB(String filePath) {
