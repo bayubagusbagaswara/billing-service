@@ -14,7 +14,7 @@ public interface FeeParameterRepository extends JpaRepository<FeeParameter, Long
 
     Optional<FeeParameter> findByName(String name);
 
-    @Query(value = "SELECT f FROM MockFeeParameter f " +
+    @Query(value = "SELECT * FROM fee_parameter AS f " +
             "WHERE f.name IN :names", nativeQuery = true)
     List<FeeParameter> findFeeParameterByNameList(@Param("names") List<String> names);
 }
