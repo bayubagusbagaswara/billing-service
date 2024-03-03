@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+
 @Entity
 @Table(name = "fee_parameter", uniqueConstraints = {
         @UniqueConstraint(name = "fee_parameter_name_unique", columnNames = "name")
@@ -27,6 +29,6 @@ public class FeeParameter {
     private String description;
 
     @Column(name = "value")
-    private double value;
+    private BigDecimal value;
 
 }
