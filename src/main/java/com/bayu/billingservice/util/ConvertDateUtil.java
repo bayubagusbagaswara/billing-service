@@ -42,7 +42,7 @@ public class ConvertDateUtil {
         return latestDateOfMonth;
     }
 
-    public static Map<String, String> getMonthYear(String monthYear) {
+    public static Map<String, String> extractMonthYearInformation(String monthYear) {
         LocalDate latestDateOfMonthYear = getLatestDateOfMonthYear(monthYear);
 
         // Month
@@ -67,6 +67,20 @@ public class ConvertDateUtil {
             int month = temporal.get(ChronoField.MONTH_OF_YEAR);
             return LocalDate.of(year, month, 1); // Day set to 1 for the first day of the month
         }
+    }
+
+    public static String convertToYearMonthFormat(String monthYear) {
+        DateTimeFormatter formatter = new DateTimeFormatterBuilder()
+                .parseCaseInsensitive()
+                .appendPattern("[MMM ][MMMM ]yyyy")
+                .toFormatter(Locale.ENGLISH);
+
+        TemporalAccessor temporalAccessor = formatter.parse(monthYear);
+        LocalDate parsedDate = LocalDate.from(new ConvertDateUtil.MonthYearQuery().queryFrom(temporalAccessor));
+
+        // Format the parsed date into the desired output format
+        DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("MMMM-yyyy", Locale.ENGLISH);
+        return parsedDate.format(outputFormatter);
     }
 
 }
