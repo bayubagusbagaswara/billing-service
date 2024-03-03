@@ -69,7 +69,7 @@ public class ConvertDateUtil {
         }
     }
 
-    public static String convertToYearMonthFormat(String monthYear) {
+    public static String[] convertToYearMonthFormat(String monthYear) {
         DateTimeFormatter formatter = new DateTimeFormatterBuilder()
                 .parseCaseInsensitive()
                 .appendPattern("[MMM ][MMMM ]yyyy")
@@ -80,7 +80,11 @@ public class ConvertDateUtil {
 
         // Format the parsed date into the desired output format
         DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("MMMM-yyyy", Locale.ENGLISH);
-        return parsedDate.format(outputFormatter);
+        // Split the formatted date string
+        String formattedDate = parsedDate.format(outputFormatter);
+
+        // Split the formatted date string
+        return formattedDate.split("-");
     }
 
 }
