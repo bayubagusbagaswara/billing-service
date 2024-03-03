@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "ksei_safe_fee")
+@Table(name = "ksei_safekeeping_fee")
 @Data
 @Builder
 @NoArgsConstructor
