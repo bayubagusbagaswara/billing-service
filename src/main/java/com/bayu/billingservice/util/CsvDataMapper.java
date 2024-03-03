@@ -35,7 +35,7 @@ public class CsvDataMapper {
                     .securityType(StringUtil.processString(row[2]))
                     .securityShortName(StringUtil.processString(row[3]))
                     .securityName(StringUtil.processString(row[4]))
-                    .type(StringUtil.processString(row[5]))
+                    .type(checkType(StringUtil.processString(row[5])))
                     .tradeDate(ConvertDateUtil.parseDateOrDefault(row[6], dateTimeFormatter))
                     .settlementDate(date)
                     .month(monthName)
@@ -53,6 +53,16 @@ public class CsvDataMapper {
 
         log.info("[Finish Map CSV] SKTran Size : {}", skTransactionList.size());
         return skTransactionList;
+    }
+
+    private static String checkType(String value) {
+        String normalized;
+        if (value.equalsIgnoreCase("S")) {
+            normalized = "Sell";
+        } else {
+            normalized = "Purchase";
+        }
+        return normalized;
     }
 
     public static List<SfValRgDaily> mapCsvSfValRgDaily(List<String[]> rows) {
