@@ -1,7 +1,6 @@
 package com.bayu.billingservice.controller;
 
 import com.bayu.billingservice.dto.ResponseDTO;
-import com.bayu.billingservice.dto.SkTransactionDTO;
 import com.bayu.billingservice.model.SkTransaction;
 import com.bayu.billingservice.service.SkTransactionService;
 import com.opencsv.exceptions.CsvException;
@@ -10,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -55,13 +55,14 @@ public class SkTransactionController {
         return ResponseEntity.ok().body(response);
     }
 
-    @GetMapping(path = "/settlement")
-    public ResponseEntity<ResponseDTO<List<SkTransactionDTO>>> getAllSettlementDate() {
-        List<SkTransactionDTO> skTransactionDTOList = skTransactionService.getAllSettlementDate();
-        ResponseDTO<List<SkTransactionDTO>> response = ResponseDTO.<List<SkTransactionDTO>>builder()
+    @DeleteMapping
+    public ResponseEntity<ResponseDTO<String>> deleteAll() {
+        String status = skTransactionService.deleteAll();
+
+        ResponseDTO<String> response = ResponseDTO.<String>builder()
                 .code(HttpStatus.OK.value())
                 .message(HttpStatus.OK.getReasonPhrase())
-                .payload(skTransactionDTOList)
+                .payload(status)
                 .build();
 
         return ResponseEntity.ok().body(response);
