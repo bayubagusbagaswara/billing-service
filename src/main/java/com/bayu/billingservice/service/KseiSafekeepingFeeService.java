@@ -8,13 +8,13 @@ import java.util.List;
 
 public interface KseiSafekeepingFeeService {
 
-    KseiSafekeepingFee create(CreateKseiSafeRequest request);
+    List<KseiSafekeepingFee> create(List<CreateKseiSafeRequest> request);
 
     String readAndInsertToDB(String filePath);
 
     List<KseiSafekeepingFee> getAll();
 
-    KseiSafekeepingFee getByCustomerCode(String customerCode);
+    List<KseiSafekeepingFee> getByCustomerCode(String customerCode);
 
     BigDecimal calculateAmountFeeByCustomerCodeAndMonthAndYear(String customerCode, String month, int year);
 
