@@ -113,6 +113,10 @@ public class KseiSafekeepingFeeServiceImpl implements KseiSafekeepingFeeService 
 
         List<KseiSafekeepingFee> filteredData = kseiSafekeepingFeeRepository.findByCustomerCodeAndDateBetweenNative(customerCode, startDate, endDate);
 
+        for (KseiSafekeepingFee filteredDatum : filteredData) {
+            log.info("Amount : {}", filteredDatum.getAmountFee());
+        }
+
         BigDecimal totalAmount = filteredData.stream()
                 .map(entity -> Objects.requireNonNullElse(entity.getAmountFee(), BigDecimal.ZERO))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
