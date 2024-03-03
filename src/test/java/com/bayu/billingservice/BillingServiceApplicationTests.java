@@ -96,9 +96,13 @@ class BillingServiceApplicationTests {
 		String input1 = "Nov 2023";
 		String input2 = "November 2023";
 
+
 		try {
 			String convertedDate1 = convertToYearMonthFormat(input1);
 			System.out.println("Converted Date 1: " + convertedDate1);
+			String[] split1 = convertedDate1.split("-");
+			System.out.println("Split 0 : " + split1[0]);
+			System.out.println("Split 1 : " + split1[1]);
 
 			String convertedDate2 = convertToYearMonthFormat(input2);
 			System.out.println("Converted Date 2: " + convertedDate2);
