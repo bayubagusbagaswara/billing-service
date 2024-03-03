@@ -75,6 +75,7 @@ public class KycCustomerServiceImpl implements KycCustomerService {
                 .journal(kycCustomer.getJournal())
                 .billingCategory(kycCustomer.getBillingCategory())
                 .billingType(kycCustomer.getBillingType())
+                .billingTemplate(kycCustomer.getBillingTemplate())
                 .build();
     }
 
