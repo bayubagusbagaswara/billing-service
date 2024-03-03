@@ -30,10 +30,15 @@ class FeeParameterTest {
     void insertData() {
         // Define test data
         String[][] testData = {
-                {"TRANSACTION_HANDLING", "Transaction Handling Fee", "5000"},
+                {"TRANSACTION_HANDLING_IDR", "Transaction Handling Fee IDR", "50000"},
                 {"KSEI", "KSEI Fee", "22200"},
                 {"BIS4", "BI-SSSS Fee", "23000"},
-                {"VAT", "PPN (VAT) Fee", "0.11"}
+                {"VAT", "PPN (VAT) Fee", "0.11"},
+                {"ADMINISTRATION_SET_UP", "Administration Set Up Fee USD", "5000"},
+                {"SIGNING_REPRESENTATION", "Signing Representation Fee USD", "2000"},
+                {"SECURITY_AGENT", "Security Agent Fee USD", "10000"},
+                {"TRANSACTION_HANDLING_USD", "Transaction Handling Fee USD", "100"},
+                {"OTHER", "Other Fee USD", "5000"}
         };
 
         // Run test for each set of data
