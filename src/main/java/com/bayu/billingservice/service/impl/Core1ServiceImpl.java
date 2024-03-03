@@ -25,7 +25,7 @@ public class Core1ServiceImpl implements Core1Service {
         log.info("Start calculate billing for category : {}, type : {}, and month year : {}", category, type, monthYear);
 
         // TODO: Call service Kyc Customer
-        KycCustomerDTO kycCustomerDTO = kycCustomerService.getByBillingCategoryAndBillingType(category, type);
+//        KycCustomerDTO kycCustomerDTO = kycCustomerService.getByBillingCategoryAndBillingType(category, type);
 
         // TODO: Get value
 
