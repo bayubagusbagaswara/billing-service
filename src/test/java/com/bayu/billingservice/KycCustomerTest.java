@@ -28,6 +28,7 @@ class KycCustomerTest {
                 .journal("")
                 .billingCategory("CORE")
                 .billingType("TYPE_1")
+                .billingTemplate("TEMPLATE_1")
                 .build();
 
         KycCustomerDTO kycCustomerDTO = kycCustomerService.create(request);
@@ -49,6 +50,7 @@ class KycCustomerTest {
                 .journal("")
                 .billingCategory("CORE")
                 .billingType("TYPE_2")
+                .billingTemplate("TEMPLATE_3")
                 .build();
 
         KycCustomerDTO kycCustomerDTO = kycCustomerService.create(request);
@@ -70,6 +72,7 @@ class KycCustomerTest {
                 .journal("GL 713017 CC 9207")
                 .billingCategory("CORE")
                 .billingType("TYPE_3")
+                .billingTemplate("TEMPLATE_7")
                 .build();
 
         KycCustomerDTO kycCustomerDTO = kycCustomerService.create(request);
@@ -92,7 +95,7 @@ class KycCustomerTest {
                 .journal("")
                 .billingCategory("CORE")
                 .billingType("TYPE_4")
-                .billingTemplate("TEMPLATE_4A")
+                .billingTemplate("TEMPLATE_3")
                 .build();
 
         KycCustomerDTO kycCustomerDTO = kycCustomerService.create(request);
@@ -114,7 +117,7 @@ class KycCustomerTest {
                 .journal("")
                 .billingCategory("CORE")
                 .billingType("TYPE_4")
-                .billingTemplate("TEMPLATE_4B")
+                .billingTemplate("TEMPLATE_5")
                 .build();
 
         KycCustomerDTO kycCustomerDTO = kycCustomerService.create(request);
@@ -126,6 +129,7 @@ class KycCustomerTest {
     }
 
     @Test
+    @DisplayName("Type 5 and Type 6 without NPWP")
     @Order(5)
     void createKycCustomerCoreType5() {
         CreateKycRequest request = CreateKycRequest.builder()
@@ -136,6 +140,7 @@ class KycCustomerTest {
                 .journal("")
                 .billingCategory("CORE")
                 .billingType("TYPE_5")
+                .billingTemplate("TEMPLATE_1")
                 .build();
 
         KycCustomerDTO kycCustomerDTO = kycCustomerService.create(request);
@@ -147,6 +152,7 @@ class KycCustomerTest {
     }
 
     @Test
+    @DisplayName("Type 5 and 6 With NPWP")
     @Order(6)
     void createKycCustomerCoreType6() {
         CreateKycRequest request = CreateKycRequest.builder()
@@ -157,6 +163,7 @@ class KycCustomerTest {
                 .journal("")
                 .billingCategory("CORE")
                 .billingType("TYPE_6")
+                .billingTemplate("TEMPLATE_4")
                 .build();
 
         KycCustomerDTO kycCustomerDTO = kycCustomerService.create(request);
@@ -179,6 +186,7 @@ class KycCustomerTest {
                 .journal("")
                 .billingCategory("CORE")
                 .billingType("TYPE_7")
+                .billingTemplate("TEMPLATE_2")
                 .build();
 
         KycCustomerDTO kycCustomerDTO = kycCustomerService.create(request);
@@ -201,6 +209,7 @@ class KycCustomerTest {
                 .journal("")
                 .billingCategory("CORE")
                 .billingType("TYPE_7")
+                .billingTemplate("TEMPLATE_2")
                 .build();
 
         KycCustomerDTO kycCustomerDTO = kycCustomerService.create(request);
@@ -223,6 +232,7 @@ class KycCustomerTest {
                 .journal("")
                 .billingCategory("CORE")
                 .billingType("TYPE_8")
+                .billingTemplate("TEMPLATE_6")
                 .build();
 
         KycCustomerDTO kycCustomerDTO = kycCustomerService.create(request);
@@ -245,6 +255,7 @@ class KycCustomerTest {
                 .journal("")
                 .billingCategory("CORE")
                 .billingType("TYPE_8")
+                .billingTemplate("TEMPLATE_6")
                 .build();
 
         KycCustomerDTO kycCustomerDTO = kycCustomerService.create(request);
@@ -267,6 +278,7 @@ class KycCustomerTest {
                 .journal("")
                 .billingCategory("CORE")
                 .billingType("TYPE_8")
+                .billingTemplate("TEMPLATE_6")
                 .build();
 
         KycCustomerDTO kycCustomerDTO = kycCustomerService.create(request);
@@ -288,6 +300,7 @@ class KycCustomerTest {
                 .journal("")
                 .billingCategory("CORE")
                 .billingType("TYPE_9")
+                .billingTemplate("TEMPLATE_3")
                 .build();
 
         KycCustomerDTO kycCustomerDTO = kycCustomerService.create(request);
@@ -309,6 +322,7 @@ class KycCustomerTest {
                 .journal("")
                 .billingCategory("CORE")
                 .billingType("TYPE_10")
+                .billingTemplate("TEMPLATE_8")
                 .build();
 
         KycCustomerDTO kycCustomerDTO = kycCustomerService.create(request);
@@ -331,6 +345,7 @@ class KycCustomerTest {
                 .journal("")
                 .billingCategory("CORE")
                 .billingType("TYPE_11")
+                .billingTemplate("TEMPLATE_3")
                 .build();
 
         KycCustomerDTO kycCustomerDTO = kycCustomerService.create(request);
@@ -353,6 +368,7 @@ class KycCustomerTest {
                 .journal("")
                 .billingCategory("CORE")
                 .billingType("TYPE_11")
+                .billingTemplate("TEMPLATE_3")
                 .build();
 
         KycCustomerDTO kycCustomerDTO = kycCustomerService.create(request);
@@ -375,6 +391,7 @@ class KycCustomerTest {
                 .journal("")
                 .billingCategory("CORE")
                 .billingType("TYPE_11")
+                .billingTemplate("TEMPLATE_3")
                 .build();
 
         KycCustomerDTO kycCustomerDTO = kycCustomerService.create(request);
