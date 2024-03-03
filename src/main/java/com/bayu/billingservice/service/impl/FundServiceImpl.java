@@ -5,6 +5,7 @@ import com.bayu.billingservice.dto.fund.FeeReportRequest;
 import com.bayu.billingservice.model.SkTransaction;
 import com.bayu.billingservice.service.FundService;
 import com.bayu.billingservice.service.SkTransactionService;
+import com.bayu.billingservice.util.ConvertDateUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -25,35 +26,25 @@ import java.util.Locale;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
 public class FundServiceImpl implements FundService {
 
     private final SkTransactionService skTransactionService;
 
+    public FundServiceImpl(SkTransactionService skTransactionService) {
+        this.skTransactionService = skTransactionService;
+    }
+
     @Override
-    public List<BillingFundDTO> generateBillingFund(List<FeeReportRequest> request, String date) {
+    public List<BillingFundDTO> calculate(List<FeeReportRequest> request, String monthYear) {
         List<BillingFundDTO> billingFundDTOList = new ArrayList<>();
 
-        // kita harus mendapatkan dulu portfolio code dari request list
         for (FeeReportRequest feeReportRequest : request) {
             String portfolioCode = feeReportRequest.getPortfolioCode();
             BigDecimal customerFee = feeReportRequest.getCustomerFee();
 
             List<SkTransaction> skTransactionList = skTransactionService.getAllByPortfolioCode(portfolioCode);
 
-            // Date bisa dibawa dari depan
-            // format date dari depan : Nov 2023
-            // Parse the month name using a custom formatter and TemporalQuery
-            DateTimeFormatter formatter = new DateTimeFormatterBuilder()
-                    .parseCaseInsensitive()
-                    .appendPattern("MMM yyyy")
-                    .toFormatter(Locale.ENGLISH);
-
-            TemporalAccessor temporalAccessor = formatter.parse(date);
-            LocalDate parsedDate = LocalDate.from(new MonthYearQuery().queryFrom(temporalAccessor));
-
-            // Set the day of the month to 1 to represent a fixed day
-            LocalDate fixedDate = parsedDate.withDayOfMonth(30);
+            LocalDate parsedDate = ConvertDateUtil.getLatestDateOfMonthYear(monthYear);
 
             int currentMonth = parsedDate.getMonthValue();
             Month currentMonthName = parsedDate.getMonth();
@@ -84,9 +75,7 @@ public class FundServiceImpl implements FundService {
         }
     }
 
-    private BillingFundDTO filterTransactionsType(String portfolioCode, BigDecimal customerFee,
-                                        String currentMonthName, int currentYear,
-                                        List<SkTransaction> transactionList) {
+    private BillingFundDTO filterTransactionsType(String portfolioCode, BigDecimal customerFee, String currentMonthName, int currentYear, List<SkTransaction> transactionList) {
         int transactionCBESTTotal = 0;
         int transactionBIS4Total = 0;
 
