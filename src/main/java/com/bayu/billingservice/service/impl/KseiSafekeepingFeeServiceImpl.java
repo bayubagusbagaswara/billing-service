@@ -92,7 +92,7 @@ public class KseiSafekeepingFeeServiceImpl implements KseiSafekeepingFeeService 
         LocalDate startDate = endDate.minusMonths(2);
         log.info("Start Date : {}, and End Date : {}", startDate, endDate);
 
-        List<KseiSafekeepingFee> filteredData = kseiSafekeepingFeeRepository.findByCustomerCodeAndDateBetween(customerCode, startDate, endDate);
+        List<KseiSafekeepingFee> filteredData = kseiSafekeepingFeeRepository.findByCustomerCodeAndDateBetweenNative(customerCode, startDate, endDate);
 
         BigDecimal totalAmount = filteredData.stream()
                 .map(entity -> Objects.requireNonNullElse(entity.getAmountFee(), BigDecimal.ZERO))
