@@ -7,10 +7,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Slf4j
@@ -54,4 +53,39 @@ public class KseiSafekeepingFeeController {
 
         return ResponseEntity.ok().body(response);
     }
+
+    @GetMapping(path = "/calculate")
+    public ResponseEntity<ResponseDTO<BigDecimal>> calculateAmountFeeByCustomerCodeAndMonthAndYear(
+            @RequestParam("customerCode") String customerCode,
+            @RequestParam("month") String month,
+            @RequestParam("year") Integer year) {
+        BigDecimal amountFee = kseiSafekeepingFeeService.calculateAmountFeeByCustomerCodeAndMonthAndYear(
+                customerCode, month, year);
+
+        ResponseDTO<BigDecimal> response = ResponseDTO.<BigDecimal>builder()
+                .code(HttpStatus.OK.value())
+                .message(HttpStatus.OK.getReasonPhrase())
+                .payload(amountFee)
+                .build();
+
+        return ResponseEntity.ok().body(response);
+    }
+
+    @PostMapping(path = "/calculate/3month")
+    public ResponseEntity<ResponseDTO<BigDecimal>> calculateAmountFeeForLast3Months(
+            @RequestParam("customerCode") String customerCode,
+            @RequestParam("month") String month,
+            @RequestParam("year") Integer year) {
+
+        BigDecimal amountFee = kseiSafekeepingFeeService.calculateAmountFeeForLast3Months(customerCode, month, year);
+
+        ResponseDTO<BigDecimal> response = ResponseDTO.<BigDecimal>builder()
+                .code(HttpStatus.OK.value())
+                .message(HttpStatus.OK.getReasonPhrase())
+                .payload(amountFee)
+                .build();
+
+        return ResponseEntity.ok().body(response);
+    }
+
 }
