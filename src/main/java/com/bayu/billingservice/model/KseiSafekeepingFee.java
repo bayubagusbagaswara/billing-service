@@ -24,12 +24,19 @@ public class KseiSafekeepingFee {
     @Column(name = "created_date")
     private LocalDate createdDate;
 
+    @Column(name = "month")
+    private String month;
+
+    @Column(name = "year")
+    private Integer year;
+
     @Column(name = "fee_description")
     private String feeDescription;
 
-    @Column(name = "fee_account")
-    private String feeAccount;
+    @Column(name = "customer_code")
+    private String customerCode;
 
     @Column(name = "amount_fee")
     private BigDecimal amountFee;
+
 }
