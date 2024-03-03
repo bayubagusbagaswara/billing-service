@@ -58,10 +58,10 @@ public class KycCustomerServiceImpl implements KycCustomerService {
     public String deleteAll() {
         try {
             kycCustomerRepository.deleteAll();
-            return "Successfully deleted all Mock Kyc Customer";
+            return "Successfully deleted all Kyc Customer";
         } catch (Exception e) {
-            log.error("Error when delete all Mock Kyc Customer : " + e.getMessage());
-            throw new ConnectionDatabaseException("Error when delete all Mock Kyc Customer");
+            log.error("Error when delete all Kyc Customer : " + e.getMessage());
+            throw new ConnectionDatabaseException("Error when delete all Kyc Customer");
         }
     }
 
