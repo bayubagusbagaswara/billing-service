@@ -20,4 +20,6 @@ public interface FeeParameterService {
     List<FeeParameterDTO> getByNameList(List<String> nameList);
 
     Map<String, BigDecimal> getValueByNameList(List<String> nameList);
+
+    String deleteAll();
 }

@@ -2,6 +2,7 @@ package com.bayu.billingservice.service.impl;
 
 import com.bayu.billingservice.dto.feeparameter.CreateFeeParameterRequest;
 import com.bayu.billingservice.dto.feeparameter.FeeParameterDTO;
+import com.bayu.billingservice.exception.ConnectionDatabaseException;
 import com.bayu.billingservice.exception.DataNotFoundException;
 import com.bayu.billingservice.model.FeeParameter;
 import com.bayu.billingservice.repository.FeeParameterRepository;
@@ -76,6 +77,17 @@ public class FeeParameterServiceImpl implements FeeParameterService {
         }
 
         return dataMap;
+    }
+
+    @Override
+    public String deleteAll() {
+        try {
+            feeParameterRepository.deleteAll();
+            return "Successfully deleted all Fee Parameter";
+        } catch (Exception e) {
+            log.error("Error when delete all Fee Parameter : " + e.getMessage());
+            throw new ConnectionDatabaseException("Error when delete all Fee Parameter");
+        }
     }
 
     private static FeeParameterDTO mapToDTO(FeeParameter feeParameter) {
