@@ -15,4 +15,8 @@ public interface SkTransactionService {
     List<SkTransaction> getAllByPortfolioCodeAndSystem(String portfolioCode, String system);
 
     List<SkTransactionDTO> getAllSettlementDate();
+
+    List<SkTransaction> getAllByAidAndMonthAndYear(String aid, String month, Integer year);
+
+    String deleteAll();
 }

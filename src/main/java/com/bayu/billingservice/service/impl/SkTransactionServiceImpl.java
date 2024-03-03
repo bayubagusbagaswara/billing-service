@@ -1,21 +1,20 @@
 package com.bayu.billingservice.service.impl;
 
 import com.bayu.billingservice.dto.SkTransactionDTO;
+import com.bayu.billingservice.exception.ConnectionDatabaseException;
 import com.bayu.billingservice.model.SkTransaction;
 import com.bayu.billingservice.repository.SkTransactionRepository;
 import com.bayu.billingservice.service.SkTransactionService;
 import com.bayu.billingservice.util.CsvDataMapper;
-import com.opencsv.CSVReader;
+import com.bayu.billingservice.util.CsvReaderUtil;
 import com.opencsv.exceptions.CsvException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -29,17 +28,15 @@ public class SkTransactionServiceImpl implements SkTransactionService {
     public String readFileAndInsertToDB(String filePath) throws IOException, CsvException {
         log.info("Start read and insert SkTransaction to the database : {}", filePath);
         try {
-            List<String[]> rows = readCsvFile(filePath);
+            List<String[]> rows = CsvReaderUtil.readCsvFile(filePath);
 
             List<SkTransaction> skTransactionList = CsvDataMapper.mapCsvSkTransaction(rows);
 
-            for (SkTransaction skTransaction : skTransactionList) {
-                skTransactionRepository.save(skTransaction);
-            }
+            skTransactionRepository.saveAll(skTransactionList);
 
-            return "CSV data processed and saved successfully";
+            return "[SK Transaction] CSV data processed and saved successfully";
         } catch (IOException | CsvException e) {
-            return "Failed to process CSV file: " + e.getMessage();
+            return "[SK Transaction] Failed to process CSV file: " + e.getMessage();
         }
     }
 
@@ -63,13 +60,24 @@ public class SkTransactionServiceImpl implements SkTransactionService {
         return mapToDTOList(skTransactionRepository.findAll());
     }
 
-    private static List<String[]> readCsvFile(String filePath) throws IOException, CsvException {
-        try (CSVReader csvReader = new CSVReader(new FileReader(filePath))) {
-            return csvReader.readAll();
+    @Override
+    public List<SkTransaction> getAllByAidAndMonthAndYear(String aid, String month, Integer year) {
+        log.info("Start get all SK TRAN by AID : {}, Month : {}, and Year : {}", aid, month, year);
+        return skTransactionRepository.findAllByPortfolioCodeAndMonthAndYear(aid, month, year);
+    }
+
+    @Override
+    public String deleteAll() {
+        try {
+            skTransactionRepository.deleteAll();
+            return "Successfully deleted all SK TRAN";
+        } catch (Exception e) {
+            log.error("Error when delete all SK TRAN : " + e.getMessage());
+            throw new ConnectionDatabaseException("Error when delete all SK TRAN");
         }
     }
 
-    private SkTransactionDTO mapToDTO(SkTransaction skTransaction) {
+    private static SkTransactionDTO mapToDTO(SkTransaction skTransaction) {
         return SkTransactionDTO.builder()
                 .id(skTransaction.getId())
                 .portfolioCode(skTransaction.getPortfolioCode())
@@ -80,9 +88,10 @@ public class SkTransactionServiceImpl implements SkTransactionService {
                 .build();
     }
 
-    private List<SkTransactionDTO> mapToDTOList(List<SkTransaction> skTransactionList) {
+    private static List<SkTransactionDTO> mapToDTOList(List<SkTransaction> skTransactionList) {
         return skTransactionList.stream()
-                .map(this::mapToDTO)
-                .collect(Collectors.toList());
+                .map(SkTransactionServiceImpl::mapToDTO)
+                .toList();
     }
+
 }
