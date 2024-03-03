@@ -18,25 +18,25 @@ public class BillingFundDTO {
 
     private String period;
 
-    private BigDecimal amountDueAccrualCustody;
+    private String amountDueAccrualCustody;
 
-    private Integer valueFrequencyS4;
+    private String valueFrequencyBis4;
 
-    private BigDecimal s4Fee; // 23.000
+    private String bis4Fee; // 23.000
 
-    private BigDecimal amountDueS4;
+    private String amountDueBis4;
 
-    private BigDecimal totalNominalBeforeTax;
+    private String totalNominalBeforeTax;
 
-    private Double taxFee; // 0.11 (11%)
+    private String vatFee; // 0.11 (11%)
 
-    private BigDecimal amountDueTax;
+    private String amountDueVat;
 
-    private Integer valueFrequencyKSEI;
+    private String valueFrequencyKSEI;
 
-    private BigDecimal kseiFee; // 22.200
+    private String kseiFee; // 22.200
 
-    private BigDecimal amountDueKSEI;
+    private String amountDueKSEI;
 
-    private BigDecimal totalAmountDue;
+    private String totalAmountDue;
 }
