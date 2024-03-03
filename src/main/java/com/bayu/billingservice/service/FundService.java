@@ -7,6 +7,6 @@ import java.util.List;
 
 public interface FundService {
 
-    List<BillingFundDTO> calculate(List<FeeReportRequest> request, String date);
+    List<BillingFundDTO> calculate(List<FeeReportRequest> request, String monthYear);
 
 }
