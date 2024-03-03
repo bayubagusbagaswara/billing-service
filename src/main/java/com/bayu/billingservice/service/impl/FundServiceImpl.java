@@ -35,7 +35,7 @@ public class FundServiceImpl implements FundService {
     }
 
     @Override
-    public List<BillingFundDTO> calculate(List<FeeReportRequest> request, String monthYear) {
+    public List<BillingFundDTO> calculate(List<FeeReportRequest> request, String month, int year) {
         List<BillingFundDTO> billingFundDTOList = new ArrayList<>();
 
         for (FeeReportRequest feeReportRequest : request) {
@@ -44,21 +44,14 @@ public class FundServiceImpl implements FundService {
 
             List<SkTransaction> skTransactionList = skTransactionService.getAllByPortfolioCode(portfolioCode);
 
-            LocalDate parsedDate = ConvertDateUtil.getLatestDateOfMonthYear(monthYear);
-
-            int currentMonth = parsedDate.getMonthValue();
-            Month currentMonthName = parsedDate.getMonth();
-            String monthName = currentMonthName.getDisplayName(TextStyle.SHORT, java.util.Locale.getDefault());
-
-            int currentYear = parsedDate.getYear();
-
             // Filter transactions for the current month
             List<SkTransaction> filteredTransactions = skTransactionList.stream()
-                    .filter(skTransaction -> skTransaction.getSettlementDate().getYear() == currentYear && skTransaction.getSettlementDate().getMonthValue() == currentMonth)
+                    .filter(skTransaction -> skTransaction.getSettlementDate().getYear() == year &&
+                            skTransaction.getSettlementDate().getMonth().name() == month)
                     .toList();
 
             BillingFundDTO billingFundDTO = filterTransactionsType(portfolioCode, customerFee,
-                    monthName, currentYear,
+                    month, year,
                     filteredTransactions);
 
             billingFundDTOList.add(billingFundDTO);

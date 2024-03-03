@@ -5,6 +5,7 @@ import com.bayu.billingservice.dto.ResponseDTO;
 import com.bayu.billingservice.dto.fund.FeeReportRequest;
 import com.bayu.billingservice.service.FundGeneratePDFService;
 import com.bayu.billingservice.service.FundService;
+import com.bayu.billingservice.util.ConvertDateUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +24,14 @@ public class FundController {
     @PostMapping(path = "/calculate")
     public ResponseEntity<ResponseDTO<List<BillingFundDTO>>> calculate(@RequestBody List<FeeReportRequest> reportRequests,
                                                                       @RequestParam("monthYear") String monthYear) {
-        List<BillingFundDTO> billingFundDTOList = fundService.calculate(reportRequests, monthYear);
+
+        // format month year MMMM-yyyy
+        String[] monthFormat = ConvertDateUtil.convertToYearMonthFormat(monthYear);
+        String month = monthFormat[0];
+        int year = Integer.parseInt(monthFormat[1]);
+
+        List<BillingFundDTO> billingFundDTOList = fundService.calculate(reportRequests, month, year);
+
         ResponseDTO<List<BillingFundDTO>> responseDTO = ResponseDTO.<List<BillingFundDTO>>builder()
                 .code(HttpStatus.OK.value())
                 .message(HttpStatus.OK.getReasonPhrase())
