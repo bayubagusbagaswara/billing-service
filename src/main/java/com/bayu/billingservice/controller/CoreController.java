@@ -1,9 +1,10 @@
 package com.bayu.billingservice.controller;
 
+import com.bayu.billingservice.constant.BillingCategoryConstant;
+import com.bayu.billingservice.constant.BillingTypeConstant;
 import com.bayu.billingservice.dto.ResponseDTO;
 import com.bayu.billingservice.service.Core1Service;
 import com.bayu.billingservice.service.Core2Service;
-import com.bayu.billingservice.util.BillingTypeConstant;
 import com.bayu.billingservice.util.StringUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -39,10 +40,10 @@ public class CoreController {
 
         ResponseDTO<String> response = new ResponseDTO<>();
 
-        if (categoryUpperCase.equalsIgnoreCase(BillingTypeConstant.CORE_CATEGORY)) {
-            if (BillingTypeConstant.CORE_TYPE_1.equalsIgnoreCase(typeUppercase)) {
+        if (categoryUpperCase.equalsIgnoreCase(BillingCategoryConstant.CORE_CATEGORY)) {
+            if (BillingTypeConstant.TYPE_1.equalsIgnoreCase(typeUppercase)) {
                 core1Service.calculate(categoryUpperCase, typeUppercase, monthYear);
-            } else if (BillingTypeConstant.CORE_TYPE_2.equalsIgnoreCase(typeUppercase)) {
+            } else if (BillingTypeConstant.TYPE_2.equalsIgnoreCase(typeUppercase)) {
                 core2Service.calculate(categoryUpperCase, typeUppercase, monthYear);
             } else {
                 response.setCode(HttpStatus.OK.value());
