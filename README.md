@@ -194,3 +194,66 @@ public class MyTest {
         assertEquals(4, 2 + 2, "2 + 2 should equal 4");
     }
 }
+
+# Create Table Billing Cor Type 7 Detail
+- insert data 3 bulan terakhir
+- Input: Type 7, Month November-2023
+
+1. Grouping berdasaran Bulan, lalu jumlahkan semua Market Pricenya
+2. Cek hasil penjumlahan 
+
+Di Billing Detail kita tambahkan fied 
+- BillingCategory 
+- BillingType
+
+kita coba tambahkan data ke Billing Detail
+- Date		: 2023-08-31
+- PortfolioCode	: 12MUFG
+- SecurityCode	: BDMN
+- MarketPrice	: 26.195.130.749.660,00 
+
+- Date		: 2023-08-31
+- PortfolioCode	: 17GUDH
+- SecurityCode	: BDMN
+- MarketPrice	: 280.830.051.620,00 
+
+- Date		: 2023-08-31
+- PortfolioCode	: 12MUFG
+- SecurityCode	: GUDH
+- MarketPrice	: 999.500.000,00 
+
+
+
+- Date		: 2023-09-30
+- PortfolioCode	: 12MUFG
+- SecurityCode	: BDMN
+- MarketPrice	: 25.569.308.513.320,00  
+
+- Date		: 2023-09-30
+- PortfolioCode	: 17GUDH
+- SecurityCode	: BDMN
+- MarketPrice	: 274.120.801.240,00 
+ 
+
+- Date		: 2023-09-30
+- PortfolioCode	: 12MUFG
+- SecurityCode	: GUDH
+- MarketPrice	: 999.500.000,00
+
+
+
+- Date		: 2023-10-31
+- PortfolioCode	: 12MUFG
+- SecurityCode	: BDMN
+- MarketPrice	: 24.496.470.393.880,00 
+
+- Date		: 2023-10-31
+- PortfolioCode	: 17GUDH
+- SecurityCode	: BDMN
+- MarketPrice	: 262.619.229.160,00  
+ 
+
+- Date		: 2023-10-31
+- PortfolioCode	: 12MUFG
+- SecurityCode	: GUDH
+- MarketPrice	: 999.500.000,00 
