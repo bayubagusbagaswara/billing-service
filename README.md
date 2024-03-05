@@ -256,4 +256,7 @@ kita coba tambahkan data ke Billing Detail
 - Date		: 2023-10-31
 - PortfolioCode	: 12MUFG
 - SecurityCode	: GUDH
-- MarketPrice	: 999.500.000,00 
+- MarketPrice	: 999.500.000,00
+
+  ## Membuat Data di Table Billing Detail
+  - untuk kepentingan menarik data Core Type 7, yakni data 3 bulan sebelumnya
