@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping(path = "/api/billing-fund")
+@RequestMapping(path = "/api/fund")
 @RequiredArgsConstructor
 public class FundController {
 
