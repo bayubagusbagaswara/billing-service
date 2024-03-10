@@ -42,12 +42,32 @@ public class FundController {
     }
 
     @GetMapping(path = "/generate-pdf")
-    public ResponseEntity<ResponseDTO<String>> generatePDF() {
-        String statusGenerate = fundGeneratePDFService.generatePDF();
+    public ResponseEntity<ResponseDTO<String>> generatePDF(@RequestParam("category") String category,
+                                                           @RequestParam("monthYear") String monthYear) {
+
+        String[] monthFormat = ConvertDateUtil.convertToYearMonthFormat(monthYear);
+        String month = monthFormat[0];
+        int year = Integer.parseInt(monthFormat[1]);
+
+        String statusGenerate = fundGeneratePDFService.generatePDF(category, month, year);
+
         ResponseDTO<String> response = ResponseDTO.<String>builder()
                 .code(HttpStatus.OK.value())
                 .message(HttpStatus.OK.getReasonPhrase())
                 .payload(statusGenerate)
+                .build();
+
+        return ResponseEntity.ok().body(response);
+    }
+
+    @GetMapping(path = "/all")
+    public ResponseEntity<ResponseDTO<List<BillingFundDTO>>> getAll() {
+        List<BillingFundDTO> billingFundDTOList = fundGeneratePDFService.getAll();
+
+        ResponseDTO<List<BillingFundDTO>> response = ResponseDTO.<List<BillingFundDTO>>builder()
+                .code(HttpStatus.OK.value())
+                .message(HttpStatus.OK.getReasonPhrase())
+                .payload(billingFundDTOList)
                 .build();
 
         return ResponseEntity.ok().body(response);
