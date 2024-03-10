@@ -38,7 +38,7 @@ public class FundCalculateCalculateServiceImpl implements FundCalculateService {
     private final BillingFundRepository billingFundRepository;
 
     @Override
-    public String calculate(List<FeeReportRequest> request, String month, int year) {
+    public String calculate(List<FeeReportRequest> request, String month, Integer year) {
         log.info("Start calculate Billing Fund with month '{}' and year '{}'", month, year);
         try {
             List<String> nameList = new ArrayList<>();
@@ -107,6 +107,7 @@ public class FundCalculateCalculateServiceImpl implements FundCalculateService {
                         .customerFee(customerFee)
                         .accrualCustodialFee(accrualCustodialFee)
                         .bis4ValueFrequency(transactionBISSSSTotal)
+                        .bis4TransactionFee(bis4TransactionFee)
                         .bis4AmountDue(bis4AmountDue)
                         .subTotal(subTotal)
                         .vatFee(vatFee)
@@ -127,6 +128,7 @@ public class FundCalculateCalculateServiceImpl implements FundCalculateService {
                 BillingFund billingFund = billingFundList.get(i);
                 String billingNumber = numberList.get(i);
                 billingFund.setBillingNumber(billingNumber);
+                billingFund.setKseiTransactionFee(kseiTransactionFee);
             }
 
             billingNumberService.saveAll(numberList);
