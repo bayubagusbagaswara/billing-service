@@ -29,8 +29,16 @@ public class BillingNumberServiceImpl implements BillingNumberService {
         List<BillingNumber> billingNumberList = new ArrayList<>();
 
         for (String billingNumber : numberList) {
-            BillingNumber billingAccountNumber = parseBillingNumber(billingNumber);
-            billingNumberList.add(billingAccountNumber);
+            log.info("[Billing Number]: {}", billingNumber);
+            BillingNumber billingNumberEntity = parseBillingNumber(billingNumber);
+
+            if (billingNumberEntity != null) {
+                log.info("[Parsed Billing Number]: {}", billingNumberEntity);
+                billingNumberList.add(billingNumberEntity);
+            } else {
+                log.warn("Invalid billing number format: {}", billingNumber);
+                // Handle invalid billing number format if needed
+            }
         }
 
         billingNumberRepository.saveAll(billingNumberList);
@@ -56,14 +64,19 @@ public class BillingNumberServiceImpl implements BillingNumberService {
         List<String> billingNumberList = new ArrayList<>();
 
         for (int i = 0; i < billingSize; i++) {
-            int currentBillingNumber = maxSequenceNumberByMonthAndYear + i + 1;
+//            int currentBillingNumber = (maxSequenceNumberByMonthAndYear != null ? maxSequenceNumberByMonthAndYear : 0) + i + 1;
+            int currentBillingNumber = (maxSequenceNumberByMonthAndYear != null ? maxSequenceNumberByMonthAndYear : 0) + i;
 
             Month month = Month.valueOf(monthName.toUpperCase());
             String monthFormat = String.format("%02d", month.getValue());
+            int lastTwoDigits = year % 100;
 
-            billingNumberList.add(String.format("C%02d/SS-BS/%s%d", currentBillingNumber, monthFormat, year));
+            billingNumberList.add(String.format("C%02d/SS-BS/%s%d", currentBillingNumber, monthFormat, lastTwoDigits));
         }
 
+        for (String s : billingNumberList) {
+            log.info("Billing Number List : {}", s);
+        }
         return billingNumberList;
     }
 
@@ -75,13 +88,17 @@ public class BillingNumberServiceImpl implements BillingNumberService {
         if (matcher.matches()) {
             int sequenceNumber = Integer.parseInt(matcher.group(1));
             int month = Integer.parseInt(matcher.group(2));
-            int year = Integer.parseInt(matcher.group(3));
+            int lastTwoDigits = Integer.parseInt(matcher.group(3));
+            String monthFullName = getMonthFullName(month);
+
+            int firstTwoDigits = 20;
+            int fullYear = firstTwoDigits * 100 + lastTwoDigits;
 
             return BillingNumber.builder()
                     .createdAt(new Date())
                     .sequenceNumber(sequenceNumber)
-                    .month(getMonthFullName(month))
-                    .year(year)
+                    .month(monthFullName)
+                    .year(fullYear)
                     .number(billingNumber)
                     .build();
         }
