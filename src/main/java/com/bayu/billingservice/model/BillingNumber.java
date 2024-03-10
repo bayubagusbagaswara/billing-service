@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 import java.util.Date;
 
 @Entity
-@Table(name = "billing_account_number")
+@Table(name = "billing_number")
 @Data
 @Builder
 @NoArgsConstructor
