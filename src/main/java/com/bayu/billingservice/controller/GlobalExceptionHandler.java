@@ -38,17 +38,17 @@ public class GlobalExceptionHandler {
         return ResponseEntity.ok().body(response);
     }
 
-    @ExceptionHandler(IOException.class)
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ResponseEntity<String> handleIOException(IOException ex) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error reading the Excel file: " + ex.getMessage());
-    }
-
-    @ExceptionHandler(RuntimeException.class)
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ResponseEntity<String> handleRuntimeException(RuntimeException ex) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to process Excel file: " + ex.getMessage());
-    }
+//    @ExceptionHandler(IOException.class)
+//    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+//    public ResponseEntity<String> handleIOException(IOException ex) {
+//        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error reading the Excel file: " + ex.getMessage());
+//    }
+//
+//    @ExceptionHandler(RuntimeException.class)
+//    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+//    public ResponseEntity<String> handleRuntimeException(RuntimeException ex) {
+//        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to process Excel file: " + ex.getMessage());
+//    }
 
     @ExceptionHandler(DataNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
