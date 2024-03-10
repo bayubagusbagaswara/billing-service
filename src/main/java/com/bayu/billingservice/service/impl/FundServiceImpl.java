@@ -5,6 +5,7 @@ import com.bayu.billingservice.constant.SkTransactionTypeConstant;
 import com.bayu.billingservice.dto.fund.BillingFundDTO;
 import com.bayu.billingservice.dto.fund.FeeReportRequest;
 import com.bayu.billingservice.model.SkTransaction;
+import com.bayu.billingservice.service.BillingNumberService;
 import com.bayu.billingservice.service.FeeParameterService;
 import com.bayu.billingservice.service.FundService;
 import com.bayu.billingservice.service.SkTransactionService;
@@ -25,6 +26,7 @@ public class FundServiceImpl implements FundService {
 
     private final SkTransactionService skTransactionService;
     private final FeeParameterService feeParameterService;
+    private final BillingNumberService billingNumberService;
 
     @Override
     public List<BillingFundDTO> calculate(List<FeeReportRequest> request, String month, int year) {
@@ -92,6 +94,17 @@ public class FundServiceImpl implements FundService {
 
             billingFundDTOList.add(billingFundDTO);
         }
+
+        List<String> numberList = billingNumberService.generateNumberList(billingFundDTOList.size(), month, year);
+
+        for (int i = 0; i < billingFundDTOList.size(); i++) {
+            BillingFundDTO billingFundDTO = billingFundDTOList.get(i);
+            String billingNumber = numberList.get(i);
+
+            // Set billing number from the generated list
+            billingFundDTO.setBillingNumber(billingNumber);
+        }
+
         return billingFundDTOList;
     }
 
