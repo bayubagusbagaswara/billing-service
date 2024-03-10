@@ -10,7 +10,7 @@ public interface BillingNumberRepository extends JpaRepository<BillingNumber, Lo
 
     @Query(nativeQuery = true, value = "SELECT " +
             "MAX(sequence_number) AS latest_sequence_number " +
-            "FROM billing_account_number " +
+            "FROM billing_number " +
             "WHERE month = :month AND year = :year")
     Integer getMaxSequenceNumberByMonthAndYear(String month, int year);
 
