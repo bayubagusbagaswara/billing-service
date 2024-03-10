@@ -1,9 +1,7 @@
 package com.bayu.billingservice.controller;
 
 import com.bayu.billingservice.dto.ErrorResponseDTO;
-import com.bayu.billingservice.exception.CsvProcessingException;
-import com.bayu.billingservice.exception.DataNotFoundException;
-import com.bayu.billingservice.exception.ExcelProcessingException;
+import com.bayu.billingservice.exception.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -65,4 +63,29 @@ public class GlobalExceptionHandler {
         return ResponseEntity.ok().body(response);
     }
 
+    @ExceptionHandler(CalculateBillingException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ResponseEntity<ErrorResponseDTO> handleCalculateBillingException(CalculateBillingException ex) {
+        ErrorResponseDTO response = ErrorResponseDTO.builder()
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .errorCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                .message(ex.getMessage())
+                .timeStamp(LocalDateTime.now())
+                .build();
+
+        return ResponseEntity.ok().body(response);
+    }
+
+    @ExceptionHandler(GeneratePDFBillingException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ResponseEntity<ErrorResponseDTO> handleGeneratePDFBillingException(GeneratePDFBillingException ex) {
+        ErrorResponseDTO response = ErrorResponseDTO.builder()
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .errorCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                .message(ex.getMessage())
+                .timeStamp(LocalDateTime.now())
+                .build();
+
+        return ResponseEntity.ok().body(response);
+    }
 }
