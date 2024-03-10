@@ -1,12 +1,16 @@
 package com.bayu.billingservice.model.base;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.MappedSuperclass;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 @EqualsAndHashCode(callSuper = true)
+@MappedSuperclass
 @Data
+@NoArgsConstructor
 @SuperBuilder
 public abstract class BaseBilling extends BaseAudit {
 
@@ -20,7 +24,7 @@ public abstract class BaseBilling extends BaseAudit {
     private String month;
 
     @Column(name = "year")
-    private int year;
+    private Integer year;
 
     @Column(name = "bill_number")
     private String billingNumber;

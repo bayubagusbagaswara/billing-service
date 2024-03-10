@@ -12,6 +12,7 @@ import java.math.BigDecimal;
 @Table(name = "billing_funds")
 @Data
 @SuperBuilder
+@NoArgsConstructor
 public class BillingFund extends BaseBilling {
 
     @Id
@@ -25,7 +26,7 @@ public class BillingFund extends BaseBilling {
     private BigDecimal accrualCustodialFee;
 
     @Column(name = "bis4_value_frequency")
-    private int bis4ValueFrequency;
+    private Integer bis4ValueFrequency;
 
     @Column(name = "bis4_transaction_fee")
     private BigDecimal bis4TransactionFee;
@@ -43,7 +44,7 @@ public class BillingFund extends BaseBilling {
     private BigDecimal vatAmountDue;
 
     @Column(name = "ksei_value_frequency")
-    private int kseiValueFrequency;
+    private Integer kseiValueFrequency;
 
     @Column(name = "ksei_transaction_fee")
     private BigDecimal kseiTransactionFee;
