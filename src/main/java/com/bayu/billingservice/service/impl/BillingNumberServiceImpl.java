@@ -25,7 +25,7 @@ public class BillingNumberServiceImpl implements BillingNumberService {
     private final BillingNumberRepository billingNumberRepository;
 
     @Override
-    public String saveToAll(List<String> numberList) {
+    public String saveAll(List<String> numberList) {
         List<BillingNumber> billingNumberList = new ArrayList<>();
 
         for (String billingNumber : numberList) {

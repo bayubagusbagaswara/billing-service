@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface BillingNumberService {
 
-    String saveToAll(List<String> numberList);
+    String saveAll(List<String> numberList);
 
     Integer getMaxSequenceNumberByMonthAndYear(String month, int year);
 
