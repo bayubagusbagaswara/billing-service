@@ -105,6 +105,8 @@ public class FundServiceImpl implements FundService {
             billingFundDTO.setBillingNumber(billingNumber);
         }
 
+        billingNumberService.saveToAll(numberList);
+
         return billingFundDTOList;
     }
 
