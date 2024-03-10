@@ -8,14 +8,26 @@ public enum BillingCategory {
     RETAIL("RETAIL"),
     ;
 
-    private final String category;
+    private final String value;
 
-    BillingCategory(String category) {
-        this.category = category;
+    BillingCategory(String value) {
+        this.value = value;
     }
 
-    public String getCategory() {
-        return category;
+    public String getValue() {
+        return value;
+    }
+
+    public boolean isFund() {
+        return this == FUND;
+    }
+
+    public boolean isCore() {
+        return this == CORE;
+    }
+
+    public boolean isRetail() {
+        return this == RETAIL;
     }
 
 }
