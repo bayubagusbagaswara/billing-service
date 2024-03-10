@@ -1,41 +1,23 @@
 package com.bayu.billingservice.dto.fund;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-public class BillingFundDTO {
+@SuperBuilder
+public class BillingFundDTO extends BillingFundBaseDTO {
 
-    private String billingNumber;
-
-    private String portfolioCode;
-
-    private String period;
-
-    private String amountDueAccrualCustody;
-
-    private String valueFrequencyBis4;
-
-    private String bis4Fee; // 23.000
-
-    private String amountDueBis4;
-
-    private String totalNominalBeforeTax;
-
-    private String vatFee; // 0.11 (11%)
-
-    private String amountDueVat;
-
-    private String valueFrequencyKSEI;
-
-    private String kseiFee; // 22.200
-
-    private String amountDueKSEI;
-
+    private String customerFee;
+    private String accrualCustodialFee;
+    private String bis4ValueFrequency;
+    private String bis4TransactionFee;
+    private String bis4AmountDue;
+    private String subTotal;
+    private String vatFee;
+    private String vatAmountDue;
+    private String kseiValueFrequency;
+    private String kseiTransactionFee;
+    private String kseiAmountDue;
     private String totalAmountDue;
 }
