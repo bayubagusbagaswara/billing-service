@@ -32,7 +32,7 @@ class FeeParameterTest {
         String[][] testData = {
                 {"TRANSACTION_HANDLING_IDR", "Transaction Handling Fee IDR", "50000"},
                 {"KSEI", "KSEI Fee", "22200"},
-                {"BIS4", "BI-SSSS Fee", "23000"},
+                {"BI-SSSS", "BI-SSSS Fee", "23000"},
                 {"VAT", "PPN (VAT) Fee", "0.11"},
                 {"ADMINISTRATION_SET_UP", "Administration Set Up Fee USD", "5000"},
                 {"SIGNING_REPRESENTATION", "Signing Representation Fee USD", "2000"},
