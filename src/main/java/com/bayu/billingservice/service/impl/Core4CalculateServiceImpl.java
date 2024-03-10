@@ -12,7 +12,7 @@ import java.util.Map;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class Core4ServiceImpl implements Core4Service {
+public class Core4CalculateServiceImpl implements Core4CalculateService {
 
     private final KycCustomerService kycCustomerService;
     private final FeeParameterService feeParameterService;
