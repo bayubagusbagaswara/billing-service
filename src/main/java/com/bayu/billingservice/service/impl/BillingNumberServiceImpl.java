@@ -49,6 +49,24 @@ public class BillingNumberServiceImpl implements BillingNumberService {
         return mapToDTOList(billingNumberList);
     }
 
+    @Override
+    public List<String> generateNumberList(int billingSize, String monthName, int year) {
+        Integer maxSequenceNumberByMonthAndYear = getMaxSequenceNumberByMonthAndYear(monthName, year);
+
+        List<String> billingNumberList = new ArrayList<>();
+
+        for (int i = 0; i < billingSize; i++) {
+            int currentBillingNumber = maxSequenceNumberByMonthAndYear + i + 1;
+
+            Month month = Month.valueOf(monthName.toUpperCase());
+            String monthFormat = String.format("%02d", month.getValue());
+
+            billingNumberList.add(String.format("C%02d/SS-BS/%s%d", currentBillingNumber, monthFormat, year));
+        }
+
+        return billingNumberList;
+    }
+
     public static BillingNumber parseBillingNumber(String billingNumber) {
         // Define a regex pattern to extract the sequence number, month, and year
         Pattern pattern = Pattern.compile("C(\\d+)/SS-BS/(\\d{2})(\\d{2})");
