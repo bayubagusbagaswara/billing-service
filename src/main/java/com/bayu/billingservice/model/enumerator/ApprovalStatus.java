@@ -3,16 +3,28 @@ package com.bayu.billingservice.model.enumerator;
 public enum ApprovalStatus {
 
     PENDING("PENDING"),
-    APPROVED("APPROVED");
+    APPROVED("APPROVED"),
+    REJECTED("REJECTED");
+    private final String status;
 
-    private final String approvalStatusName;
-
-    ApprovalStatus(String approvalStatusName) {
-        this.approvalStatusName = approvalStatusName;
+    ApprovalStatus(String status) {
+        this.status = status;
     }
 
-    public String getApprovalStatusName() {
-        return approvalStatusName;
+    public String getStatus() {
+        return status;
+    }
+
+    public boolean isPending() {
+        return this == PENDING;
+    }
+
+    public boolean isApproved() {
+        return this == APPROVED;
+    }
+
+    public boolean isRejected() {
+        return this == REJECTED;
     }
 
 }
