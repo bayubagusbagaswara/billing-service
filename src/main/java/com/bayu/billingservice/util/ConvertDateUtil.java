@@ -3,7 +3,10 @@ package com.bayu.billingservice.util;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.format.TextStyle;
@@ -15,6 +18,8 @@ import java.util.Map;
 @Slf4j
 @UtilityClass
 public class ConvertDateUtil {
+
+    private static final String APPEND_PATTERN = "[MMM ][MMMM ]yyyy";
 
     public static LocalDate parseDateOrDefault(String value, DateTimeFormatter dateTimeFormatter) {
         try {
@@ -30,8 +35,8 @@ public class ConvertDateUtil {
     public static LocalDate getLatestDateOfMonthYear(String monthYear) {
         DateTimeFormatter formatter = new DateTimeFormatterBuilder()
                 .parseCaseInsensitive()
-                .appendPattern("[MMM ][MMMM ]yyyy")
-                .toFormatter(Locale.ENGLISH);
+                .appendPattern(APPEND_PATTERN)
+                .toFormatter(new Locale("id", "ID"));
 
         TemporalAccessor temporalAccessor = formatter.parse(monthYear);
         LocalDate parsedDate = LocalDate.from(new MonthYearQuery().queryFrom(temporalAccessor));
@@ -45,8 +50,8 @@ public class ConvertDateUtil {
     public static LocalDate getFirstDateOfMonthYear(String monthYear) {
         DateTimeFormatter formatter = new DateTimeFormatterBuilder()
                 .parseCaseInsensitive()
-                .appendPattern("[MMM ][MMMM ]yyyy")
-                .toFormatter(Locale.ENGLISH);
+                .appendPattern(APPEND_PATTERN)
+                .toFormatter(new Locale("id", "ID"));
 
         TemporalAccessor temporalAccessor = formatter.parse(monthYear);
         LocalDate parsedDate = LocalDate.from(new MonthYearQuery().queryFrom(temporalAccessor));
@@ -62,7 +67,7 @@ public class ConvertDateUtil {
 
         // Month
         int monthValue = latestDateOfMonthYear.getMonthValue();
-        String monthFullName = latestDateOfMonthYear.getMonth().getDisplayName(TextStyle.FULL, Locale.ENGLISH);
+        String monthFullName = latestDateOfMonthYear.getMonth().getDisplayName(TextStyle.FULL, new Locale("id", "ID"));
 
         // Year
         int year = latestDateOfMonthYear.getYear();
@@ -87,8 +92,8 @@ public class ConvertDateUtil {
     public static String[] convertToYearMonthFormat(String monthYear) {
         DateTimeFormatter formatter = new DateTimeFormatterBuilder()
                 .parseCaseInsensitive()
-                .appendPattern("[MMM ][MMMM ]yyyy")
-                .toFormatter(Locale.ENGLISH);
+                .appendPattern(APPEND_PATTERN)
+                .toFormatter(new Locale("id", "ID"));
 
         TemporalAccessor temporalAccessor = formatter.parse(monthYear);
         LocalDate parsedDate = LocalDate.from(new ConvertDateUtil.MonthYearQuery().queryFrom(temporalAccessor));
@@ -100,6 +105,31 @@ public class ConvertDateUtil {
 
         // Split the formatted date string
         return formattedDate.split("-");
+    }
+
+    public static String convertInstantToString(Instant instant) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d-MMM-yy")
+                .withLocale(Locale.forLanguageTag("id-ID"));
+
+        ZoneId jakartaZone = ZoneId.of("Asia/Jakarta");
+
+        String formattedString = formatter.format(instant.atZone(jakartaZone));
+        log.info("Formatted Instant to String : {}", formattedString);
+
+        return formattedString;
+    }
+
+    public static String convertInstantToStringPlus14Days(Instant instant) {
+        Instant newInstant = instant.plus(Duration.ofDays(14));
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d-MMM-yy")
+                .withLocale(Locale.forLanguageTag("id-ID"));
+
+        ZoneId jakartaZone = ZoneId.of("Asia/Jakarta");
+
+        String formattedString = formatter.format(newInstant.atZone(jakartaZone));
+        log.info("Formatted Instant to String : {}", formattedString);
+
+        return formattedString;
     }
 
 }
