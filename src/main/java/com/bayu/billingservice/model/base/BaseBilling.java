@@ -46,7 +46,7 @@ public abstract class BaseBilling extends BaseAudit {
     @Column(name = "mi_name")
     private String investmentManagementName;
 
-    @Column(name = "min_address")
+    @Column(name = "mi_address")
     private String investmentManagementAddress;
 
     @Column(name = "product_name")
