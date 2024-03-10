@@ -1,7 +1,7 @@
 package com.bayu.billingservice.service.impl;
 
 import com.bayu.billingservice.dto.core.Core2DTO;
-import com.bayu.billingservice.service.Core2Service;
+import com.bayu.billingservice.service.Core2CalculateService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -9,7 +9,7 @@ import java.util.List;
 
 @Slf4j
 @Service
-public class Core2ServiceImpl implements Core2Service {
+public class Core2CalculateServiceImpl implements Core2CalculateService {
 
 
     @Override

@@ -4,7 +4,7 @@ import com.bayu.billingservice.constant.BillingCategoryConstant;
 import com.bayu.billingservice.constant.BillingTypeConstant;
 import com.bayu.billingservice.dto.ResponseDTO;
 import com.bayu.billingservice.service.Core1CalculateService;
-import com.bayu.billingservice.service.Core2Service;
+import com.bayu.billingservice.service.Core2CalculateService;
 import com.bayu.billingservice.util.StringUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -20,9 +20,9 @@ import org.springframework.web.bind.annotation.RestController;
 public class CoreController {
 
     private final Core1CalculateService core1Service;
-    private final Core2Service core2Service;
+    private final Core2CalculateService core2Service;
 
-    public CoreController(Core1CalculateService core1Service, Core2Service core2Service) {
+    public CoreController(Core1CalculateService core1Service, Core2CalculateService core2Service) {
         this.core1Service = core1Service;
         this.core2Service = core2Service;
     }
