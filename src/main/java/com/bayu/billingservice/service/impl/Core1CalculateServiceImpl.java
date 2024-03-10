@@ -11,7 +11,7 @@ import java.util.List;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class Core1ServiceImpl implements Core1CalculateService {
+public class Core1CalculateServiceImpl implements Core1CalculateService {
 
     private final KycCustomerService kycCustomerService;
     private final FeeParameterService feeParameterService;
