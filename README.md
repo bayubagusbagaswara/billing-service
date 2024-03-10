@@ -256,4 +256,31 @@ kita coba tambahkan data ke Billing Detail
 - Date		: 2023-10-31
 - PortfolioCode	: 12MUFG
 - SecurityCode	: GUDH
-- MarketPrice	: 999.500.000,00 
+- MarketPrice	: 999.500.000,00
+
+  ## Membuat Data di Table Billing Detail
+  - untuk kepentingan menarik data Core Type 7, yakni data 3 bulan sebelumnya
+ 
+  ## Check Folder Exist and Create Folder
+
+  // Get current date and format it as "YYYY-MM"
+    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM");
+    String dateString = dateFormat.format(new Date());
+
+    // Define the base folder path (replace with your desired path)
+    String basePath = "/path/to/your/base/folder";
+
+    // Combine base path and date string to create folder name
+    String folderName = basePath + File.separator + dateString;
+
+    // Check if folder exists
+    File folder = new File(folderName);
+    if (!folder.exists()) {
+      // Create the folder if it doesn't exist
+      folder.mkdirs();
+      System.out.println("Folder created: " + folderName);
+    } else {
+      System.out.println("Folder already exists: " + folderName);
+    }
+
+  
