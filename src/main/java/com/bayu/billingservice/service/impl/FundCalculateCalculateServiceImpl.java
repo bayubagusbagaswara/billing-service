@@ -4,10 +4,12 @@ import com.bayu.billingservice.constant.FeeParameterNameConstant;
 import com.bayu.billingservice.constant.SkTransactionTypeConstant;
 import com.bayu.billingservice.dto.fund.BillingFundDTO;
 import com.bayu.billingservice.dto.fund.FeeReportRequest;
+import com.bayu.billingservice.model.BillingFund;
 import com.bayu.billingservice.model.SkTransaction;
+import com.bayu.billingservice.repository.BillingFundRepository;
 import com.bayu.billingservice.service.BillingNumberService;
 import com.bayu.billingservice.service.FeeParameterService;
-import com.bayu.billingservice.service.FundService;
+import com.bayu.billingservice.service.FundCalculateService;
 import com.bayu.billingservice.service.SkTransactionService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -22,14 +25,15 @@ import java.util.Map;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class FundServiceImpl implements FundService {
+public class FundCalculateCalculateServiceImpl implements FundCalculateService {
 
     private final SkTransactionService skTransactionService;
     private final FeeParameterService feeParameterService;
     private final BillingNumberService billingNumberService;
+    private final BillingFundRepository billingFundRepository;
 
     @Override
-    public List<BillingFundDTO> calculate(List<FeeReportRequest> request, String month, int year) {
+    public String calculate(List<FeeReportRequest> request, String month, int year) {
 
         List<String> nameList = new ArrayList<>();
         nameList.add(FeeParameterNameConstant.BI_SSSS);
@@ -41,7 +45,7 @@ public class FundServiceImpl implements FundService {
         BigDecimal kseiFee = feeParameterMap.get(FeeParameterNameConstant.KSEI);
         BigDecimal vatFee = feeParameterMap.get(FeeParameterNameConstant.VAT);
 
-        List<BillingFundDTO> billingFundDTOList = new ArrayList<>();
+        List<BillingFund> billingFundList = new ArrayList<>();
 
         BigDecimal accrualCustodialFee;
         int transactionBISSSSTotal;
@@ -76,38 +80,46 @@ public class FundServiceImpl implements FundService {
 
             // Map to Entity Billing Fund List
 
-            BillingFundDTO billingFundDTO = BillingFundDTO.builder()
-                    .portfolioCode(aid)
-                    .period(month + " " + year)
-                    .amountDueAccrualCustody(String.valueOf(accrualCustodialFee))
-                    .valueFrequencyBis4(String.valueOf(transactionBISSSSTotal))
-                    .bis4Fee(String.valueOf(bis4Fee))
-                    .amountDueBis4(String.valueOf(amountDueBis4))
-                    .totalNominalBeforeTax(String.valueOf(totalAmountDueBeforeTax))
-                    .vatFee(String.valueOf(vatFee))
-                    .amountDueVat(String.valueOf(amountDueVat))
-                    .valueFrequencyKSEI(String.valueOf(transactionCBESTTotal))
-                    .kseiFee(String.valueOf(kseiFee))
-                    .amountDueKSEI(String.valueOf(amountDueKSEI))
-                    .totalAmountDue(String.valueOf(totalAmountDue))
+//            BillingFundDTO billingFundDTO = BillingFundDTO.builder()
+//                    .portfolioCode(aid)
+//                    .period(month + " " + year)
+//                    .amountDueAccrualCustody(String.valueOf(accrualCustodialFee))
+//                    .valueFrequencyBis4(String.valueOf(transactionBISSSSTotal))
+//                    .bis4Fee(String.valueOf(bis4Fee))
+//                    .amountDueBis4(String.valueOf(amountDueBis4))
+//                    .totalNominalBeforeTax(String.valueOf(totalAmountDueBeforeTax))
+//                    .vatFee(String.valueOf(vatFee))
+//                    .amountDueVat(String.valueOf(amountDueVat))
+//                    .valueFrequencyKSEI(String.valueOf(transactionCBESTTotal))
+//                    .kseiFee(String.valueOf(kseiFee))
+//                    .amountDueKSEI(String.valueOf(amountDueKSEI))
+//                    .totalAmountDue(String.valueOf(totalAmountDue))
+//                    .build();
+
+            Instant dateNow = Instant.now();
+
+            BillingFund billingFund = BillingFund.builder()
+                    .createdAt(dateNow)
                     .build();
 
-            billingFundDTOList.add(billingFundDTO);
+            billingFundList.add(billingFund);
         }
 
-        List<String> numberList = billingNumberService.generateNumberList(billingFundDTOList.size(), month, year);
+        List<String> numberList = billingNumberService.generateNumberList(billingFundList.size(), month, year);
 
-        for (int i = 0; i < billingFundDTOList.size(); i++) {
-            BillingFundDTO billingFundDTO = billingFundDTOList.get(i);
+        int billingFundListSize = billingFundList.size();
+
+        for (int i = 0; i < billingFundListSize; i++) {
+            BillingFund billingFund = billingFundList.get(i);
             String billingNumber = numberList.get(i);
 
             // Set billing number from the generated list
-            billingFundDTO.setBillingNumber(billingNumber);
+            billingFund.setBillingNumber(billingNumber);
         }
 
         billingNumberService.saveAll(numberList);
 
-        return billingFundDTOList;
+        return "Successfully calculated Billing Funds with a total : " + billingFundListSize;
     }
 
     private int[] filterTransactionsType(List<SkTransaction> transactionList) {
