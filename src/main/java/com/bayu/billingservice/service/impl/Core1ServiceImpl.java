@@ -1,7 +1,6 @@
 package com.bayu.billingservice.service.impl;
 
 import com.bayu.billingservice.dto.core.Core1DTO;
-import com.bayu.billingservice.dto.kyc.KycCustomerDTO;
 import com.bayu.billingservice.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,7 +11,7 @@ import java.util.List;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class Core1ServiceImpl implements Core1Service {
+public class Core1ServiceImpl implements Core1CalculateService {
 
     private final KycCustomerService kycCustomerService;
     private final FeeParameterService feeParameterService;
