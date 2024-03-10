@@ -14,15 +14,13 @@ public enum BillingType {
     TYPE_10("TYPE 10"),
     TYPE_11("TYPE 11"),
     ;
+    private final String value;
 
-    private final String type;
-
-    BillingType(String type) {
-        this.type = type;
+    BillingType(String value) {
+        this.value = value;
     }
 
-    public String getType() {
-        return type;
+    public String getValue() {
+        return value;
     }
-
 }
