@@ -71,7 +71,7 @@ public class BillingNumberServiceImpl implements BillingNumberService {
             String monthFormat = String.format("%02d", month.getValue());
             int lastTwoDigits = year % 100;
 
-            billingNumberList.add(String.format("C%02d/SS-BS/%s%d", currentBillingNumber, monthFormat, lastTwoDigits));
+            billingNumberList.add(String.format("C%03d/SS-BS/%s%d", currentBillingNumber, monthFormat, lastTwoDigits));
         }
 
         for (String s : billingNumberList) {
