@@ -1,7 +1,8 @@
-<html lang="en-US">
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
 	<meta charset="utf-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" />
 	<title>Billing Fund Template</title>
 </head>
 <body
@@ -43,7 +44,7 @@
 					<tr style="font-size: 10pt">
 						<td style="width: 10px">No</td>
 						<td align="center" style="width: 3px">:</td>
-						<td>[No_Surat]</td>
+						<td th:text="${billingNumber}">[No_Surat]</td>
 					</tr>
 					</tbody>
 				</table>
