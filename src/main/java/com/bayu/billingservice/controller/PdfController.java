@@ -40,14 +40,14 @@ public class PdfController {
         response.setContentType("application/pdf");
 
         // Generate PDF from HTML content and write it to the response stream
-        try {
-            pdfGenerator.generatePdfFromHtml(htmlContent, response.getOutputStream());
-            response.flushBuffer();
-        } catch (Exception e) {
-            // Handle exceptions appropriately (e.g., log or return an error response)
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            response.getWriter().write("Error generating PDF");
-        }
+//        try {
+//            pdfGenerator.generatePdfFromHtml(htmlContent, response.getOutputStream());
+//            response.flushBuffer();
+//        } catch (Exception e) {
+//            // Handle exceptions appropriately (e.g., log or return an error response)
+//            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+//            response.getWriter().write("Error generating PDF");
+//        }
     }
 
     private String renderThymeleafTemplate(String title, String content) {
