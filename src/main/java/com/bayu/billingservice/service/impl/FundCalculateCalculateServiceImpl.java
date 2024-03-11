@@ -1,16 +1,12 @@
 package com.bayu.billingservice.service.impl;
 
-import com.bayu.billingservice.constant.CurrencyConstant;
 import com.bayu.billingservice.constant.FeeParameterNameConstant;
 import com.bayu.billingservice.constant.SkTransactionTypeConstant;
 import com.bayu.billingservice.dto.fund.FeeReportRequest;
 import com.bayu.billingservice.exception.CalculateBillingException;
 import com.bayu.billingservice.model.BillingFund;
 import com.bayu.billingservice.model.SkTransaction;
-import com.bayu.billingservice.model.enumerator.ApprovalStatus;
-import com.bayu.billingservice.model.enumerator.BillingCategory;
-import com.bayu.billingservice.model.enumerator.BillingTemplate;
-import com.bayu.billingservice.model.enumerator.BillingType;
+import com.bayu.billingservice.model.enumerator.*;
 import com.bayu.billingservice.repository.BillingFundRepository;
 import com.bayu.billingservice.service.BillingNumberService;
 import com.bayu.billingservice.service.FeeParameterService;
@@ -27,8 +23,6 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
-import static com.bayu.billingservice.constant.CurrencyConstant.*;
 
 @Slf4j
 @Service
@@ -107,7 +101,7 @@ public class FundCalculateCalculateServiceImpl implements FundCalculateService {
                         .productName("")
                         .accountName("")
                         .accountNumber("")
-                        .currency(CURRENCY_IDR)
+                        .currency(Currency.IDR.getValue())
                         .customerFee(customerFee)
                         .accrualCustodialFee(accrualCustodialFee)
                         .bis4ValueFrequency(transactionBISSSSTotal)
