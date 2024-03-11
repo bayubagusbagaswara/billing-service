@@ -90,7 +90,7 @@ public class FundCalculateCalculateServiceImpl implements FundCalculateService {
                         .createdAt(dateNow)
                         .updatedAt(dateNow)
                         .approvalStatus(ApprovalStatus.PENDING.getStatus())
-                        .portfolioCode(aid)
+                        .aid(aid)
                         .month(month)
                         .year(year)
                         .billingPeriod(month + " " + year)

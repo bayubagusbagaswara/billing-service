@@ -1,20 +1,21 @@
 package com.bayu.billingservice.model;
 
+import com.bayu.billingservice.model.base.BaseBilling;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
+@EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "billing_cores")
 @Data
-@Builder
+@SuperBuilder
 @NoArgsConstructor
-@AllArgsConstructor
-public class BillingCore {
+public class BillingCore extends BaseBilling {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+
 }

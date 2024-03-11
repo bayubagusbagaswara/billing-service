@@ -17,8 +17,8 @@ public abstract class BaseBilling extends BaseAudit {
     @Column(name = "approval_status")
     private String approvalStatus;
 
-    @Column(name = "portfolio_code")
-    private String portfolioCode;
+    @Column(name = "aid")
+    private String aid;
 
     @Column(name = "month")
     private String month;

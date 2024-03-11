@@ -84,15 +84,13 @@ public class FundGeneratePDFServiceImpl implements FundGeneratePDFService {
 
                 htmlContent = renderThymeleafTemplate(fundDTO);
                 pdfBytes = pdfGenerator.generatePdfFromHtml(htmlContent);
-                fileName = generateFileName(fundDTO.getInvestmentManagementName(), fundDTO.getPortfolioCode(), yearMonthFormat);
+                fileName = generateFileName(fundDTO.getInvestmentManagementName(), fundDTO.getAid(), yearMonthFormat);
 
                 folderPath = basePathBillingFund + yearMonthFormat;
 
-                // Using File.separator for platform-independent file separator
                 Path folderPathObj = Paths.get(folderPath);
                 Files.createDirectories(folderPathObj);
 
-                // Using Paths.get() for platform-independent file path
                 Path outputPathObj = folderPathObj.resolve(fileName);
                 outputPath = outputPathObj.toString();
 
@@ -137,8 +135,8 @@ public class FundGeneratePDFServiceImpl implements FundGeneratePDFService {
         return templateEngine.process(BillingTemplate.FUND_TEMPLATE.getValue(), context);
     }
 
-    private String generateFileName(String investmentManagementName, String portfolioCode, String yearMonth) {
-        return investmentManagementName + "_" + portfolioCode + "_" + yearMonth + ".pdf";
+    private String generateFileName(String investmentManagementName, String aid, String yearMonth) {
+        return investmentManagementName + "_" + aid + "_" + yearMonth + ".pdf";
     }
 
     private static BillingFundDTO mapToDTO(BillingFund billingFund) {
@@ -146,7 +144,7 @@ public class FundGeneratePDFServiceImpl implements FundGeneratePDFService {
                 .createdAt(billingFund.getCreatedAt())
                 .updatedAt(billingFund.getUpdatedAt())
                 .approvalStatus(billingFund.getApprovalStatus())
-                .portfolioCode(billingFund.getPortfolioCode())
+                .aid(billingFund.getAid())
                 .month(billingFund.getMonth())
                 .year(String.valueOf(billingFund.getYear()))
                 .billingNumber(billingFund.getBillingNumber())

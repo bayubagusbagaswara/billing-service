@@ -13,7 +13,7 @@ public abstract class BillingFundBaseDTO {
     private Instant updatedAt;
 
     private String approvalStatus;
-    private String portfolioCode;
+    private String aid;
     private String month;
     private String year;
 
