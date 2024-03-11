@@ -1,5 +1,6 @@
 package com.bayu.billingservice.service.impl;
 
+import com.bayu.billingservice.constant.CurrencyConstant;
 import com.bayu.billingservice.constant.FeeParameterNameConstant;
 import com.bayu.billingservice.constant.SkTransactionTypeConstant;
 import com.bayu.billingservice.dto.fund.FeeReportRequest;
@@ -26,6 +27,8 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import static com.bayu.billingservice.constant.CurrencyConstant.*;
 
 @Slf4j
 @Service
@@ -104,6 +107,7 @@ public class FundCalculateCalculateServiceImpl implements FundCalculateService {
                         .productName("")
                         .accountName("")
                         .accountNumber("")
+                        .currency(CURRENCY_IDR)
                         .customerFee(customerFee)
                         .accrualCustodialFee(accrualCustodialFee)
                         .bis4ValueFrequency(transactionBISSSSTotal)
