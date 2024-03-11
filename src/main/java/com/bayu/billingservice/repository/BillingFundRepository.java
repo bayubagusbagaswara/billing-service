@@ -12,7 +12,7 @@ import java.util.List;
 public interface BillingFundRepository extends JpaRepository<BillingFund, Long> {
 
     @Query(value = "SELECT * FROM billing_funds " +
-            "WHERE billing_category = :billingCategory " +
+            "WHERE bill_category = :billingCategory " +
             "AND month = :month " +
             "AND year = :year " +
             "AND approval_status = :approvalStatus", nativeQuery = true)
