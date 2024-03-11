@@ -5,6 +5,7 @@ import com.bayu.billingservice.exception.GeneratePDFBillingException;
 import com.bayu.billingservice.exception.UnexpectedException;
 import com.bayu.billingservice.model.BillingFund;
 import com.bayu.billingservice.model.enumerator.ApprovalStatus;
+import com.bayu.billingservice.model.enumerator.BillingTemplate;
 import com.bayu.billingservice.repository.BillingFundRepository;
 import com.bayu.billingservice.service.FundGeneratePDFService;
 import com.bayu.billingservice.util.ConvertBigDecimalUtil;
@@ -133,7 +134,7 @@ public class FundGeneratePDFServiceImpl implements FundGeneratePDFService {
         context.setVariable(KSEI_TRANSACTION_FEE, fundDTO.getKseiTransactionFee());
         context.setVariable(TOTAL_AMOUNT_DUE, fundDTO.getTotalAmountDue());
 
-        return templateEngine.process("FUND_TEMPLATE", context);
+        return templateEngine.process(BillingTemplate.FUND_TEMPLATE.getValue(), context);
     }
 
     private String generateFileName(String investmentManagementName, String portfolioCode, String yearMonth) {
