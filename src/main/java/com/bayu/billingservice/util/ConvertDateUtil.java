@@ -36,7 +36,7 @@ public class ConvertDateUtil {
         DateTimeFormatter formatter = new DateTimeFormatterBuilder()
                 .parseCaseInsensitive()
                 .appendPattern(APPEND_PATTERN)
-                .toFormatter(new Locale("id", "ID"));
+                .toFormatter(getLocaleID());
 
         TemporalAccessor temporalAccessor = formatter.parse(monthYear);
         LocalDate parsedDate = LocalDate.from(new MonthYearQuery().queryFrom(temporalAccessor));
@@ -51,7 +51,7 @@ public class ConvertDateUtil {
         DateTimeFormatter formatter = new DateTimeFormatterBuilder()
                 .parseCaseInsensitive()
                 .appendPattern(APPEND_PATTERN)
-                .toFormatter(new Locale("id", "ID"));
+                .toFormatter(getLocaleID());
 
         TemporalAccessor temporalAccessor = formatter.parse(monthYear);
         LocalDate parsedDate = LocalDate.from(new MonthYearQuery().queryFrom(temporalAccessor));
@@ -63,19 +63,21 @@ public class ConvertDateUtil {
     }
 
     public static Map<String, String> extractMonthYearInformation(String monthYear) {
-        LocalDate latestDateOfMonthYear = getLatestDateOfMonthYear(monthYear);
+        LocalDate firstDateOfMonthYear = getFirstDateOfMonthYear(monthYear);
 
         // Month
-        int monthValue = latestDateOfMonthYear.getMonthValue();
-        String monthFullName = latestDateOfMonthYear.getMonth().getDisplayName(TextStyle.FULL, new Locale("id", "ID"));
+        int monthValue = firstDateOfMonthYear.getMonthValue();
+        String monthFullName = firstDateOfMonthYear.getMonth().getDisplayName(TextStyle.FULL, getLocaleID());
+        String formattedMonth = (monthValue < 10) ? "0" + monthValue : String.valueOf(monthValue);
 
         // Year
-        int year = latestDateOfMonthYear.getYear();
+        int year = firstDateOfMonthYear.getYear();
 
         Map<String, String> monthYearMap = new HashMap<>();
         monthYearMap.put("month", String.valueOf(monthValue));
         monthYearMap.put("year", String.valueOf(year));
         monthYearMap.put("monthName", monthFullName);
+        monthYearMap.put("monthValue", formattedMonth);
 
         return monthYearMap;
     }
@@ -132,4 +134,7 @@ public class ConvertDateUtil {
         return formattedString;
     }
 
+    private static Locale getLocaleID() {
+        return new Locale("id", "ID");
+    }
 }
