@@ -68,7 +68,7 @@ public class FundGeneratePDFServiceImpl implements FundGeneratePDFService {
         }
     }
 
-    private void generateAndSavePDFStatements(List<BillingFundDTO> fundDTOList) throws IOException {
+    private void generateAndSavePDFStatements(List<BillingFundDTO> fundDTOList) {
         for (BillingFundDTO fundDTO : fundDTOList) {
             Map<String, String> monthYearMap;
             String yearMonthFormat;
@@ -80,7 +80,7 @@ public class FundGeneratePDFServiceImpl implements FundGeneratePDFService {
 
             try {
                 monthYearMap = ConvertDateUtil.extractMonthYearInformation(fundDTO.getBillingPeriod());
-                yearMonthFormat = monthYearMap.get("year") + monthYearMap.get("monthFormat");
+                yearMonthFormat = monthYearMap.get("year") + monthYearMap.get("monthValue");
 
                 htmlContent = renderThymeleafTemplate(fundDTO);
                 pdfBytes = pdfGenerator.generatePdfFromHtml(htmlContent);
