@@ -128,7 +128,6 @@ public class FundCalculateCalculateServiceImpl implements FundCalculateService {
                 BillingFund billingFund = billingFundList.get(i);
                 String billingNumber = numberList.get(i);
                 billingFund.setBillingNumber(billingNumber);
-                billingFund.setKseiTransactionFee(kseiTransactionFee);
             }
 
             billingNumberService.saveAll(numberList);
