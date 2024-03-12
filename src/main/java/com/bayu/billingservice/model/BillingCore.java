@@ -22,9 +22,6 @@ public class BillingCore extends BaseBilling {
     @Column(name = "swift_code")
     private String swiftCode; // especially for core template 2 and 6
 
-    @Column(name = "bank")
-    private String bank;
-
     @Column(name = "corr_bank")
     private String corrBank;
 
