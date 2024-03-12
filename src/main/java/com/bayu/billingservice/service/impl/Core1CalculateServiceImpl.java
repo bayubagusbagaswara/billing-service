@@ -110,7 +110,7 @@ public class Core1CalculateServiceImpl implements Core1CalculateService {
                         .accountBank(kycCustomerDTO.getAccountBank())
                         .currency(IDR.getValue())
                         .minimumFee(kycCustomerDTO.getMinimumFee())
-                        .transactionHandlingFrequency(transactionHandlingValueFrequency)
+                        .transactionHandlingValueFrequency(transactionHandlingValueFrequency)
                         .transactionHandlingFee(transactionHandlingFee)
                         .transactionHandlingAmountDue(transactionHandlingAmountDue)
                         .safekeepingValueFrequency(safekeepingValueFrequency)
