@@ -260,28 +260,6 @@ kita coba tambahkan data ke Billing Detail
 
   ## Membuat Data di Table Billing Detail
   - untuk kepentingan menarik data Core Type 7, yakni data 3 bulan sebelumnya
- 
-  ## Check Folder Exist and Create Folder
-
-  // Get current date and format it as "YYYY-MM"
-    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM");
-    String dateString = dateFormat.format(new Date());
-
-    // Define the base folder path (replace with your desired path)
-    String basePath = "/path/to/your/base/folder";
-
-    // Combine base path and date string to create folder name
-    String folderName = basePath + File.separator + dateString;
-
-    // Check if folder exists
-    File folder = new File(folderName);
-    if (!folder.exists()) {
-      // Create the folder if it doesn't exist
-      folder.mkdirs();
-      System.out.println("Folder created: " + folderName);
-    } else {
-      System.out.println("Folder already exists: " + folderName);
-    }
 
   
 ## Format Billing Number
@@ -290,3 +268,13 @@ kita coba tambahkan data ke Billing Detail
 
 - Jika user menekan tombol calculate, maka otomatis semua data yg sudah digenerate akan hilang (REPLACE), hanya sesuai dengan period yang diinputkan
 - karena ini adalah urutan process. Jika poin 1 (calculate) dijalankan ulang, maka akan menghapus proses yang sudah ada
+
+# Template Core
+1. No VAT (Safekeeping Fee, KSEI, etc) - type 5, type 6 (without NPWP)
+2. VAT (Foreign Client) - type 7.docx
+3. VAT (Safekeeping Fee & Trx Handling) - type 1, type 2, type 4 a, type 9, type 11
+4. VAT (Safekeeping Fee, KSEI, etc) - type 5, type 6 (With NPWP)
+5. 17 OBAL (EB) - type 4b
+6. IIG - type 8
+7. No VAT (only Safekeeping Fee) - type 3
+8. No VAT (only Trx Handling and Safekeeping Fee) - type 10
