@@ -139,7 +139,7 @@ public class Core1GeneratePDFServiceImpl implements Core1GeneratePDFService {
         context.setVariable(VAT_AMOUNT_DUE, core1DTO.getVatAmountDue());
         context.setVariable(TOTAL_AMOUNT_DUE, core1DTO.getTotalAmountDue());
 
-        String billingTemplate = core1DTO.getBillingTemplate();
+        String billingTemplate = core1DTO.getBillingCategory() +  "_" + core1DTO.getBillingTemplate();
         log.info("[Core type 1] Billing Template '{}'", billingTemplate);
         return templateEngine.process(billingTemplate, context);
     }
