@@ -14,7 +14,7 @@ public interface BillingCoreRepository extends JpaRepository<BillingCore, Long> 
 
     @Query(value = "SELECT * FROM billing_cores " +
             "WHERE bill_category = :billingCategory " +
-            "AND bill_type = :billingType" +
+            "AND bill_type = :billingType " +
             "AND month = :month " +
             "AND year = :year " +
             "AND approval_status = :approvalStatus", nativeQuery = true)
