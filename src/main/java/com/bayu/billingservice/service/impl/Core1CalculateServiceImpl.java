@@ -69,6 +69,8 @@ public class Core1CalculateServiceImpl implements Core1CalculateService {
 
             for (KycCustomerDTO kycCustomerDTO : kycCustomerDTOList) {
                 String aid = kycCustomerDTO.getAid();
+                String billingCategory = kycCustomerDTO.getBillingCategory();
+                String billingType = kycCustomerDTO.getBillingType();
 
                 List<SkTransaction> skTransactionList = skTransactionService.getAllByAidAndMonthAndYear(aid, monthName, year);
 
@@ -88,12 +90,22 @@ public class Core1CalculateServiceImpl implements Core1CalculateService {
 
                 totalAmountDue = calculateTotalAmountDue(aid, subTotal, vatAmountDue);
 
+                Optional<BillingCore> existingBillingCore = billingCoreRepository.findByAidAndBillingCategoryAndBillingTypeAndMonthAndYear(aid, billingCategory, billingType, monthName, year);
+
+                if (existingBillingCore.isPresent()) {
+                    // Update existing record
+                    BillingCore existBillingCore = existingBillingCore.get();
+                    String billingNumber = existBillingCore.getBillingNumber();
+                    billingCoreRepository.delete(existBillingCore);
+                    billingNumberService.deleteByBillingNumber(billingNumber);
+                }
+
                 Instant dateNow = Instant.now();
                 BillingCore billingCore = BillingCore.builder()
                         .createdAt(dateNow)
                         .updatedAt(dateNow)
                         .approvalStatus(PENDING.getStatus())
-                        .aid(aid)
+                        .aid(kycCustomerDTO.getAid())
                         .month(monthName)
                         .year(year)
                         .billingPeriod(monthName + " " + year)
@@ -134,8 +146,8 @@ public class Core1CalculateServiceImpl implements Core1CalculateService {
                 billingCore.setBillingNumber(billingNumber);
             }
 
-            billingNumberService.saveAll(numberList);
             billingCoreRepository.saveAll(billingCoreList);
+            billingNumberService.saveAll(numberList);
 
             log.info("Finished calculate Billing Core type 1 with month '{}' and year '{}'", monthName, year);
             return "Successfully calculated Billing Core type 1 with a total : " + billingCoreListSize;
@@ -165,6 +177,9 @@ public class Core1CalculateServiceImpl implements Core1CalculateService {
                         .max(Comparator.naturalOrder())
                         .orElse(null)))
                 .toList();
+        for (SfValRgDaily latestEntry : latestEntries) {
+            log.info("Date '{}', Security Name '{}'", latestEntry.getDate(), latestEntry.getSecurityName());
+        }
 
         // Calculate safekeepingValueFrequency
         BigDecimal safekeepingValueFrequency = latestEntries.stream()
