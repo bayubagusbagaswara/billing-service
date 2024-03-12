@@ -5,6 +5,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface BillingNumberRepository extends JpaRepository<BillingNumber, Long> {
 
@@ -13,5 +15,9 @@ public interface BillingNumberRepository extends JpaRepository<BillingNumber, Lo
             "FROM billing_number " +
             "WHERE month = :month AND year = :year")
     Integer getMaxSequenceNumberByMonthAndYear(String month, int year);
+
+    @Query(value = "SELECT * FROM billing_number " +
+            "WHERE number = :billingNumber", nativeQuery = true)
+    Optional<BillingNumber> findByNumber(String billingNumber);
 
 }
