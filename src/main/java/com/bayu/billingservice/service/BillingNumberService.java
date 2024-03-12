@@ -13,4 +13,6 @@ public interface BillingNumberService {
     List<BillingNumberDTO> getAll();
 
     List<String> generateNumberList(int billingSize, String month, int year);
+
+    String deleteByBillingNumber(String billingNumber);
 }

@@ -1,6 +1,7 @@
 package com.bayu.billingservice.service.impl;
 
 import com.bayu.billingservice.dto.BillingNumberDTO;
+import com.bayu.billingservice.exception.DataNotFoundException;
 import com.bayu.billingservice.model.BillingNumber;
 import com.bayu.billingservice.repository.BillingNumberRepository;
 import com.bayu.billingservice.service.BillingNumberService;
@@ -64,8 +65,9 @@ public class BillingNumberServiceImpl implements BillingNumberService {
         List<String> billingNumberList = new ArrayList<>();
 
         for (int i = 0; i < billingSize; i++) {
-//            int currentBillingNumber = (maxSequenceNumberByMonthAndYear != null ? maxSequenceNumberByMonthAndYear : 0) + i + 1;
-            int currentBillingNumber = (maxSequenceNumberByMonthAndYear != null ? maxSequenceNumberByMonthAndYear : 0) + i;
+
+            // int currentBillingNumber = (maxSequenceNumberByMonthAndYear != null ? maxSequenceNumberByMonthAndYear : 0) + i + 1;
+            int currentBillingNumber = (maxSequenceNumberByMonthAndYear != null ? maxSequenceNumberByMonthAndYear + 1 : 1) + i;
 
             Month month = Month.valueOf(monthName.toUpperCase());
             String monthFormat = String.format("%02d", month.getValue());
@@ -78,6 +80,14 @@ public class BillingNumberServiceImpl implements BillingNumberService {
             log.info("Billing Number List : {}", s);
         }
         return billingNumberList;
+    }
+
+    @Override
+    public String deleteByBillingNumber(String number) {
+        BillingNumber billingNumber = billingNumberRepository.findByNumber(number)
+                .orElseThrow(() -> new DataNotFoundException("Billing Number with number '" + number + "' is not found"));
+        billingNumberRepository.delete(billingNumber);
+        return "Successfully delete billing number with number : " + number;
     }
 
     public static BillingNumber parseBillingNumber(String billingNumber) {
