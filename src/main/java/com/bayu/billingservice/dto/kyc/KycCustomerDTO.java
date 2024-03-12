@@ -21,7 +21,7 @@ public class KycCustomerDTO {
 
     private BigDecimal minimumFee;
 
-    private double customerFee;
+    private BigDecimal customerFee;
 
     private String journal;
 

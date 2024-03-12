@@ -28,7 +28,7 @@ class KycCustomerTest {
                 .journal("")
                 .billingCategory("CORE")
                 .billingType("TYPE_1")
-                .billingTemplate("TEMPLATE_1")
+                .billingTemplate("TEMPLATE_3")
                 .build();
 
         KycCustomerDTO kycCustomerDTO = kycCustomerService.create(request);

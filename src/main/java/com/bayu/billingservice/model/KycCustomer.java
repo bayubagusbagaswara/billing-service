@@ -23,6 +23,24 @@ public class KycCustomer {
     @Column(name = "aid")
     private String aid;
 
+    @Column(name = "mi_name")
+    private String investmentManagementName;
+
+    @Column(name = "mi_address")
+    private String investmentManagementAddress;
+
+    @Column(name = "product_name")
+    private String productName;
+
+    @Column(name = "account_name")
+    private String accountName;
+
+    @Column(name = "account_number")
+    private String accountNumber;
+
+    @Column(name = "account_bank")
+    private String accountBank;
+
     @Column(name = "ksei_safe_code")
     private String kseiSafeCode;
 
@@ -30,7 +48,7 @@ public class KycCustomer {
     private BigDecimal minimumFee;
 
     @Column(name = "customer_fee")
-    private double customerFee;
+    private BigDecimal customerFee;
 
     @Column(name = "journal")
     private String journal;
