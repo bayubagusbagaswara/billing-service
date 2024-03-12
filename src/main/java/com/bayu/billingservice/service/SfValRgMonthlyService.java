@@ -13,4 +13,6 @@ public interface SfValRgMonthlyService {
     List<SfValRgMonthly> getAllByAid(String aid);
 
     SfValRgMonthly getByAidAndSecurityName(String aid, String securityName);
+
+    String deleteAll();
 }

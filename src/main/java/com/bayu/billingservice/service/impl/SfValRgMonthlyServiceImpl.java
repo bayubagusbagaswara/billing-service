@@ -1,5 +1,6 @@
 package com.bayu.billingservice.service.impl;
 
+import com.bayu.billingservice.exception.ConnectionDatabaseException;
 import com.bayu.billingservice.exception.DataNotFoundException;
 import com.bayu.billingservice.model.SfValRgMonthly;
 import com.bayu.billingservice.repository.SfValRgMonthlyRepository;
@@ -57,6 +58,17 @@ public class SfValRgMonthlyServiceImpl implements SfValRgMonthlyService {
         log.info("Get SfVal RG Monthly by Aid : {} and Security Name : {}", aid, securityName);
         return sfValRgMonthlyRepository.findByAidAndSecurityName(aid, securityName)
                 .orElseThrow(() -> new DataNotFoundException("SfVal RG Monthly not found with Aid : " + aid + " and Security Name : " + securityName));
+    }
+
+    @Override
+    public String deleteAll() {
+        try {
+            sfValRgMonthlyRepository.deleteAll();
+            return "Successfully deleted all Sf Val RG Monthly data";
+        } catch (Exception e) {
+            log.error("Error when delete all Sf Val RG Monthly : " + e.getMessage(), e);
+            throw new ConnectionDatabaseException("Error when delete all Sf Val RG Monthly");
+        }
     }
 
 }
