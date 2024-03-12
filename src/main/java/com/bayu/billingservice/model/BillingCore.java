@@ -37,8 +37,8 @@ public class BillingCore extends BaseBilling {
     @Column(name = "transaction_handling_journal")
     private String transactionHandlingJournal; // for core template 7 and 8
 
-    @Column(name = "transaction_handling_frequency")
-    private Integer transactionHandlingFrequency;
+    @Column(name = "transaction_handling_value_frequency")
+    private Integer transactionHandlingValueFrequency;
 
     @Column(name = "transaction_handling_fee")
     private BigDecimal transactionHandlingFee;
