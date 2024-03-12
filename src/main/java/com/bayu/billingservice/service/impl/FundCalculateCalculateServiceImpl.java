@@ -4,7 +4,6 @@ import com.bayu.billingservice.dto.fund.FeeReportRequest;
 import com.bayu.billingservice.exception.CalculateBillingException;
 import com.bayu.billingservice.model.BillingFund;
 import com.bayu.billingservice.model.SkTransaction;
-import com.bayu.billingservice.model.enumerator.*;
 import com.bayu.billingservice.repository.BillingFundRepository;
 import com.bayu.billingservice.service.BillingNumberService;
 import com.bayu.billingservice.service.FeeParameterService;
@@ -21,7 +20,13 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
+import static com.bayu.billingservice.model.enumerator.ApprovalStatus.PENDING;
+import static com.bayu.billingservice.model.enumerator.BillingCategory.FUND;
+import static com.bayu.billingservice.model.enumerator.BillingTemplate.FUND_TEMPLATE;
+import static com.bayu.billingservice.model.enumerator.BillingType.TYPE_1;
+import static com.bayu.billingservice.model.enumerator.Currency.IDR;
 import static com.bayu.billingservice.model.enumerator.FeeParameter.*;
 import static com.bayu.billingservice.model.enumerator.SkTransactionType.*;
 
@@ -83,27 +88,38 @@ public class FundCalculateCalculateServiceImpl implements FundCalculateService {
 
                 totalAmountDue = calculateTotalAmountDue(subTotal, vatAmountDue, kseiAmountDue);
 
+                Optional<BillingFund> existingBillingFund = billingFundRepository.findByAidAndBillingCategoryAndBillingTypeAndMonthAndYear(
+                        aid, FUND.getValue(), TYPE_1.getValue(), month, year
+                );
+
+                if (existingBillingFund.isPresent()) {
+                    BillingFund existBillingFund = existingBillingFund.get();
+                    String billingNumber = existBillingFund.getBillingNumber();
+                    billingFundRepository.delete(existBillingFund);
+                    billingNumberService.deleteByBillingNumber(billingNumber);
+                }
+
                 Instant dateNow = Instant.now();
                 BillingFund billingFund = BillingFund.builder()
                         .createdAt(dateNow)
                         .updatedAt(dateNow)
-                        .approvalStatus(ApprovalStatus.PENDING.getStatus())
+                        .approvalStatus(PENDING.getStatus())
                         .aid(aid)
                         .month(month)
                         .year(year)
                         .billingPeriod(month + " " + year)
                         .billingStatementDate(ConvertDateUtil.convertInstantToString(dateNow))
                         .billingPaymentDueDate(ConvertDateUtil.convertInstantToStringPlus14Days(dateNow))
-                        .billingCategory(BillingCategory.FUND.getValue())
-                        .billingType(BillingType.TYPE_1.getValue())
-                        .billingTemplate(BillingTemplate.FUND_TEMPLATE.getValue())
+                        .billingCategory(FUND.getValue())
+                        .billingType(TYPE_1.getValue())
+                        .billingTemplate(FUND_TEMPLATE.getValue())
                         .investmentManagementName("")
                         .investmentManagementAddress("")
                         .productName("")
                         .accountName("")
                         .accountNumber("")
                         .accountBank("")
-                        .currency(Currency.IDR.getValue())
+                        .currency(IDR.getValue())
                         .customerFee(customerFee)
                         .accrualCustodialFee(accrualCustodialFee)
                         .bis4ValueFrequency(transactionBISSSSTotal)
