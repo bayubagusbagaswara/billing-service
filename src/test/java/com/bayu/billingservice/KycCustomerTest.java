@@ -22,6 +22,12 @@ class KycCustomerTest {
     void createKycCustomerCoreType1() {
         CreateKycRequest request = CreateKycRequest.builder()
                 .aid("15PCAP")
+                .investmentManagementName("PT SETIABUDI INVESTMETN MANAGEMENT")
+                .investmentManagementAddress("Setiabudi Atrium LT 5 Suites 501A<br/>Jl HR Rasuna Said Kav<br/>Kuningan Timur - Jakarta Selata<br/>Jakarta Selata")
+                .productName("Reksa Dana Setiabudi Dana Obligasi Unggulan")
+                .accountName("Reksa Dana Setiabudi Dana Obligasi Unggulan")
+                .accountNumber("3607809104")
+                .accountBank("PT Bank Danamon Indonesia, Tbk")
                 .kseiSafeCode("")
                 .minimumFee("")
                 .customerFee("0.03")
