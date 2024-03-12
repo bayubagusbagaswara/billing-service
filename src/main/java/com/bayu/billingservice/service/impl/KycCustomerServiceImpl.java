@@ -27,7 +27,7 @@ public class KycCustomerServiceImpl implements KycCustomerService {
         log.info("Create Kyc : {}", request);
 
         BigDecimal minimumFee = request.getMinimumFee().isEmpty() ? BigDecimal.ZERO : new BigDecimal(request.getMinimumFee());
-        BigDecimal customerFee = request.getMinimumFee().isEmpty() ? BigDecimal.ZERO : new BigDecimal(request.getCustomerFee());
+        BigDecimal customerFee = request.getCustomerFee().isEmpty() ? BigDecimal.ZERO : new BigDecimal(request.getCustomerFee());
 
         KycCustomer kycCustomer = KycCustomer.builder()
                 .investmentManagementName(request.getInvestmentManagementName())
