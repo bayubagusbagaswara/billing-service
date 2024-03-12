@@ -18,6 +18,7 @@ public class FundConstant {
     public static final String PRODUCT_NAME = "productName";
     public static final String ACCOUNT_NAME = "accountName";
     public static final String ACCOUNT_NUMBER = "accountNumber";
+    public static final String ACCOUNT_BANK = "accountBank";
 
     public static final String CUSTOMER_FEE = "customerFee";
     public static final String ACCRUAL_CUSTODIAL_FEE = "accrualCustodialFee";
