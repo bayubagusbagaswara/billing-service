@@ -62,6 +62,9 @@ public abstract class BaseBilling extends BaseAudit {
     @Column(name = "account_number")
     private String accountNumber;
 
+    @Column(name = "account_bank")
+    private String accountBank;
+
     @Column(name = "currency")
     private String currency;
 

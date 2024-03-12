@@ -30,7 +30,9 @@ public abstract class BillingCoreBaseDTO {
     private String investmentManagementName;
     private String investmentManagementAddress;
     private String productName;
+
     private String accountName;
     private String accountNumber;
+    private String accountBank;
 
 }

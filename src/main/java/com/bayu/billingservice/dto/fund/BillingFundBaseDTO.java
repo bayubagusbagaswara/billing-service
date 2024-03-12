@@ -27,8 +27,11 @@ public abstract class BillingFundBaseDTO {
 
     private String investmentManagementName;
     private String investmentManagementAddress;
+
     private String productName; // or security name
+
     private String accountName;
     private String accountNumber;
+    private String accountBank;
 
 }
