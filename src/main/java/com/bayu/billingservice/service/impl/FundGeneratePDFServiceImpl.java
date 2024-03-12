@@ -120,6 +120,7 @@ public class FundGeneratePDFServiceImpl implements FundGeneratePDFService {
         context.setVariable(PRODUCT_NAME, fundDTO.getProductName());
         context.setVariable(ACCOUNT_NAME, fundDTO.getAccountName());
         context.setVariable(ACCOUNT_NUMBER, fundDTO.getAccountNumber());
+        context.setVariable(ACCOUNT_BANK, fundDTO.getAccountBank());
         context.setVariable(CUSTOMER_FEE, fundDTO.getCustomerFee());
         context.setVariable(ACCRUAL_CUSTODIAL_FEE, fundDTO.getAccrualCustodialFee());
         context.setVariable(BI_SSSS_VALUE_FREQUENCY, fundDTO.getBis4ValueFrequency());

@@ -102,6 +102,7 @@ public class FundCalculateCalculateServiceImpl implements FundCalculateService {
                         .productName("")
                         .accountName("")
                         .accountNumber("")
+                        .accountBank("")
                         .currency(Currency.IDR.getValue())
                         .customerFee(customerFee)
                         .accrualCustodialFee(accrualCustodialFee)
