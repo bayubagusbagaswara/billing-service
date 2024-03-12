@@ -1,7 +1,5 @@
 package com.bayu.billingservice.service.impl;
 
-import com.bayu.billingservice.constant.FeeParameterNameConstant;
-import com.bayu.billingservice.constant.SkTransactionTypeConstant;
 import com.bayu.billingservice.dto.fund.FeeReportRequest;
 import com.bayu.billingservice.exception.CalculateBillingException;
 import com.bayu.billingservice.model.BillingFund;
@@ -24,6 +22,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static com.bayu.billingservice.model.enumerator.FeeParameter.*;
+import static com.bayu.billingservice.model.enumerator.SkTransactionType.*;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -39,14 +40,14 @@ public class FundCalculateCalculateServiceImpl implements FundCalculateService {
         log.info("Start calculate Billing Fund with month '{}' and year '{}'", month, year);
         try {
             List<String> nameList = new ArrayList<>();
-            nameList.add(FeeParameterNameConstant.BI_SSSS);
-            nameList.add(FeeParameterNameConstant.KSEI);
-            nameList.add(FeeParameterNameConstant.VAT);
+            nameList.add(BI_SSSS.getValue());
+            nameList.add(KSEI.getValue());
+            nameList.add(VAT.getValue());
 
             Map<String, BigDecimal> feeParameterMap = feeParameterService.getValueByNameList(nameList);
-            BigDecimal bis4TransactionFee = feeParameterMap.get(FeeParameterNameConstant.BI_SSSS);
-            BigDecimal kseiTransactionFee = feeParameterMap.get(FeeParameterNameConstant.KSEI);
-            BigDecimal vatFee = feeParameterMap.get(FeeParameterNameConstant.VAT);
+            BigDecimal bis4TransactionFee = feeParameterMap.get(BI_SSSS.getValue());
+            BigDecimal kseiTransactionFee = feeParameterMap.get(KSEI.getValue());
+            BigDecimal vatFee = feeParameterMap.get(VAT.getValue());
 
             List<BillingFund> billingFundList = new ArrayList<>();
 
@@ -147,9 +148,9 @@ public class FundCalculateCalculateServiceImpl implements FundCalculateService {
         for (SkTransaction skTransaction : transactionList) {
             String settlementSystem = skTransaction.getSettlementSystem();
             if (settlementSystem != null) {
-                if (SkTransactionTypeConstant.TRANSACTION_CBEST.equalsIgnoreCase(settlementSystem)) {
+                if (TRANSACTION_CBEST.getValue().equalsIgnoreCase(settlementSystem)) {
                     transactionCBESTTotal++;
-                } else if (SkTransactionTypeConstant.TRANSACTION_BI_SSSS.equalsIgnoreCase(settlementSystem)) {
+                } else if (TRANSACTION_BI_SSSS.getValue().equalsIgnoreCase(settlementSystem)) {
                     transactionBIS4Total++;
                 }
             }
