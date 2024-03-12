@@ -36,7 +36,7 @@ public class SfValCoreIIG {
     private BigDecimal totalHolding;
 
     @Column(name = "price_trub")
-    private Integer priceTrub;
+    private Integer priceTRUB;
 
     @Column(name = "total_market_value")
     private BigDecimal totalMarketValue;
