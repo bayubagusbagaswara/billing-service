@@ -287,4 +287,6 @@ kita coba tambahkan data ke Billing Detail
 ## Format Billing Number
 
 - C135/SS-BS/1223
-SS
+
+- Jika user menekan tombol calculate, maka otomatis semua data yg sudah digenerate akan hilang (REPLACE), hanya sesuai dengan period yang diinputkan
+- karena ini adalah urutan process. Jika poin 1 (calculate) dijalankan ulang, maka akan menghapus proses yang sudah ada
