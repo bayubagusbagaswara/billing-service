@@ -1,9 +1,9 @@
 package com.bayu.billingservice.service.impl;
 
-import com.bayu.billingservice.constant.FeeParameterNameConstant;
 import com.bayu.billingservice.dto.kseisafe.CreateKseiSafeRequest;
 import com.bayu.billingservice.exception.*;
 import com.bayu.billingservice.model.KseiSafekeepingFee;
+import com.bayu.billingservice.model.enumerator.FeeParameter;
 import com.bayu.billingservice.repository.KseiSafekeepingFeeRepository;
 import com.bayu.billingservice.service.FeeParameterService;
 import com.bayu.billingservice.service.KseiSafekeepingFeeService;
@@ -94,7 +94,7 @@ public class KseiSafekeepingFeeServiceImpl implements KseiSafekeepingFeeService 
 
     @Override
     public BigDecimal calculateAmountFeeByCustomerCodeAndMonthAndYear(String customerCode, String month, int year) {
-        BigDecimal vatFee = feeParameterService.getValueByName(FeeParameterNameConstant.VAT);
+        BigDecimal vatFee = feeParameterService.getValueByName(FeeParameter.VAT.getValue());
         log.info("[Ksei Safe Service] VAT Fee : {}", vatFee);
 
         KseiSafekeepingFee kseiSafekeepingFee = kseiSafekeepingFeeRepository.findByCustomerCodeAndMonthAndYear(customerCode, month, year)
