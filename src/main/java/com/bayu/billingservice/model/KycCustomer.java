@@ -45,10 +45,10 @@ public class KycCustomer {
     private String kseiSafeCode;
 
     @Column(name = "minimum_fee")
-    private BigDecimal minimumFee;
+    private BigDecimal minimumFee; // 5.000.000 etc
 
     @Column(name = "customer_fee")
-    private BigDecimal customerFee;
+    private BigDecimal customerFee; // 0.5 etc
 
     @Column(name = "journal")
     private String journal;
