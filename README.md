@@ -290,3 +290,65 @@ kita coba tambahkan data ke Billing Detail
 
 - Jika user menekan tombol calculate, maka otomatis semua data yg sudah digenerate akan hilang (REPLACE), hanya sesuai dengan period yang diinputkan
 - karena ini adalah urutan process. Jika poin 1 (calculate) dijalankan ulang, maka akan menghapus proses yang sudah ada
+
+# Maintenance
+Table BillingFeeParam (untuk fee parameter)
+- Long id
+- String feeCode
+- String feeName
+- double feeValue
+- String description
+
+Table BillingFeeScedule
+- Long id
+- Double feeMin
+- Double feeMax
+- Double feeAmount
+
+Table BillingCustomer (untuk Kyc Customer)
+- Long id
+- String customerCode
+- String customerName
+- String category
+- String type
+- String namaMI
+- String alamatMI
+- String debitTransfer
+- String account
+- String accountName
+- String glAccountHasil
+- String minimumFee
+- String npwp
+- String nameNPWP
+- String customerTemplate
+- String alamatNPWP
+- String costCenter
+- double safekeepingKsei
+- String kseiSafeCode
+- String currency
+- String sellingAgent
+- String informationFee
+
+Table BillingEmailProcessing
+- Long id
+- String customerCode
+- String customerName
+- String customerEmail
+- String period
+- String emailStatus
+- Date sentAt;
+- String description
+
+Table BillingEMaterai
+- Long id
+- String customerCode
+- String securityCode
+- String period
+
+Table BillingSecurity
+- Long id
+- String code
+- String group
+- String currency
+- String issuerName
+- String name
