@@ -3,7 +3,7 @@ package com.bayu.billingservice.controller;
 import com.bayu.billingservice.dto.ResponseDTO;
 import com.bayu.billingservice.dto.kyc.CreateKycRequest;
 import com.bayu.billingservice.dto.kyc.KycCustomerDTO;
-import com.bayu.billingservice.service.KycCustomerService;
+import com.bayu.billingservice.service.BillingCustomerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -16,15 +16,15 @@ import java.util.List;
 @RestController
 @RequestMapping(path = "/api/kyc-customer")
 @RequiredArgsConstructor
-public class KycCustomerController {
+public class BillingCustomerController {
 
-    private final KycCustomerService kycCustomerService;
+    private final BillingCustomerService billingCustomerService;
 
     @GetMapping(path = "/create")
     public ResponseEntity<ResponseDTO<KycCustomerDTO>> create(@RequestBody CreateKycRequest request) {
         log.info("Start Create Mock Kyc Customer");
 
-        KycCustomerDTO kycCustomerDTO = kycCustomerService.create(request);
+        KycCustomerDTO kycCustomerDTO = billingCustomerService.create(request);
 
         ResponseDTO<KycCustomerDTO> response = ResponseDTO.<KycCustomerDTO>builder()
                 .code(HttpStatus.CREATED.value())
@@ -38,7 +38,7 @@ public class KycCustomerController {
     @GetMapping(path = "/all")
     public ResponseEntity<ResponseDTO<List<KycCustomerDTO>>> getAll() {
 
-        List<KycCustomerDTO> kycCustomerDTOList = kycCustomerService.getAll();
+        List<KycCustomerDTO> kycCustomerDTOList = billingCustomerService.getAll();
 
         ResponseDTO<List<KycCustomerDTO>> response = ResponseDTO.<List<KycCustomerDTO>>builder()
                 .code(HttpStatus.OK.value())
@@ -51,7 +51,7 @@ public class KycCustomerController {
 
     @DeleteMapping
     public ResponseEntity<ResponseDTO<String>> delete() {
-        String status = kycCustomerService.deleteAll();
+        String status = billingCustomerService.deleteAll();
 
         ResponseDTO<String> response = ResponseDTO.<String>builder()
                 .code(HttpStatus.OK.value())

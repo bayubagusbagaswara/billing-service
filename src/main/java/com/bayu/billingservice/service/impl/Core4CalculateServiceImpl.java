@@ -14,17 +14,17 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class Core4CalculateServiceImpl implements Core4CalculateService {
 
-    private final KycCustomerService kycCustomerService;
+    private final BillingCustomerService billingCustomerService;
     private final FeeParameterService feeParameterService;
-    private SkTransactionService skTransactionService;
-    private SfValRgDailyService sfValRgDailyService;
-    private KseiSafekeepingFeeService kseiSafekeepingFeeService;
+    private final SkTransactionService skTransactionService;
+    private final SfValRgDailyService sfValRgDailyService;
+    private final KseiSafekeepingFeeService kseiSafekeepingFeeService;
 
     @Override
     public Map<String, List<Object>> calculate(String category, String type, String monthYear) {
 
         // KYC Customer List
-        List<KycCustomerDTO> kycCustomerDTOList = kycCustomerService.getByBillingCategoryAndBillingType(category, type);
+        List<KycCustomerDTO> kycCustomerDTOList = billingCustomerService.getByBillingCategoryAndBillingType(category, type);
         return null;
     }
 

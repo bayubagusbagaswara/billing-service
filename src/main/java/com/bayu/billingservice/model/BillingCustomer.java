@@ -9,12 +9,12 @@ import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 
 @Entity
-@Table(name = "kyc_customer")
+@Table(name = "billing_customer")
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class KycCustomer {
+public class BillingCustomer {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

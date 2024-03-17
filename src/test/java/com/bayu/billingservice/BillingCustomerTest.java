@@ -2,7 +2,7 @@ package com.bayu.billingservice;
 
 import com.bayu.billingservice.dto.kyc.CreateKycRequest;
 import com.bayu.billingservice.dto.kyc.KycCustomerDTO;
-import com.bayu.billingservice.service.KycCustomerService;
+import com.bayu.billingservice.service.BillingCustomerService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,10 +13,10 @@ import static org.junit.jupiter.api.Assertions.*;
 @Slf4j
 @SpringBootTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-class KycCustomerTest {
+class BillingCustomerTest {
 
     @Autowired
-    KycCustomerService kycCustomerService;
+    BillingCustomerService billingCustomerService;
     @Test
     @Order(1)
     void createKycCustomerCoreType1() {
@@ -37,7 +37,7 @@ class KycCustomerTest {
                 .billingTemplate("TEMPLATE_3")
                 .build();
 
-        KycCustomerDTO kycCustomerDTO = kycCustomerService.create(request);
+        KycCustomerDTO kycCustomerDTO = billingCustomerService.create(request);
 
         assertNotNull(kycCustomerDTO.getId());
         assertEquals(request.getAid(), kycCustomerDTO.getAid());
@@ -59,7 +59,7 @@ class KycCustomerTest {
                 .billingTemplate("TEMPLATE_3")
                 .build();
 
-        KycCustomerDTO kycCustomerDTO = kycCustomerService.create(request);
+        KycCustomerDTO kycCustomerDTO = billingCustomerService.create(request);
 
         assertNotNull(kycCustomerDTO.getId());
         assertEquals(request.getAid(), kycCustomerDTO.getAid());
@@ -81,7 +81,7 @@ class KycCustomerTest {
                 .billingTemplate("TEMPLATE_7")
                 .build();
 
-        KycCustomerDTO kycCustomerDTO = kycCustomerService.create(request);
+        KycCustomerDTO kycCustomerDTO = billingCustomerService.create(request);
 
         assertNotNull(kycCustomerDTO.getId());
         assertEquals(request.getAid(), kycCustomerDTO.getAid());
@@ -104,7 +104,7 @@ class KycCustomerTest {
                 .billingTemplate("TEMPLATE_3")
                 .build();
 
-        KycCustomerDTO kycCustomerDTO = kycCustomerService.create(request);
+        KycCustomerDTO kycCustomerDTO = billingCustomerService.create(request);
 
         assertNotNull(kycCustomerDTO.getId());
         assertEquals(request.getAid(), kycCustomerDTO.getAid());
@@ -126,7 +126,7 @@ class KycCustomerTest {
                 .billingTemplate("TEMPLATE_5")
                 .build();
 
-        KycCustomerDTO kycCustomerDTO = kycCustomerService.create(request);
+        KycCustomerDTO kycCustomerDTO = billingCustomerService.create(request);
 
         assertNotNull(kycCustomerDTO.getId());
         assertEquals(request.getAid(), kycCustomerDTO.getAid());
@@ -149,7 +149,7 @@ class KycCustomerTest {
                 .billingTemplate("TEMPLATE_1")
                 .build();
 
-        KycCustomerDTO kycCustomerDTO = kycCustomerService.create(request);
+        KycCustomerDTO kycCustomerDTO = billingCustomerService.create(request);
 
         assertNotNull(kycCustomerDTO.getId());
         assertEquals(request.getAid(), kycCustomerDTO.getAid());
@@ -172,7 +172,7 @@ class KycCustomerTest {
                 .billingTemplate("TEMPLATE_4")
                 .build();
 
-        KycCustomerDTO kycCustomerDTO = kycCustomerService.create(request);
+        KycCustomerDTO kycCustomerDTO = billingCustomerService.create(request);
 
         assertNotNull(kycCustomerDTO.getId());
         assertEquals(request.getAid(), kycCustomerDTO.getAid());
@@ -195,7 +195,7 @@ class KycCustomerTest {
                 .billingTemplate("TEMPLATE_2")
                 .build();
 
-        KycCustomerDTO kycCustomerDTO = kycCustomerService.create(request);
+        KycCustomerDTO kycCustomerDTO = billingCustomerService.create(request);
 
         assertNotNull(kycCustomerDTO.getId());
         assertEquals(request.getAid(), kycCustomerDTO.getAid());
@@ -218,7 +218,7 @@ class KycCustomerTest {
                 .billingTemplate("TEMPLATE_2")
                 .build();
 
-        KycCustomerDTO kycCustomerDTO = kycCustomerService.create(request);
+        KycCustomerDTO kycCustomerDTO = billingCustomerService.create(request);
 
         assertNotNull(kycCustomerDTO.getId());
         assertEquals(request.getAid(), kycCustomerDTO.getAid());
@@ -241,7 +241,7 @@ class KycCustomerTest {
                 .billingTemplate("TEMPLATE_6")
                 .build();
 
-        KycCustomerDTO kycCustomerDTO = kycCustomerService.create(request);
+        KycCustomerDTO kycCustomerDTO = billingCustomerService.create(request);
 
         assertNotNull(kycCustomerDTO.getId());
         assertEquals(request.getAid(), kycCustomerDTO.getAid());
@@ -264,7 +264,7 @@ class KycCustomerTest {
                 .billingTemplate("TEMPLATE_6")
                 .build();
 
-        KycCustomerDTO kycCustomerDTO = kycCustomerService.create(request);
+        KycCustomerDTO kycCustomerDTO = billingCustomerService.create(request);
 
         assertNotNull(kycCustomerDTO.getId());
         assertEquals(request.getAid(), kycCustomerDTO.getAid());
@@ -287,7 +287,7 @@ class KycCustomerTest {
                 .billingTemplate("TEMPLATE_6")
                 .build();
 
-        KycCustomerDTO kycCustomerDTO = kycCustomerService.create(request);
+        KycCustomerDTO kycCustomerDTO = billingCustomerService.create(request);
 
         assertNotNull(kycCustomerDTO.getId());
         assertEquals(request.getAid(), kycCustomerDTO.getAid());
@@ -309,7 +309,7 @@ class KycCustomerTest {
                 .billingTemplate("TEMPLATE_3")
                 .build();
 
-        KycCustomerDTO kycCustomerDTO = kycCustomerService.create(request);
+        KycCustomerDTO kycCustomerDTO = billingCustomerService.create(request);
 
         assertNotNull(kycCustomerDTO.getId());
         assertEquals(request.getAid(), kycCustomerDTO.getAid());
@@ -331,7 +331,7 @@ class KycCustomerTest {
                 .billingTemplate("TEMPLATE_8")
                 .build();
 
-        KycCustomerDTO kycCustomerDTO = kycCustomerService.create(request);
+        KycCustomerDTO kycCustomerDTO = billingCustomerService.create(request);
 
         assertNotNull(kycCustomerDTO.getId());
         assertEquals(request.getAid(), kycCustomerDTO.getAid());
@@ -354,7 +354,7 @@ class KycCustomerTest {
                 .billingTemplate("TEMPLATE_3")
                 .build();
 
-        KycCustomerDTO kycCustomerDTO = kycCustomerService.create(request);
+        KycCustomerDTO kycCustomerDTO = billingCustomerService.create(request);
 
         assertNotNull(kycCustomerDTO.getId());
         assertEquals(request.getAid(), kycCustomerDTO.getAid());
@@ -377,7 +377,7 @@ class KycCustomerTest {
                 .billingTemplate("TEMPLATE_3")
                 .build();
 
-        KycCustomerDTO kycCustomerDTO = kycCustomerService.create(request);
+        KycCustomerDTO kycCustomerDTO = billingCustomerService.create(request);
 
         assertNotNull(kycCustomerDTO.getId());
         assertEquals(request.getAid(), kycCustomerDTO.getAid());
@@ -400,7 +400,7 @@ class KycCustomerTest {
                 .billingTemplate("TEMPLATE_3")
                 .build();
 
-        KycCustomerDTO kycCustomerDTO = kycCustomerService.create(request);
+        KycCustomerDTO kycCustomerDTO = billingCustomerService.create(request);
 
         assertNotNull(kycCustomerDTO.getId());
         assertEquals(request.getAid(), kycCustomerDTO.getAid());
