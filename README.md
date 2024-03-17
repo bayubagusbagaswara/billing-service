@@ -339,3 +339,7 @@ Table BillingSecurity
 - String currency
 - String issuerName
 - String name
+
+# General Ledger (GL)
+
+
