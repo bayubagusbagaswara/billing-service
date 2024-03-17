@@ -10,7 +10,7 @@ import java.util.Optional;
 @Repository
 public interface BillingCustomerRepository extends JpaRepository<BillingCustomer, Long> {
 
-    Optional<BillingCustomer> findByAid(String aid);
+    Optional<BillingCustomer> findByCustomerCode(String aid);
 
     Optional<BillingCustomer> findByKseiSafeCode(String kseiSafeCode);
 
