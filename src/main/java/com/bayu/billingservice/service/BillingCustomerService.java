@@ -1,17 +1,17 @@
 package com.bayu.billingservice.service;
 
 import com.bayu.billingservice.dto.kyc.CreateKycRequest;
-import com.bayu.billingservice.dto.kyc.KycCustomerDTO;
+import com.bayu.billingservice.dto.kyc.BillingCustomerDTO;
 
 import java.util.List;
 
 public interface BillingCustomerService {
 
-    KycCustomerDTO create(CreateKycRequest request);
+    BillingCustomerDTO create(CreateKycRequest request);
 
-    List<KycCustomerDTO> getAll();
+    List<BillingCustomerDTO> getAll();
 
-    List<KycCustomerDTO> getByBillingCategoryAndBillingType(String billingCategory, String billingType);
+    List<BillingCustomerDTO> getByBillingCategoryAndBillingType(String billingCategory, String billingType);
 
     String deleteAll();
 }

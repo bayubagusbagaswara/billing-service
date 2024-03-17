@@ -10,4 +10,5 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(path = "/api/core-4")
 @RequiredArgsConstructor
 public class Core4Controller {
+
 }

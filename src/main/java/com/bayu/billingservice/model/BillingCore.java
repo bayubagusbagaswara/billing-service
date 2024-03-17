@@ -67,6 +67,30 @@ public class BillingCore extends BaseBilling {
     @Column(name = "total_amount_due")
     private BigDecimal totalAmountDue;
 
+    // KSEI Safe Fee Amount
+    @Column(name = "ksei_safekeeping_amount_due")
+    private BigDecimal kseiSafekeepingAmountDue;
+
+    // For Transaction KSEI
+    @Column(name = "ksei_transaction_value_frequency")
+    private Integer kseiTransactionValueFrequency;
+
+    @Column(name = "ksei_transaction_fee")
+    private BigDecimal kseiTransactionFee;
+
+    @Column(name = "ksei_transaction_amount_due")
+    private BigDecimal kseiTransactionAmountDue;
+
+    // For Transaction BI-SSS
+    @Column(name = "bis4_transaction_value_frequency")
+    private String bis4TransactionValueFrequency;
+
+    @Column(name = "bis4_transaction_fee")
+    private String bis4TransactionFee;
+
+    @Column(name = "bis4_transaction_amount_due")
+    private String bis4TransactionAmountDue;
+
     // Especially Core Type 8 IIG, because USD
     @Column(name = "administration_setup_item")
     private BigDecimal administrationSetUpItem;

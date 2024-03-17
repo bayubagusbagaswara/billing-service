@@ -11,17 +11,15 @@ import java.math.BigDecimal;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class KycCustomerDTO {
+public class BillingCustomerDTO {
 
     private Long id;
 
-    private String aid;
+    private String customerCode; // alias AID
 
     private String investmentManagementName;
 
     private String investmentManagementAddress;
-
-    private String productName;
 
     private String accountName;
 
@@ -31,11 +29,10 @@ public class KycCustomerDTO {
 
     private String kseiSafeCode;
 
-    private BigDecimal minimumFee;
+    private BigDecimal customerMinimumFee;
 
-    private BigDecimal customerFee;
+    private BigDecimal customerSafekeepingFee;
 
-    private String journal;
 
     private String billingCategory;
 

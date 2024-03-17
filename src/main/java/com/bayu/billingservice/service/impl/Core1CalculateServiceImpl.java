@@ -1,7 +1,7 @@
 package com.bayu.billingservice.service.impl;
 
 import com.bayu.billingservice.dto.CoreCalculateRequest;
-import com.bayu.billingservice.dto.kyc.KycCustomerDTO;
+import com.bayu.billingservice.dto.kyc.BillingCustomerDTO;
 import com.bayu.billingservice.exception.CalculateBillingException;
 import com.bayu.billingservice.model.BillingCore;
 import com.bayu.billingservice.model.SfValRgDaily;
@@ -56,7 +56,7 @@ public class Core1CalculateServiceImpl implements Core1CalculateService {
             List<BillingCore> billingCoreList = new ArrayList<>();
 
             // Get data KYC Customer
-            List<KycCustomerDTO> kycCustomerDTOList = billingCustomerService.getByBillingCategoryAndBillingType(categoryUpperCase, typeUpperCase);
+            List<BillingCustomerDTO> billingCustomerDTOList = billingCustomerService.getByBillingCategoryAndBillingType(categoryUpperCase, typeUpperCase);
 
             // Get data Fee Parameter
             List<String> feeParamList = new ArrayList<>();
@@ -67,10 +67,10 @@ public class Core1CalculateServiceImpl implements Core1CalculateService {
             BigDecimal transactionHandlingFee = feeParamMap.get(TRANSACTION_HANDLING_IDR.getValue());
             BigDecimal vatFee = feeParamMap.get(VAT.getValue());
 
-            for (KycCustomerDTO kycCustomerDTO : kycCustomerDTOList) {
-                String aid = kycCustomerDTO.getAid();
-                String billingCategory = kycCustomerDTO.getBillingCategory();
-                String billingType = kycCustomerDTO.getBillingType();
+            for (BillingCustomerDTO billingCustomerDTO : billingCustomerDTOList) {
+                String aid = billingCustomerDTO.getCustomerCode();
+                String billingCategory = billingCustomerDTO.getBillingCategory();
+                String billingType = billingCustomerDTO.getBillingType();
 
                 List<SkTransaction> skTransactionList = skTransactionService.getAllByAidAndMonthAndYear(aid, monthName, year);
 
@@ -105,28 +105,27 @@ public class Core1CalculateServiceImpl implements Core1CalculateService {
                         .createdAt(dateNow)
                         .updatedAt(dateNow)
                         .approvalStatus(PENDING.getStatus())
-                        .aid(kycCustomerDTO.getAid())
+                        .aid(billingCustomerDTO.getCustomerCode())
                         .month(monthName)
                         .year(year)
                         .billingPeriod(monthName + " " + year)
                         .billingStatementDate(ConvertDateUtil.convertInstantToString(dateNow))
                         .billingPaymentDueDate(ConvertDateUtil.convertInstantToStringPlus14Days(dateNow))
-                        .billingCategory(kycCustomerDTO.getBillingCategory())
-                        .billingType(kycCustomerDTO.getBillingType())
-                        .billingTemplate(kycCustomerDTO.getBillingTemplate())
-                        .investmentManagementName(kycCustomerDTO.getInvestmentManagementName())
-                        .investmentManagementAddress(kycCustomerDTO.getInvestmentManagementAddress())
-                        .productName(kycCustomerDTO.getProductName())
-                        .accountName(kycCustomerDTO.getAccountName())
-                        .accountNumber(kycCustomerDTO.getAccountNumber())
-                        .accountBank(kycCustomerDTO.getAccountBank())
+                        .billingCategory(billingCustomerDTO.getBillingCategory())
+                        .billingType(billingCustomerDTO.getBillingType())
+                        .billingTemplate(billingCustomerDTO.getBillingTemplate())
+                        .investmentManagementName(billingCustomerDTO.getInvestmentManagementName())
+                        .investmentManagementAddress(billingCustomerDTO.getInvestmentManagementAddress())
+                        .accountName(billingCustomerDTO.getAccountName())
+                        .accountNumber(billingCustomerDTO.getAccountNumber())
+                        .accountBank(billingCustomerDTO.getAccountBank())
                         .currency(IDR.getValue())
-                        .minimumFee(kycCustomerDTO.getMinimumFee())
+                        .minimumFee(billingCustomerDTO.getCustomerMinimumFee())
                         .transactionHandlingValueFrequency(transactionHandlingValueFrequency)
                         .transactionHandlingFee(transactionHandlingFee)
                         .transactionHandlingAmountDue(transactionHandlingAmountDue)
                         .safekeepingValueFrequency(safekeepingValueFrequency)
-                        .safekeepingFee(kycCustomerDTO.getCustomerFee())
+                        .safekeepingFee(billingCustomerDTO.getCustomerSafekeepingFee())
                         .safekeepingAmountDue(safekeepingAmountDue)
                         .subTotal(subTotal)
                         .vatFee(vatFee)

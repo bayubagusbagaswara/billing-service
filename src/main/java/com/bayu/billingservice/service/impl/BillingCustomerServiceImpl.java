@@ -1,7 +1,7 @@
 package com.bayu.billingservice.service.impl;
 
 import com.bayu.billingservice.dto.kyc.CreateKycRequest;
-import com.bayu.billingservice.dto.kyc.KycCustomerDTO;
+import com.bayu.billingservice.dto.kyc.BillingCustomerDTO;
 import com.bayu.billingservice.exception.ConnectionDatabaseException;
 import com.bayu.billingservice.model.BillingCustomer;
 import com.bayu.billingservice.repository.BillingCustomerRepository;
@@ -23,7 +23,7 @@ public class BillingCustomerServiceImpl implements BillingCustomerService {
     }
 
     @Override
-    public KycCustomerDTO create(CreateKycRequest request) {
+    public BillingCustomerDTO create(CreateKycRequest request) {
         log.info("Create Kyc : {}", request);
 
         BigDecimal minimumFee = request.getMinimumFee().isEmpty() ? BigDecimal.ZERO : new BigDecimal(request.getMinimumFee());
@@ -49,12 +49,12 @@ public class BillingCustomerServiceImpl implements BillingCustomerService {
     }
 
     @Override
-    public List<KycCustomerDTO> getAll() {
+    public List<BillingCustomerDTO> getAll() {
         return mapToDTOList(billingCustomerRepository.findAll());
     }
 
     @Override
-    public List<KycCustomerDTO> getByBillingCategoryAndBillingType(String billingCategory, String billingType) {
+    public List<BillingCustomerDTO> getByBillingCategoryAndBillingType(String billingCategory, String billingType) {
         List<BillingCustomer> billingCustomerList = billingCustomerRepository.findByBillingCategoryAndBillingType(billingCategory, billingType);
         return mapToDTOList(billingCustomerList);
     }
@@ -70,8 +70,8 @@ public class BillingCustomerServiceImpl implements BillingCustomerService {
         }
     }
 
-    private static KycCustomerDTO mapToDTO(BillingCustomer billingCustomer) {
-        return KycCustomerDTO.builder()
+    private static BillingCustomerDTO mapToDTO(BillingCustomer billingCustomer) {
+        return BillingCustomerDTO.builder()
                 .id(billingCustomer.getId())
                 .aid(billingCustomer.getCustomerCode())
                 .investmentManagementName(billingCustomer.getInvestmentManagementName())
@@ -88,7 +88,7 @@ public class BillingCustomerServiceImpl implements BillingCustomerService {
                 .build();
     }
 
-    private static List<KycCustomerDTO> mapToDTOList(List<BillingCustomer> billingCustomerList) {
+    private static List<BillingCustomerDTO> mapToDTOList(List<BillingCustomer> billingCustomerList) {
         return billingCustomerList.stream()
                 .map(BillingCustomerServiceImpl::mapToDTO)
                 .toList();

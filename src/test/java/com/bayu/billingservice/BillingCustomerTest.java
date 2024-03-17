@@ -1,7 +1,7 @@
 package com.bayu.billingservice;
 
 import com.bayu.billingservice.dto.kyc.CreateKycRequest;
-import com.bayu.billingservice.dto.kyc.KycCustomerDTO;
+import com.bayu.billingservice.dto.kyc.BillingCustomerDTO;
 import com.bayu.billingservice.service.BillingCustomerService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
@@ -37,12 +37,12 @@ class BillingCustomerTest {
                 .billingTemplate("TEMPLATE_3")
                 .build();
 
-        KycCustomerDTO kycCustomerDTO = billingCustomerService.create(request);
+        BillingCustomerDTO billingCustomerDTO = billingCustomerService.create(request);
 
-        assertNotNull(kycCustomerDTO.getId());
-        assertEquals(request.getAid(), kycCustomerDTO.getAid());
-        assertEquals(request.getBillingCategory(), kycCustomerDTO.getBillingCategory());
-        assertEquals(request.getBillingType(), kycCustomerDTO.getBillingType());
+        assertNotNull(billingCustomerDTO.getId());
+        assertEquals(request.getAid(), billingCustomerDTO.getAid());
+        assertEquals(request.getBillingCategory(), billingCustomerDTO.getBillingCategory());
+        assertEquals(request.getBillingType(), billingCustomerDTO.getBillingType());
     }
 
     @Test
@@ -59,12 +59,12 @@ class BillingCustomerTest {
                 .billingTemplate("TEMPLATE_3")
                 .build();
 
-        KycCustomerDTO kycCustomerDTO = billingCustomerService.create(request);
+        BillingCustomerDTO billingCustomerDTO = billingCustomerService.create(request);
 
-        assertNotNull(kycCustomerDTO.getId());
-        assertEquals(request.getAid(), kycCustomerDTO.getAid());
-        assertEquals(request.getBillingCategory(), kycCustomerDTO.getBillingCategory());
-        assertEquals(request.getBillingType(), kycCustomerDTO.getBillingType());
+        assertNotNull(billingCustomerDTO.getId());
+        assertEquals(request.getAid(), billingCustomerDTO.getAid());
+        assertEquals(request.getBillingCategory(), billingCustomerDTO.getBillingCategory());
+        assertEquals(request.getBillingType(), billingCustomerDTO.getBillingType());
     }
 
     @Test
@@ -81,12 +81,12 @@ class BillingCustomerTest {
                 .billingTemplate("TEMPLATE_7")
                 .build();
 
-        KycCustomerDTO kycCustomerDTO = billingCustomerService.create(request);
+        BillingCustomerDTO billingCustomerDTO = billingCustomerService.create(request);
 
-        assertNotNull(kycCustomerDTO.getId());
-        assertEquals(request.getAid(), kycCustomerDTO.getAid());
-        assertEquals(request.getBillingCategory(), kycCustomerDTO.getBillingCategory());
-        assertEquals(request.getBillingType(), kycCustomerDTO.getBillingType());
+        assertNotNull(billingCustomerDTO.getId());
+        assertEquals(request.getAid(), billingCustomerDTO.getAid());
+        assertEquals(request.getBillingCategory(), billingCustomerDTO.getBillingCategory());
+        assertEquals(request.getBillingType(), billingCustomerDTO.getBillingType());
     }
 
     @Test
@@ -104,12 +104,12 @@ class BillingCustomerTest {
                 .billingTemplate("TEMPLATE_3")
                 .build();
 
-        KycCustomerDTO kycCustomerDTO = billingCustomerService.create(request);
+        BillingCustomerDTO billingCustomerDTO = billingCustomerService.create(request);
 
-        assertNotNull(kycCustomerDTO.getId());
-        assertEquals(request.getAid(), kycCustomerDTO.getAid());
-        assertEquals(request.getBillingCategory(), kycCustomerDTO.getBillingCategory());
-        assertEquals(request.getBillingType(), kycCustomerDTO.getBillingType());
+        assertNotNull(billingCustomerDTO.getId());
+        assertEquals(request.getAid(), billingCustomerDTO.getAid());
+        assertEquals(request.getBillingCategory(), billingCustomerDTO.getBillingCategory());
+        assertEquals(request.getBillingType(), billingCustomerDTO.getBillingType());
     }
 
     @Test
@@ -126,12 +126,12 @@ class BillingCustomerTest {
                 .billingTemplate("TEMPLATE_5")
                 .build();
 
-        KycCustomerDTO kycCustomerDTO = billingCustomerService.create(request);
+        BillingCustomerDTO billingCustomerDTO = billingCustomerService.create(request);
 
-        assertNotNull(kycCustomerDTO.getId());
-        assertEquals(request.getAid(), kycCustomerDTO.getAid());
-        assertEquals(request.getBillingCategory(), kycCustomerDTO.getBillingCategory());
-        assertEquals(request.getBillingType(), kycCustomerDTO.getBillingType());
+        assertNotNull(billingCustomerDTO.getId());
+        assertEquals(request.getAid(), billingCustomerDTO.getAid());
+        assertEquals(request.getBillingCategory(), billingCustomerDTO.getBillingCategory());
+        assertEquals(request.getBillingType(), billingCustomerDTO.getBillingType());
     }
 
     @Test
@@ -149,12 +149,12 @@ class BillingCustomerTest {
                 .billingTemplate("TEMPLATE_1")
                 .build();
 
-        KycCustomerDTO kycCustomerDTO = billingCustomerService.create(request);
+        BillingCustomerDTO billingCustomerDTO = billingCustomerService.create(request);
 
-        assertNotNull(kycCustomerDTO.getId());
-        assertEquals(request.getAid(), kycCustomerDTO.getAid());
-        assertEquals(request.getBillingCategory(), kycCustomerDTO.getBillingCategory());
-        assertEquals(request.getBillingType(), kycCustomerDTO.getBillingType());
+        assertNotNull(billingCustomerDTO.getId());
+        assertEquals(request.getAid(), billingCustomerDTO.getAid());
+        assertEquals(request.getBillingCategory(), billingCustomerDTO.getBillingCategory());
+        assertEquals(request.getBillingType(), billingCustomerDTO.getBillingType());
     }
 
     @Test
@@ -172,12 +172,12 @@ class BillingCustomerTest {
                 .billingTemplate("TEMPLATE_4")
                 .build();
 
-        KycCustomerDTO kycCustomerDTO = billingCustomerService.create(request);
+        BillingCustomerDTO billingCustomerDTO = billingCustomerService.create(request);
 
-        assertNotNull(kycCustomerDTO.getId());
-        assertEquals(request.getAid(), kycCustomerDTO.getAid());
-        assertEquals(request.getBillingCategory(), kycCustomerDTO.getBillingCategory());
-        assertEquals(request.getBillingType(), kycCustomerDTO.getBillingType());
+        assertNotNull(billingCustomerDTO.getId());
+        assertEquals(request.getAid(), billingCustomerDTO.getAid());
+        assertEquals(request.getBillingCategory(), billingCustomerDTO.getBillingCategory());
+        assertEquals(request.getBillingType(), billingCustomerDTO.getBillingType());
     }
 
     @Test
@@ -195,12 +195,12 @@ class BillingCustomerTest {
                 .billingTemplate("TEMPLATE_2")
                 .build();
 
-        KycCustomerDTO kycCustomerDTO = billingCustomerService.create(request);
+        BillingCustomerDTO billingCustomerDTO = billingCustomerService.create(request);
 
-        assertNotNull(kycCustomerDTO.getId());
-        assertEquals(request.getAid(), kycCustomerDTO.getAid());
-        assertEquals(request.getBillingCategory(), kycCustomerDTO.getBillingCategory());
-        assertEquals(request.getBillingType(), kycCustomerDTO.getBillingType());
+        assertNotNull(billingCustomerDTO.getId());
+        assertEquals(request.getAid(), billingCustomerDTO.getAid());
+        assertEquals(request.getBillingCategory(), billingCustomerDTO.getBillingCategory());
+        assertEquals(request.getBillingType(), billingCustomerDTO.getBillingType());
     }
 
     @Test
@@ -218,12 +218,12 @@ class BillingCustomerTest {
                 .billingTemplate("TEMPLATE_2")
                 .build();
 
-        KycCustomerDTO kycCustomerDTO = billingCustomerService.create(request);
+        BillingCustomerDTO billingCustomerDTO = billingCustomerService.create(request);
 
-        assertNotNull(kycCustomerDTO.getId());
-        assertEquals(request.getAid(), kycCustomerDTO.getAid());
-        assertEquals(request.getBillingCategory(), kycCustomerDTO.getBillingCategory());
-        assertEquals(request.getBillingType(), kycCustomerDTO.getBillingType());
+        assertNotNull(billingCustomerDTO.getId());
+        assertEquals(request.getAid(), billingCustomerDTO.getAid());
+        assertEquals(request.getBillingCategory(), billingCustomerDTO.getBillingCategory());
+        assertEquals(request.getBillingType(), billingCustomerDTO.getBillingType());
     }
 
     @Test
@@ -241,12 +241,12 @@ class BillingCustomerTest {
                 .billingTemplate("TEMPLATE_6")
                 .build();
 
-        KycCustomerDTO kycCustomerDTO = billingCustomerService.create(request);
+        BillingCustomerDTO billingCustomerDTO = billingCustomerService.create(request);
 
-        assertNotNull(kycCustomerDTO.getId());
-        assertEquals(request.getAid(), kycCustomerDTO.getAid());
-        assertEquals(request.getBillingCategory(), kycCustomerDTO.getBillingCategory());
-        assertEquals(request.getBillingType(), kycCustomerDTO.getBillingType());
+        assertNotNull(billingCustomerDTO.getId());
+        assertEquals(request.getAid(), billingCustomerDTO.getAid());
+        assertEquals(request.getBillingCategory(), billingCustomerDTO.getBillingCategory());
+        assertEquals(request.getBillingType(), billingCustomerDTO.getBillingType());
     }
 
     @Test
@@ -264,12 +264,12 @@ class BillingCustomerTest {
                 .billingTemplate("TEMPLATE_6")
                 .build();
 
-        KycCustomerDTO kycCustomerDTO = billingCustomerService.create(request);
+        BillingCustomerDTO billingCustomerDTO = billingCustomerService.create(request);
 
-        assertNotNull(kycCustomerDTO.getId());
-        assertEquals(request.getAid(), kycCustomerDTO.getAid());
-        assertEquals(request.getBillingCategory(), kycCustomerDTO.getBillingCategory());
-        assertEquals(request.getBillingType(), kycCustomerDTO.getBillingType());
+        assertNotNull(billingCustomerDTO.getId());
+        assertEquals(request.getAid(), billingCustomerDTO.getAid());
+        assertEquals(request.getBillingCategory(), billingCustomerDTO.getBillingCategory());
+        assertEquals(request.getBillingType(), billingCustomerDTO.getBillingType());
     }
 
     @Test
@@ -287,12 +287,12 @@ class BillingCustomerTest {
                 .billingTemplate("TEMPLATE_6")
                 .build();
 
-        KycCustomerDTO kycCustomerDTO = billingCustomerService.create(request);
+        BillingCustomerDTO billingCustomerDTO = billingCustomerService.create(request);
 
-        assertNotNull(kycCustomerDTO.getId());
-        assertEquals(request.getAid(), kycCustomerDTO.getAid());
-        assertEquals(request.getBillingCategory(), kycCustomerDTO.getBillingCategory());
-        assertEquals(request.getBillingType(), kycCustomerDTO.getBillingType());
+        assertNotNull(billingCustomerDTO.getId());
+        assertEquals(request.getAid(), billingCustomerDTO.getAid());
+        assertEquals(request.getBillingCategory(), billingCustomerDTO.getBillingCategory());
+        assertEquals(request.getBillingType(), billingCustomerDTO.getBillingType());
     }
 
     @Test
@@ -309,12 +309,12 @@ class BillingCustomerTest {
                 .billingTemplate("TEMPLATE_3")
                 .build();
 
-        KycCustomerDTO kycCustomerDTO = billingCustomerService.create(request);
+        BillingCustomerDTO billingCustomerDTO = billingCustomerService.create(request);
 
-        assertNotNull(kycCustomerDTO.getId());
-        assertEquals(request.getAid(), kycCustomerDTO.getAid());
-        assertEquals(request.getBillingCategory(), kycCustomerDTO.getBillingCategory());
-        assertEquals(request.getBillingType(), kycCustomerDTO.getBillingType());
+        assertNotNull(billingCustomerDTO.getId());
+        assertEquals(request.getAid(), billingCustomerDTO.getAid());
+        assertEquals(request.getBillingCategory(), billingCustomerDTO.getBillingCategory());
+        assertEquals(request.getBillingType(), billingCustomerDTO.getBillingType());
     }
 
     @Test
@@ -331,12 +331,12 @@ class BillingCustomerTest {
                 .billingTemplate("TEMPLATE_8")
                 .build();
 
-        KycCustomerDTO kycCustomerDTO = billingCustomerService.create(request);
+        BillingCustomerDTO billingCustomerDTO = billingCustomerService.create(request);
 
-        assertNotNull(kycCustomerDTO.getId());
-        assertEquals(request.getAid(), kycCustomerDTO.getAid());
-        assertEquals(request.getBillingCategory(), kycCustomerDTO.getBillingCategory());
-        assertEquals(request.getBillingType(), kycCustomerDTO.getBillingType());
+        assertNotNull(billingCustomerDTO.getId());
+        assertEquals(request.getAid(), billingCustomerDTO.getAid());
+        assertEquals(request.getBillingCategory(), billingCustomerDTO.getBillingCategory());
+        assertEquals(request.getBillingType(), billingCustomerDTO.getBillingType());
     }
 
     @Test
@@ -354,12 +354,12 @@ class BillingCustomerTest {
                 .billingTemplate("TEMPLATE_3")
                 .build();
 
-        KycCustomerDTO kycCustomerDTO = billingCustomerService.create(request);
+        BillingCustomerDTO billingCustomerDTO = billingCustomerService.create(request);
 
-        assertNotNull(kycCustomerDTO.getId());
-        assertEquals(request.getAid(), kycCustomerDTO.getAid());
-        assertEquals(request.getBillingCategory(), kycCustomerDTO.getBillingCategory());
-        assertEquals(request.getBillingType(), kycCustomerDTO.getBillingType());
+        assertNotNull(billingCustomerDTO.getId());
+        assertEquals(request.getAid(), billingCustomerDTO.getAid());
+        assertEquals(request.getBillingCategory(), billingCustomerDTO.getBillingCategory());
+        assertEquals(request.getBillingType(), billingCustomerDTO.getBillingType());
     }
 
     @Test
@@ -377,12 +377,12 @@ class BillingCustomerTest {
                 .billingTemplate("TEMPLATE_3")
                 .build();
 
-        KycCustomerDTO kycCustomerDTO = billingCustomerService.create(request);
+        BillingCustomerDTO billingCustomerDTO = billingCustomerService.create(request);
 
-        assertNotNull(kycCustomerDTO.getId());
-        assertEquals(request.getAid(), kycCustomerDTO.getAid());
-        assertEquals(request.getBillingCategory(), kycCustomerDTO.getBillingCategory());
-        assertEquals(request.getBillingType(), kycCustomerDTO.getBillingType());
+        assertNotNull(billingCustomerDTO.getId());
+        assertEquals(request.getAid(), billingCustomerDTO.getAid());
+        assertEquals(request.getBillingCategory(), billingCustomerDTO.getBillingCategory());
+        assertEquals(request.getBillingType(), billingCustomerDTO.getBillingType());
     }
 
     @Test
@@ -400,12 +400,12 @@ class BillingCustomerTest {
                 .billingTemplate("TEMPLATE_3")
                 .build();
 
-        KycCustomerDTO kycCustomerDTO = billingCustomerService.create(request);
+        BillingCustomerDTO billingCustomerDTO = billingCustomerService.create(request);
 
-        assertNotNull(kycCustomerDTO.getId());
-        assertEquals(request.getAid(), kycCustomerDTO.getAid());
-        assertEquals(request.getBillingCategory(), kycCustomerDTO.getBillingCategory());
-        assertEquals(request.getBillingType(), kycCustomerDTO.getBillingType());
+        assertNotNull(billingCustomerDTO.getId());
+        assertEquals(request.getAid(), billingCustomerDTO.getAid());
+        assertEquals(request.getBillingCategory(), billingCustomerDTO.getBillingCategory());
+        assertEquals(request.getBillingType(), billingCustomerDTO.getBillingType());
     }
 
 }
