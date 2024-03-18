@@ -25,6 +25,12 @@ public class BillingCore extends BaseBilling {
     @Column(name = "corr_bank")
     private String corrBank;
 
+    @Column(name = "debit_from")
+    private String debitFrom; // core type 3
+
+    @Column(name = "credit_to")
+    private String creditTo; // core type 3
+
     @Column(name = "account_number_cbest")
     private String accountNumberCBEST; // especially for core template 6
 

@@ -57,13 +57,16 @@ public abstract class BaseBilling extends BaseAudit {
     private String productName; // or security name
 
     @Column(name = "account_name")
-    private String accountName;
+    private String accountName; // this is same with GL Name
 
     @Column(name = "account_number")
-    private String accountNumber;
+    private String accountNumber; // this is same with GL Number (account)
+
+    @Column(name = "cost_center")
+    private String costCenter;
 
     @Column(name = "account_bank")
-    private String accountBank;
+    private String accountBank; // this is bank name
 
     @Column(name = "currency")
     private String currency;

@@ -7,6 +7,7 @@ import com.bayu.billingservice.exception.CalculateBillingException;
 import com.bayu.billingservice.model.BillingCore;
 import com.bayu.billingservice.model.SfValRgDaily;
 import com.bayu.billingservice.model.SkTransaction;
+import com.bayu.billingservice.model.enumerator.ApprovalStatus;
 import com.bayu.billingservice.model.enumerator.BillingTemplate;
 import com.bayu.billingservice.repository.BillingCoreRepository;
 import com.bayu.billingservice.service.*;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.Instant;
 import java.util.*;
 
 import static com.bayu.billingservice.model.enumerator.FeeParameter.*;
@@ -75,13 +77,38 @@ public class Core4CalculateServiceImpl implements Core4CalculateService {
                 BigDecimal kseiSafeFeeAmount = kseiSafekeepingFeeService.calculateAmountFeeByCustomerCodeAndMonthAndYear(kseiSafeCode, monthName, year);
 
                 // TODO: Check by Billing Template
+                BillingCore billingCore;
+                Instant dateNow = Instant.now();
                 if (BillingTemplate.CORE_TEMPLATE_5.getValue().equalsIgnoreCase(billingTemplateFormat)) {
                     // calculate EB
-                    Core4DTO core4DTO = calculateEB(aid, billingTemplate, kseiSafeFeeAmount, kseiTransactionFee, skTransactionList);
+                    billingCore = calculateEB(aid, billingTemplate, kseiSafeFeeAmount, kseiTransactionFee, skTransactionList);
                 } else {
                     // calculate ITAMA
-                    Core4DTO core4DTO = calculateITAMA(aid, billingTemplate, customerSafekeepingFee, vatFee, sfValRgDailyList);
+                    billingCore = calculateITAMA(aid, billingTemplate, customerSafekeepingFee, vatFee, sfValRgDailyList);
                 }
+
+                billingCore.setCreatedAt(dateNow);
+                billingCore.setUpdatedAt(dateNow);
+                billingCore.setApprovalStatus(ApprovalStatus.PENDING.getStatus());
+                billingCore.setMonth(monthName);
+                billingCore.setYear(year);
+                billingCore.setBillingPeriod(monthName + " " + year);
+                billingCore.setBillingStatementDate(ConvertDateUtil.convertInstantToString(dateNow));
+                billingCore.setBillingPaymentDueDate(ConvertDateUtil.convertInstantToStringPlus14Days(dateNow));
+                billingCore.setBillingCategory(billingCustomerDTO.getBillingCategory());
+                billingCore.setBillingType(billingCustomerDTO.getBillingType());
+                billingCore.setBillingTemplate(billingCustomerDTO.getBillingTemplate());
+                billingCore.setInvestmentManagementName(billingCustomerDTO.getInvestmentManagementName());
+                billingCore.setInvestmentManagementAddress(billingCustomerDTO.getInvestmentManagementAddress());
+                billingCore.setAccountName(billingCustomerDTO.getAccountName());
+                billingCore.setAccountNumber(billingCustomerDTO.getAccountNumber());
+                billingCore.setCostCenter(billingCustomerDTO.getCostCenter());
+                billingCore.setAccountBank(billingCustomerDTO.getAccountBank());
+
+
+                billingCoreList.add(billingCore);
+
+                // TODO: Set fields common to BillingCore, common to Core 4 (EB and ITAMA)
 
 
             }
@@ -147,7 +174,7 @@ public class Core4CalculateServiceImpl implements Core4CalculateService {
         return totalAmountDueITAMA;
     }
 
-    // TODO: [ITAMA] Create Object Itama to Core4DTO [DONE]
+    // TODO: [ITAMA] Create Object Itama to BilingCore model [DONE]
     private static BillingCore calculateITAMA(String aid, String billingTemplate, BigDecimal customerSafekeepingFee, BigDecimal vatFee, List<SfValRgDaily> sfValRgDailyList) {
         BigDecimal safekeepingValueFrequency = calculateSafekeepingValueFrequency(aid, sfValRgDailyList);
         BigDecimal safekeepingAmountDue = calculateSafekeepingAmountDue(aid, sfValRgDailyList);
@@ -188,8 +215,8 @@ public class Core4CalculateServiceImpl implements Core4CalculateService {
         return totalAmountDueEB;
     }
 
-    // TODO: [EB] Create Object EB to Core4DTO
-    private static Core4DTO calculateEB(String aid, String billingTemplate,
+    // TODO: [EB] Create Object EB to BillingCore model [DONE]
+    private static BillingCore calculateEB(String aid, String billingTemplate,
                                         BigDecimal kseiSafeFeeAmount,
                                         BigDecimal kseiTransactionFee,
                                         List<SkTransaction> skTransactionList) {
@@ -197,22 +224,15 @@ public class Core4CalculateServiceImpl implements Core4CalculateService {
         BigDecimal kseiTransactionAmountDue = calculateKSEITransactionAmountDue(aid, kseiTransactionFee, transactionValueFrequency);
         BigDecimal totalAmountDueEB = calculateTotalAmountDueEB(aid, kseiSafeFeeAmount, kseiTransactionAmountDue);
 
-//        return Core4DTO.builder()
-//                .aid(aid)
-//                .billingTemplate(billingTemplate)
-//                .kseiSafekeepingAmountDue(ConvertBigDecimalUtil.formattedBigDecimalToString(kseiSafeFeeAmount))
-//                .kseiTransactionValueFrequency(String.valueOf(transactionValueFrequency))
-//                .kseiTransactionFee(ConvertBigDecimalUtil.formattedBigDecimalToString(kseiTransactionFee))
-//                .kseiTransactionAmountDue(ConvertBigDecimalUtil.formattedBigDecimalToString(kseiTransactionAmountDue))
-//                .totalAmountDue(ConvertBigDecimalUtil.formattedBigDecimalToString(totalAmountDueEB))
-//                .build();
         return BillingCore.builder()
-                .aid()
-                .billingTemplate()
-                .kseiSafekeepingFeeAmount(kseiSafeFeeAmount)
-                .transactionHandlingValueFrequency(transactionHandlingValueFrequency)
-                .ksei
-
+                .aid(aid)
+                .billingTemplate(billingTemplate)
+                .kseiSafekeepingAmountDue(kseiSafeFeeAmount)
+                .kseiTransactionValueFrequency(kseiTransactionValueFrequency)
+                .kseiTransactionFee(kseiTransactionFee)
+                .kseiTransactionAmountDue(kseiTransactionAmountDue)
+                .totalAmountDue(totalAmountDueEB)
                 .build();
     }
+
 }

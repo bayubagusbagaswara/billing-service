@@ -25,6 +25,8 @@ public class BillingCustomerDTO {
 
     private String accountNumber;
 
+    private String costCenter;
+
     private String accountBank;
 
     private String kseiSafeCode;
