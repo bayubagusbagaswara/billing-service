@@ -117,10 +117,10 @@ public class Core4CalculateServiceImpl implements Core4CalculateService {
                 billingCore.setBillingNumber(billingNumber);
             }
 
-            List<BillingCore> resultBillingCores = billingCoreRepository.saveAll(billingCoreList);
+            List<BillingCore> billingCoreSaved = billingCoreRepository.saveAll(billingCoreList);
 
             log.info("Finished calculate Billing Core type 4 with period '{}'", request.getMonthYear());
-            return "Successfully calculated Billing Core type 4 with a total : " + resultBillingCores.size();
+            return "Successfully calculated Billing Core type 4 with a total : " + billingCoreSaved.size();
         } catch (Exception e) {
             log.error("Error when calculate Billing Core type 4 : " + e.getMessage(), e);
             throw new CalculateBillingException("Error when calculate Billing Core type 4 : " + e.getMessage());
