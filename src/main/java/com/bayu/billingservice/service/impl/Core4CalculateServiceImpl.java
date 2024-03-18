@@ -221,7 +221,7 @@ public class Core4CalculateServiceImpl implements Core4CalculateService {
                                         BigDecimal kseiTransactionFee,
                                         List<SkTransaction> skTransactionList) {
         int kseiTransactionValueFrequency = calculateTransactionHandlingValueFrequency(aid, skTransactionList);
-        BigDecimal kseiTransactionAmountDue = calculateKSEITransactionAmountDue(aid, kseiTransactionFee, transactionValueFrequency);
+        BigDecimal kseiTransactionAmountDue = calculateKSEITransactionAmountDue(aid, kseiTransactionFee, kseiTransactionValueFrequency);
         BigDecimal totalAmountDueEB = calculateTotalAmountDueEB(aid, kseiSafeFeeAmount, kseiTransactionAmountDue);
 
         return BillingCore.builder()
