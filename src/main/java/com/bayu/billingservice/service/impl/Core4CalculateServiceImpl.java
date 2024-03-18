@@ -1,7 +1,6 @@
 package com.bayu.billingservice.service.impl;
 
 import com.bayu.billingservice.dto.CoreCalculateRequest;
-import com.bayu.billingservice.dto.core.Core4DTO;
 import com.bayu.billingservice.dto.kyc.BillingCustomerDTO;
 import com.bayu.billingservice.exception.CalculateBillingException;
 import com.bayu.billingservice.model.BillingCore;
@@ -11,7 +10,6 @@ import com.bayu.billingservice.model.enumerator.ApprovalStatus;
 import com.bayu.billingservice.model.enumerator.BillingTemplate;
 import com.bayu.billingservice.repository.BillingCoreRepository;
 import com.bayu.billingservice.service.*;
-import com.bayu.billingservice.util.ConvertBigDecimalUtil;
 import com.bayu.billingservice.util.ConvertDateUtil;
 import com.bayu.billingservice.util.StringUtil;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +33,7 @@ public class Core4CalculateServiceImpl implements Core4CalculateService {
     private final SkTransactionService skTransactionService;
     private final SfValRgDailyService sfValRgDailyService;
     private final KseiSafekeepingFeeService kseiSafekeepingFeeService;
+    private final BillingNumberService billingNumberService;
     private final BillingCoreRepository billingCoreRepository;
 
     @Override
@@ -87,6 +86,7 @@ public class Core4CalculateServiceImpl implements Core4CalculateService {
                     billingCore = calculateITAMA(aid, billingTemplate, customerSafekeepingFee, vatFee, sfValRgDailyList);
                 }
 
+                // TODO: Set fields common to BillingCore, common to Core 4 (EB and ITAMA)
                 billingCore.setCreatedAt(dateNow);
                 billingCore.setUpdatedAt(dateNow);
                 billingCore.setApprovalStatus(ApprovalStatus.PENDING.getStatus());
@@ -102,17 +102,20 @@ public class Core4CalculateServiceImpl implements Core4CalculateService {
                 billingCore.setInvestmentManagementAddress(billingCustomerDTO.getInvestmentManagementAddress());
                 billingCore.setAccountName(billingCustomerDTO.getAccountName());
                 billingCore.setAccountNumber(billingCustomerDTO.getAccountNumber());
-                billingCore.setCostCenter(billingCustomerDTO.getCostCenter());
-                billingCore.setAccountBank(billingCustomerDTO.getAccountBank());
-
+                billingCore.setCostCenter(billingCustomerDTO.getCostCenter()); // EB
+                billingCore.setAccountBank(billingCustomerDTO.getAccountBank()); // ITAMA
 
                 billingCoreList.add(billingCore);
-
-                // TODO: Set fields common to BillingCore, common to Core 4 (EB and ITAMA)
-
-
             }
 
+            int billingCoreListSize = billingCoreList.size();
+            List<String> numberList = billingNumberService.generateNumberList(billingCoreListSize, monthName, year);
+
+            for (int i = 0; i < billingCoreListSize; i++) {
+                BillingCore billingCore = billingCoreList.get(i);
+                String billingNumber = numberList.get(i);
+                billingCore.setBillingNumber(billingNumber);
+            }
 
             List<BillingCore> resultBillingCores = billingCoreRepository.saveAll(billingCoreList);
 
@@ -216,10 +219,7 @@ public class Core4CalculateServiceImpl implements Core4CalculateService {
     }
 
     // TODO: [EB] Create Object EB to BillingCore model [DONE]
-    private static BillingCore calculateEB(String aid, String billingTemplate,
-                                        BigDecimal kseiSafeFeeAmount,
-                                        BigDecimal kseiTransactionFee,
-                                        List<SkTransaction> skTransactionList) {
+    private static BillingCore calculateEB(String aid, String billingTemplate, BigDecimal kseiSafeFeeAmount, BigDecimal kseiTransactionFee, List<SkTransaction> skTransactionList) {
         int kseiTransactionValueFrequency = calculateTransactionHandlingValueFrequency(aid, skTransactionList);
         BigDecimal kseiTransactionAmountDue = calculateKSEITransactionAmountDue(aid, kseiTransactionFee, kseiTransactionValueFrequency);
         BigDecimal totalAmountDueEB = calculateTotalAmountDueEB(aid, kseiSafeFeeAmount, kseiTransactionAmountDue);
