@@ -342,4 +342,7 @@ Table BillingSecurity
 
 # General Ledger (GL)
 
+# Header Column Name SfValCrowdFunding
+
+No | Sett Date | ClientCode | Security | Holding (Face Value) | Price |Market Price | (abaikan) | investor
 
