@@ -346,3 +346,7 @@ Table BillingSecurity
 
 No | Sett Date | ClientCode | Security | Holding (Face Value) | Price |Market Price | (abaikan) | investor
 
+Ketika akan membeli smartphone produksi Oppo, hindari Oppo seri A
+Ketika akan membeli smartphone produksi Realme, hindari Realme seri C
+Ketika akan membeli smartphone produksi Vivo, hindari Vivo seri Y
+Ketika akan membeli smartphone produksi POCO, hindari POCO seri X
