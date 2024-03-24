@@ -14,33 +14,23 @@
             overflow-y: auto;
             padding-top: 6px;
             padding-bottom: 6px;
-        }
+        },
     </style>
 </head>
 <body>
-
+<header>
+	<img th:src="${imageUrlHeader}" style="width: 200px; height: 80px;" alt="Image" />
+	<div class="title" style="text-align: center; margin-top: 20px;">
+		<strong>LEMBAR TAGIHAN</strong>
+		<br/>
+		<strong>BILLING STATEMENT</strong>
+	</div>
+</header>
 <table style="width: 100%">
 	<tbody>
 	<tr>
 		<td>
-			<div style="width: 100%">
-				<img
-						th:src="${imageUrlHeader}" style="width: 200px; height: 80px;" alt="Image"
-				/>
-			</div>
-		</td>
-	</tr>
-	<tr>
-		<td>
-			<div style="width: 100%">
-				<center><strong>LEMBAR TAGIHAN</strong></center>
-				<center><strong>BILLING STATEMENT</strong></center>
-			</div>
-		</td>
-	</tr>
-	<tr>
-		<td>
-			<div style="width: 100%; margin-top: 30px">
+			<div style="width: 100%; margin-top: 10px">
 				<table border="0" style="width: 100%">
 					<tbody>
 					<tr style="font-size: 10pt">
