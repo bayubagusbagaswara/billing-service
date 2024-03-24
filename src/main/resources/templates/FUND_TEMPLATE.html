@@ -4,26 +4,28 @@
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" />
 	<title>Billing Fund Template</title>
+	<style>
+        body {
+            margin: auto;
+            width: 650px;
+            height: 842px;
+            font-family: Calibri;
+            size: 7in 9.25in;
+            overflow-y: auto;
+            padding-top: 6px;
+            padding-bottom: 6px;
+        }
+    </style>
 </head>
-<body
-		style="
-      width: 595px;
-      height: 842px;
-      font-family: Calibri;
-      size: 7in 9.25in;
-      overflow-y: auto;
-      padding-top: 6px;
-      padding-bottom: 6px;
-    "
->
+<body>
+
 <table style="width: 100%">
 	<tbody>
 	<tr>
 		<td>
 			<div style="width: 100%">
 				<img
-						src="D:\E-STATEMENT\INTERFACE\FILES\BODY\logo.png"
-						style="width: 60%; margin-left: -60px; margin-bottom: 50px"
+						th:src="${imageUrlHeader}" style="width: 200px; height: 80px;" alt="Image"
 				/>
 			</div>
 		</td>
@@ -752,35 +754,20 @@
 	</tbody>
 </table>
 <!-- Footer -->
-<footer
-		style="
-        position: relative;
-        bottom: -150px;
-        width: 100%;
-        font-size: 80%;
-        display: block;
-      "
->
-	<table style="width: 100%">
-		<tbody style="width: 100%">
+<footer>
+	<table style="margin: 0 auto;">
+		<tbody>
 		<tr>
-			<td>
-		<tr style="font-size: 10pt">
-			<td style="padding-left: 5%; color: gray">
+			<td style="text-align: left; font-size: 10pt; color: gray;">
 				PT Bank Danamon Indonesia, Tbk.
 			</td>
 		</tr>
 		<tr>
 			<td>
-				<div style="width: 100%">
-					<img
-							src="D:\E-STATEMENT\INTERFACE\FILES\BODY\footer.png"
-							style="width: 110%; margin-left: -50px"
-					/>
+				<div style="width: 100%;">
+					<img th:src="${imageUrlFooter}" style="width: 110%; margin-left: -50px;" alt="Image" />
 				</div>
 			</td>
-		</tr>
-		</td>
 		</tr>
 		</tbody>
 	</table>

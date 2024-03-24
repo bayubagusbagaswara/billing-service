@@ -35,6 +35,9 @@ public class FundGeneratePDFServiceImpl implements FundGeneratePDFService {
     @Value("${base.path.billing.fund}")
     private String basePathBillingFund;
 
+    @Value("${base.path.billing.image}")
+    private String folderPathImage;
+
     private final BillingFundRepository billingFundRepository;
     private final SpringTemplateEngine templateEngine;
     private final PdfGenerator pdfGenerator;
@@ -132,6 +135,11 @@ public class FundGeneratePDFServiceImpl implements FundGeneratePDFService {
         context.setVariable(KSEI_VALUE_FREQUENCY, fundDTO.getKseiValueFrequency());
         context.setVariable(KSEI_TRANSACTION_FEE, fundDTO.getKseiTransactionFee());
         context.setVariable(TOTAL_AMOUNT_DUE, fundDTO.getTotalAmountDue());
+        // tambahkan Image URL
+        String imageUrlHeader = "file:///" + folderPathImage + "/danamon_header.png";
+        String imageUrlFooter = "file:///" + folderPathImage + "/danamon_footer.png";
+        context.setVariable("imageUrlHeader", imageUrlHeader);
+        context.setVariable("imageUrlFooter", imageUrlFooter);
 
         return templateEngine.process(BillingTemplate.FUND_TEMPLATE.getValue(), context);
     }
