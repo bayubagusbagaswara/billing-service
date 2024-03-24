@@ -12,31 +12,23 @@ import lombok.NoArgsConstructor;
 public class CreateKycRequest {
 
     private String aid;
+    private String customerMinimumFee;
+    private String customerSafekeepingFee;
 
     private String investmentManagementName;
-
-    private String investmentManagementAddress;
-
-    private String productName;
+    private String investmentManagementAddressBuilding;
+    private String investmentManagementAddressStreet;
+    private String investmentManagementAddressCity;
+    private String investmentManagementAddressProvince;
 
     private String accountName;
-
     private String accountNumber;
-
     private String accountBank;
 
     private String kseiSafeCode;
 
-    private String minimumFee;
-
-    private String customerFee;
-
-    private String journal;
-
     private String billingCategory;
-
     private String billingType;
-
     private String billingTemplate;
 
 }

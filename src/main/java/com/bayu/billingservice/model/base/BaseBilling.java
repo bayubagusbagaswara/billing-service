@@ -50,11 +50,20 @@ public abstract class BaseBilling extends BaseAudit {
     @Column(name = "mi_name")
     private String investmentManagementName;
 
-    @Column(name = "mi_address")
-    private String investmentManagementAddress;
+    @Column(name = "mi_address_building")
+    private String investmentManagementAddressBuilding;
 
-    @Column(name = "product_name")
-    private String productName; // or security name
+    @Column(name = "mi_address_street")
+    private String investmentManagementAddressStreet;
+
+    @Column(name = "mi_address_city")
+    private String investmentManagementAddressCity;
+
+    @Column(name = "mi_address_province")
+    private String investmentManagementAddressProvince;
+
+//    @Column(name = "product_name")
+//    private String productName; // or security name
 
     @Column(name = "account_name")
     private String accountName; // this is same with GL Name

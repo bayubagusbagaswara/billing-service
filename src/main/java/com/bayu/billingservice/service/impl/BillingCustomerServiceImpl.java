@@ -26,12 +26,15 @@ public class BillingCustomerServiceImpl implements BillingCustomerService {
     public BillingCustomerDTO create(CreateKycRequest request) {
         log.info("Create Kyc : {}", request);
 
-        BigDecimal minimumFee = request.getMinimumFee().isEmpty() ? BigDecimal.ZERO : new BigDecimal(request.getMinimumFee());
-        BigDecimal customerFee = request.getCustomerFee().isEmpty() ? BigDecimal.ZERO : new BigDecimal(request.getCustomerFee());
+        BigDecimal minimumFee = request.getCustomerMinimumFee().isEmpty() ? BigDecimal.ZERO : new BigDecimal(request.getCustomerMinimumFee());
+        BigDecimal customerFee = request.getCustomerSafekeepingFee().isEmpty() ? BigDecimal.ZERO : new BigDecimal(request.getCustomerSafekeepingFee());
 
         BillingCustomer billingCustomer = BillingCustomer.builder()
                 .investmentManagementName(request.getInvestmentManagementName())
-                .investmentManagementAddress(request.getInvestmentManagementAddress())
+                .investmentManagementAddressBuilding(request.getInvestmentManagementAddressBuilding())
+                .investmentManagementAddressStreet(request.getInvestmentManagementAddressStreet())
+                .investmentManagementAddressCity(request.getInvestmentManagementAddressCity())
+                .investmentManagementAddressProvince(request.getInvestmentManagementAddressProvince())
                 .accountName(request.getAccountName())
                 .accountNumber(request.getAccountNumber())
                 .accountBank(request.getAccountBank())
@@ -75,7 +78,10 @@ public class BillingCustomerServiceImpl implements BillingCustomerService {
                 .id(billingCustomer.getId())
                 .customerCode(billingCustomer.getCustomerCode())
                 .investmentManagementName(billingCustomer.getInvestmentManagementName())
-                .investmentManagementAddress(billingCustomer.getInvestmentManagementAddress())
+                .investmentManagementAddressBuilding(billingCustomer.getInvestmentManagementAddressBuilding())
+                .investmentManagementAddressStreet(billingCustomer.getInvestmentManagementAddressStreet())
+                .investmentManagementAddressCity(billingCustomer.getInvestmentManagementAddressCity())
+                .investmentManagementAddressProvince(billingCustomer.getInvestmentManagementAddressProvince())
                 .accountName(billingCustomer.getAccountName())
                 .accountNumber(billingCustomer.getAccountNumber())
                 .accountBank(billingCustomer.getAccountBank())

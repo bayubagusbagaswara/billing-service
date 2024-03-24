@@ -14,7 +14,10 @@ public class FundConstant {
     public static final String BILLING_TEMPLATE = "billingTemplate";
 
     public static final String INVESTMENT_MANAGEMENT_NAME = "investmentManagementName";
-    public static final String INVESTMENT_MANAGEMENT_ADDRESS = "investmentManagementAddress";
+    public static final String INVESTMENT_MANAGEMENT_ADDRESS_BUILDING = "investmentManagementAddressBuilding";
+    public static final  String INVESTMENT_MANAGEMENT_ADDRESS_STREET = "investmentManagementAddressStreet";
+    public static final String INVESTMENT_MANAGEMENT_ADDRESS_CITY = "investmentManagementAddressCity";
+    public static final  String INVESTMENT_MANAGEMENT_ADDRESS_PROVINCE = "investmentManagementAddressProvince";
     public static final String PRODUCT_NAME = "productName";
     public static final String ACCOUNT_NAME = "accountName";
     public static final String ACCOUNT_NUMBER = "accountNumber";

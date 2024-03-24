@@ -16,6 +16,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.IOException;
 import java.util.List;
 
+import static com.bayu.billingservice.model.enumerator.SkTransactionType.TRANSACTION_BI_SSSS;
+import static com.bayu.billingservice.model.enumerator.SkTransactionType.TRANSACTION_CBEST;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -64,6 +67,25 @@ public class SkTransactionServiceImpl implements SkTransactionService {
     public List<SkTransaction> getAllByAidAndMonthAndYear(String aid, String month, Integer year) {
         log.info("Start get all SK TRAN by AID : {}, Month : {}, and Year : {}", aid, month, year);
         return skTransactionRepository.findAllByPortfolioCodeAndMonthAndYear(aid, month, year);
+    }
+
+    @Override
+    public int[] filterTransactionsType(List<SkTransaction> skTransactionList) {
+        int transactionCBESTTotal = 0;
+        int transactionBIS4Total = 0;
+
+        for (SkTransaction skTransaction : skTransactionList) {
+            String settlementSystem = skTransaction.getSettlementSystem();
+            if (settlementSystem != null) {
+                if (TRANSACTION_CBEST.getValue().equalsIgnoreCase(settlementSystem)) {
+                        transactionCBESTTotal++;
+                } else if (TRANSACTION_BI_SSSS.getValue().equalsIgnoreCase(settlementSystem)) {
+                        transactionBIS4Total++;
+                }
+            }
+        }
+        log.info("Total KSEI : {}", transactionCBESTTotal);log.info("Total BI-S4 : {}", transactionBIS4Total);
+        return new int[] {transactionCBESTTotal, transactionBIS4Total};
     }
 
     @Override

@@ -36,8 +36,17 @@ public class BillingCustomer {
     @Column(name = "mi_name")
     private String investmentManagementName;
 
-    @Column(name = "mi_address")
-    private String investmentManagementAddress;
+    @Column(name = "mi_address_building")
+    private String investmentManagementAddressBuilding;
+
+    @Column(name = "mi_address_street")
+    private String investmentManagementAddressStreet;
+
+    @Column(name = "mi_address_city")
+    private String investmentManagementAddressCity;
+
+    @Column(name = "mi_address_province")
+    private String investmentManagementAddressProvince;
 
     // Account Transaction information
     @Column(name = "account_name")

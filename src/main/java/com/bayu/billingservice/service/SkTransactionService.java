@@ -18,5 +18,7 @@ public interface SkTransactionService {
 
     List<SkTransaction> getAllByAidAndMonthAndYear(String aid, String month, Integer year);
 
+    int[] filterTransactionsType(List<SkTransaction> skTransactionList);
+
     String deleteAll();
 }

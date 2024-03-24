@@ -73,4 +73,17 @@ public class FundController {
         return ResponseEntity.ok().body(response);
     }
 
+    @DeleteMapping
+    public ResponseEntity<ResponseDTO<String>> deleteAll() {
+        String status = fundGeneratePDFService.deleteAll();
+
+        ResponseDTO<String> response = ResponseDTO.<String>builder()
+                .code(HttpStatus.OK.value())
+                .message(HttpStatus.OK.getReasonPhrase())
+                .payload(status)
+                .build();
+
+        return ResponseEntity.ok().body(response);
+    }
+
 }

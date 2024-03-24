@@ -16,29 +16,24 @@ public class BillingCustomerDTO {
     private Long id;
 
     private String customerCode; // alias AID
+    private BigDecimal customerMinimumFee;
+    private BigDecimal customerSafekeepingFee;
 
     private String investmentManagementName;
+    private String investmentManagementAddressBuilding;
+    private String investmentManagementAddressStreet;
+    private String investmentManagementAddressCity;
+    private String investmentManagementAddressProvince;
 
-    private String investmentManagementAddress;
 
     private String accountName;
-
     private String accountNumber;
-
     private String costCenter;
-
     private String accountBank;
 
     private String kseiSafeCode;
 
-    private BigDecimal customerMinimumFee;
-
-    private BigDecimal customerSafekeepingFee;
-
-
     private String billingCategory;
-
     private String billingType;
-
     private String billingTemplate;
 }

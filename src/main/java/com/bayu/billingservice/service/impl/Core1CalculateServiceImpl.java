@@ -115,7 +115,7 @@ public class Core1CalculateServiceImpl implements Core1CalculateService {
                         .billingType(billingCustomerDTO.getBillingType())
                         .billingTemplate(billingCustomerDTO.getBillingTemplate())
                         .investmentManagementName(billingCustomerDTO.getInvestmentManagementName())
-                        .investmentManagementAddress(billingCustomerDTO.getInvestmentManagementAddress())
+//                        .investmentManagementAddress(billingCustomerDTO.getInvestmentManagementAddress())
                         .accountName(billingCustomerDTO.getAccountName())
                         .accountNumber(billingCustomerDTO.getAccountNumber())
                         .accountBank(billingCustomerDTO.getAccountBank())

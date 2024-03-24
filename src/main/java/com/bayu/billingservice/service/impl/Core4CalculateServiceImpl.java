@@ -99,7 +99,7 @@ public class Core4CalculateServiceImpl implements Core4CalculateService {
                 billingCore.setBillingType(billingCustomerDTO.getBillingType());
                 billingCore.setBillingTemplate(billingCustomerDTO.getBillingTemplate());
                 billingCore.setInvestmentManagementName(billingCustomerDTO.getInvestmentManagementName());
-                billingCore.setInvestmentManagementAddress(billingCustomerDTO.getInvestmentManagementAddress());
+//                billingCore.setInvestmentManagementAddress(billingCustomerDTO.getInvestmentManagementAddress());
                 billingCore.setAccountName(billingCustomerDTO.getAccountName());
                 billingCore.setAccountNumber(billingCustomerDTO.getAccountNumber());
                 billingCore.setCostCenter(billingCustomerDTO.getCostCenter()); // EB

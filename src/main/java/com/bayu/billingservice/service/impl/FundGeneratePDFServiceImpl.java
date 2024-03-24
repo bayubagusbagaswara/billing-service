@@ -1,6 +1,7 @@
 package com.bayu.billingservice.service.impl;
 
 import com.bayu.billingservice.dto.fund.BillingFundDTO;
+import com.bayu.billingservice.exception.ConnectionDatabaseException;
 import com.bayu.billingservice.exception.GeneratePDFBillingException;
 import com.bayu.billingservice.exception.UnexpectedException;
 import com.bayu.billingservice.model.BillingFund;
@@ -71,6 +72,17 @@ public class FundGeneratePDFServiceImpl implements FundGeneratePDFService {
         }
     }
 
+    @Override
+    public String deleteAll() {
+        try {
+            billingFundRepository.deleteAll();
+            return "Successfully deleted all Billing Funds";
+        } catch (Exception e) {
+            log.error("Error when delete all Billing Funds : " + e.getMessage());
+            throw new ConnectionDatabaseException("Error when delete all Billing Fund");
+        }
+    }
+
     private void generateAndSavePDFStatements(List<BillingFundDTO> fundDTOList) {
         for (BillingFundDTO fundDTO : fundDTOList) {
             Map<String, String> monthYearMap;
@@ -119,7 +131,10 @@ public class FundGeneratePDFServiceImpl implements FundGeneratePDFService {
         context.setVariable(BILLING_TYPE, fundDTO.getBillingType());
         context.setVariable(BILLING_TEMPLATE, fundDTO.getBillingTemplate());
         context.setVariable(INVESTMENT_MANAGEMENT_NAME, fundDTO.getInvestmentManagementName());
-        context.setVariable(INVESTMENT_MANAGEMENT_ADDRESS, fundDTO.getInvestmentManagementAddress());
+        context.setVariable(INVESTMENT_MANAGEMENT_ADDRESS_BUILDING, fundDTO.getInvestmentManagementAddressBuilding());
+        context.setVariable(INVESTMENT_MANAGEMENT_ADDRESS_STREET, fundDTO.getInvestmentManagementAddressStreet());
+        context.setVariable(INVESTMENT_MANAGEMENT_ADDRESS_CITY, fundDTO.getInvestmentManagementAddressCity());
+        context.setVariable(INVESTMENT_MANAGEMENT_ADDRESS_PROVINCE, fundDTO.getInvestmentManagementAddressProvince());
         context.setVariable(PRODUCT_NAME, fundDTO.getProductName());
         context.setVariable(ACCOUNT_NAME, fundDTO.getAccountName());
         context.setVariable(ACCOUNT_NUMBER, fundDTO.getAccountNumber());
@@ -164,8 +179,10 @@ public class FundGeneratePDFServiceImpl implements FundGeneratePDFService {
                 .billingType(billingFund.getBillingType())
                 .billingTemplate(billingFund.getBillingTemplate())
                 .investmentManagementName(billingFund.getInvestmentManagementName())
-                .investmentManagementAddress(billingFund.getInvestmentManagementAddress())
-                .productName(billingFund.getProductName())
+                .investmentManagementAddressBuilding(billingFund.getInvestmentManagementAddressBuilding())
+                .investmentManagementAddressStreet(billingFund.getInvestmentManagementAddressStreet())
+                .investmentManagementAddressCity(billingFund.getInvestmentManagementAddressCity())
+                .investmentManagementAddressProvince(billingFund.getInvestmentManagementAddressProvince())
                 .accountName(billingFund.getAccountName())
                 .accountNumber(billingFund.getAccountNumber())
                 .customerFee(ConvertBigDecimalUtil.formattedBigDecimalToString(billingFund.getCustomerFee()))

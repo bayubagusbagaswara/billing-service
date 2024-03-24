@@ -1,5 +1,6 @@
 package com.bayu.billingservice.dto.fund;
 
+import jakarta.persistence.Column;
 import lombok.Data;
 import lombok.experimental.SuperBuilder;
 
@@ -26,7 +27,10 @@ public abstract class BillingFundBaseDTO {
     private String billingTemplate;
 
     private String investmentManagementName;
-    private String investmentManagementAddress;
+    private String investmentManagementAddressBuilding;
+    private String investmentManagementAddressStreet;
+    private String investmentManagementAddressCity;
+    private String investmentManagementAddressProvince;
 
     private String productName; // or security name
 
