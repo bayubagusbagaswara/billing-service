@@ -1,5 +1,6 @@
 package com.bayu.billingservice.util;
 
+import com.bayu.billingservice.model.SfValCrowdfunding;
 import com.bayu.billingservice.model.SfValRgDaily;
 import com.bayu.billingservice.model.SfValRgMonthly;
 import com.bayu.billingservice.model.SkTransaction;
@@ -19,6 +20,9 @@ public class CsvDataMapper {
 
     private static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("d-MMM-yy");
     private static final DateTimeFormatter dateTimeFormatter1 = DateTimeFormatter.ofPattern("d/M/yyyy");
+
+    private static final DateTimeFormatter dateTimeFormatterCrowdFunding = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
 
     public static List<SkTransaction> mapCsvSkTransaction(List<String[]> rows) {
         List<SkTransaction> skTransactionList = new ArrayList<>();
@@ -123,4 +127,32 @@ public class CsvDataMapper {
         return sfValRgMonthlyList;
     }
 
+    public static List<SfValCrowdfunding> mapCsvSfValCrowdFunding(List<String[]> rows) {
+        List<SfValCrowdfunding> sfValCrowdfundingList = new ArrayList<>();
+        log.info("[Start Map CSV] SfVal Crowd Funding rows : {}", rows.size());
+
+        for (String[] row : rows) {
+            LocalDate date = ConvertDateUtil.parseDateOrDefault(row[1], dateTimeFormatterCrowdFunding);
+            Integer year = date != null ? date.getYear() : null;
+            String monthName = date != null ? date.getMonth().getDisplayName(TextStyle.FULL, Locale.ENGLISH) : null;
+
+            SfValCrowdfunding sfValCrowdfunding = SfValCrowdfunding.builder()
+                    .number(ConvertIntegerUtil.parseIntOrDefault(row[0]))
+                    .settlementDate(date)
+                    .month(monthName)
+                    .year(year)
+                    .clientCode(StringUtil.processString(row[2]))
+                    .securityCode(StringUtil.processString(row[3]))
+                    .faceValue(ConvertBigDecimalUtil.parseBigDecimalOrDefault(row[4]))
+                    .marketPrice(StringUtil.processString(row[5]))
+                    .marketValue(ConvertBigDecimalUtil.parseBigDecimalOrDefault(row[6]))
+                    .investor(StringUtil.processString(row[8]))
+                    .build();
+
+            sfValCrowdfundingList.add(sfValCrowdfunding);
+        }
+
+        log.info("[Finish Map CSV] SfVal Crowd Funding Size : {}", sfValCrowdfundingList.size());
+        return sfValCrowdfundingList;
+    }
 }

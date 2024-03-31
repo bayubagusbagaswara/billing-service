@@ -152,7 +152,8 @@ public class FundGeneratePDFServiceImpl implements FundGeneratePDFService {
         context.setVariable(TOTAL_AMOUNT_DUE, fundDTO.getTotalAmountDue());
         // tambahkan Image URL
         String imageUrlHeader = "file:///" + folderPathImage + "/danamon_header.png";
-        String imageUrlFooter = "file:///" + folderPathImage + "/danamon_footer.png";
+//        String imageUrlFooter = "file:///" + folderPathImage + "/danamon_footer.png";
+        String imageUrlFooter = "file:///" + folderPathImage + "/test.png";
         context.setVariable("imageUrlHeader", imageUrlHeader);
         context.setVariable("imageUrlFooter", imageUrlFooter);
 
