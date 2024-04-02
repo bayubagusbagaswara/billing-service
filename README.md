@@ -350,3 +350,13 @@ Ketika akan membeli smartphone produksi Oppo, hindari Oppo seri A
 Ketika akan membeli smartphone produksi Realme, hindari Realme seri C
 Ketika akan membeli smartphone produksi Vivo, hindari Vivo seri Y
 Ketika akan membeli smartphone produksi POCO, hindari POCO seri X
+
+
+<tbody align="center">
+                                <tr style="font-size:10pt;">
+                                    <td th:text="${safekeepingFee} + ' %'" style="text-align: center;">[SK_Fee]</td>
+                                </tr>
+                                <tr align="center" style="font-size:9pt;">
+                                    <td colspan="2">p.a each</td>
+                                </tr>
+                                </tbody>
