@@ -3,6 +3,9 @@ package com.bayu.billingservice.util;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Slf4j
 @UtilityClass
 public class StringUtil {
@@ -26,4 +29,10 @@ public class StringUtil {
         // Replace blank characters with an underscore
         return input.replaceAll("\\s", "_");
     }
+
+    public static String joinStrings(List<String> stringList) {
+        // Use Java streams to join strings with comma and space separator
+        return String.join(", ", stringList);
+    }
+
 }
