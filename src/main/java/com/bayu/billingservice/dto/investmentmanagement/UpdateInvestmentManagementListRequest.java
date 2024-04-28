@@ -11,7 +11,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UploadInvestmentManagementListRequest {
+public class UpdateInvestmentManagementListRequest {
 
     private Long dataChangeId;
 

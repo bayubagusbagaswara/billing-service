@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UploadInvestmentManagementRequest {
+public class UpdateInvestmentManagementRequest {
 
     private Long id;
 
