@@ -27,5 +27,9 @@ public interface InvestmentManagementService {
     // update with upload data list
     UpdateInvestmentManagementListResponse updateList(UpdateInvestmentManagementListRequest investmentManagementListRequest);
 
+
+    UpdateInvestmentManagementListResponse updateListApprove(UpdateInvestmentManagementListRequest investmentManagementListRequest);
+
+
     // delete by id
 }
