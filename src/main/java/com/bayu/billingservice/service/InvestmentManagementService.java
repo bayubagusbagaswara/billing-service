@@ -2,6 +2,8 @@ package com.bayu.billingservice.service;
 
 import com.bayu.billingservice.dto.investmentmanagement.CreateInvestmentManagementListRequest;
 import com.bayu.billingservice.dto.investmentmanagement.CreateInvestmentManagementListResponse;
+import com.bayu.billingservice.dto.investmentmanagement.UpdateInvestmentManagementListRequest;
+import com.bayu.billingservice.dto.investmentmanagement.UpdateInvestmentManagementListResponse;
 
 public interface InvestmentManagementService {
 
@@ -23,6 +25,7 @@ public interface InvestmentManagementService {
     // update by id
 
     // update with upload data list
+    UpdateInvestmentManagementListResponse updateList(UpdateInvestmentManagementListRequest investmentManagementListRequest);
 
     // delete by id
 }
