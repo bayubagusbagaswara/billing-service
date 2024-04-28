@@ -4,6 +4,7 @@ public interface InvestmentManagementService {
 
     // TRUE means the data is in the table
     // check existing with code
+    Boolean checkExistByCode(String code);
 
     // create single data
 
