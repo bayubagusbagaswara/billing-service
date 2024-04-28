@@ -1,5 +1,7 @@
 package com.bayu.billingservice.service.impl;
 
+import com.bayu.billingservice.dto.investmentmanagement.CreateInvestmentManagementListRequest;
+import com.bayu.billingservice.dto.investmentmanagement.CreateInvestmentManagementListResponse;
 import com.bayu.billingservice.repository.InvestmentManagementRepository;
 import com.bayu.billingservice.service.InvestmentManagementService;
 import lombok.RequiredArgsConstructor;
@@ -21,4 +23,13 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
         return existedByCode;
     }
 
+    @Override
+    public CreateInvestmentManagementListResponse createList(CreateInvestmentManagementListRequest investmentManagementListRequest) {
+        // TODO: 1. Validation request data
+
+        // TODO: 2. Check code for make sure is not exist in table, because code is unique
+
+        // TODO: 3. Create data change
+        return null;
+    }
 }
