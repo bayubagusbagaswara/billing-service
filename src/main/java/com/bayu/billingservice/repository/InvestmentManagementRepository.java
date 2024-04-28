@@ -9,4 +9,5 @@ public interface InvestmentManagementRepository extends JpaRepository<Investment
 
     Optional<InvestmentManagement> findByCode(String code);
 
+    Boolean existsByCode(String code);
 }
