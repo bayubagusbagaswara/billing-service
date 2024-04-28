@@ -1,5 +1,8 @@
 package com.bayu.billingservice.service;
 
+import com.bayu.billingservice.dto.investmentmanagement.CreateInvestmentManagementListRequest;
+import com.bayu.billingservice.dto.investmentmanagement.CreateInvestmentManagementListResponse;
+
 public interface InvestmentManagementService {
 
     // check existing with code
@@ -8,6 +11,7 @@ public interface InvestmentManagementService {
     // create single data
 
     // create with upload data list
+    CreateInvestmentManagementListResponse createList(CreateInvestmentManagementListRequest investmentManagementListRequest);
 
     // get by code
 
