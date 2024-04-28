@@ -396,3 +396,82 @@ public CreateInvestmentManagementListResponse createList(CreateInvestmentManagem
             .build();
 }
 ```
+
+# Flow Approve
+
+```java 
+  public UpdateInvestmentManagementListResponse updateList(UpdateInvestmentManagementListRequest investmentManagementListRequest) {
+        log.info("Request data: {}", investmentManagementListRequest);
+        Long dataChangeId = investmentManagementListRequest.getDataChangeId();
+        String inputId = investmentManagementListRequest.getInputId();
+        String inputIPAddress = investmentManagementListRequest.getInputIPAddress();
+        int totalDataSuccess = 0;
+        int totalDataFailed = 0;
+        List<ErrorMessageInvestmentManagementDTO> errorMessageList = new ArrayList<>();
+        
+        try {
+            for (InvestmentManagementDTO dto : investmentManagementListRequest.getInvestmentManagementRequestList()) {
+                List<String> errorMessages = new ArrayList<>();
+                Errors errors = validateInvestmentManagementDTO(dto);
+
+                if (errors.hasErrors()) {
+                    errors.getAllErrors().forEach(error -> errorMessages.add(error.getDefaultMessage()));
+                }
+
+                if (isCodeAlreadyExists(dto.getCode())) {
+                    errorMessages.add("Code '" + dto.getCode() + "' is already taken");
+                }
+
+                if (errorMessages.isEmpty()) {
+                    InvestmentManagement investmentManagementEntity = investmentManagementRepository.findById(dto.getId())
+                            .orElseThrow(() -> new DataNotFoundException("Investment Management with id '" + dto.getId() + "' not found"));
+                    
+                    investmentManagementEntity.setCode(dto.getCode());
+                    investmentManagementEntity.setName(dto.getName());
+                    investmentManagementEntity.setEmail(dto.getEmail());
+                    investmentManagementEntity.setAddress1(dto.getAddress1());
+                    investmentManagementEntity.setAddress2(dto.getAddress2());
+                    investmentManagementEntity.setAddress3(dto.getAddress3());
+                    investmentManagementEntity.setAddress4(dto.getAddress4());
+                    InvestmentManagement investmentManagementSave = investmentManagementRepository.save(investmentManagementEntity);
+
+                    String jsonDataBefore = objectMapper.writeValueAsString(investmentManagementEntity);
+                    String jsonDataAfter = objectMapper.writeValueAsString(investmentManagementSave);
+                    BillingDataChange dataChangeEntity = dataChangeRepository.findById(dataChangeId)
+                            .orElseThrow(() -> new DataNotFoundException("Data Change with id '" + dataChangeId + "' not found"));
+                    dataChangeEntity.setActionStatus(ActionStatus.EDIT);
+                    dataChangeEntity.setInputId(inputId);
+                    dataChangeEntity.setInputIPAddress(inputIPAddress);
+                    dataChangeEntity.setJsonDataBefore(jsonDataBefore);
+                    dataChangeEntity.setJsonDataAfter(jsonDataAfter);
+                    
+                    dataChangeRepository.save(dataChangeEntity);
+                    totalDataSuccess++;
+                } else {
+                    // Update data change, dengan Approval Status Reject dan description nya adalah error list
+                    InvestmentManagement investmentManagementEntity = investmentManagementRepository.findById(dto.getId())
+                            .orElseThrow(() -> new DataNotFoundException("Investment Management with id '" + dto.getId() + "' not found"));
+
+                    String jsonDataBefore = objectMapper.writeValueAsString(investmentManagementEntity);
+                    String jsonDataAfter = objectMapper.writeValueAsString(dto);
+                    BillingDataChange dataChangeEntity = dataChangeRepository.findById(dataChangeId)
+                            .orElseThrow(() -> new DataNotFoundException("Data Change with id '" + dataChangeId + "' not found"));
+                    dataChangeEntity.setActionStatus(ActionStatus.EDIT);
+                    dataChangeEntity.setInputId(inputId);
+                    dataChangeEntity.setInputIPAddress(inputIPAddress);
+                    dataChangeEntity.setJsonDataBefore(jsonDataBefore);
+                    dataChangeEntity.setJsonDataAfter(jsonDataAfter);
+                    dataChangeEntity.setDescription(StringUtil.joinStrings(errorMessages));
+
+                    dataChangeRepository.save(dataChangeEntity);
+                    totalDataFailed++;
+                }
+            }
+
+            return new UpdateInvestmentManagementListResponse(totalDataSuccess, totalDataFailed, errorMessageList);
+        } catch (Exception e) {
+            log.error("Error when update list: {}", e.getMessage());
+            throw new CreateDataException("Error saving investment management data", e);
+        }
+    }
+```
