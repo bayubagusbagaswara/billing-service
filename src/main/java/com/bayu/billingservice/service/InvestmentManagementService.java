@@ -2,7 +2,6 @@ package com.bayu.billingservice.service;
 
 public interface InvestmentManagementService {
 
-    // TRUE means the data is in the table
     // check existing with code
     Boolean checkExistByCode(String code);
 
