@@ -12,12 +12,15 @@ import com.bayu.billingservice.model.enumerator.ApprovalStatus;
 import com.bayu.billingservice.repository.BillingDataChangeRepository;
 import com.bayu.billingservice.repository.InvestmentManagementRepository;
 import com.bayu.billingservice.service.InvestmentManagementService;
-import com.bayu.billingservice.util.EmailValidator;
 import com.bayu.billingservice.util.TableNameResolver;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.BeanPropertyBindingResult;
+import org.springframework.validation.Errors;
+import org.springframework.validation.Validator;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -30,15 +33,12 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
 
     private final InvestmentManagementRepository investmentManagementRepository;
     private final BillingDataChangeRepository dataChangeRepository;
-    private final EmailValidator emailValidator;
+    private final Validator validator;
     private final ObjectMapper objectMapper;
 
     @Override
-    public Boolean checkExistByCode(String code) {
-        // TRUE means the data is in the table
-        Boolean existedByCode = investmentManagementRepository.existsByCode(code);
-        log.info("Existed by code: {}", existedByCode);
-        return existedByCode;
+    public boolean isCodeAlreadyExists(String code) {
+        return investmentManagementRepository.existsByCode(code);
     }
 
     @Override
@@ -48,64 +48,39 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
         String inputIPAddress = investmentManagementListRequest.getInputIPAddress();
         int totalDataSuccess = 0;
         int totalDataFailed= 0;
-        List<ErrorMessageInvestmentManagementDTO> errorMessageInvestmentManagementDTOList = new ArrayList<>();
+        List<ErrorMessageInvestmentManagementDTO> errorMessageList = new ArrayList<>();
 
-        try {
-            for (InvestmentManagementDTO investmentManagementDTO : investmentManagementListRequest.getInvestmentManagementRequestList()) {
-                // TODO: 1. Validation data request
-                List<String> errorValidationList = checkValidationDataRequest(investmentManagementDTO);
-                List<String> errorMessages = new ArrayList<>(errorValidationList);
+        for (InvestmentManagementDTO dto : investmentManagementListRequest.getInvestmentManagementRequestList()) {
+            List<String> errorMessages = new ArrayList<>();
+            Errors errors = validateInvestmentManagementDTO(dto);
 
-                String code = investmentManagementDTO.getCode();
-
-                // TODO: 2. Check code for make sure is not exist in table, because code is unique
-                Boolean existsByCode = investmentManagementRepository.existsByCode(code);
-                if (Boolean.TRUE.equals(existsByCode)) {
-                    errorMessages.add("Code '" + code + "' is already taken");
-                }
-
-                // TODO: 3. Checking list error messages
-                if (errorMessages.isEmpty()) {
-                    // TODO: Create entity Data Change
-                    String jsonDataAfter = objectMapper.writeValueAsString(investmentManagementDTO);
-
-                    BillingDataChange billingDataChange = BillingDataChange.builder()
-                            .approvalStatus(ApprovalStatus.PENDING)
-                            .inputId(inputId)
-                            .inputDate(new Date())
-                            .inputIPAddress(inputIPAddress)
-                            .approveId("")
-                            .approveDate(null)
-                            .approveIPAddress("")
-                            .actionStatus(ActionStatus.ADD)
-                            .entityClassName(InvestmentManagement.class.getName())
-                            .tableName(TableNameResolver.getTableName(InvestmentManagement.class))
-                            .jsonDataBefore("")
-                            .jsonDataAfter(jsonDataAfter)
-                            .description("")
-                            .build();
-
-                    dataChangeRepository.save(billingDataChange);
-                    totalDataSuccess++;
-                } else {
-                    ErrorMessageInvestmentManagementDTO errorMessageInvestmentManagementDTO = ErrorMessageInvestmentManagementDTO.builder()
-                            .code(code)
-                            .errorMessageList(errorMessages)
-                            .build();
-                    errorMessageInvestmentManagementDTOList.add(errorMessageInvestmentManagementDTO);
-                    totalDataFailed++;
-                }
+            if (errors.hasErrors()) {
+                errors.getAllErrors().forEach(error -> errorMessages.add(error.getDefaultMessage()));
             }
 
-            return CreateInvestmentManagementListResponse.builder()
-                    .totalDataSuccess(totalDataSuccess)
-                    .totalDataFailed(totalDataFailed)
-                    .errorMessages(errorMessageInvestmentManagementDTOList)
-                    .build();
-        } catch (Exception e) {
-            log.error("Error when create list billing customer: {}", e.getMessage());
-            throw new CreateDataException("Error when create list billing customer: " + e.getMessage(), e);
+            if (isCodeAlreadyExists(dto.getCode())) {
+                errorMessages.add("Code '" + dto.getCode() + "' is already taken");
+            }
+
+            if (errorMessages.isEmpty()) {
+                try {
+                    saveToDataChange(dto, inputId, inputIPAddress);
+                    totalDataSuccess++;
+                } catch (Exception e) {
+                    log.error("Error saving investment management data for DTO: {}", dto, e);
+                    errorMessages.add("Failed to save data: " + e.getMessage());
+                    totalDataFailed++;
+                }
+            } else {
+                ErrorMessageInvestmentManagementDTO errorMessageDTO = new ErrorMessageInvestmentManagementDTO();
+                errorMessageDTO.setCode(dto.getCode());
+                errorMessageDTO.setErrorMessages(errorMessages);
+                errorMessageList.add(errorMessageDTO);
+                totalDataFailed++;
+            }
         }
+
+        return new CreateInvestmentManagementListResponse(totalDataSuccess, totalDataFailed, errorMessageList);
     }
 
     @Override
@@ -113,28 +88,43 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
         return null;
     }
 
-    public List<String> checkValidationDataRequest(InvestmentManagementDTO investmentManagementDTO) {
-        List<String> errorMessages = new ArrayList<>();
+    private void saveToDataChange(InvestmentManagementDTO dto, String inputId, String inputIPAddress) {
+      try {
+            String jsonDataAfter = objectMapper.writeValueAsString(dto);
+            BillingDataChange billingDataChange = BillingDataChange.builder()
+                    .approvalStatus(ApprovalStatus.PENDING)
+                    .inputId(inputId)
+                    .inputDate(new Date())
+                    .inputIPAddress(inputIPAddress)
+                    .approveId("")
+                    .approveDate(null)
+                    .approveIPAddress("")
+                    .actionStatus(ActionStatus.ADD)
+                    .entityClassName(InvestmentManagement.class.getName())
+                    .tableName(TableNameResolver.getTableName(InvestmentManagement.class))
+                    .jsonDataBefore("")
+                    .jsonDataAfter(jsonDataAfter)
+                    .description("")
+                    .build();
 
-        if (investmentManagementDTO.getCode().isEmpty()) {
-            errorMessages.add("Code cannot be empty");
+            dataChangeRepository.save(billingDataChange);
+        } catch (JsonProcessingException e) {
+            log.error("Error serializing InvestmentManagementDTO to JSON: {}", e.getMessage());
+            throw new CreateDataException("Error serializing InvestmentManagementDTO to JSON", e);
+        } catch (Exception e) {
+            log.error("Error saving investment management data: {}", e.getMessage());
+            throw new CreateDataException("Error saving investment management data", e);
         }
-
-        if (investmentManagementDTO.getName().isEmpty()) {
-            errorMessages.add("Name cannot be empty");
-        }
-
-        String email = investmentManagementDTO.getEmail();
-        if (email.isEmpty()) {
-            errorMessages.add("Email cannot be empty");
-        } else {
-            // Check if email is valid using emailValidator
-            if (!emailValidator.isValidEmail(email)) {
-                errorMessages.add("Email is not valid");
-            }
-        }
-
-
-        return errorMessages;
     }
+
+    private void saveToEntity(InvestmentManagementDTO dto, String approve) {
+        // update Data Change and save to Entity
+    }
+
+    public Errors validateInvestmentManagementDTO(InvestmentManagementDTO dto) {
+        Errors errors = new BeanPropertyBindingResult(dto, "investmentManagementDTO");
+        validator.validate(dto, errors);
+        return errors;
+    }
+
 }
