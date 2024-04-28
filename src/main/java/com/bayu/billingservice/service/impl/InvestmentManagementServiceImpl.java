@@ -145,6 +145,85 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
         }
     }
 
+    @Override
+    public UpdateInvestmentManagementListResponse updateListApprove(UpdateInvestmentManagementListRequest investmentManagementListRequest) {
+        // data yg penting adalah approve
+        log.info("Request data update approve: {}", investmentManagementListRequest);
+        Long dataChangeId = investmentManagementListRequest.getDataChangeId();
+        String approveId = investmentManagementListRequest.getApproveId();
+        String approveIPAddress = investmentManagementListRequest.getApproveIPAddress();
+        int totalDataSuccess = 0;
+        int totalDataFailed = 0;
+        List<ErrorMessageInvestmentManagementDTO> errorMessageList = new ArrayList<>();
+
+        try {
+            for (InvestmentManagementDTO dto : investmentManagementListRequest.getInvestmentManagementRequestList()) {
+                List<String> errorMessages = new ArrayList<>();
+                Errors errors = validateInvestmentManagementDTO(dto);
+
+                if (errors.hasErrors()) {
+                    errors.getAllErrors().forEach(error -> errorMessages.add(error.getDefaultMessage()));
+                }
+
+                if (isCodeAlreadyExists(dto.getCode())) {
+                    errorMessages.add("Code '" + dto.getCode() + "' is already taken");
+                }
+
+                InvestmentManagement investmentManagementEntity = investmentManagementRepository.findById(dto.getId())
+                        .orElseThrow(() -> new DataNotFoundException("Investment Management with id '" + dto.getId() + "' not found"));
+
+                if (errorMessages.isEmpty()) {
+                    // do update entity
+                    investmentManagementEntity.setCode(dto.getCode());
+                    investmentManagementEntity.setName(dto.getName());
+                    investmentManagementEntity.setEmail(dto.getEmail());
+                    investmentManagementEntity.setAddress1(dto.getAddress1());
+                    investmentManagementEntity.setAddress2(dto.getAddress2());
+                    investmentManagementEntity.setAddress3(dto.getAddress3());
+                    investmentManagementEntity.setAddress4(dto.getAddress4());
+                    InvestmentManagement investmentManagementSaved = investmentManagementRepository.save(investmentManagementEntity);
+
+                    String jsonDataBefore = objectMapper.writeValueAsString(investmentManagementEntity);
+                    String jsonDataAfter = objectMapper.writeValueAsString(investmentManagementSaved);
+                    BillingDataChange dataChangeEntity = dataChangeRepository.findById(dataChangeId)
+                            .orElseThrow(() -> new DataNotFoundException("Data Change with id '" + dataChangeId + "' not found"));
+
+                    dataChangeEntity.setApprovalStatus(ApprovalStatus.APPROVED);
+                    dataChangeEntity.setApproveId(approveId);
+                    dataChangeEntity.setApproveIPAddress(approveIPAddress);
+                    dataChangeEntity.setApproveDate(new Date());
+                    dataChangeEntity.setJsonDataBefore(jsonDataBefore);
+                    dataChangeEntity.setJsonDataAfter(jsonDataAfter);
+
+                    dataChangeRepository.save(dataChangeEntity);
+                    totalDataSuccess++;
+                } else {
+                    // do update data change, with approval status is REJECT and put error messages to description
+                    String jsonDataBefore = objectMapper.writeValueAsString(investmentManagementEntity);
+                    String jsonDataAfter = objectMapper.writeValueAsString(dto);
+                    BillingDataChange dataChangeEntity = dataChangeRepository.findById(dataChangeId)
+                            .orElseThrow(() -> new DataNotFoundException("Data Change with id '" + dataChangeId + "' not found"));
+
+                    dataChangeEntity.setApprovalStatus(ApprovalStatus.REJECTED);
+                    dataChangeEntity.setApproveId(approveId);
+                    dataChangeEntity.setApproveIPAddress(approveIPAddress);
+                    dataChangeEntity.setApproveDate(new Date());
+                    dataChangeEntity.setJsonDataBefore(jsonDataBefore);
+                    dataChangeEntity.setJsonDataAfter(jsonDataAfter);
+                    dataChangeEntity.setDescription(StringUtil.joinStrings(errorMessages));
+
+                    dataChangeRepository.save(dataChangeEntity);
+                    totalDataFailed++;
+                }
+            }
+
+            return new UpdateInvestmentManagementListResponse(totalDataSuccess, totalDataFailed, errorMessageList);
+        } catch (Exception e) {
+            log.error("Error when update list approve: {}", e.getMessage());
+            throw new CreateDataException("Error saving investment management data", e);
+        }
+    }
+
     private void saveToDataChange(InvestmentManagementDTO dto, String inputId, String inputIPAddress) {
       try {
             String jsonDataAfter = objectMapper.writeValueAsString(dto);
