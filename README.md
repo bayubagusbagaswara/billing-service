@@ -360,3 +360,39 @@ Ketika akan membeli smartphone produksi POCO, hindari POCO seri X
                                     <td colspan="2">p.a each</td>
                                 </tr>
                                 </tbody>
+
+## Validation
+
+```java
+public CreateInvestmentManagementListResponse createList(CreateInvestmentManagementListRequest investmentManagementListRequest) {
+    // Other code...
+
+    for (InvestmentManagementDTO dto : investmentManagementListRequest.getInvestmentManagementRequestList()) {
+        Errors errors = validateInvestmentManagementDTO(dto);
+
+        if (errors.hasErrors()) {
+            // Handle validation errors
+            List<String> errorMessages = new ArrayList<>();
+            errors.getAllErrors().forEach(error -> errorMessages.add(error.getDefaultMessage()));
+
+            ErrorMessageInvestmentManagementDTO errorMessageDTO = new ErrorMessageInvestmentManagementDTO();
+            errorMessageDTO.setCode(dto.getCode());
+            errorMessageDTO.setErrorMessageList(errorMessages);
+            errorMessageInvestmentManagementDTOList.add(errorMessageDTO);
+            totalDataFailed++;
+        } else {
+            // DTO is valid, proceed with processing
+            // Save data, etc.
+            totalDataSuccess++;
+        }
+    }
+
+    // Other code...
+
+    return CreateInvestmentManagementListResponse.builder()
+            .totalDataSuccess(totalDataSuccess)
+            .totalDataFailed(totalDataFailed)
+            .errorMessages(errorMessageInvestmentManagementDTOList)
+            .build();
+}
+```
