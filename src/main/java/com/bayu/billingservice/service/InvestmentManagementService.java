@@ -6,7 +6,7 @@ import com.bayu.billingservice.dto.investmentmanagement.CreateInvestmentManageme
 public interface InvestmentManagementService {
 
     // check existing with code
-    Boolean checkExistByCode(String code);
+    boolean isCodeAlreadyExists(String code);
 
     // create single data
 
