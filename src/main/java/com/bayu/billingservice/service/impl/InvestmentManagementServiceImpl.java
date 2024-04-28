@@ -12,4 +12,13 @@ import org.springframework.stereotype.Service;
 public class InvestmentManagementServiceImpl implements InvestmentManagementService {
 
     private final InvestmentManagementRepository investmentManagementRepository;
+
+    @Override
+    public Boolean checkExistByCode(String code) {
+        // TRUE means the data is in the table
+        Boolean existedByCode = investmentManagementRepository.existsByCode(code);
+        log.info("Existed by code: {}", existedByCode);
+        return existedByCode;
+    }
+
 }
