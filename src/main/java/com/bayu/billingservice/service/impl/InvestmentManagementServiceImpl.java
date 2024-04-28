@@ -32,4 +32,9 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
         // TODO: 3. Create data change
         return null;
     }
+
+    @Override
+    public CreateInvestmentManagementListResponse createListApprove(CreateInvestmentManagementListRequest investmentManagementListRequest) {
+        return null;
+    }
 }
