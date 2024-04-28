@@ -15,6 +15,6 @@ public class ErrorMessageInvestmentManagementDTO {
 
     private String code;
 
-    private List<String> errorMessageList;
+    private List<String> errorMessages;
 
 }
