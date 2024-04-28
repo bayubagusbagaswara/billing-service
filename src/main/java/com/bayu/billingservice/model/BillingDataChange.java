@@ -55,9 +55,11 @@ public class BillingDataChange {
     @Column(name = "table_name")
     private String tableName;
 
+    @Lob
     @Column(name = "json_date_before")
     private String jsonDataBefore;
 
+    @Lob
     @Column(name = "json_data_after")
     private String jsonDataAfter;
 
