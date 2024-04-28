@@ -13,6 +13,9 @@ public interface InvestmentManagementService {
     // create with upload data list
     CreateInvestmentManagementListResponse createList(CreateInvestmentManagementListRequest investmentManagementListRequest);
 
+    // approve upload data list
+    CreateInvestmentManagementListResponse createListApprove(CreateInvestmentManagementListRequest investmentManagementListRequest);
+
     // get by code
 
     // get all
