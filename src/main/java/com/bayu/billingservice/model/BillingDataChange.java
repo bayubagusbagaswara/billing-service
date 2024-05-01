@@ -1,6 +1,6 @@
 package com.bayu.billingservice.model;
 
-import com.bayu.billingservice.model.enumerator.ActionStatus;
+import com.bayu.billingservice.model.enumerator.ChangeAction;
 import com.bayu.billingservice.model.enumerator.ApprovalStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -47,7 +47,10 @@ public class BillingDataChange {
     private String approveIPAddress;
 
     @Enumerated(EnumType.STRING)
-    private ActionStatus actionStatus;
+    private ChangeAction changeAction;
+
+    @Column(name = "entity_id")
+    private String entityId;
 
     @Column(name = "entity_class_name")
     private String entityClassName;
@@ -65,6 +68,24 @@ public class BillingDataChange {
 
     @Column(name = "description")
     private String description;
+
+    @Column(name = "method")
+    private String methodHttp;
+
+    @Column(name = "endpoint")
+    private String endpoint;
+
+    @Column(name = "is_request_body")
+    private Boolean isRequestBody;
+
+    @Column(name = "is_request_param")
+    private Boolean isRequestParam;
+
+    @Column(name = "is_path_variable")
+    private Boolean isPathVariable;
+
+    @Column(name = "menu")
+    private String menu;
 
     private String getIP() {
         String ipStr = "";
