@@ -1,14 +1,10 @@
 package com.bayu.billingservice;
 
-import com.bayu.billingservice.dto.kyc.CreateKycRequest;
-import com.bayu.billingservice.dto.kyc.BillingCustomerDTO;
-import com.bayu.billingservice.service.BillingCustomerService;
+import com.bayu.billingservice.service.CustomerService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @Slf4j
 @SpringBootTest
@@ -16,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class BillingCustomerTest {
 
     @Autowired
-    BillingCustomerService billingCustomerService;
+    CustomerService customerService;
 //    @Test
 //    @Order(1)
 //    void createKycCustomerCoreType1() {

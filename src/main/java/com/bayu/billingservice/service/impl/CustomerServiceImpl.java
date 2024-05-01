@@ -3,9 +3,9 @@ package com.bayu.billingservice.service.impl;
 import com.bayu.billingservice.dto.kyc.CreateKycRequest;
 import com.bayu.billingservice.dto.kyc.BillingCustomerDTO;
 import com.bayu.billingservice.exception.ConnectionDatabaseException;
-import com.bayu.billingservice.model.BillingCustomer;
-import com.bayu.billingservice.repository.BillingCustomerRepository;
-import com.bayu.billingservice.service.BillingCustomerService;
+import com.bayu.billingservice.model.Customer;
+import com.bayu.billingservice.repository.CustomerRepository;
+import com.bayu.billingservice.service.CustomerService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -14,12 +14,12 @@ import java.util.List;
 
 @Slf4j
 @Service
-public class BillingCustomerServiceImpl implements BillingCustomerService {
+public class CustomerServiceImpl implements CustomerService {
 
-    private final BillingCustomerRepository billingCustomerRepository;
+    private final CustomerRepository customerRepository;
 
-    public BillingCustomerServiceImpl(BillingCustomerRepository billingCustomerRepository) {
-        this.billingCustomerRepository = billingCustomerRepository;
+    public CustomerServiceImpl(CustomerRepository customerRepository) {
+        this.customerRepository = customerRepository;
     }
 
     @Override
@@ -29,7 +29,7 @@ public class BillingCustomerServiceImpl implements BillingCustomerService {
         BigDecimal minimumFee = request.getCustomerMinimumFee().isEmpty() ? BigDecimal.ZERO : new BigDecimal(request.getCustomerMinimumFee());
         BigDecimal customerFee = request.getCustomerSafekeepingFee().isEmpty() ? BigDecimal.ZERO : new BigDecimal(request.getCustomerSafekeepingFee());
 
-        BillingCustomer billingCustomer = BillingCustomer.builder()
+        Customer customer = Customer.builder()
                 .investmentManagementName(request.getInvestmentManagementName())
                 .investmentManagementAddressBuilding(request.getInvestmentManagementAddressBuilding())
                 .investmentManagementAddressStreet(request.getInvestmentManagementAddressStreet())
@@ -48,24 +48,24 @@ public class BillingCustomerServiceImpl implements BillingCustomerService {
                 .billingTemplate(request.getBillingTemplate())
                 .build();
 
-        return mapToDTO(billingCustomerRepository.save(billingCustomer));
+        return mapToDTO(customerRepository.save(customer));
     }
 
     @Override
     public List<BillingCustomerDTO> getAll() {
-        return mapToDTOList(billingCustomerRepository.findAll());
+        return mapToDTOList(customerRepository.findAll());
     }
 
     @Override
     public List<BillingCustomerDTO> getByBillingCategoryAndBillingType(String billingCategory, String billingType) {
-        List<BillingCustomer> billingCustomerList = billingCustomerRepository.findByBillingCategoryAndBillingType(billingCategory, billingType);
-        return mapToDTOList(billingCustomerList);
+        List<Customer> customerList = customerRepository.findByBillingCategoryAndBillingType(billingCategory, billingType);
+        return mapToDTOList(customerList);
     }
 
     @Override
     public String deleteAll() {
         try {
-            billingCustomerRepository.deleteAll();
+            customerRepository.deleteAll();
             return "Successfully deleted all Kyc Customer";
         } catch (Exception e) {
             log.error("Error when delete all Kyc Customer : " + e.getMessage());
@@ -73,30 +73,30 @@ public class BillingCustomerServiceImpl implements BillingCustomerService {
         }
     }
 
-    private static BillingCustomerDTO mapToDTO(BillingCustomer billingCustomer) {
+    private static BillingCustomerDTO mapToDTO(Customer customer) {
         return BillingCustomerDTO.builder()
-                .id(billingCustomer.getId())
-                .customerCode(billingCustomer.getCustomerCode())
-                .investmentManagementName(billingCustomer.getInvestmentManagementName())
-                .investmentManagementAddressBuilding(billingCustomer.getInvestmentManagementAddressBuilding())
-                .investmentManagementAddressStreet(billingCustomer.getInvestmentManagementAddressStreet())
-                .investmentManagementAddressCity(billingCustomer.getInvestmentManagementAddressCity())
-                .investmentManagementAddressProvince(billingCustomer.getInvestmentManagementAddressProvince())
-                .accountName(billingCustomer.getAccountName())
-                .accountNumber(billingCustomer.getAccountNumber())
-                .accountBank(billingCustomer.getAccountBank())
-                .kseiSafeCode(billingCustomer.getKseiSafeCode())
-                .customerMinimumFee(billingCustomer.getCustomerMinimumFee())
-                .customerSafekeepingFee(billingCustomer.getCustomerSafekeepingFee())
-                .billingCategory(billingCustomer.getBillingCategory())
-                .billingType(billingCustomer.getBillingType())
-                .billingTemplate(billingCustomer.getBillingTemplate())
+                .id(customer.getId())
+                .customerCode(customer.getCustomerCode())
+                .investmentManagementName(customer.getInvestmentManagementName())
+                .investmentManagementAddressBuilding(customer.getInvestmentManagementAddressBuilding())
+                .investmentManagementAddressStreet(customer.getInvestmentManagementAddressStreet())
+                .investmentManagementAddressCity(customer.getInvestmentManagementAddressCity())
+                .investmentManagementAddressProvince(customer.getInvestmentManagementAddressProvince())
+                .accountName(customer.getAccountName())
+                .accountNumber(customer.getAccountNumber())
+                .accountBank(customer.getAccountBank())
+                .kseiSafeCode(customer.getKseiSafeCode())
+                .customerMinimumFee(customer.getCustomerMinimumFee())
+                .customerSafekeepingFee(customer.getCustomerSafekeepingFee())
+                .billingCategory(customer.getBillingCategory())
+                .billingType(customer.getBillingType())
+                .billingTemplate(customer.getBillingTemplate())
                 .build();
     }
 
-    private static List<BillingCustomerDTO> mapToDTOList(List<BillingCustomer> billingCustomerList) {
-        return billingCustomerList.stream()
-                .map(BillingCustomerServiceImpl::mapToDTO)
+    private static List<BillingCustomerDTO> mapToDTOList(List<Customer> customerList) {
+        return customerList.stream()
+                .map(CustomerServiceImpl::mapToDTO)
                 .toList();
     }
 

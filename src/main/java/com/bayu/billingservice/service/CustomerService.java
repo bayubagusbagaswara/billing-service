@@ -5,7 +5,7 @@ import com.bayu.billingservice.dto.kyc.BillingCustomerDTO;
 
 import java.util.List;
 
-public interface BillingCustomerService {
+public interface CustomerService {
 
     BillingCustomerDTO create(CreateKycRequest request);
 

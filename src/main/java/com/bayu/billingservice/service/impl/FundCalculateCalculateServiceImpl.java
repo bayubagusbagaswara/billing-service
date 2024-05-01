@@ -31,7 +31,7 @@ import static com.bayu.billingservice.model.enumerator.FeeParameter.*;
 @RequiredArgsConstructor
 public class FundCalculateCalculateServiceImpl implements FundCalculateService {
 
-    private final BillingCustomerService billingCustomerService;
+    private final CustomerService customerService;
     private final SkTransactionService skTransactionService;
     private final FeeParameterService feeParameterService;
     private final BillingNumberService billingNumberService;
@@ -66,7 +66,7 @@ public class FundCalculateCalculateServiceImpl implements FundCalculateService {
             BigDecimal kseiAmountDue;
             BigDecimal totalAmountDue;
 
-            List<BillingCustomerDTO> billingCustomerDTOList = billingCustomerService.getByBillingCategoryAndBillingType(billingCategory, billingType);
+            List<BillingCustomerDTO> billingCustomerDTOList = customerService.getByBillingCategoryAndBillingType(billingCategory, billingType);
 
             for (FeeReportRequest feeReportRequest : request) {
                 String aid = feeReportRequest.getPortfolioCode();

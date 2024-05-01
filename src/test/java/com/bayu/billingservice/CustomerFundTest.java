@@ -5,7 +5,7 @@ import com.bayu.billingservice.dto.kyc.CreateKycRequest;
 import com.bayu.billingservice.model.enumerator.BillingCategory;
 import com.bayu.billingservice.model.enumerator.BillingTemplate;
 import com.bayu.billingservice.model.enumerator.BillingType;
-import com.bayu.billingservice.service.BillingCustomerService;
+import com.bayu.billingservice.service.CustomerService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -13,10 +13,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-class BillingCustomerFundTest {
+class CustomerFundTest {
 
     @Autowired
-    BillingCustomerService billingCustomerService;
+    CustomerService customerService;
 
     @Test
     void createCustomerFund() {
@@ -38,7 +38,7 @@ class BillingCustomerFundTest {
                 .billingTemplate(BillingTemplate.FUND_TEMPLATE.getValue())
                 .build();
 
-        BillingCustomerDTO billingCustomerDTO = billingCustomerService.create(request);
+        BillingCustomerDTO billingCustomerDTO = customerService.create(request);
         assertNotNull(billingCustomerDTO.getId());
     }
 }

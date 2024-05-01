@@ -14,7 +14,7 @@ import java.math.BigDecimal;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class BillingCustomer {
+public class Customer {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,20 +33,11 @@ public class BillingCustomer {
     private BigDecimal customerSafekeepingFee; // 0.5 etc
 
     // MI information
+    @Column(name = "mi_code")
+    private String investmentManagementCode;
+
     @Column(name = "mi_name")
     private String investmentManagementName;
-
-    @Column(name = "mi_address_building")
-    private String investmentManagementAddressBuilding;
-
-    @Column(name = "mi_address_street")
-    private String investmentManagementAddressStreet;
-
-    @Column(name = "mi_address_city")
-    private String investmentManagementAddressCity;
-
-    @Column(name = "mi_address_province")
-    private String investmentManagementAddressProvince;
 
     // Account Transaction information
     @Column(name = "account_name")

@@ -28,7 +28,7 @@ import static com.bayu.billingservice.model.enumerator.FeeParameter.*;
 @RequiredArgsConstructor
 public class Core1CalculateServiceImpl implements Core1CalculateService {
 
-    private final BillingCustomerService billingCustomerService;
+    private final CustomerService customerService;
     private final FeeParameterService feeParameterService;
     private final SkTransactionService skTransactionService;
     private final SfValRgDailyService sfValRgDailyService;
@@ -56,7 +56,7 @@ public class Core1CalculateServiceImpl implements Core1CalculateService {
             List<BillingCore> billingCoreList = new ArrayList<>();
 
             // Get data KYC Customer
-            List<BillingCustomerDTO> billingCustomerDTOList = billingCustomerService.getByBillingCategoryAndBillingType(categoryUpperCase, typeUpperCase);
+            List<BillingCustomerDTO> billingCustomerDTOList = customerService.getByBillingCategoryAndBillingType(categoryUpperCase, typeUpperCase);
 
             // Get data Fee Parameter
             List<String> feeParamList = new ArrayList<>();
