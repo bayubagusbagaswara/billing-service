@@ -13,10 +13,6 @@ import java.util.List;
 @AllArgsConstructor
 public class UpdateInvestmentManagementListRequest {
 
-    private Long dataChangeId;
-
-    private String approvalStatus;
-
     private String inputId;
 
     private String inputIPAddress;

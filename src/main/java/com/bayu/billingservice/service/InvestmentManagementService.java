@@ -2,6 +2,7 @@ package com.bayu.billingservice.service;
 
 import com.bayu.billingservice.dto.datachange.BillingDataChangeDTO;
 import com.bayu.billingservice.dto.investmentmanagement.*;
+import com.bayu.billingservice.model.InvestmentManagement;
 
 public interface InvestmentManagementService {
 
@@ -17,14 +18,17 @@ public interface InvestmentManagementService {
     // approve upload data list
     CreateInvestmentManagementListResponse createListApprove(CreateInvestmentManagementListRequest investmentManagementListRequest);
 
+    InvestmentManagement getById(Long id);
     // get by code
 
     // get all
 
     // update by id
+    UpdateInvestmentManagementListResponse updateById(UpdateInvestmentManagementRequest request, BillingDataChangeDTO dataChangeDTO);
+
 
     // update with upload data list
-    UpdateInvestmentManagementListResponse updateList(UpdateInvestmentManagementListRequest investmentManagementListRequest);
+    UpdateInvestmentManagementListResponse updateList(UpdateInvestmentManagementListRequest investmentManagementListRequest, BillingDataChangeDTO dataChangeDTO);
 
 
     UpdateInvestmentManagementListResponse updateListApprove(UpdateInvestmentManagementListRequest investmentManagementListRequest);

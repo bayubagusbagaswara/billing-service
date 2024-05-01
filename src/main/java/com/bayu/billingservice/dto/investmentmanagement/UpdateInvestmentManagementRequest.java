@@ -12,7 +12,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class UpdateInvestmentManagementRequest {
 
-    private Long dataChangeId;
     private String inputId;
     private String inputIPAddress;
 
