@@ -392,6 +392,60 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
         }
     }
 
+    @Override
+    public DeleteInvestmentManagementListResponse deleteListApprove(DeleteInvestmentManagementListRequest request) {
+        log.info("Request data delete approve: {}", request);
+        String approveId = request.getApproveId();
+        String approveIPAddress = request.getApproveIPAddress();
+        int totalDataSuccess = 0;
+        int totalDataFailed = 0;
+        List<ErrorMessageInvestmentManagementDTO> errorMessageList = new ArrayList<>();
+
+        try {
+            for (InvestmentManagementDTO investmentManagementDTO : request.getInvestmentManagementDTOList()) {
+                List<String> errorMessages = new ArrayList<>();
+
+                Optional<InvestmentManagement> investmentManagementOptional = investmentManagementRepository.findById(investmentManagementDTO.getId());
+                if (investmentManagementOptional.isEmpty()) {
+                    errorMessages.add(ID_NOT_FOUND + investmentManagementDTO.getId());
+                }
+
+                BillingDataChange dataChangeEntity = getBillingDataChangeById(investmentManagementDTO.getDataChangeId());
+
+                if (errorMessages.isEmpty()) {
+                    InvestmentManagement investmentManagement = investmentManagementOptional.get();
+                    investmentManagementRepository.delete(investmentManagement);
+
+                    String jsonDataAfter = objectMapper.writeValueAsString(investmentManagementDTO);
+                    dataChangeEntity.setApprovalStatus(ApprovalStatus.APPROVED);
+                    dataChangeEntity.setApproveId(approveId);
+                    dataChangeEntity.setApproveIPAddress(approveIPAddress);
+                    dataChangeEntity.setApproveDate(new Date());
+                    dataChangeEntity.setJsonDataAfter(jsonDataAfter);
+                    dataChangeEntity.setDescription("Successfully approve data change and delete data entity");
+
+                    dataChangeRepository.save(dataChangeEntity);
+                    totalDataSuccess++;
+                } else {
+                    String jsonDataAfter = objectMapper.writeValueAsString(investmentManagementDTO);
+                    dataChangeEntity.setApprovalStatus(ApprovalStatus.REJECTED);
+                    dataChangeEntity.setApproveId(approveId);
+                    dataChangeEntity.setApproveIPAddress(approveIPAddress);
+                    dataChangeEntity.setApproveDate(new Date());
+                    dataChangeEntity.setJsonDataAfter(jsonDataAfter);
+                    dataChangeEntity.setDescription(StringUtil.joinStrings(errorMessages));
+
+                    dataChangeRepository.save(dataChangeEntity);
+                    totalDataFailed++;
+                }
+            }
+            return new DeleteInvestmentManagementListResponse(totalDataSuccess, totalDataFailed, errorMessageList);
+        } catch (Exception e) {
+            log.error("An error occurred while deleting entity data investment managements: {}", e.getMessage());
+            throw new DataProcessingException("An error occurred while deleting entity data investment managements", e);
+        }
+    }
+
     public Errors validateInvestmentManagementDTO(InvestmentManagementDTO dto) {
         Errors errors = new BeanPropertyBindingResult(dto, "investmentManagementDTO");
         validator.validate(dto, errors);
