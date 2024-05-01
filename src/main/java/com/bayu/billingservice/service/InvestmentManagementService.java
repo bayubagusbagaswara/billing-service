@@ -3,6 +3,8 @@ package com.bayu.billingservice.service;
 import com.bayu.billingservice.dto.datachange.BillingDataChangeDTO;
 import com.bayu.billingservice.dto.investmentmanagement.*;
 
+import java.util.List;
+
 public interface InvestmentManagementService {
 
     boolean isCodeAlreadyExists(String code);
@@ -19,4 +21,6 @@ public interface InvestmentManagementService {
     DeleteInvestmentManagementListResponse deleteListApprove(DeleteInvestmentManagementListRequest request);
 
     String deleteAll();
+
+    List<InvestmentManagementDTO> getAll();
 }

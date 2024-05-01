@@ -11,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping(path = "/api/investment-management")
 @RequiredArgsConstructor
@@ -158,6 +160,17 @@ public class InvestmentManagementController {
                 .code(HttpStatus.OK.value())
                 .message(HttpStatus.OK.getReasonPhrase())
                 .payload(status)
+                .build();
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping(path = "/all")
+    public ResponseEntity<ResponseDTO<List<InvestmentManagementDTO>>> getAll() {
+        List<InvestmentManagementDTO> investmentManagementDTOList = investmentManagementService.getAll();
+        ResponseDTO<List<InvestmentManagementDTO>> response = ResponseDTO.<List<InvestmentManagementDTO>>builder()
+                .code(HttpStatus.OK.value())
+                .message(HttpStatus.OK.getReasonPhrase())
+                .payload(investmentManagementDTOList)
                 .build();
         return ResponseEntity.ok(response);
     }
