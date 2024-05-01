@@ -1,7 +1,7 @@
 package com.bayu.billingservice.service.impl;
 
-import com.bayu.billingservice.dto.kyc.CreateKycRequest;
-import com.bayu.billingservice.dto.kyc.BillingCustomerDTO;
+import com.bayu.billingservice.dto.customer.CreateCustomerRequest;
+import com.bayu.billingservice.dto.customer.CustomerDTO;
 import com.bayu.billingservice.exception.ConnectionDatabaseException;
 import com.bayu.billingservice.model.Customer;
 import com.bayu.billingservice.repository.CustomerRepository;
@@ -23,7 +23,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public BillingCustomerDTO create(CreateKycRequest request) {
+    public CustomerDTO create(CreateCustomerRequest request) {
         log.info("Create Kyc : {}", request);
 
         BigDecimal minimumFee = request.getCustomerMinimumFee().isEmpty() ? BigDecimal.ZERO : new BigDecimal(request.getCustomerMinimumFee());
@@ -34,7 +34,7 @@ public class CustomerServiceImpl implements CustomerService {
                 .accountName(request.getAccountName())
                 .accountNumber(request.getAccountNumber())
                 .accountBank(request.getAccountBank())
-                .customerCode(request.getAid())
+                .customerCode(request.getCustomerCode())
                 .kseiSafeCode(request.getKseiSafeCode())
                 .customerMinimumFee(minimumFee)
                 .customerSafekeepingFee(customerFee)
@@ -48,12 +48,12 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public List<BillingCustomerDTO> getAll() {
+    public List<CustomerDTO> getAll() {
         return mapToDTOList(customerRepository.findAll());
     }
 
     @Override
-    public List<BillingCustomerDTO> getByBillingCategoryAndBillingType(String billingCategory, String billingType) {
+    public List<CustomerDTO> getByBillingCategoryAndBillingType(String billingCategory, String billingType) {
         List<Customer> customerList = customerRepository.findByBillingCategoryAndBillingType(billingCategory, billingType);
         return mapToDTOList(customerList);
     }
@@ -69,8 +69,8 @@ public class CustomerServiceImpl implements CustomerService {
         }
     }
 
-    private static BillingCustomerDTO mapToDTO(Customer customer) {
-        return BillingCustomerDTO.builder()
+    private static CustomerDTO mapToDTO(Customer customer) {
+        return CustomerDTO.builder()
                 .id(customer.getId())
                 .customerCode(customer.getCustomerCode())
                 .investmentManagementName(customer.getInvestmentManagementName())
@@ -86,7 +86,7 @@ public class CustomerServiceImpl implements CustomerService {
                 .build();
     }
 
-    private static List<BillingCustomerDTO> mapToDTOList(List<Customer> customerList) {
+    private static List<CustomerDTO> mapToDTOList(List<Customer> customerList) {
         return customerList.stream()
                 .map(CustomerServiceImpl::mapToDTO)
                 .toList();

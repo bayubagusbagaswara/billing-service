@@ -1,7 +1,7 @@
 package com.bayu.billingservice;
 
-import com.bayu.billingservice.dto.kyc.BillingCustomerDTO;
-import com.bayu.billingservice.dto.kyc.CreateKycRequest;
+import com.bayu.billingservice.dto.customer.CustomerDTO;
+import com.bayu.billingservice.dto.customer.CreateCustomerRequest;
 import com.bayu.billingservice.model.enumerator.BillingCategory;
 import com.bayu.billingservice.model.enumerator.BillingTemplate;
 import com.bayu.billingservice.model.enumerator.BillingType;
@@ -20,8 +20,8 @@ class CustomerFundTest {
 
     @Test
     void createCustomerFund() {
-        CreateKycRequest request = CreateKycRequest.builder()
-                .aid("24SDOU")
+        CreateCustomerRequest request = CreateCustomerRequest.builder()
+                .customerCode("24SDOU")
                 .customerMinimumFee("")
                 .customerSafekeepingFee("")
                 .investmentManagementName("PT Setiabudi Investment Management")
@@ -38,7 +38,7 @@ class CustomerFundTest {
                 .billingTemplate(BillingTemplate.FUND_TEMPLATE.getValue())
                 .build();
 
-        BillingCustomerDTO billingCustomerDTO = customerService.create(request);
-        assertNotNull(billingCustomerDTO.getId());
+        CustomerDTO customerDTO = customerService.create(request);
+        assertNotNull(customerDTO.getId());
     }
 }

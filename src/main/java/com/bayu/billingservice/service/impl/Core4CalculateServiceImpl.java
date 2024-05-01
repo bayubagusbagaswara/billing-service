@@ -1,7 +1,7 @@
 package com.bayu.billingservice.service.impl;
 
 import com.bayu.billingservice.dto.CoreCalculateRequest;
-import com.bayu.billingservice.dto.kyc.BillingCustomerDTO;
+import com.bayu.billingservice.dto.customer.CustomerDTO;
 import com.bayu.billingservice.exception.CalculateBillingException;
 import com.bayu.billingservice.model.BillingCore;
 import com.bayu.billingservice.model.SfValRgDaily;
@@ -47,7 +47,7 @@ public class Core4CalculateServiceImpl implements Core4CalculateService {
 
             List<BillingCore> billingCoreList = new ArrayList<>();
 
-            List<BillingCustomerDTO> billingCustomerDTOList = customerService.getByBillingCategoryAndBillingType(categoryUpperCase, typeUpperCase);
+            List<CustomerDTO> customerDTOList = customerService.getByBillingCategoryAndBillingType(categoryUpperCase, typeUpperCase);
 
             // Get data Fee Parameter
             List<String> feeParamList = new ArrayList<>();
@@ -58,12 +58,12 @@ public class Core4CalculateServiceImpl implements Core4CalculateService {
             BigDecimal kseiTransactionFee = feeParamMap.get(KSEI.getValue());
             BigDecimal vatFee = feeParamMap.get(VAT.getValue());
 
-            for (BillingCustomerDTO billingCustomerDTO : billingCustomerDTOList) {
-                String aid = billingCustomerDTO.getCustomerCode();
-                String kseiSafeCode = billingCustomerDTO.getKseiSafeCode();
-                BigDecimal customerSafekeepingFee = billingCustomerDTO.getCustomerSafekeepingFee();
-                String billingCategory = billingCustomerDTO.getBillingCategory();
-                String billingTemplate = billingCustomerDTO.getBillingTemplate();
+            for (CustomerDTO customerDTO : customerDTOList) {
+                String aid = customerDTO.getCustomerCode();
+                String kseiSafeCode = customerDTO.getKseiSafeCode();
+                BigDecimal customerSafekeepingFee = customerDTO.getCustomerSafekeepingFee();
+                String billingCategory = customerDTO.getBillingCategory();
+                String billingTemplate = customerDTO.getBillingTemplate();
                 String billingTemplateFormat = billingCategory + "_" + billingTemplate;
 
                 // TODO: Get SK Transaction
@@ -95,15 +95,15 @@ public class Core4CalculateServiceImpl implements Core4CalculateService {
                 billingCore.setBillingPeriod(monthName + " " + year);
                 billingCore.setBillingStatementDate(ConvertDateUtil.convertInstantToString(dateNow));
                 billingCore.setBillingPaymentDueDate(ConvertDateUtil.convertInstantToStringPlus14Days(dateNow));
-                billingCore.setBillingCategory(billingCustomerDTO.getBillingCategory());
-                billingCore.setBillingType(billingCustomerDTO.getBillingType());
-                billingCore.setBillingTemplate(billingCustomerDTO.getBillingTemplate());
-                billingCore.setInvestmentManagementName(billingCustomerDTO.getInvestmentManagementName());
+                billingCore.setBillingCategory(customerDTO.getBillingCategory());
+                billingCore.setBillingType(customerDTO.getBillingType());
+                billingCore.setBillingTemplate(customerDTO.getBillingTemplate());
+                billingCore.setInvestmentManagementName(customerDTO.getInvestmentManagementName());
 //                billingCore.setInvestmentManagementAddress(billingCustomerDTO.getInvestmentManagementAddress());
-                billingCore.setAccountName(billingCustomerDTO.getAccountName());
-                billingCore.setAccountNumber(billingCustomerDTO.getAccountNumber());
-                billingCore.setCostCenter(billingCustomerDTO.getCostCenter()); // EB
-                billingCore.setAccountBank(billingCustomerDTO.getAccountBank()); // ITAMA
+                billingCore.setAccountName(customerDTO.getAccountName());
+                billingCore.setAccountNumber(customerDTO.getAccountNumber());
+                billingCore.setCostCenter(customerDTO.getCostCenter()); // EB
+                billingCore.setAccountBank(customerDTO.getAccountBank()); // ITAMA
 
                 billingCoreList.add(billingCore);
             }

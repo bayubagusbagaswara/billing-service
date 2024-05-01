@@ -1,8 +1,8 @@
 package com.bayu.billingservice.controller;
 
 import com.bayu.billingservice.dto.ResponseDTO;
-import com.bayu.billingservice.dto.kyc.CreateKycRequest;
-import com.bayu.billingservice.dto.kyc.BillingCustomerDTO;
+import com.bayu.billingservice.dto.customer.CreateCustomerRequest;
+import com.bayu.billingservice.dto.customer.CustomerDTO;
 import com.bayu.billingservice.service.CustomerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,36 +14,36 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping(path = "/api/kyc-customer")
+@RequestMapping(path = "/api/customer")
 @RequiredArgsConstructor
-public class BillingCustomerController {
+public class CustomerController {
 
     private final CustomerService customerService;
 
     @GetMapping(path = "/create")
-    public ResponseEntity<ResponseDTO<BillingCustomerDTO>> create(@RequestBody CreateKycRequest request) {
+    public ResponseEntity<ResponseDTO<CustomerDTO>> create(@RequestBody CreateCustomerRequest request) {
         log.info("Start Create Mock Kyc Customer");
 
-        BillingCustomerDTO billingCustomerDTO = customerService.create(request);
+        CustomerDTO customerDTO = customerService.create(request);
 
-        ResponseDTO<BillingCustomerDTO> response = ResponseDTO.<BillingCustomerDTO>builder()
+        ResponseDTO<CustomerDTO> response = ResponseDTO.<CustomerDTO>builder()
                 .code(HttpStatus.CREATED.value())
                 .message(HttpStatus.CREATED.getReasonPhrase())
-                .payload(billingCustomerDTO)
+                .payload(customerDTO)
                 .build();
 
         return ResponseEntity.ok().body(response);
     }
 
     @GetMapping(path = "/all")
-    public ResponseEntity<ResponseDTO<List<BillingCustomerDTO>>> getAll() {
+    public ResponseEntity<ResponseDTO<List<CustomerDTO>>> getAll() {
 
-        List<BillingCustomerDTO> billingCustomerDTOList = customerService.getAll();
+        List<CustomerDTO> customerDTOList = customerService.getAll();
 
-        ResponseDTO<List<BillingCustomerDTO>> response = ResponseDTO.<List<BillingCustomerDTO>>builder()
+        ResponseDTO<List<CustomerDTO>> response = ResponseDTO.<List<CustomerDTO>>builder()
                 .code(HttpStatus.OK.value())
                 .message(HttpStatus.OK.getReasonPhrase())
-                .payload(billingCustomerDTOList)
+                .payload(customerDTOList)
                 .build();
 
         return ResponseEntity.ok().body(response);

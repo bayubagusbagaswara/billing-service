@@ -1,7 +1,7 @@
 package com.bayu.billingservice.service.impl;
 
 import com.bayu.billingservice.dto.fund.FeeReportRequest;
-import com.bayu.billingservice.dto.kyc.BillingCustomerDTO;
+import com.bayu.billingservice.dto.customer.CustomerDTO;
 import com.bayu.billingservice.exception.CalculateBillingException;
 import com.bayu.billingservice.model.BillingFund;
 import com.bayu.billingservice.model.SkTransaction;
@@ -66,14 +66,14 @@ public class FundCalculateCalculateServiceImpl implements FundCalculateService {
             BigDecimal kseiAmountDue;
             BigDecimal totalAmountDue;
 
-            List<BillingCustomerDTO> billingCustomerDTOList = customerService.getByBillingCategoryAndBillingType(billingCategory, billingType);
+            List<CustomerDTO> customerDTOList = customerService.getByBillingCategoryAndBillingType(billingCategory, billingType);
 
             for (FeeReportRequest feeReportRequest : request) {
                 String aid = feeReportRequest.getPortfolioCode();
                 BigDecimal customerFee = feeReportRequest.getCustomerFee();
 
-                for (BillingCustomerDTO billingCustomerDTO : billingCustomerDTOList) {
-                    if (billingCustomerDTO.getCustomerCode().equalsIgnoreCase(aid)) {
+                for (CustomerDTO customerDTO : customerDTOList) {
+                    if (customerDTO.getCustomerCode().equalsIgnoreCase(aid)) {
                         List<SkTransaction> skTransactionList = skTransactionService.getAllByAidAndMonthAndYear(aid, month, year);
 
                         int[] filteredTransactionsType = skTransactionService.filterTransactionsType(skTransactionList);
@@ -114,17 +114,13 @@ public class FundCalculateCalculateServiceImpl implements FundCalculateService {
                                 .billingPeriod(month + " " + year)
                                 .billingStatementDate(ConvertDateUtil.convertInstantToString(dateNow))
                                 .billingPaymentDueDate(ConvertDateUtil.convertInstantToStringPlus14Days(dateNow))
-                                .billingCategory(billingCustomerDTO.getBillingCategory())
-                                .billingType(billingCustomerDTO.getBillingType())
-                                .billingTemplate(billingCustomerDTO.getBillingTemplate())
-                                .investmentManagementName(billingCustomerDTO.getInvestmentManagementName())
-                                .investmentManagementAddressBuilding(billingCustomerDTO.getInvestmentManagementAddressBuilding())
-                                .investmentManagementAddressStreet(billingCustomerDTO.getInvestmentManagementAddressStreet())
-                                .investmentManagementAddressCity(billingCustomerDTO.getInvestmentManagementAddressCity())
-                                .investmentManagementAddressProvince(billingCustomerDTO.getInvestmentManagementAddressProvince())
-                                .accountName(billingCustomerDTO.getAccountName())
-                                .accountNumber(billingCustomerDTO.getAccountNumber())
-                                .accountBank(billingCustomerDTO.getAccountBank())
+                                .billingCategory(customerDTO.getBillingCategory())
+                                .billingType(customerDTO.getBillingType())
+                                .billingTemplate(customerDTO.getBillingTemplate())
+                                .investmentManagementName(customerDTO.getInvestmentManagementName())
+                                .accountName(customerDTO.getAccountName())
+                                .accountNumber(customerDTO.getAccountNumber())
+                                .accountBank(customerDTO.getAccountBank())
                                 .currency(IDR.getValue())
                                 .customerFee(customerFee)
                                 .accrualCustodialFee(accrualCustodialFee)

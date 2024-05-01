@@ -1,7 +1,7 @@
 package com.bayu.billingservice.service.impl;
 
 import com.bayu.billingservice.dto.CoreCalculateRequest;
-import com.bayu.billingservice.dto.kyc.BillingCustomerDTO;
+import com.bayu.billingservice.dto.customer.CustomerDTO;
 import com.bayu.billingservice.exception.CalculateBillingException;
 import com.bayu.billingservice.model.BillingCore;
 import com.bayu.billingservice.model.SfValRgDaily;
@@ -56,7 +56,7 @@ public class Core1CalculateServiceImpl implements Core1CalculateService {
             List<BillingCore> billingCoreList = new ArrayList<>();
 
             // Get data KYC Customer
-            List<BillingCustomerDTO> billingCustomerDTOList = customerService.getByBillingCategoryAndBillingType(categoryUpperCase, typeUpperCase);
+            List<CustomerDTO> customerDTOList = customerService.getByBillingCategoryAndBillingType(categoryUpperCase, typeUpperCase);
 
             // Get data Fee Parameter
             List<String> feeParamList = new ArrayList<>();
@@ -67,10 +67,10 @@ public class Core1CalculateServiceImpl implements Core1CalculateService {
             BigDecimal transactionHandlingFee = feeParamMap.get(TRANSACTION_HANDLING_IDR.getValue());
             BigDecimal vatFee = feeParamMap.get(VAT.getValue());
 
-            for (BillingCustomerDTO billingCustomerDTO : billingCustomerDTOList) {
-                String aid = billingCustomerDTO.getCustomerCode();
-                String billingCategory = billingCustomerDTO.getBillingCategory();
-                String billingType = billingCustomerDTO.getBillingType();
+            for (CustomerDTO customerDTO : customerDTOList) {
+                String aid = customerDTO.getCustomerCode();
+                String billingCategory = customerDTO.getBillingCategory();
+                String billingType = customerDTO.getBillingType();
 
                 List<SkTransaction> skTransactionList = skTransactionService.getAllByAidAndMonthAndYear(aid, monthName, year);
 
@@ -105,27 +105,27 @@ public class Core1CalculateServiceImpl implements Core1CalculateService {
                         .createdAt(dateNow)
                         .updatedAt(dateNow)
                         .approvalStatus(PENDING.getStatus())
-                        .aid(billingCustomerDTO.getCustomerCode())
+                        .aid(customerDTO.getCustomerCode())
                         .month(monthName)
                         .year(year)
                         .billingPeriod(monthName + " " + year)
                         .billingStatementDate(ConvertDateUtil.convertInstantToString(dateNow))
                         .billingPaymentDueDate(ConvertDateUtil.convertInstantToStringPlus14Days(dateNow))
-                        .billingCategory(billingCustomerDTO.getBillingCategory())
-                        .billingType(billingCustomerDTO.getBillingType())
-                        .billingTemplate(billingCustomerDTO.getBillingTemplate())
-                        .investmentManagementName(billingCustomerDTO.getInvestmentManagementName())
+                        .billingCategory(customerDTO.getBillingCategory())
+                        .billingType(customerDTO.getBillingType())
+                        .billingTemplate(customerDTO.getBillingTemplate())
+                        .investmentManagementName(customerDTO.getInvestmentManagementName())
 //                        .investmentManagementAddress(billingCustomerDTO.getInvestmentManagementAddress())
-                        .accountName(billingCustomerDTO.getAccountName())
-                        .accountNumber(billingCustomerDTO.getAccountNumber())
-                        .accountBank(billingCustomerDTO.getAccountBank())
+                        .accountName(customerDTO.getAccountName())
+                        .accountNumber(customerDTO.getAccountNumber())
+                        .accountBank(customerDTO.getAccountBank())
                         .currency(IDR.getValue())
-                        .minimumFee(billingCustomerDTO.getCustomerMinimumFee())
+                        .minimumFee(customerDTO.getCustomerMinimumFee())
                         .transactionHandlingValueFrequency(transactionHandlingValueFrequency)
                         .transactionHandlingFee(transactionHandlingFee)
                         .transactionHandlingAmountDue(transactionHandlingAmountDue)
                         .safekeepingValueFrequency(safekeepingValueFrequency)
-                        .safekeepingFee(billingCustomerDTO.getCustomerSafekeepingFee())
+                        .safekeepingFee(customerDTO.getCustomerSafekeepingFee())
                         .safekeepingAmountDue(safekeepingAmountDue)
                         .subTotal(subTotal)
                         .vatFee(vatFee)
