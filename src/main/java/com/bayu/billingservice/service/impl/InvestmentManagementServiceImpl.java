@@ -5,6 +5,7 @@ import com.bayu.billingservice.dto.investmentmanagement.*;
 import com.bayu.billingservice.exception.CreateDataException;
 import com.bayu.billingservice.exception.DataChangeException;
 import com.bayu.billingservice.exception.DataNotFoundException;
+import com.bayu.billingservice.exception.DataProcessingException;
 import com.bayu.billingservice.model.BillingDataChange;
 import com.bayu.billingservice.model.InvestmentManagement;
 import com.bayu.billingservice.model.enumerator.ChangeAction;
@@ -121,11 +122,6 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
         }
     }
 
-    private void validationCodeAlreadyExists(InvestmentManagementDTO dto, List<String> errorMessages) {
-        if (isCodeAlreadyExists(dto.getCode())) {
-            errorMessages.add("Code '" + dto.getCode() + "' is already taken");
-        }
-    }
 
     @Override
     public CreateInvestmentManagementListResponse createListApprove(CreateInvestmentManagementListRequest investmentManagementListRequest) {
@@ -140,15 +136,11 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
             for (InvestmentManagementDTO investmentManagementDTO : investmentManagementListRequest.getInvestmentManagementRequestList()) {
                 List<String> errorMessages = new ArrayList<>();
                 Errors errors = validateInvestmentManagementDTO(investmentManagementDTO);
-
                 if (errors.hasErrors()) {
                     errors.getAllErrors().forEach(error -> errorMessages.add(error.getDefaultMessage()));
                 }
-
                 validationCodeAlreadyExists(investmentManagementDTO, errorMessages);
-
                 BillingDataChange dataChange = getBillingDataChangeById(investmentManagementDTO.getDataChangeId());
-
                 if (errorMessages.isEmpty()) {
                     InvestmentManagement investmentManagement = InvestmentManagement.builder()
                             .code(investmentManagementDTO.getCode())
@@ -168,34 +160,25 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
                     dataChange.setApproveDate(new Date());
                     dataChange.setJsonDataAfter(jsonDataAfter);
                     dataChange.setDescription("Successfully approve data change and save data entity");
-
                     dataChangeRepository.save(dataChange);
                     totalDataSuccess++;
                 } else {
-                    String jsonDataAfter = objectMapper.writeValueAsString(investmentManagementDTO);
                     dataChange.setApprovalStatus(ApprovalStatus.REJECTED);
                     dataChange.setApproveId(approveId);
                     dataChange.setApproveIPAddress(approveIPAddress);
                     dataChange.setApproveDate(new Date());
-                    dataChange.setJsonDataAfter(jsonDataAfter);
                     dataChange.setDescription(StringUtil.joinStrings(errorMessages));
-
                     dataChangeRepository.save(dataChange);
                     totalDataFailed++;
                 }
             }
-
             return new CreateInvestmentManagementListResponse(totalDataSuccess, totalDataFailed, errorMessageList);
         } catch (Exception e) {
-            log.error("Error when create list approve: {}", e.getMessage());
-            throw new CreateDataException("Error create saving investment management data", e);
+            log.error("An error occurred while saving entity data investment managements: {}", e.getMessage());
+            throw new DataProcessingException("An error occurred while saving entity data investment managements", e);
         }
     }
 
-    private BillingDataChange getBillingDataChangeById(Long dataChangeId) {
-        return dataChangeRepository.findById(dataChangeId)
-                .orElseThrow(() -> new DataNotFoundException("Data Change not found with id: " + dataChangeId));
-    }
 
     @Override
     public UpdateInvestmentManagementListResponse updateList(UpdateInvestmentManagementListRequest investmentManagementListRequest) {
@@ -368,6 +351,17 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
         errorMessageInvestmentManagementDTOList.add(errorMessageDTO);
         totalDataFailed++;
         return totalDataFailed;
+    }
+
+    private BillingDataChange getBillingDataChangeById(Long dataChangeId) {
+        return dataChangeRepository.findById(dataChangeId)
+                .orElseThrow(() -> new DataNotFoundException("Data Change not found with id: " + dataChangeId));
+    }
+
+    private void validationCodeAlreadyExists(InvestmentManagementDTO dto, List<String> errorMessages) {
+        if (isCodeAlreadyExists(dto.getCode())) {
+            errorMessages.add("Code '" + dto.getCode() + "' is already taken");
+        }
     }
 
 }

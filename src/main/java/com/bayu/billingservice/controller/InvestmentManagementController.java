@@ -63,4 +63,16 @@ public class InvestmentManagementController {
 
         return ResponseEntity.ok(response);
     }
+
+    @PostMapping(path = "/create-list/approve")
+    public ResponseEntity<ResponseDTO<CreateInvestmentManagementListResponse>> createListApprove(@RequestBody CreateInvestmentManagementListRequest request) {
+        CreateInvestmentManagementListResponse listApprove = investmentManagementService.createListApprove(request);
+        ResponseDTO<CreateInvestmentManagementListResponse> response = ResponseDTO.<CreateInvestmentManagementListResponse>builder()
+                .code(HttpStatus.OK.value())
+                .message(HttpStatus.OK.getReasonPhrase())
+                .payload(listApprove)
+                .build();
+        return ResponseEntity.ok(response);
+    }
+
 }
