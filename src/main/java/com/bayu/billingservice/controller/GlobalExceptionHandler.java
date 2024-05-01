@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
 
 @RestControllerAdvice
@@ -37,18 +36,6 @@ public class GlobalExceptionHandler {
                 .build();
         return ResponseEntity.ok().body(response);
     }
-
-//    @ExceptionHandler(IOException.class)
-//    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-//    public ResponseEntity<String> handleIOException(IOException ex) {
-//        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error reading the Excel file: " + ex.getMessage());
-//    }
-//
-//    @ExceptionHandler(RuntimeException.class)
-//    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-//    public ResponseEntity<String> handleRuntimeException(RuntimeException ex) {
-//        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to process Excel file: " + ex.getMessage());
-//    }
 
     @ExceptionHandler(DataNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
@@ -92,6 +79,18 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(DataChangeException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ResponseEntity<ErrorResponseDTO> handleDataChangeException(DataChangeException ex) {
+        ErrorResponseDTO response = ErrorResponseDTO.builder()
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .errorCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                .message(ex.getMessage())
+                .timeStamp(LocalDateTime.now())
+                .build();
+        return ResponseEntity.ok(response);
+    }
+
+    @ExceptionHandler(DataProcessingException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ResponseEntity<ErrorResponseDTO> handleDataProcessingException(DataProcessingException ex) {
         ErrorResponseDTO response = ErrorResponseDTO.builder()
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .errorCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
