@@ -88,4 +88,17 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.ok().body(response);
     }
+
+    @ExceptionHandler(DataChangeException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ResponseEntity<ErrorResponseDTO> handleDataChangeException(DataChangeException ex) {
+        ErrorResponseDTO response = ErrorResponseDTO.builder()
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .errorCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                .message(ex.getMessage())
+                .timeStamp(LocalDateTime.now())
+                .build();
+        return ResponseEntity.ok(response);
+    }
+
 }
