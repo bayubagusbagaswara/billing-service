@@ -275,50 +275,43 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
         List<ErrorMessageInvestmentManagementDTO> errorMessageList = new ArrayList<>();
 
         try {
-            for (InvestmentManagementDTO dto : investmentManagementListRequest.getInvestmentManagementRequestList()) {
+            for (InvestmentManagementDTO investmentManagementDTO : investmentManagementListRequest.getInvestmentManagementRequestList()) {
                 List<String> errorMessages = new ArrayList<>();
-                Errors errors = validateInvestmentManagementDTO(dto);
+                Errors errors = validateInvestmentManagementDTO(investmentManagementDTO);
                 if (errors.hasErrors()) {
                     errors.getAllErrors().forEach(error -> errorMessages.add(error.getDefaultMessage()));
                 }
-                validationCodeAlreadyExists(dto, errorMessages);
+                validationCodeAlreadyExists(investmentManagementDTO, errorMessages);
 
-                InvestmentManagement investmentManagementEntity = getById(dto.getId());
-                BillingDataChange dataChangeEntity = getBillingDataChangeById(dto.getDataChangeId());
+                BillingDataChange dataChangeEntity = getBillingDataChangeById(investmentManagementDTO.getDataChangeId());
 
                 if (errorMessages.isEmpty()) {
-                    investmentManagementEntity.setCode(dto.getCode());
-                    investmentManagementEntity.setName(dto.getName());
-                    investmentManagementEntity.setEmail(dto.getEmail());
-                    investmentManagementEntity.setAddress1(dto.getAddress1());
-                    investmentManagementEntity.setAddress2(dto.getAddress2());
-                    investmentManagementEntity.setAddress3(dto.getAddress3());
-                    investmentManagementEntity.setAddress4(dto.getAddress4());
+                    InvestmentManagement investmentManagementEntity = getById(investmentManagementDTO.getId());
+                    investmentManagementEntity.setCode(investmentManagementDTO.getCode());
+                    investmentManagementEntity.setName(investmentManagementDTO.getName());
+                    investmentManagementEntity.setEmail(investmentManagementDTO.getEmail());
+                    investmentManagementEntity.setAddress1(investmentManagementDTO.getAddress1());
+                    investmentManagementEntity.setAddress2(investmentManagementDTO.getAddress2());
+                    investmentManagementEntity.setAddress3(investmentManagementDTO.getAddress3());
+                    investmentManagementEntity.setAddress4(investmentManagementDTO.getAddress4());
                     InvestmentManagement investmentManagementSaved = investmentManagementRepository.save(investmentManagementEntity);
 
-                    String jsonDataBefore = objectMapper.writeValueAsString(investmentManagementEntity);
                     String jsonDataAfter = objectMapper.writeValueAsString(investmentManagementSaved);
-
                     dataChangeEntity.setApprovalStatus(ApprovalStatus.APPROVED);
                     dataChangeEntity.setApproveId(approveId);
                     dataChangeEntity.setApproveIPAddress(approveIPAddress);
                     dataChangeEntity.setApproveDate(approveDate);
-                    dataChangeEntity.setJsonDataBefore(jsonDataBefore);
                     dataChangeEntity.setJsonDataAfter(jsonDataAfter);
-                    dataChangeEntity.setDescription("Success Approve");
+                    dataChangeEntity.setDescription("Successfully approve data change and update data entity");
 
                     dataChangeRepository.save(dataChangeEntity);
                     totalDataSuccess++;
                 } else {
-                    // do update data change, with approval status is REJECT and put error messages to description
-                    String jsonDataBefore = objectMapper.writeValueAsString(investmentManagementEntity);
-                    String jsonDataAfter = objectMapper.writeValueAsString(dto);
-
+                    String jsonDataAfter = objectMapper.writeValueAsString(investmentManagementDTO);
                     dataChangeEntity.setApprovalStatus(ApprovalStatus.REJECTED);
                     dataChangeEntity.setApproveId(approveId);
                     dataChangeEntity.setApproveIPAddress(approveIPAddress);
                     dataChangeEntity.setApproveDate(approveDate);
-                    dataChangeEntity.setJsonDataBefore(jsonDataBefore);
                     dataChangeEntity.setJsonDataAfter(jsonDataAfter);
                     dataChangeEntity.setDescription(StringUtil.joinStrings(errorMessages));
 
@@ -328,8 +321,8 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
             }
             return new UpdateInvestmentManagementListResponse(totalDataSuccess, totalDataFailed, errorMessageList);
         } catch (Exception e) {
-            log.error(": {}", e.getMessage());
-            throw new CreateDataException("", e);
+            log.error("An error occurred while updating entity data investment managements: {}", e.getMessage());
+            throw new DataProcessingException("An error occurred while updating entity data investment managements", e);
         }
     }
 

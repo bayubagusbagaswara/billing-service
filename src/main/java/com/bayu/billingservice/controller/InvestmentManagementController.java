@@ -110,5 +110,15 @@ public class InvestmentManagementController {
         return ResponseEntity.ok(response);
     }
 
-    // update approve
+    @PutMapping(path = "/update-list/approve")
+    public ResponseEntity<ResponseDTO<UpdateInvestmentManagementListResponse>> updateListApprove(@RequestBody UpdateInvestmentManagementListRequest request) {
+        UpdateInvestmentManagementListResponse updateInvestmentManagementListResponse = investmentManagementService.updateListApprove(request);
+        ResponseDTO<UpdateInvestmentManagementListResponse> response = ResponseDTO.<UpdateInvestmentManagementListResponse>builder()
+                .code(HttpStatus.OK.value())
+                .message(HttpStatus.OK.getReasonPhrase())
+                .payload(updateInvestmentManagementListResponse)
+                .build();
+        return ResponseEntity.ok(response);
+    }
+
 }
