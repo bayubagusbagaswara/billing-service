@@ -91,7 +91,24 @@ public class InvestmentManagementController {
         return ResponseEntity.ok(response);
     }
 
-    // update by id list
+    @PutMapping(path = "/update-list")
+    public ResponseEntity<ResponseDTO<UpdateInvestmentManagementListResponse>> updateList(@RequestBody UpdateInvestmentManagementListRequest request) {
+        BillingDataChangeDTO dataChangeDTO = BillingDataChangeDTO.builder()
+                .methodHttp(HttpMethod.PUT.name())
+                .endpoint("/api/investment-management/update-list/approve")
+                .isRequestBody(true)
+                .isRequestParam(false)
+                .isPathVariable(false)
+                .menu(MENU_INVESTMENT_MANAGEMENT)
+                .build();
+        UpdateInvestmentManagementListResponse updateInvestmentManagementListResponse = investmentManagementService.updateList(request, dataChangeDTO);
+        ResponseDTO<UpdateInvestmentManagementListResponse> response = ResponseDTO.<UpdateInvestmentManagementListResponse>builder()
+                .code(HttpStatus.OK.value())
+                .message(HttpStatus.OK.getReasonPhrase())
+                .payload(updateInvestmentManagementListResponse)
+                .build();
+        return ResponseEntity.ok(response);
+    }
 
     // update approve
 }
