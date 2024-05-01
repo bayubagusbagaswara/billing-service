@@ -27,6 +27,7 @@ import org.springframework.validation.Validator;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -38,6 +39,8 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
     private final Validator validator;
     private final ObjectMapper objectMapper;
 
+    private static final String ID_NOT_FOUND = "Investment Management not found with id: ";
+
     @Override
     public boolean isCodeAlreadyExists(String code) {
         return investmentManagementRepository.existsByCode(code);
@@ -46,7 +49,7 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
     @Override
     public InvestmentManagement getById(Long id) {
         return investmentManagementRepository.findById(id)
-                .orElseThrow(() -> new DataNotFoundException("Investment Management not found with id: " + id));
+                .orElseThrow(() -> new DataNotFoundException(ID_NOT_FOUND + id));
     }
 
     @Override
@@ -214,8 +217,13 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
 
             validationCodeAlreadyExists(investmentManagementDTO, errorMessages);
 
+            Optional<InvestmentManagement> investmentManagementOptional = investmentManagementRepository.findById(investmentManagementDTO.getId());
+            if (investmentManagementOptional.isEmpty()) {
+                errorMessages.add(ID_NOT_FOUND + investmentManagementDTO.getId());
+            }
+
             if (errorMessages.isEmpty()) {
-                InvestmentManagement investmentManagement = getById(investmentManagementDTO.getId());
+                InvestmentManagement investmentManagement = investmentManagementOptional.get();
                 BillingDataChange billingDataChange = getBillingDataChangeUpdate(dataChangeDTO, investmentManagement, investmentManagementDTO, inputId, inputIPAddress);
                 dataChangeRepository.save(billingDataChange);
                 totalDataSuccess++;
@@ -323,6 +331,64 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
         } catch (Exception e) {
             log.error("An error occurred while updating entity data investment managements: {}", e.getMessage());
             throw new DataProcessingException("An error occurred while updating entity data investment managements", e);
+        }
+    }
+
+    @Override
+    public DeleteInvestmentManagementListResponse deleteList(DeleteInvestmentManagementListRequest request, BillingDataChangeDTO dataChangeDTO) {
+        log.info("Delete investment management by id with request: {}", request);
+        String inputId = request.getInputId();
+        String inputIPAddress = request.getInputIPAddress();
+        int totalDataSuccess = 0;
+        int totalDataFailed = 0;
+        List<ErrorMessageInvestmentManagementDTO> errorMessageInvestmentManagementDTOList = new ArrayList<>();
+
+        try {
+            for (InvestmentManagementDTO investmentManagementDTO : request.getInvestmentManagementDTOList()) {
+                List<String> errorMessages = new ArrayList<>();
+
+                Optional<InvestmentManagement> investmentManagementOptional = investmentManagementRepository.findById(investmentManagementDTO.getId());
+                if (investmentManagementOptional.isEmpty()) {
+                    errorMessages.add(ID_NOT_FOUND + investmentManagementDTO.getId());
+                }
+
+                if (errorMessages.isEmpty()) {
+                    // Create data change
+                    InvestmentManagement investmentManagement = investmentManagementOptional.get();
+                    String jsonDataBefore = objectMapper.writeValueAsString(investmentManagement);
+                    String jsonDataAfter = objectMapper.writeValueAsString(investmentManagementDTO);
+                    BillingDataChange billingDataChange = BillingDataChange.builder()
+                            .approvalStatus(ApprovalStatus.PENDING)
+                            .inputId(inputId)
+                            .inputDate(new Date())
+                            .inputIPAddress(inputIPAddress)
+                            .approveId("")
+                            .approveDate(null)
+                            .approveIPAddress("")
+                            .changeAction(ChangeAction.DELETE)
+                            .entityId(investmentManagement.getId().toString())
+                            .entityClassName(InvestmentManagement.class.getName())
+                            .tableName(TableNameResolver.getTableName(InvestmentManagement.class))
+                            .jsonDataBefore(jsonDataBefore)
+                            .jsonDataAfter(jsonDataAfter)
+                            .description("")
+                            .methodHttp(dataChangeDTO.getMethodHttp())
+                            .endpoint(dataChangeDTO.getEndpoint())
+                            .isRequestBody(dataChangeDTO.getIsRequestBody())
+                            .isRequestParam(dataChangeDTO.getIsRequestParam())
+                            .isPathVariable(dataChangeDTO.getIsPathVariable())
+                            .menu(dataChangeDTO.getMenu())
+                            .build();
+                    dataChangeRepository.save(billingDataChange);
+                    totalDataSuccess++;
+                } else {
+                    totalDataFailed = getTotalDataFailed(totalDataFailed, errorMessageInvestmentManagementDTOList, investmentManagementDTO, errorMessages);
+                }
+            }
+            return new DeleteInvestmentManagementListResponse(totalDataSuccess, totalDataFailed, errorMessageInvestmentManagementDTOList);
+        } catch (Exception e) {
+            log.error("An error occurred while saving data changes to delete investment management single data: {}", e.getMessage());
+            throw new DataChangeException("An error occurred while saving data changes to delete investment management single data", e);
         }
     }
 

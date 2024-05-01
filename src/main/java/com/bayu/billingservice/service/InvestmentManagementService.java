@@ -18,6 +18,7 @@ public interface InvestmentManagementService {
     UpdateInvestmentManagementListResponse updateList(UpdateInvestmentManagementListRequest investmentManagementListRequest, BillingDataChangeDTO dataChangeDTO);
     UpdateInvestmentManagementListResponse updateListApprove(UpdateInvestmentManagementListRequest investmentManagementListRequest);
 
+    DeleteInvestmentManagementListResponse deleteList(DeleteInvestmentManagementListRequest request, BillingDataChangeDTO dataChangeDTO);
 
 
     // delete by id
