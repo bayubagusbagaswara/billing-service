@@ -20,4 +20,10 @@ public class BillingDataChangeServiceImpl implements BillingDataChangeService {
     public List<BillingDataChange> getAll() {
         return dataChangeRepository.findAll();
     }
+
+    @Override
+    public String deleteAll() {
+        dataChangeRepository.deleteAll();
+        return "Successfully delete all data change";
+    }
 }
