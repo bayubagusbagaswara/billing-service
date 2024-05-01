@@ -1,9 +1,7 @@
 package com.bayu.billingservice.service;
 
-import com.bayu.billingservice.dto.investmentmanagement.CreateInvestmentManagementListRequest;
-import com.bayu.billingservice.dto.investmentmanagement.CreateInvestmentManagementListResponse;
-import com.bayu.billingservice.dto.investmentmanagement.UpdateInvestmentManagementListRequest;
-import com.bayu.billingservice.dto.investmentmanagement.UpdateInvestmentManagementListResponse;
+import com.bayu.billingservice.dto.datachange.BillingDataChangeDTO;
+import com.bayu.billingservice.dto.investmentmanagement.*;
 
 public interface InvestmentManagementService {
 
@@ -11,9 +9,10 @@ public interface InvestmentManagementService {
     boolean isCodeAlreadyExists(String code);
 
     // create single data
+    CreateInvestmentManagementListResponse create(CreateInvestmentManagementRequest request, BillingDataChangeDTO dataChangeDTO);
 
     // create with upload data list
-    CreateInvestmentManagementListResponse createList(CreateInvestmentManagementListRequest investmentManagementListRequest);
+    CreateInvestmentManagementListResponse createList(CreateInvestmentManagementListRequest investmentManagementListRequest, BillingDataChangeDTO dataChangeDTO);
 
     // approve upload data list
     CreateInvestmentManagementListResponse createListApprove(CreateInvestmentManagementListRequest investmentManagementListRequest);
@@ -29,6 +28,7 @@ public interface InvestmentManagementService {
 
 
     UpdateInvestmentManagementListResponse updateListApprove(UpdateInvestmentManagementListRequest investmentManagementListRequest);
+
 
 
     // delete by id
