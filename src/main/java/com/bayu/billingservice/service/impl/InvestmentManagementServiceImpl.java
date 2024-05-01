@@ -451,6 +451,12 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
         }
     }
 
+    @Override
+    public String deleteAll() {
+        investmentManagementRepository.deleteAll();
+        return "Successfully delete all investment management";
+    }
+
     public Errors validateInvestmentManagementDTO(InvestmentManagementDTO dto) {
         Errors errors = new BeanPropertyBindingResult(dto, "investmentManagementDTO");
         validator.validate(dto, errors);

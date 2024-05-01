@@ -151,4 +151,14 @@ public class InvestmentManagementController {
         return ResponseEntity.ok(response);
     }
 
+    @DeleteMapping(path = "/all")
+    public ResponseEntity<ResponseDTO<String>> deleteAll() {
+        String status = investmentManagementService.deleteAll();
+        ResponseDTO<String> response = ResponseDTO.<String>builder()
+                .code(HttpStatus.OK.value())
+                .message(HttpStatus.OK.getReasonPhrase())
+                .payload(status)
+                .build();
+        return ResponseEntity.ok(response);
+    }
 }

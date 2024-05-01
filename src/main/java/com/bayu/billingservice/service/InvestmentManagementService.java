@@ -18,4 +18,5 @@ public interface InvestmentManagementService {
     DeleteInvestmentManagementListResponse deleteList(DeleteInvestmentManagementListRequest request, BillingDataChangeDTO dataChangeDTO);
     DeleteInvestmentManagementListResponse deleteListApprove(DeleteInvestmentManagementListRequest request);
 
+    String deleteAll();
 }
