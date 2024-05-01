@@ -12,6 +12,7 @@ import com.bayu.billingservice.model.enumerator.ChangeAction;
 import com.bayu.billingservice.model.enumerator.ApprovalStatus;
 import com.bayu.billingservice.repository.BillingDataChangeRepository;
 import com.bayu.billingservice.repository.InvestmentManagementRepository;
+import com.bayu.billingservice.service.BillingDataChangeService;
 import com.bayu.billingservice.service.InvestmentManagementService;
 import com.bayu.billingservice.util.StringUtil;
 import com.bayu.billingservice.util.TableNameResolver;
@@ -36,6 +37,7 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
 
     private final InvestmentManagementRepository investmentManagementRepository;
     private final BillingDataChangeRepository dataChangeRepository;
+    private final BillingDataChangeService dataChangeService;
     private final Validator validator;
     private final ObjectMapper objectMapper;
 
@@ -44,12 +46,6 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
     @Override
     public boolean isCodeAlreadyExists(String code) {
         return investmentManagementRepository.existsByCode(code);
-    }
-
-    @Override
-    public InvestmentManagement getById(Long id) {
-        return investmentManagementRepository.findById(id)
-                .orElseThrow(() -> new DataNotFoundException(ID_NOT_FOUND + id));
     }
 
     @Override
@@ -255,9 +251,13 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
                     errors.getAllErrors().forEach(error -> errorMessages.add(error.getDefaultMessage()));
                 }
                 validationCodeAlreadyExists(investmentManagementDTO, errorMessages);
+                Optional<InvestmentManagement> investmentManagementOptional = investmentManagementRepository.findById(investmentManagementDTO.getId());
+                if (investmentManagementOptional.isEmpty()) {
+                    errorMessages.add(ID_NOT_FOUND + investmentManagementDTO.getId());
+                }
+
                 if (errorMessages.isEmpty()) {
-                    Long id = investmentManagementDTO.getId();
-                    InvestmentManagement investmentManagement = getById(id);
+                    InvestmentManagement investmentManagement = investmentManagementOptional.get();
                     BillingDataChange dataChange = getBillingDataChangeUpdate(dataChangeDTO, investmentManagement, investmentManagementDTO, inputId, inputIPAddress);
                     dataChangeRepository.save(dataChange);
                     totalDataSuccess++;
@@ -292,9 +292,14 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
                 validationCodeAlreadyExists(investmentManagementDTO, errorMessages);
 
                 BillingDataChange dataChangeEntity = getBillingDataChangeById(investmentManagementDTO.getDataChangeId());
+                Optional<InvestmentManagement> investmentManagementOptional = investmentManagementRepository.findById(investmentManagementDTO.getId());
+
+                if (investmentManagementOptional.isEmpty()) {
+                    errorMessages.add(ID_NOT_FOUND + investmentManagementDTO.getId());
+                }
 
                 if (errorMessages.isEmpty()) {
-                    InvestmentManagement investmentManagementEntity = getById(investmentManagementDTO.getId());
+                    InvestmentManagement investmentManagementEntity = investmentManagementOptional.get();
                     investmentManagementEntity.setCode(investmentManagementDTO.getCode());
                     investmentManagementEntity.setName(investmentManagementDTO.getName());
                     investmentManagementEntity.setEmail(investmentManagementDTO.getEmail());
