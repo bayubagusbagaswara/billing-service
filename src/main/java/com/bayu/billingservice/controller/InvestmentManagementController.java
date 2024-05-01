@@ -140,4 +140,15 @@ public class InvestmentManagementController {
         return ResponseEntity.ok(response);
     }
 
+    @DeleteMapping(path = "/delete/approve")
+    public ResponseEntity<ResponseDTO<DeleteInvestmentManagementListResponse>> deleteApprove(@RequestBody DeleteInvestmentManagementListRequest request) {
+        DeleteInvestmentManagementListResponse deleteInvestmentManagementListResponse = investmentManagementService.deleteListApprove(request);
+        ResponseDTO<DeleteInvestmentManagementListResponse> response = ResponseDTO.<DeleteInvestmentManagementListResponse>builder()
+                .code(HttpStatus.OK.value())
+                .message(HttpStatus.OK.getReasonPhrase())
+                .payload(deleteInvestmentManagementListResponse)
+                .build();
+        return ResponseEntity.ok(response);
+    }
+
 }
