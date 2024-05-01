@@ -276,10 +276,12 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
             for (InvestmentManagementDTO investmentManagementDTO : investmentManagementListRequest.getInvestmentManagementRequestList()) {
                 List<String> errorMessages = new ArrayList<>();
                 Errors errors = validateInvestmentManagementDTO(investmentManagementDTO);
+
                 if (errors.hasErrors()) {
                     errors.getAllErrors().forEach(error -> errorMessages.add(error.getDefaultMessage()));
                 }
-                validationCodeAlreadyExists(investmentManagementDTO, errorMessages);
+
+//                validationCodeAlreadyExists(investmentManagementDTO, errorMessages);
 
                 BillingDataChange dataChangeEntity = getBillingDataChangeById(investmentManagementDTO.getDataChangeId());
                 Optional<InvestmentManagement> investmentManagementOptional = investmentManagementRepository.findById(investmentManagementDTO.getId());
@@ -290,13 +292,7 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
 
                 if (errorMessages.isEmpty()) {
                     InvestmentManagement investmentManagementEntity = investmentManagementOptional.get();
-                    investmentManagementEntity.setCode(investmentManagementDTO.getCode());
-                    investmentManagementEntity.setName(investmentManagementDTO.getName());
-                    investmentManagementEntity.setEmail(investmentManagementDTO.getEmail());
-                    investmentManagementEntity.setAddress1(investmentManagementDTO.getAddress1());
-                    investmentManagementEntity.setAddress2(investmentManagementDTO.getAddress2());
-                    investmentManagementEntity.setAddress3(investmentManagementDTO.getAddress3());
-                    investmentManagementEntity.setAddress4(investmentManagementDTO.getAddress4());
+                    updateInvestmentManagement(investmentManagementEntity, investmentManagementDTO);
                     InvestmentManagement investmentManagementSaved = investmentManagementRepository.save(investmentManagementEntity);
 
                     String jsonDataAfter = objectMapper.writeValueAsString(investmentManagementSaved);
@@ -558,6 +554,31 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
         return investmentManagementList.stream()
                 .map(InvestmentManagementServiceImpl::mapToDTO)
                 .toList();
+    }
+
+    private void updateInvestmentManagement(InvestmentManagement existingInvestment, InvestmentManagementDTO updatedDTO) {
+        // Update only the fields that are present in the updated DTO
+        if (!updatedDTO.getCode().isEmpty()) {
+            existingInvestment.setCode(updatedDTO.getCode());
+        }
+        if (!updatedDTO.getName().isEmpty()) {
+            existingInvestment.setName(updatedDTO.getName());
+        }
+        if (!updatedDTO.getEmail().isEmpty()) {
+            existingInvestment.setEmail(updatedDTO.getEmail());
+        }
+        if (!updatedDTO.getAddress1().isEmpty()) {
+            existingInvestment.setAddress1(updatedDTO.getAddress1());
+        }
+        if (!updatedDTO.getAddress2().isEmpty()) {
+            existingInvestment.setAddress2(updatedDTO.getAddress2());
+        }
+        if (!updatedDTO.getAddress3().isEmpty()) {
+            existingInvestment.setAddress3(updatedDTO.getAddress3());
+        }
+        if (!updatedDTO.getAddress4().isEmpty()) {
+            existingInvestment.setAddress4(updatedDTO.getAddress4());
+        }
     }
 
 }
