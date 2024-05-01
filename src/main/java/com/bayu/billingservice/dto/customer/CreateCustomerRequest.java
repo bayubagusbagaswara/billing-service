@@ -1,17 +1,23 @@
-package com.bayu.billingservice.dto.kyc;
+package com.bayu.billingservice.dto.customer;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * for single data request
+ */
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateKycRequest {
+public class CreateCustomerRequest {
 
-    private String aid;
+    private String inputId;
+    private String inputIPAddress;
+
+    private String customerCode;
     private String customerMinimumFee;
     private String customerSafekeepingFee;
 

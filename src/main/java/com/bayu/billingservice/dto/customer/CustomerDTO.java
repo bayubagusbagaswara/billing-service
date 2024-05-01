@@ -1,5 +1,8 @@
-package com.bayu.billingservice.dto.kyc;
+package com.bayu.billingservice.dto.customer;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,20 +14,25 @@ import java.math.BigDecimal;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class BillingCustomerDTO {
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class CustomerDTO {
+
+    private Long dataChangeId;
 
     private Long id;
 
-    private String customerCode; // alias AID
+    @NotBlank(message = "Customer Code cannot be empty")
+    private String customerCode;
+
+    @NotNull(message = "Customer Minimum Fee cannot be null")
     private BigDecimal customerMinimumFee;
+
+    @NotNull(message = "Customer Safekeeping Fee cannot be null")
     private BigDecimal customerSafekeepingFee;
 
+    @NotBlank(message = "MI Code cannot be empty")
+    private String investmentManagementCode;
     private String investmentManagementName;
-    private String investmentManagementAddressBuilding;
-    private String investmentManagementAddressStreet;
-    private String investmentManagementAddressCity;
-    private String investmentManagementAddressProvince;
-
 
     private String accountName;
     private String accountNumber;
