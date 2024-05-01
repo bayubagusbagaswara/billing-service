@@ -14,10 +14,6 @@ import java.util.List;
 @AllArgsConstructor
 public class CreateInvestmentManagementListRequest {
 
-    private Long dataChangeId; // use when approve
-
-    private String approvalStatus;
-
     private String inputId;
 
     private String inputIPAddress;

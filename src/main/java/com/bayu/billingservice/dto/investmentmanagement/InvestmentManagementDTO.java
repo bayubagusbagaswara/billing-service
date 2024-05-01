@@ -14,6 +14,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class InvestmentManagementDTO {
 
+    private Long dataChangeId;
+
     private Long id;
 
     @JsonProperty(value = "MI Code")

@@ -1,5 +1,6 @@
 package com.bayu.billingservice.dto.investmentmanagement;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,10 +12,16 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class UpdateInvestmentManagementRequest {
 
+    private Long dataChangeId;
+    private String inputId;
+    private String inputIPAddress;
+
     private Long id;
 
+//    @JsonProperty(value = "MI Code")
     private String code;
 
+//    @JsonProperty(value = "MI Name")
     private String name;
 
     private String email;

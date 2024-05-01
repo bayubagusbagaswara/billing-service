@@ -12,6 +12,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class CreateInvestmentManagementRequest {
 
+    private String inputId;
+
+    private String inputIPAddress;
+
     @JsonProperty(value = "MI Code")
     private String code;
 
