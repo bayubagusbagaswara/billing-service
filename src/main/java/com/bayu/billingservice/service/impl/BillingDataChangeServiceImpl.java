@@ -110,6 +110,33 @@ public class BillingDataChangeServiceImpl implements BillingDataChangeService {
         dataChangeRepository.save(billingDataChange);
     }
 
+    @Override
+    public <T> void createChangeActionEDIT(BillingDataChangeDTO dataChangeDTO, Class<T> clazz) {
+        BillingDataChange dataChange = BillingDataChange.builder()
+                .approvalStatus(ApprovalStatus.PENDING)
+                .inputId(dataChangeDTO.getInputId())
+                .inputDate(new Date())
+                .inputIPAddress(dataChangeDTO.getInputIPAddress())
+                .approveId("")
+                .approveDate(null)
+                .approveIPAddress("")
+                .changeAction(ChangeAction.EDIT)
+                .entityId("")
+                .entityClassName(clazz.getName())
+                .tableName(TableNameResolver.getTableName(clazz))
+                .jsonDataBefore(dataChangeDTO.getJsonDataBefore())
+                .jsonDataAfter(dataChangeDTO.getJsonDataAfter())
+                .description("")
+                .methodHttp(dataChangeDTO.getMethodHttp())
+                .endpoint(dataChangeDTO.getEndpoint())
+                .isRequestBody(dataChangeDTO.getIsRequestBody())
+                .isRequestParam(dataChangeDTO.getIsRequestParam())
+                .isPathVariable(dataChangeDTO.getIsPathVariable())
+                .menu(dataChangeDTO.getMenu())
+                .build();
+        dataChangeRepository.save(dataChange);
+    }
+
     private static BillingDataChangeDTO mapToDTO(BillingDataChange dataChange) {
         return BillingDataChangeDTO.builder()
                 .id(dataChange.getId())
