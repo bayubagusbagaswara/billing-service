@@ -11,7 +11,7 @@ public interface BillingDataChangeService {
 
     String deleteAll();
 
-    <T> BillingDataChangeDTO createChangeActionADD(BillingDataChangeDTO dataChangeDTO, Class<T> clazz);
+    <T> void createChangeActionADD(BillingDataChangeDTO dataChangeDTO, Class<T> clazz);
 
     void approvalStatusIsRejected(BillingDataChangeDTO dataChangeDTO, List<String> errorMessageList);
 

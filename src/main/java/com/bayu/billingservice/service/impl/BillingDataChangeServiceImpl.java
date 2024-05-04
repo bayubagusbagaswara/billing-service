@@ -35,7 +35,7 @@ public class BillingDataChangeServiceImpl implements BillingDataChangeService {
     }
 
     @Override
-    public <T> BillingDataChangeDTO createChangeActionADD(BillingDataChangeDTO dataChangeDTO, Class<T> clazz) {
+    public <T> void createChangeActionADD(BillingDataChangeDTO dataChangeDTO, Class<T> clazz) {
         BillingDataChange dataChange = BillingDataChange.builder()
                 .approvalStatus(ApprovalStatus.PENDING)
                 .inputId(dataChangeDTO.getInputId())
@@ -58,7 +58,7 @@ public class BillingDataChangeServiceImpl implements BillingDataChangeService {
                 .isPathVariable(dataChangeDTO.getIsPathVariable())
                 .menu(dataChangeDTO.getMenu())
                 .build();
-        return mapToDTO(dataChangeRepository.save(dataChange));
+        dataChangeRepository.save(dataChange);
     }
 
     @Override
