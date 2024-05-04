@@ -1,11 +1,13 @@
 package com.bayu.billingservice.service.impl;
 
 import com.bayu.billingservice.dto.datachange.BillingDataChangeDTO;
+import com.bayu.billingservice.exception.DataNotFoundException;
 import com.bayu.billingservice.model.BillingDataChange;
 import com.bayu.billingservice.model.enumerator.ApprovalStatus;
 import com.bayu.billingservice.model.enumerator.ChangeAction;
 import com.bayu.billingservice.repository.BillingDataChangeRepository;
 import com.bayu.billingservice.service.BillingDataChangeService;
+import com.bayu.billingservice.util.StringUtil;
 import com.bayu.billingservice.util.TableNameResolver;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -57,6 +59,55 @@ public class BillingDataChangeServiceImpl implements BillingDataChangeService {
                 .menu(dataChangeDTO.getMenu())
                 .build();
         return mapToDTO(dataChangeRepository.save(dataChange));
+    }
+
+    @Override
+    public void approvalStatusIsRejected(BillingDataChangeDTO dataChangeDTO, List<String> errorMessageList) {
+        BillingDataChange billingDataChange = dataChangeRepository.findById(dataChangeDTO.getId())
+                .orElseThrow(() -> new DataNotFoundException("Data Change not found with id: " + dataChangeDTO.getId()));
+
+        billingDataChange.setApprovalStatus(ApprovalStatus.REJECTED);
+        billingDataChange.setApproveId(dataChangeDTO.getApproveId());
+        billingDataChange.setApproveIPAddress(dataChangeDTO.getApproveIPAddress());
+        billingDataChange.setApproveDate(new Date());
+        billingDataChange.setJsonDataAfter(dataChangeDTO.getJsonDataAfter());
+        billingDataChange.setDescription(StringUtil.joinStrings(errorMessageList));
+
+        if (!dataChangeDTO.getJsonDataBefore().isEmpty()) {
+            billingDataChange.setJsonDataBefore(dataChangeDTO.getJsonDataBefore());
+        }
+
+        if (!dataChangeDTO.getEntityId().isEmpty()) {
+            billingDataChange.setEntityId(dataChangeDTO.getEntityId());
+        }
+
+        dataChangeRepository.save(billingDataChange);
+    }
+
+    @Override
+    public void approvalStatusIsApproved(BillingDataChangeDTO dataChangeDTO) {
+        BillingDataChange billingDataChange = dataChangeRepository.findById(dataChangeDTO.getId())
+                .orElseThrow(() -> new DataNotFoundException("Data Change not found with id: " + dataChangeDTO.getId()));
+
+        billingDataChange.setApprovalStatus(ApprovalStatus.APPROVED);
+        billingDataChange.setApproveId(dataChangeDTO.getApproveId());
+        billingDataChange.setApproveIPAddress(dataChangeDTO.getApproveIPAddress());
+        billingDataChange.setApproveDate(new Date());
+        billingDataChange.setJsonDataAfter(dataChangeDTO.getJsonDataAfter());
+
+        if (!dataChangeDTO.getJsonDataBefore().isEmpty()) {
+            billingDataChange.setJsonDataBefore(dataChangeDTO.getJsonDataBefore());
+        }
+
+        if (!dataChangeDTO.getEntityId().isEmpty()) {
+            billingDataChange.setEntityId(dataChangeDTO.getEntityId());
+        }
+
+        if (!dataChangeDTO.getDescription().isEmpty()) {
+            billingDataChange.setDescription(dataChangeDTO.getDescription());
+        }
+
+        dataChangeRepository.save(billingDataChange);
     }
 
     private static BillingDataChangeDTO mapToDTO(BillingDataChange dataChange) {
