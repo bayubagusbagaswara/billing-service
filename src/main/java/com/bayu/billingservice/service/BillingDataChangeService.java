@@ -17,5 +17,6 @@ public interface BillingDataChangeService {
 
     void approvalStatusIsApproved(BillingDataChangeDTO dataChangeDTO);
 
-    // approve action ADD (da)
+    <T> void createChangeActionEDIT(BillingDataChangeDTO dataChangeDTO, Class<T> clazz);
+
 }
