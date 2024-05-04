@@ -29,6 +29,7 @@ public class InvestmentManagementDTO {
     @Email(message = "Email is not valid")
     private String email;
 
+    @NotBlank(message = "Address 1 cannot be empty")
     private String address1;
 
     private String address2;
