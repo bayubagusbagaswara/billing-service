@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -18,12 +20,12 @@ public class BillingDataChangeDTO {
     private ApprovalStatus approvalStatus;
 
     private String inputId;
-    private String inputDate;
     private String inputIPAddress;
+    private Date inputDate;
 
     private String approveId;
-    private String approveDate;
     private String approveIPAddress;
+    private Date approveDate;
 
     private ChangeAction changeAction;
 
