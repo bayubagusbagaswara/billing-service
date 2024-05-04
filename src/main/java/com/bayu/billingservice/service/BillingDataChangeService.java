@@ -11,6 +11,6 @@ public interface BillingDataChangeService {
 
     String deleteAll();
 
-    <T> BillingDataChangeDTO createIsActionADD(BillingDataChangeDTO dataChangeDTO, Class<T> clazz);
+    <T> BillingDataChangeDTO createActionADD(BillingDataChangeDTO dataChangeDTO, Class<T> clazz);
 
 }
