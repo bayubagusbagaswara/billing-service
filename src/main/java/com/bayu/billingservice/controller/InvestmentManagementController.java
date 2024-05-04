@@ -46,7 +46,7 @@ public class InvestmentManagementController {
     public ResponseEntity<ResponseDTO<CreateInvestmentManagementListResponse>> createList(@RequestBody CreateInvestmentManagementListRequest request) {
         BillingDataChangeDTO dataChangeDTO = BillingDataChangeDTO.builder()
                 .methodHttp(HttpMethod.POST.name())
-                .endpoint("/api/investment-management/create-list/approve")
+                .endpoint("/api/investment-management/create/approve")
                 .isRequestBody(true)
                 .isRequestParam(false)
                 .isPathVariable(false)
