@@ -149,6 +149,79 @@ public class CustomerServiceImpl implements CustomerService {
         return new CreateCustomerListResponse(totalDataSuccess, totalDataFailed, errorMessageList);
     }
 
+    @Override
+    public CreateCustomerListResponse createApprove(CreateCustomerListRequest request) {
+        log.info("Approve for create billing customer with request: {}", request);
+        int totalDataSuccess = 0;
+        int totalDataFailed = 0;
+        List<ErrorMessageDTO> errorMessageList = new ArrayList<>();
+
+        try {
+            validateDataChangeIds(request.getCustomerDTOList());
+            for (CustomerDTO customerDTO : request.getCustomerDTOList()) {
+                try {
+                    List<String> validationErrors = new ArrayList<>();
+                    Errors errors = validateBillingCustomerUsingValidator(customerDTO);
+                    if (errors.hasErrors()) {
+                        errors.getAllErrors().forEach(objectError -> validationErrors.add(objectError.getDefaultMessage()));
+                    }
+
+                    validateBillingEnums(customerDTO, validationErrors);
+
+                    validationCustomerCodeAlreadyExists(customerDTO, validationErrors);
+
+                    InvestmentManagementDTO investmentManagementDTO = investmentManagementService.getByCode(customerDTO.getInvestmentManagementCode());
+                    customerDTO.setInvestmentManagementName(investmentManagementDTO.getName());
+
+                    if (!validationErrors.isEmpty()) {
+                        BillingDataChangeDTO dataChangeDTO = BillingDataChangeDTO.builder()
+                                .id(customerDTO.getDataChangeId())
+                                .approveId(request.getApproveId())
+                                .approveIPAddress(request.getApproveIPAddress())
+                                .jsonDataAfter(objectMapper.writeValueAsString(customerDTO))
+                                .build();
+                        dataChangeService.approvalStatusIsRejected(dataChangeDTO, validationErrors);
+                        totalDataFailed++;
+                    } else {
+                        Customer customer = createCustomer(customerDTO);
+                        customerRepository.save(customer);
+
+                        BillingDataChangeDTO dataChangeDTO = BillingDataChangeDTO.builder()
+                                .id(customerDTO.getDataChangeId())
+                                .approveId(request.getApproveId())
+                                .approveIPAddress(request.getApproveIPAddress())
+                                .entityId(customer.getId().toString())
+                                .jsonDataAfter(objectMapper.writeValueAsString(customer))
+                                .description("Successfully approve data create billing customer data")
+                                .build();
+                        dataChangeService.approvalStatusIsApproved(dataChangeDTO);
+
+                        totalDataSuccess++;
+                    }
+                } catch (DataNotFoundException e) {
+                    handleDataNotFoundError(customerDTO, errorMessageList, e);
+                    totalDataFailed++;
+                } catch (JsonProcessingException e) {
+                    handleJsonProcessingException(e);
+                } catch (Exception e) {
+                    handleGeneralError(e);
+                }
+            }
+        } catch (DataChangeException e) {
+            handleDataChangeException(e);
+        }
+        return new CreateCustomerListResponse(totalDataSuccess, totalDataFailed, errorMessageList);
+    }
+
+    private Customer createCustomer(CustomerDTO customerDTO) {
+        return Customer.builder()
+                .customerCode(customerDTO.getCustomerCode())
+                .customerName(customerDTO.getCustomerName())
+                .investmentManagementCode(customerDTO.getInvestmentManagementCode())
+                .investmentManagementName(customerDTO.getInvestmentManagementName())
+                .build();
+    }
+
     private void validationCustomerCodeAlreadyExists(CustomerDTO customerDTO, List<String> errorMessages) {
         if (isCodeAlreadyExists(customerDTO.getCustomerCode())) {
             errorMessages.add("Billing Customer already taken with code: " + customerDTO.getCustomerCode());
@@ -249,6 +322,12 @@ public class CustomerServiceImpl implements CustomerService {
         if (!EnumValidator.validateEnumBillingTemplate(customerDTO.getBillingTemplate())) {
             validationErrors.add("Billing Template enum not found with value '" + customerDTO.getBillingTemplate());
         }
+    }
+
+    private void handleDataNotFoundError(CustomerDTO customerDTO, List<ErrorMessageDTO> errorMessageList, DataNotFoundException e) {
+        List<String> errorMessages = new ArrayList<>();
+        errorMessages.add(e.getMessage());
+        errorMessageList.add(new ErrorMessageDTO(customerDTO.getCustomerCode(), errorMessages));
     }
 
 }
