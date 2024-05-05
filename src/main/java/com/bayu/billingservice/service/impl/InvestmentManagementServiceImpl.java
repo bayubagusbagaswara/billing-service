@@ -1,5 +1,6 @@
 package com.bayu.billingservice.service.impl;
 
+import com.bayu.billingservice.dto.ErrorMessageDTO;
 import com.bayu.billingservice.dto.datachange.BillingDataChangeDTO;
 import com.bayu.billingservice.dto.investmentmanagement.*;
 import com.bayu.billingservice.exception.DataChangeException;
@@ -43,7 +44,7 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
         log.info("Create single investment management with request: {}", request);
         int totalDataSuccess = 0;
         int totalDataFailed = 0;
-        List<ErrorMessageInvestmentManagementDTO> errorMessageList = new ArrayList<>();
+        List<ErrorMessageDTO> errorMessageList = new ArrayList<>();
 
         try {
             InvestmentManagementDTO investmentManagementDTO = InvestmentManagementDTO.builder()
@@ -73,7 +74,7 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
                 totalDataSuccess++;
             } else {
                 totalDataFailed++;
-                ErrorMessageInvestmentManagementDTO errorMessageDTO = new ErrorMessageInvestmentManagementDTO(investmentManagementDTO.getCode(), errorMessages);
+                ErrorMessageDTO errorMessageDTO = new ErrorMessageDTO(investmentManagementDTO.getCode(), errorMessages);
                 errorMessageList.add(errorMessageDTO);
             }
             return new CreateInvestmentManagementListResponse(totalDataSuccess, totalDataFailed, errorMessageList);
@@ -90,7 +91,7 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
         log.info("Create investment management list with request: {}", request);
         int totalDataSuccess = 0;
         int totalDataFailed = 0;
-        List<ErrorMessageInvestmentManagementDTO> errorMessageList = new ArrayList<>();
+        List<ErrorMessageDTO> errorMessageList = new ArrayList<>();
 
         try {
             for (InvestmentManagementDTO investmentManagementDTO : request.getInvestmentManagementRequestList()) {
@@ -111,7 +112,7 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
                     totalDataSuccess++;
                 } else {
                     totalDataFailed++;
-                    ErrorMessageInvestmentManagementDTO errorMessageDTO = new ErrorMessageInvestmentManagementDTO(investmentManagementDTO.getCode(), errorMessages);
+                    ErrorMessageDTO errorMessageDTO = new ErrorMessageDTO(investmentManagementDTO.getCode(), errorMessages);
                     errorMessageList.add(errorMessageDTO);
                 }
             }
@@ -129,7 +130,7 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
         log.info("Create investment management list approve with request: {}", investmentManagementListRequest);
         int totalDataSuccess = 0;
         int totalDataFailed = 0;
-        List<ErrorMessageInvestmentManagementDTO> errorMessageList = new ArrayList<>();
+        List<ErrorMessageDTO> errorMessageList = new ArrayList<>();
 
         try {
             validateDataChangeIds(investmentManagementListRequest.getInvestmentManagementRequestList());
@@ -186,7 +187,7 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
         log.info("Update investment management by id with request: {}", request);
         int totalDataSuccess = 0;
         int totalDataFailed = 0;
-        List<ErrorMessageInvestmentManagementDTO> errorMessageList = new ArrayList<>();
+        List<ErrorMessageDTO> errorMessageList = new ArrayList<>();
 
         try {
             InvestmentManagementDTO investmentManagementDTO = InvestmentManagementDTO.builder()
@@ -221,13 +222,13 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
                 totalDataSuccess++;
             } else {
                 totalDataFailed++;
-                ErrorMessageInvestmentManagementDTO errorMessageDTO = new ErrorMessageInvestmentManagementDTO(investmentManagementDTO.getCode(), errorMessages);
+                ErrorMessageDTO errorMessageDTO = new ErrorMessageDTO(investmentManagementDTO.getCode(), errorMessages);
                 errorMessageList.add(errorMessageDTO);
             }
             return new UpdateInvestmentManagementListResponse(totalDataSuccess, totalDataFailed, errorMessageList);
         } catch (DataNotFoundException e) {
             log.error("Investment Management not found: {}", e.getMessage(), e);
-            errorMessageList.add(new ErrorMessageInvestmentManagementDTO(null, Collections.singletonList(e.getMessage())));
+            errorMessageList.add(new ErrorMessageDTO(null, Collections.singletonList(e.getMessage())));
             totalDataFailed++;
             return new UpdateInvestmentManagementListResponse(totalDataSuccess, totalDataFailed, errorMessageList);
         } catch (JsonProcessingException e) {
@@ -243,7 +244,7 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
         log.info("Update investment management list with request: {}", request);
         int totalDataSuccess = 0;
         int totalDataFailed = 0;
-        List<ErrorMessageInvestmentManagementDTO> errorMessageList = new ArrayList<>();
+        List<ErrorMessageDTO> errorMessageList = new ArrayList<>();
 
         try {
             for (InvestmentManagementDTO investmentManagementDTO : request.getInvestmentManagementRequestList()) {
@@ -266,7 +267,7 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
                     totalDataSuccess++;
                 } else {
                     totalDataFailed++;
-                    ErrorMessageInvestmentManagementDTO errorMessageDTO = new ErrorMessageInvestmentManagementDTO(investmentManagementDTO.getCode(), errorMessages);
+                    ErrorMessageDTO errorMessageDTO = new ErrorMessageDTO(investmentManagementDTO.getCode(), errorMessages);
                     errorMessageList.add(errorMessageDTO);
                 }
             }
@@ -287,7 +288,7 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
         log.info("Request data update approve: {}", investmentManagementListRequest);
         int totalDataSuccess = 0;
         int totalDataFailed = 0;
-        List<ErrorMessageInvestmentManagementDTO> errorMessageList = new ArrayList<>();
+        List<ErrorMessageDTO> errorMessageList = new ArrayList<>();
 
         try {
             for (InvestmentManagementDTO investmentManagementDTO : investmentManagementListRequest.getInvestmentManagementRequestList()) {
@@ -345,7 +346,7 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
         log.info("Delete investment management by id with request: {}", request);
         int totalDataSuccess = 0;
         int totalDataFailed = 0;
-        List<ErrorMessageInvestmentManagementDTO> errorMessageList = new ArrayList<>();
+        List<ErrorMessageDTO> errorMessageList = new ArrayList<>();
 
         try {
             InvestmentManagement investmentManagement= investmentManagementRepository.findById(request.getId())
@@ -377,7 +378,7 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
         String approveIPAddress = request.getApproveIPAddress();
         int totalDataSuccess = 0;
         int totalDataFailed = 0;
-        List<ErrorMessageInvestmentManagementDTO> errorMessageList = new ArrayList<>();
+        List<ErrorMessageDTO> errorMessageList = new ArrayList<>();
 
         try {
             for (DeleteInvestmentManagementDTO deleteInvestmentManagementDTO : request.getInvestmentManagementDTOList()) {
@@ -397,7 +398,7 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
                         .build();
 
                 if (!errorMessages.isEmpty()) {
-                    errorMessageList.add(new ErrorMessageInvestmentManagementDTO(deleteInvestmentManagementDTO.getId().toString(), errorMessages));
+                    errorMessageList.add(new ErrorMessageDTO(deleteInvestmentManagementDTO.getId().toString(), errorMessages));
                     dataChangeService.approvalStatusIsRejected(dataChangeDTO, errorMessages);
                     totalDataFailed++;
                 } else {
@@ -502,9 +503,9 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
     }
 
 
-    private static int getTotalDataFailed(DataNotFoundException e, List<ErrorMessageInvestmentManagementDTO> errorMessageList, int totalDataFailed) {
+    private static int getTotalDataFailed(DataNotFoundException e, List<ErrorMessageDTO> errorMessageList, int totalDataFailed) {
         log.error("Investment Management not found: {}", e.getMessage(), e);
-        errorMessageList.add(new ErrorMessageInvestmentManagementDTO(null, Collections.singletonList(e.getMessage())));
+        errorMessageList.add(new ErrorMessageDTO(null, Collections.singletonList(e.getMessage())));
         totalDataFailed++;
         return totalDataFailed;
     }
