@@ -150,6 +150,12 @@ public class BillingDataChangeServiceImpl implements BillingDataChangeService {
         dataChangeRepository.save(dataChange);
     }
 
+    @Override
+    public boolean existByIdList(List<Long> idList, Integer idListSize) {
+        log.info("Id List: {}, Id List Size: {}", idList, idList);
+        return dataChangeRepository.existsByIdList(idList, idListSize);
+    }
+
     private static BillingDataChangeDTO mapToDTO(BillingDataChange dataChange) {
         return BillingDataChangeDTO.builder()
                 .id(dataChange.getId())

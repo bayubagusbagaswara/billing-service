@@ -21,4 +21,6 @@ public interface BillingDataChangeService {
     <T> void createChangeActionEDIT(BillingDataChangeDTO dataChangeDTO, Class<T> clazz);
 
     <T> void createChangeActionDELETE(BillingDataChangeDTO dataChangeDTO, Class<T> clazz);
+
+    boolean existByIdList(List<Long> idList, Integer idListSize);
 }
