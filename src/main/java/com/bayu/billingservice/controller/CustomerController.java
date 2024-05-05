@@ -65,6 +65,17 @@ public class CustomerController {
         return ResponseEntity.ok(response);
     }
 
+    @PostMapping(path = "/create/approve")
+    public ResponseEntity<ResponseDTO<CreateCustomerListResponse>> createApprove(@RequestBody CreateCustomerListRequest request) {
+        CreateCustomerListResponse createCustomerListResponse = customerService.createApprove(request);
+        ResponseDTO<CreateCustomerListResponse> response = ResponseDTO.<CreateCustomerListResponse>builder()
+                .code(HttpStatus.OK.value())
+                .message(HttpStatus.OK.getReasonPhrase())
+                .payload(createCustomerListResponse)
+                .build();
+        return ResponseEntity.ok(response);
+    }
+
     @GetMapping(path = "/all")
     public ResponseEntity<ResponseDTO<List<CustomerDTO>>> getAll() {
 

@@ -21,4 +21,6 @@ public interface CustomerService {
     CreateCustomerListResponse createSingleData(CreateCustomerRequest request, BillingDataChangeDTO dataChangeDTO);
 
     CreateCustomerListResponse createList(CreateCustomerListRequest request, BillingDataChangeDTO dataChangeDTO);
+
+    CreateCustomerListResponse createApprove(CreateCustomerListRequest request);
 }
