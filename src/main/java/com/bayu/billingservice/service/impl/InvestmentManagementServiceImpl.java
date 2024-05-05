@@ -332,8 +332,7 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
         } catch (DataNotFoundException e) {
             totalDataFailed = getTotalDataFailed(e, errorMessageList, totalDataFailed);
             return new UpdateInvestmentManagementListResponse(totalDataSuccess, totalDataFailed, errorMessageList);
-        }
-        catch (JsonProcessingException e) {
+        } catch (JsonProcessingException e) {
             handleJsonProcessingException(e);
         } catch (Exception e) {
             handleGeneralError(e);
