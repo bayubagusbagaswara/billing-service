@@ -1,6 +1,7 @@
 package com.bayu.billingservice.service.impl;
 
 import com.bayu.billingservice.dto.ErrorMessageDTO;
+import com.bayu.billingservice.dto.customer.CreateCustomerListRequest;
 import com.bayu.billingservice.dto.customer.CreateCustomerListResponse;
 import com.bayu.billingservice.dto.customer.CreateCustomerRequest;
 import com.bayu.billingservice.dto.customer.CustomerDTO;
@@ -90,6 +91,51 @@ public class CustomerServiceImpl implements CustomerService {
         } catch (DataNotFoundException e) {
           totalDataFailed = getTotalDataFailed(e, errorMessageList, totalDataFailed);
           return new CreateCustomerListResponse(totalDataSuccess, totalDataFailed, errorMessageList);
+        } catch (JsonProcessingException e) {
+            handleJsonProcessingException(e);
+        } catch (Exception e) {
+            handleGeneralError(e);
+        }
+        return new CreateCustomerListResponse(totalDataSuccess, totalDataFailed, errorMessageList);
+    }
+
+    @Override
+    public CreateCustomerListResponse createList(CreateCustomerListRequest request, BillingDataChangeDTO dataChangeDTO) {
+        log.info("Create billing customer list with request: {}", request);
+        int totalDataSuccess = 0;
+        int totalDataFailed = 0;
+        List<ErrorMessageDTO> errorMessageList = new ArrayList<>();
+
+        try {
+            for (CustomerDTO customerDTO : request.getCustomerDTOList()) {
+                List<String> errorMessages = new ArrayList<>();
+                Errors errors = validateBillingCustomerUsingValidator(customerDTO);
+                if (errors.hasErrors()) {
+                    errors.getAllErrors().forEach(objectError -> errorMessages.add(objectError.getDefaultMessage()));
+                }
+
+                validationCustomerCodeAlreadyExists(customerDTO, errorMessages);
+
+                InvestmentManagementDTO investmentManagementDTO = investmentManagementService.getByCode(customerDTO.getInvestmentManagementCode());
+                customerDTO.setInvestmentManagementName(investmentManagementDTO.getName());
+
+                dataChangeDTO.setInputId(request.getInputId());
+                dataChangeDTO.setInputIPAddress(request.getInputIPAddress());
+                dataChangeDTO.setJsonDataAfter(objectMapper.writeValueAsString(customerDTO));
+
+                if (errorMessages.isEmpty()) {
+                    dataChangeService.createChangeActionADD(dataChangeDTO, Customer.class);
+                    totalDataSuccess++;
+                } else {
+                    totalDataFailed++;
+                    ErrorMessageDTO errorMessageDTO = new ErrorMessageDTO(customerDTO.getCustomerCode(), errorMessages);
+                    errorMessageList.add(errorMessageDTO);
+                }
+            }
+            return new CreateCustomerListResponse(totalDataSuccess, totalDataFailed, errorMessageList);
+        } catch (DataNotFoundException e) {
+            totalDataFailed = getTotalDataFailed(e, errorMessageList, totalDataFailed);
+            return new CreateCustomerListResponse(totalDataSuccess, totalDataFailed, errorMessageList);
         } catch (JsonProcessingException e) {
             handleJsonProcessingException(e);
         } catch (Exception e) {
