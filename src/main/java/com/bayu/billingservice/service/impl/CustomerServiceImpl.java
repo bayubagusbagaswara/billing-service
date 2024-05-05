@@ -15,6 +15,7 @@ import com.bayu.billingservice.repository.CustomerRepository;
 import com.bayu.billingservice.service.BillingDataChangeService;
 import com.bayu.billingservice.service.CustomerService;
 import com.bayu.billingservice.service.InvestmentManagementService;
+import com.bayu.billingservice.util.EnumValidator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +25,6 @@ import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -114,6 +114,8 @@ public class CustomerServiceImpl implements CustomerService {
                 if (errors.hasErrors()) {
                     errors.getAllErrors().forEach(objectError -> validationErrors.add(objectError.getDefaultMessage()));
                 }
+
+                validateBillingEnums(customerDTO, validationErrors);
 
                 validationCustomerCodeAlreadyExists(customerDTO, validationErrors);
 
@@ -236,4 +238,17 @@ public class CustomerServiceImpl implements CustomerService {
             throw new DataChangeException("Data Change id not found");
         }
     }
+
+    private void validateBillingEnums(CustomerDTO customerDTO, List<String> validationErrors) {
+        if (!EnumValidator.validateEnumBillingCategory(customerDTO.getBillingCategory())) {
+            validationErrors.add("Billing Category enum not found with value: " + customerDTO.getBillingCategory());
+        }
+        if (!EnumValidator.validateEnumBillingType(customerDTO.getBillingType())) {
+            validationErrors.add("Billing Type enum not found with value: " + customerDTO.getBillingType());
+        }
+        if (!EnumValidator.validateEnumBillingTemplate(customerDTO.getBillingTemplate())) {
+            validationErrors.add("Billing Template enum not found with value '" + customerDTO.getBillingTemplate());
+        }
+    }
+
 }
