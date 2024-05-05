@@ -104,17 +104,18 @@ public class CustomerServiceImpl implements CustomerService {
         log.info("Create billing customer list with request: {}", request);
         int totalDataSuccess = 0;
         int totalDataFailed = 0;
-        List<ErrorMessageDTO> errorMessageList = new ArrayList<>();
+        List<ErrorMessageDTO> errorMessageList = new ArrayList<>(); // List to collect all error messages
 
-        try {
-            for (CustomerDTO customerDTO : request.getCustomerDTOList()) {
-                List<String> errorMessages = new ArrayList<>();
+        for (CustomerDTO customerDTO : request.getCustomerDTOList()) {
+            try {
+                List<String> validationErrors = new ArrayList<>();
+
                 Errors errors = validateBillingCustomerUsingValidator(customerDTO);
                 if (errors.hasErrors()) {
-                    errors.getAllErrors().forEach(objectError -> errorMessages.add(objectError.getDefaultMessage()));
+                    errors.getAllErrors().forEach(objectError -> validationErrors.add(objectError.getDefaultMessage()));
                 }
 
-                validationCustomerCodeAlreadyExists(customerDTO, errorMessages);
+                validationCustomerCodeAlreadyExists(customerDTO, validationErrors);
 
                 InvestmentManagementDTO investmentManagementDTO = investmentManagementService.getByCode(customerDTO.getInvestmentManagementCode());
                 customerDTO.setInvestmentManagementName(investmentManagementDTO.getName());
@@ -123,23 +124,25 @@ public class CustomerServiceImpl implements CustomerService {
                 dataChangeDTO.setInputIPAddress(request.getInputIPAddress());
                 dataChangeDTO.setJsonDataAfter(objectMapper.writeValueAsString(customerDTO));
 
-                if (errorMessages.isEmpty()) {
+                if (validationErrors.isEmpty()) {
                     dataChangeService.createChangeActionADD(dataChangeDTO, Customer.class);
                     totalDataSuccess++;
                 } else {
                     totalDataFailed++;
-                    ErrorMessageDTO errorMessageDTO = new ErrorMessageDTO(customerDTO.getCustomerCode(), errorMessages);
+                    ErrorMessageDTO errorMessageDTO = new ErrorMessageDTO(customerDTO.getCustomerCode(), validationErrors);
                     errorMessageList.add(errorMessageDTO);
                 }
+            } catch (DataNotFoundException e) {
+                List<String> errorMessages = new ArrayList<>();
+                errorMessages.add(e.getMessage());
+                ErrorMessageDTO errorMessageDTO = new ErrorMessageDTO(customerDTO.getCustomerCode(), errorMessages);
+                errorMessageList.add(errorMessageDTO);
+                totalDataFailed++;
+            } catch (JsonProcessingException e) {
+                handleJsonProcessingException(e);
+            } catch (Exception e) {
+                handleGeneralError(e);
             }
-            return new CreateCustomerListResponse(totalDataSuccess, totalDataFailed, errorMessageList);
-        } catch (DataNotFoundException e) {
-            totalDataFailed = getTotalDataFailed(e, errorMessageList, totalDataFailed);
-            return new CreateCustomerListResponse(totalDataSuccess, totalDataFailed, errorMessageList);
-        } catch (JsonProcessingException e) {
-            handleJsonProcessingException(e);
-        } catch (Exception e) {
-            handleGeneralError(e);
         }
         return new CreateCustomerListResponse(totalDataSuccess, totalDataFailed, errorMessageList);
     }
