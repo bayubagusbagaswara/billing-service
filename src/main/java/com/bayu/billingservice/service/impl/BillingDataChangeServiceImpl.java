@@ -70,22 +70,17 @@ public class BillingDataChangeServiceImpl implements BillingDataChangeService {
         billingDataChange.setApproveId(dataChangeDTO.getApproveId());
         billingDataChange.setApproveIPAddress(dataChangeDTO.getApproveIPAddress());
         billingDataChange.setApproveDate(new Date());
-        billingDataChange.setJsonDataAfter(dataChangeDTO.getJsonDataAfter());
+        billingDataChange.setJsonDataAfter(dataChangeDTO.getJsonDataAfter() == null ? "" : dataChangeDTO.getJsonDataAfter());
+        billingDataChange.setJsonDataBefore(dataChangeDTO.getJsonDataBefore() == null ? "" : dataChangeDTO.getJsonDataBefore());
+        billingDataChange.setEntityId(dataChangeDTO.getEntityId() == null ? "" : dataChangeDTO.getEntityId());
         billingDataChange.setDescription(StringUtil.joinStrings(errorMessageList));
-
-        if (!dataChangeDTO.getJsonDataBefore().isEmpty()) {
-            billingDataChange.setJsonDataBefore(dataChangeDTO.getJsonDataBefore());
-        }
-
-        if (!dataChangeDTO.getEntityId().isEmpty()) {
-            billingDataChange.setEntityId(dataChangeDTO.getEntityId());
-        }
 
         dataChangeRepository.save(billingDataChange);
     }
 
     @Override
     public void approvalStatusIsApproved(BillingDataChangeDTO dataChangeDTO) {
+        log.info("Approval Status Is Approved request: {}", dataChangeDTO);
         BillingDataChange billingDataChange = dataChangeRepository.findById(dataChangeDTO.getId())
                 .orElseThrow(() -> new DataNotFoundException("Data Change not found with id: " + dataChangeDTO.getId()));
 
@@ -93,19 +88,10 @@ public class BillingDataChangeServiceImpl implements BillingDataChangeService {
         billingDataChange.setApproveId(dataChangeDTO.getApproveId());
         billingDataChange.setApproveIPAddress(dataChangeDTO.getApproveIPAddress());
         billingDataChange.setApproveDate(new Date());
-        billingDataChange.setJsonDataAfter(dataChangeDTO.getJsonDataAfter());
-
-        if (!dataChangeDTO.getJsonDataBefore().isEmpty()) {
-            billingDataChange.setJsonDataBefore(dataChangeDTO.getJsonDataBefore());
-        }
-
-        if (!dataChangeDTO.getEntityId().isEmpty()) {
-            billingDataChange.setEntityId(dataChangeDTO.getEntityId());
-        }
-
-        if (!dataChangeDTO.getDescription().isEmpty()) {
-            billingDataChange.setDescription(dataChangeDTO.getDescription());
-        }
+        billingDataChange.setJsonDataAfter(dataChangeDTO.getJsonDataAfter() == null ? "" : dataChangeDTO.getJsonDataAfter());
+        billingDataChange.setJsonDataBefore(dataChangeDTO.getJsonDataBefore() == null ? "" : dataChangeDTO.getJsonDataBefore());
+        billingDataChange.setEntityId(dataChangeDTO.getEntityId());
+        billingDataChange.setDescription(dataChangeDTO.getDescription());
 
         dataChangeRepository.save(billingDataChange);
     }
@@ -121,6 +107,33 @@ public class BillingDataChangeServiceImpl implements BillingDataChangeService {
                 .approveDate(null)
                 .approveIPAddress("")
                 .changeAction(ChangeAction.EDIT)
+                .entityId("")
+                .entityClassName(clazz.getName())
+                .tableName(TableNameResolver.getTableName(clazz))
+                .jsonDataBefore(dataChangeDTO.getJsonDataBefore())
+                .jsonDataAfter(dataChangeDTO.getJsonDataAfter())
+                .description("")
+                .methodHttp(dataChangeDTO.getMethodHttp())
+                .endpoint(dataChangeDTO.getEndpoint())
+                .isRequestBody(dataChangeDTO.getIsRequestBody())
+                .isRequestParam(dataChangeDTO.getIsRequestParam())
+                .isPathVariable(dataChangeDTO.getIsPathVariable())
+                .menu(dataChangeDTO.getMenu())
+                .build();
+        dataChangeRepository.save(dataChange);
+    }
+
+    @Override
+    public <T> void createChangeActionDELETE(BillingDataChangeDTO dataChangeDTO, Class<T> clazz) {
+        BillingDataChange dataChange = BillingDataChange.builder()
+                .approvalStatus(ApprovalStatus.PENDING)
+                .inputId(dataChangeDTO.getInputId())
+                .inputDate(new Date())
+                .inputIPAddress(dataChangeDTO.getInputIPAddress())
+                .approveId("")
+                .approveDate(null)
+                .approveIPAddress("")
+                .changeAction(ChangeAction.DELETE)
                 .entityId("")
                 .entityClassName(clazz.getName())
                 .tableName(TableNameResolver.getTableName(clazz))

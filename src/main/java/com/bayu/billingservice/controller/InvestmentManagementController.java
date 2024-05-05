@@ -124,7 +124,7 @@ public class InvestmentManagementController {
     }
 
     @DeleteMapping(path = "/delete")
-    public ResponseEntity<ResponseDTO<DeleteInvestmentManagementListResponse>> delete(@RequestBody DeleteInvestmentManagementListRequest request) {
+    public ResponseEntity<ResponseDTO<DeleteInvestmentManagementListResponse>> delete(@RequestBody DeleteInvestmentManagementRequest request) {
         BillingDataChangeDTO dataChangeDTO = BillingDataChangeDTO.builder()
                 .methodHttp(HttpMethod.DELETE.name())
                 .endpoint("/api/investment-management/delete/approve")
@@ -133,7 +133,7 @@ public class InvestmentManagementController {
                 .isPathVariable(false)
                 .menu(MENU_INVESTMENT_MANAGEMENT)
                 .build();
-        DeleteInvestmentManagementListResponse deleteInvestmentManagementListResponse = investmentManagementService.deleteList(request, dataChangeDTO);
+        DeleteInvestmentManagementListResponse deleteInvestmentManagementListResponse = investmentManagementService.deleteSingle(request, dataChangeDTO);
         ResponseDTO<DeleteInvestmentManagementListResponse> response = ResponseDTO.<DeleteInvestmentManagementListResponse>builder()
                 .code(HttpStatus.OK.value())
                 .message(HttpStatus.OK.getReasonPhrase())

@@ -1,5 +1,6 @@
 package com.bayu.billingservice.dto.customer;
 
+import com.bayu.billingservice.dto.investmentmanagement.InvestmentManagementDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -19,5 +20,5 @@ public class UpdateCustomerListRequest {
     private String approveId;
     private String approveIPAddress;
 
-    private List<UpdateCustomerRequest> updateCustomerRequests;
+    private List<InvestmentManagementDTO> investmentManagementDTOList;
 }
