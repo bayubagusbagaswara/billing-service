@@ -1,5 +1,8 @@
 package com.bayu.billingservice.model.enumerator;
 
+import lombok.Getter;
+
+@Getter
 public enum BillingTemplate {
 
     FUND_TEMPLATE("FUND_TEMPLATE"),
@@ -16,16 +19,13 @@ public enum BillingTemplate {
     RETAIL_TEMPLATE_2_IDR("RETAIL_TEMPLATE_2_IDR"),
     RETAIL_TEMPLATE_2_USD("RETAIL_TEMPLATE_2_USD"),
     RETAIL_TEMPLATE_3_IDR("RETAIL_TEMPLATE_3_IDR"),
-    RETAIL_TEMPLATE_3_USD("RETAIL_TEMPLATE_3_USD");
+    RETAIL_TEMPLATE_3_USD("RETAIL_TEMPLATE_3_USD"),
+    RETAIL_TEMPLATE_4_IDR("RETAIL_TEMPLATE_4_IDR");
 
     private final String value;
 
     BillingTemplate(String value) {
         this.value = value;
-    }
-
-    public String getValue() {
-        return value;
     }
 
 }

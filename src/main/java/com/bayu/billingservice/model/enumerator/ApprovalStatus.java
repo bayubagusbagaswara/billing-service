@@ -1,5 +1,8 @@
 package com.bayu.billingservice.model.enumerator;
 
+import lombok.Getter;
+
+@Getter
 public enum ApprovalStatus {
 
     PENDING("PENDING"),
@@ -9,10 +12,6 @@ public enum ApprovalStatus {
 
     ApprovalStatus(String status) {
         this.status = status;
-    }
-
-    public String getStatus() {
-        return status;
     }
 
     public boolean isPending() {

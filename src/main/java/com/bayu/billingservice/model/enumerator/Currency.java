@@ -1,5 +1,8 @@
 package com.bayu.billingservice.model.enumerator;
 
+import lombok.Getter;
+
+@Getter
 public enum Currency {
 
     IDR("IDR"),
@@ -9,10 +12,6 @@ public enum Currency {
 
     Currency(String value) {
         this.value = value;
-    }
-
-    public String getValue() {
-        return value;
     }
 
 }

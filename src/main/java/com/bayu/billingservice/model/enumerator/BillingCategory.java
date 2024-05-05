@@ -1,5 +1,8 @@
 package com.bayu.billingservice.model.enumerator;
 
+import lombok.Getter;
+
+@Getter
 public enum BillingCategory {
 
     FUND("FUND"),
@@ -12,10 +15,6 @@ public enum BillingCategory {
 
     BillingCategory(String value) {
         this.value = value;
-    }
-
-    public String getValue() {
-        return value;
     }
 
     public boolean isFund() {

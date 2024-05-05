@@ -1,5 +1,8 @@
 package com.bayu.billingservice.model.enumerator;
 
+import lombok.Getter;
+
+@Getter
 public enum FeeParameter {
 
     VAT("VAT"),
@@ -18,7 +21,4 @@ public enum FeeParameter {
         this.value = value;
     }
 
-    public String getValue() {
-        return value;
-    }
 }

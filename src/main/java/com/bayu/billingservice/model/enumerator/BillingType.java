@@ -1,5 +1,8 @@
 package com.bayu.billingservice.model.enumerator;
 
+import lombok.Getter;
+
+@Getter
 public enum BillingType {
 
     TYPE_1("TYPE_1"),
@@ -20,7 +23,4 @@ public enum BillingType {
         this.value = value;
     }
 
-    public String getValue() {
-        return value;
-    }
 }
