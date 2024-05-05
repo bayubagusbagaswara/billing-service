@@ -58,7 +58,9 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
 
             List<String> errorMessages = new ArrayList<>();
             Errors errors = validateInvestmentManagementUsingValidator(investmentManagementDTO);
-            errors.getAllErrors().forEach(objectError -> errorMessages.add(objectError.getDefaultMessage()));
+            if (errors.hasErrors()) {
+                errors.getAllErrors().forEach(objectError -> errorMessages.add(objectError.getDefaultMessage()));
+            }
 
             validationCodeAlreadyExists(investmentManagementDTO.getCode(), errorMessages);
 
@@ -94,7 +96,9 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
             for (InvestmentManagementDTO investmentManagementDTO : request.getInvestmentManagementRequestList()) {
                 List<String> errorMessages = new ArrayList<>();
                 Errors errors = validateInvestmentManagementUsingValidator(investmentManagementDTO);
-                errors.getAllErrors().forEach(objectError -> errorMessages.add(objectError.getDefaultMessage()));
+                if (errors.hasErrors()) {
+                    errors.getAllErrors().forEach(objectError -> errorMessages.add(objectError.getDefaultMessage()));
+                }
 
                 validationCodeAlreadyExists(investmentManagementDTO.getCode(), errorMessages);
 
@@ -133,7 +137,9 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
             for (InvestmentManagementDTO investmentManagementDTO : investmentManagementListRequest.getInvestmentManagementRequestList()) {
                 List<String> errorMessages = new ArrayList<>();
                 Errors errors = validateInvestmentManagementUsingValidator(investmentManagementDTO);
-                errors.getAllErrors().forEach(objectError -> errorMessages.add(objectError.getDefaultMessage()));
+                if (errors.hasErrors()) {
+                    errors.getAllErrors().forEach(objectError -> errorMessages.add(objectError.getDefaultMessage()));
+                }
 
                 if (isCodeAlreadyExists(investmentManagementDTO.getCode())) {
                     errorMessages.add("Investment Management is already taken with code: " + investmentManagementDTO.getCode());
@@ -193,8 +199,15 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
                     .address3(request.getAddress3())
                     .address4(request.getAddress4())
                     .build();
-            List<String> errorMessages = validateInvestmentManagementDTO(investmentManagementDTO);
+            List<String> errorMessages = new ArrayList<>();
+
+            Errors errors = validateInvestmentManagementUsingValidator(investmentManagementDTO);
+            if (errors.hasErrors()) {
+                errors.getAllErrors().forEach(error -> errorMessages.add(error.getDefaultMessage()));
+            }
+
             validationCodeAlreadyExists(investmentManagementDTO.getCode(), errorMessages);
+
             InvestmentManagement investmentManagement = investmentManagementRepository.findById(investmentManagementDTO.getId())
                     .orElseThrow(() -> new DataNotFoundException(ID_NOT_FOUND + investmentManagementDTO.getId()));
 
@@ -234,8 +247,12 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
 
         try {
             for (InvestmentManagementDTO investmentManagementDTO : request.getInvestmentManagementRequestList()) {
-                List<String> errorMessages = validateInvestmentManagementDTO(investmentManagementDTO);
-                validationCodeAlreadyExists(investmentManagementDTO.getCode(), errorMessages);
+                List<String> errorMessages = new ArrayList<>();
+                Errors errors = validateInvestmentManagementUsingValidator(investmentManagementDTO);
+                if (errors.hasErrors()) {
+                    errors.getAllErrors().forEach(error -> errorMessages.add(error.getDefaultMessage()));
+                }
+
                 InvestmentManagement investmentManagement = investmentManagementRepository.findById(investmentManagementDTO.getId())
                         .orElseThrow(() -> new DataNotFoundException(ID_NOT_FOUND + investmentManagementDTO.getId()));
 
@@ -274,11 +291,15 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
 
         try {
             for (InvestmentManagementDTO investmentManagementDTO : investmentManagementListRequest.getInvestmentManagementRequestList()) {
-                List<String> errorMessages = validateInvestmentManagementDTO(investmentManagementDTO);
-                validationCodeAlreadyExists(investmentManagementDTO.getCode(), errorMessages);
+                List<String> errorMessages = new ArrayList<>();
 
-                InvestmentManagement investmentManagement = investmentManagementRepository.findById(investmentManagementDTO.getId())
-                        .orElseThrow(() -> new DataNotFoundException(ID_NOT_FOUND + investmentManagementDTO.getId()));
+                Errors errors = validateInvestmentManagementUsingValidator(investmentManagementDTO);
+                if (errors.hasErrors()) {
+                    errors.getAllErrors().forEach(error -> errorMessages.add(error.getDefaultMessage()));
+                }
+
+                InvestmentManagement investmentManagement = investmentManagementRepository.findByCode(investmentManagementDTO.getCode())
+                        .orElseThrow(() -> new DataNotFoundException(ID_NOT_FOUND + investmentManagementDTO.getCode()));
 
                 if (!errorMessages.isEmpty()) {
                     BillingDataChangeDTO dataChangeDTO = BillingDataChangeDTO.builder()
@@ -344,8 +365,7 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
         } catch (JsonProcessingException e) {
             handleJsonProcessingException(e);
         } catch (Exception e) {
-            log.error("An error occurred while deleting entity data investment managements: {}", e.getMessage());
-            throw new DataProcessingException("An error occurred while deleting entity data investment managements", e);
+            handleGeneralError(e);
         }
         return new DeleteInvestmentManagementListResponse(totalDataSuccess, totalDataFailed, errorMessageList);
     }
@@ -420,13 +440,6 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
         return errors;
     }
 
-    private List<String> validateInvestmentManagementDTO(InvestmentManagementDTO investmentManagementDTO) {
-        Errors errors = validateInvestmentManagementUsingValidator(investmentManagementDTO);
-        return errors.getAllErrors().stream()
-                .map(DefaultMessageSourceResolvable::getDefaultMessage)
-                .toList();
-    }
-
     private void validationCodeAlreadyExists(String code, List<String> errorMessages) {
         if (isCodeAlreadyExists(code)) {
             errorMessages.add("Investment Management is already taken with code: " + code);
@@ -465,9 +478,9 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
     }
 
     private void updateInvestmentManagement(InvestmentManagement existingInvestment, InvestmentManagementDTO updatedDTO) {
-        if (!updatedDTO.getCode().isEmpty()) {
-            existingInvestment.setCode(updatedDTO.getCode());
-        }
+//        if (!updatedDTO.getCode().isEmpty()) {
+//            existingInvestment.setCode(updatedDTO.getCode());
+//        }
         if (!updatedDTO.getName().isEmpty()) {
             existingInvestment.setName(updatedDTO.getName());
         }
