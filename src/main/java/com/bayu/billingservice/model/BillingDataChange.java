@@ -58,12 +58,14 @@ public class BillingDataChange {
     @Column(name = "table_name")
     private String tableName;
 
+//    @Column(name = "json_data_before", columnDefinition = "CLOB") // Untuk Oracle
+//    // @Column(name = "json_data_before", columnDefinition = "TEXT") // Untuk MySQL
     @Lob
-    @Column(name = "json_date_before")
+    @Column(name = "json_date_before", columnDefinition = "TEXT")
     private String jsonDataBefore;
 
     @Lob
-    @Column(name = "json_data_after")
+    @Column(name = "json_data_after", columnDefinition = "TEXT")
     private String jsonDataAfter;
 
     @Column(name = "description")
