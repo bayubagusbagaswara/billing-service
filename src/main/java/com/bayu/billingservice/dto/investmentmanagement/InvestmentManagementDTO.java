@@ -3,6 +3,7 @@ package com.bayu.billingservice.dto.investmentmanagement;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -20,6 +21,7 @@ public class InvestmentManagementDTO {
     private Long id;
 
     @NotBlank(message = "Code cannot be empty")
+    @Pattern(regexp = "^[a-zA-Z0-9]*$", message = "Name must contain only letters and digits")
     private String code;
 
     @NotBlank(message = "Name cannot be empty")
