@@ -22,5 +22,7 @@ public interface BillingDataChangeService {
 
     <T> void createChangeActionDELETE(BillingDataChangeDTO dataChangeDTO, Class<T> clazz);
 
-    boolean existByIdList(List<Long> idList, Integer idListSize);
+    Boolean existByIdList(List<Long> idList, Integer idListSize);
+
+    boolean areAllIdsExistInDatabase(List<Long> idList);
 }

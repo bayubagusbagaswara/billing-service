@@ -14,7 +14,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -151,9 +154,22 @@ public class BillingDataChangeServiceImpl implements BillingDataChangeService {
     }
 
     @Override
-    public boolean existByIdList(List<Long> idList, Integer idListSize) {
-        log.info("Id List: {}, Id List Size: {}", idList, idList);
-        return dataChangeRepository.existsByIdList(idList, idListSize);
+    public Boolean existByIdList(List<Long> idList, Integer idListSize) {
+        log.info("Id List: {}, Id List Size: {}", idList, idListSize);
+        Boolean b = dataChangeRepository.existsByIdList(idList, idListSize);
+        log.info("Status: {}", b);
+        return b;
+    }
+
+    @Override
+    public boolean areAllIdsExistInDatabase(List<Long> idList) {
+        long countOfExistingIds = dataChangeRepository.countByIdIn(idList);
+        List<BillingDataChange> existingDataChanges = dataChangeRepository.findByIdIn(idList);
+        Set<Long> existingIds = existingDataChanges.stream()
+                .map(BillingDataChange::getId)
+                .collect(Collectors.toSet());
+        Set<Long> idSet = new HashSet<>(idList);
+        return existingIds.equals(idSet) && countOfExistingIds == idList.size();
     }
 
     private static BillingDataChangeDTO mapToDTO(BillingDataChange dataChange) {
