@@ -84,7 +84,7 @@ public class InvestmentManagementController {
                 .isPathVariable(false)
                 .menu(MENU_INVESTMENT_MANAGEMENT)
                 .build();
-        UpdateInvestmentManagementListResponse updateInvestmentManagementListResponse = investmentManagementService.updateById(request, dataChangeDTO);
+        UpdateInvestmentManagementListResponse updateInvestmentManagementListResponse = investmentManagementService.updateSingle(request, dataChangeDTO);
         ResponseDTO<UpdateInvestmentManagementListResponse> response = ResponseDTO.<UpdateInvestmentManagementListResponse>builder()
                 .code(HttpStatus.OK.value())
                 .message(HttpStatus.OK.getReasonPhrase())
