@@ -475,3 +475,9 @@ public CreateInvestmentManagementListResponse createList(CreateInvestmentManagem
         }
     }
 ```
+
+//    private void handleGeneralError(Exception e, List<ErrorMessageInvestmentManagementDTO> errorMessageList) {
+//        log.error("An error occurred while processing investment management records: {}", e.getMessage());
+//        String errorMessage = "An error occurred: " + e.getMessage();
+//        errorMessageList.add(new ErrorMessageInvestmentManagementDTO(null, Collections.singletonList(errorMessage)));
+//    }
