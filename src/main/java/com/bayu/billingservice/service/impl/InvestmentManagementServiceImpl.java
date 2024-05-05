@@ -128,6 +128,8 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
         List<ErrorMessageInvestmentManagementDTO> errorMessageList = new ArrayList<>();
 
         try {
+            validateDataChangeIds(investmentManagementListRequest.getInvestmentManagementRequestList());
+
             for (InvestmentManagementDTO investmentManagementDTO : investmentManagementListRequest.getInvestmentManagementRequestList()) {
                 List<String> errorMessages = new ArrayList<>();
                 Errors errors = validateInvestmentManagementUsingValidator(investmentManagementDTO);
@@ -163,6 +165,8 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
                 }
             }
             return new CreateInvestmentManagementListResponse(totalDataSuccess, totalDataFailed, errorMessageList);
+        } catch (DataChangeException e) {
+            handleDataChangeException(e);
         } catch (JsonProcessingException e) {
             handleJsonProcessingException(e);
         } catch (Exception e) {
@@ -209,7 +213,9 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
             }
             return new UpdateInvestmentManagementListResponse(totalDataSuccess, totalDataFailed, errorMessageList);
         } catch (DataNotFoundException e) {
-            totalDataFailed = getTotalDataFailed(e, errorMessageList, totalDataFailed);
+            log.error("Investment Management not found: {}", e.getMessage(), e);
+            errorMessageList.add(new ErrorMessageInvestmentManagementDTO(null, Collections.singletonList(e.getMessage())));
+            totalDataFailed++;
             return new UpdateInvestmentManagementListResponse(totalDataSuccess, totalDataFailed, errorMessageList);
         } catch (JsonProcessingException e) {
             handleJsonProcessingException(e);
@@ -482,9 +488,17 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
         }
     }
 
-    private void handleGeneralError(Exception e) {
-        log.error("An error occurred while processing investment management records: {}", e.getMessage(), e);
-        throw new DataChangeException("An error occurred while processing investment management records", e);
+
+    private static int getTotalDataFailed(DataNotFoundException e, List<ErrorMessageInvestmentManagementDTO> errorMessageList, int totalDataFailed) {
+        log.error("Investment Management not found: {}", e.getMessage(), e);
+        errorMessageList.add(new ErrorMessageInvestmentManagementDTO(null, Collections.singletonList(e.getMessage())));
+        totalDataFailed++;
+        return totalDataFailed;
+    }
+
+    private void handleDataChangeException(DataChangeException e) {
+        log.error("Data Change exception occurred: {}", e.getMessage());
+        throw new DataChangeException("Data Change exception occurred: " + e.getMessage());
     }
 
     private void handleJsonProcessingException(JsonProcessingException e) {
@@ -492,11 +506,20 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
         throw new DataChangeException("Error processing JSON during data change logging", e);
     }
 
-    private static int getTotalDataFailed(DataNotFoundException e, List<ErrorMessageInvestmentManagementDTO> errorMessageList, int totalDataFailed) {
-        log.error("Investment Management not found: {}", e.getMessage(), e);
-        errorMessageList.add(new ErrorMessageInvestmentManagementDTO(null, Collections.singletonList(e.getMessage())));
-        totalDataFailed++;
-        return totalDataFailed;
+    private void handleGeneralError(Exception e) {
+        log.error("An unexpected error occurred: {}", e.getMessage(), e);
+        throw new DataChangeException("An unexpected error occurred: " + e.getMessage());
+    }
+
+    private void validateDataChangeIds(List<InvestmentManagementDTO> investmentManagementDTOList) {
+        List<Long> idDataChangeList = investmentManagementDTOList.stream()
+                .map(InvestmentManagementDTO::getDataChangeId)
+                .toList();
+
+        if (!dataChangeService.areAllIdsExistInDatabase(idDataChangeList)) {
+            log.info("Data Change id not found");
+            throw new DataChangeException("Data Change id not found");
+        }
     }
 
 }
