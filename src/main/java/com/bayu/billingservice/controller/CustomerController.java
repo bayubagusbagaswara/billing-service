@@ -1,6 +1,7 @@
 package com.bayu.billingservice.controller;
 
 import com.bayu.billingservice.dto.ResponseDTO;
+import com.bayu.billingservice.dto.customer.CreateCustomerListRequest;
 import com.bayu.billingservice.dto.customer.CreateCustomerListResponse;
 import com.bayu.billingservice.dto.customer.CreateCustomerRequest;
 import com.bayu.billingservice.dto.customer.CustomerDTO;
@@ -37,11 +38,30 @@ public class CustomerController {
         CreateCustomerListResponse createCustomerListResponse = customerService.createSingleData(request, dataChangeDTO);
 
         ResponseDTO<CreateCustomerListResponse> response = ResponseDTO.<CreateCustomerListResponse>builder()
-                .code(HttpStatus.CREATED.value())
-                .message(HttpStatus.CREATED.getReasonPhrase())
+                .code(HttpStatus.OK.value())
+                .message(HttpStatus.OK.getReasonPhrase())
                 .payload(createCustomerListResponse)
                 .build();
 
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping(path = "/create-list")
+    public ResponseEntity<ResponseDTO<CreateCustomerListResponse>> createList(@RequestBody CreateCustomerListRequest request) {
+        BillingDataChangeDTO dataChangeDTO = BillingDataChangeDTO.builder()
+                .methodHttp(HttpMethod.POST.name())
+                .endpoint("/api/customer/create/approve")
+                .isRequestBody(true)
+                .isRequestParam(false)
+                .isPathVariable(false)
+                .menu(MENU_CUSTOMER)
+                .build();
+        CreateCustomerListResponse createCustomerListResponse = customerService.createList(request, dataChangeDTO);
+        ResponseDTO<CreateCustomerListResponse> response = ResponseDTO.<CreateCustomerListResponse>builder()
+                .code(HttpStatus.OK.value())
+                .message(HttpStatus.OK.getReasonPhrase())
+                .payload(createCustomerListResponse)
+                .build();
         return ResponseEntity.ok(response);
     }
 

@@ -1,5 +1,6 @@
 package com.bayu.billingservice.service;
 
+import com.bayu.billingservice.dto.customer.CreateCustomerListRequest;
 import com.bayu.billingservice.dto.customer.CreateCustomerListResponse;
 import com.bayu.billingservice.dto.customer.CreateCustomerRequest;
 import com.bayu.billingservice.dto.customer.CustomerDTO;
@@ -18,4 +19,6 @@ public interface CustomerService {
     String deleteAll();
 
     CreateCustomerListResponse createSingleData(CreateCustomerRequest request, BillingDataChangeDTO dataChangeDTO);
+
+    CreateCustomerListResponse createList(CreateCustomerListRequest request, BillingDataChangeDTO dataChangeDTO);
 }
