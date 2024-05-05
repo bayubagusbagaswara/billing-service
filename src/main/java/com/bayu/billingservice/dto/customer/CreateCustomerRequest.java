@@ -1,6 +1,7 @@
 package com.bayu.billingservice.dto.customer;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -22,7 +23,10 @@ public class CreateCustomerRequest {
 
     @NotBlank(message = "Customer Name cannot be empty")
     private String customerName;
+
+    @NotNull(message = "Customer Minimum Fee cannot be null")
     private BigDecimal customerMinimumFee;
+
     private BigDecimal customerSafekeepingFee;
 
     @NotBlank(message = "MI Code cannot be empty")
