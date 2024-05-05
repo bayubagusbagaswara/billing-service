@@ -24,6 +24,9 @@ public class CustomerDTO {
     @NotBlank(message = "Customer Code cannot be empty")
     private String customerCode;
 
+    @NotBlank(message = "Customer Name cannot be empty")
+    private String customerName;
+
     @NotNull(message = "Customer Minimum Fee cannot be null")
     private BigDecimal customerMinimumFee;
 
@@ -44,4 +47,7 @@ public class CustomerDTO {
     private String billingCategory;
     private String billingType;
     private String billingTemplate;
+
+    private String currency;
+    private String sellingAgentCode;
 }
