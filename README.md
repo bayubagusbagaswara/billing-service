@@ -481,3 +481,5 @@ public CreateInvestmentManagementListResponse createList(CreateInvestmentManagem
 //        String errorMessage = "An error occurred: " + e.getMessage();
 //        errorMessageList.add(new ErrorMessageInvestmentManagementDTO(null, Collections.singletonList(errorMessage)));
 //    }
+
+//                errorMessages.add("Error processing customer: " + customerDTO.getCustomerCode() + " - " + e.getMessage());
