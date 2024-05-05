@@ -1,11 +1,14 @@
 package com.bayu.billingservice.controller;
 
 import com.bayu.billingservice.dto.ResponseDTO;
+import com.bayu.billingservice.dto.customer.CreateCustomerListResponse;
 import com.bayu.billingservice.dto.customer.CreateCustomerRequest;
 import com.bayu.billingservice.dto.customer.CustomerDTO;
+import com.bayu.billingservice.dto.datachange.BillingDataChangeDTO;
 import com.bayu.billingservice.service.CustomerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,20 +22,27 @@ import java.util.List;
 public class CustomerController {
 
     private final CustomerService customerService;
+    private static final String MENU_CUSTOMER = "Customer";
 
     @GetMapping(path = "/create")
-    public ResponseEntity<ResponseDTO<CustomerDTO>> create(@RequestBody CreateCustomerRequest request) {
-        log.info("Start Create Mock Kyc Customer");
+    public ResponseEntity<ResponseDTO<CreateCustomerListResponse>> create(@RequestBody CreateCustomerRequest request) {
+        BillingDataChangeDTO dataChangeDTO = BillingDataChangeDTO.builder()
+                .methodHttp(HttpMethod.POST.name())
+                .endpoint("/api/customer/create/approve")
+                .isRequestBody(true)
+                .isRequestParam(false)
+                .isPathVariable(false)
+                .menu(MENU_CUSTOMER)
+                .build();
+        CreateCustomerListResponse createCustomerListResponse = customerService.createSingleData(request, dataChangeDTO);
 
-        CustomerDTO customerDTO = customerService.create(request);
-
-        ResponseDTO<CustomerDTO> response = ResponseDTO.<CustomerDTO>builder()
+        ResponseDTO<CreateCustomerListResponse> response = ResponseDTO.<CreateCustomerListResponse>builder()
                 .code(HttpStatus.CREATED.value())
                 .message(HttpStatus.CREATED.getReasonPhrase())
-                .payload(customerDTO)
+                .payload(createCustomerListResponse)
                 .build();
 
-        return ResponseEntity.ok().body(response);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping(path = "/all")
