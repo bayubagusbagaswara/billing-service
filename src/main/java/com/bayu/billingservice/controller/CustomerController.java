@@ -24,7 +24,7 @@ public class CustomerController {
     private final CustomerService customerService;
     private static final String MENU_CUSTOMER = "Customer";
 
-    @GetMapping(path = "/create")
+    @PostMapping(path = "/create")
     public ResponseEntity<ResponseDTO<CreateCustomerListResponse>> create(@RequestBody CreateCustomerRequest request) {
         BillingDataChangeDTO dataChangeDTO = BillingDataChangeDTO.builder()
                 .methodHttp(HttpMethod.POST.name())
