@@ -1,5 +1,6 @@
 package com.bayu.billingservice.dto.investmentmanagement;
 
+import com.bayu.billingservice.dto.ErrorMessageDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,5 +18,5 @@ public class CreateInvestmentManagementListResponse {
 
     private Integer totalDataFailed;
 
-    private List<ErrorMessageInvestmentManagementDTO> errorMessages;
+    private List<ErrorMessageDTO> errorMessages;
 }
