@@ -316,14 +316,13 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
     @Override
     public DeleteInvestmentManagementListResponse deleteSingle(DeleteInvestmentManagementRequest request, BillingDataChangeDTO dataChangeDTO) {
         log.info("Delete investment management by id with request: {}", request);
-        Long id = request.getId();
         int totalDataSuccess = 0;
         int totalDataFailed = 0;
         List<ErrorMessageInvestmentManagementDTO> errorMessageList = new ArrayList<>();
 
         try {
-            InvestmentManagement investmentManagement= investmentManagementRepository.findById(id)
-                    .orElseThrow(() -> new DataNotFoundException(ID_NOT_FOUND + id));
+            InvestmentManagement investmentManagement= investmentManagementRepository.findById(request.getId())
+                    .orElseThrow(() -> new DataNotFoundException(ID_NOT_FOUND + request.getId()));
 
             dataChangeDTO.setInputId(request.getInputId());
             dataChangeDTO.setInputIPAddress(request.getInputIPAddress());
