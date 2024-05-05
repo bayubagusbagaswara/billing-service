@@ -429,6 +429,13 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
         return mapToDTOList(investmentManagementRepository.findAll());
     }
 
+    @Override
+    public InvestmentManagementDTO getByCode(String investmentManagementCode) {
+        InvestmentManagement investmentManagement = investmentManagementRepository.findByCode(investmentManagementCode)
+                .orElseThrow(() -> new DataNotFoundException("Investment Management not found with code: " + investmentManagementCode));
+        return mapToDTO(investmentManagement);
+    }
+
     public Errors validateInvestmentManagementUsingValidator(InvestmentManagementDTO dto) {
         Errors errors = new BeanPropertyBindingResult(dto, "investmentManagementDTO");
         validator.validate(dto, errors);

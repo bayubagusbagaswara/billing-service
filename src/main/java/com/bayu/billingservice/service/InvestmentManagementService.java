@@ -23,4 +23,6 @@ public interface InvestmentManagementService {
     String deleteAll();
 
     List<InvestmentManagementDTO> getAll();
+
+    InvestmentManagementDTO getByCode(String investmentManagementCode);
 }
