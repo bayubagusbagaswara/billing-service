@@ -483,3 +483,6 @@ public CreateInvestmentManagementListResponse createList(CreateInvestmentManagem
 //    }
 
 //                errorMessages.add("Error processing customer: " + customerDTO.getCustomerCode() + " - " + e.getMessage());
+
+
+    @Column(name = "json_data_before", columnDefinition = "nvarchar(max)")
