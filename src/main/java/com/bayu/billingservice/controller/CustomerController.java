@@ -1,10 +1,7 @@
 package com.bayu.billingservice.controller;
 
 import com.bayu.billingservice.dto.ResponseDTO;
-import com.bayu.billingservice.dto.customer.CreateCustomerListRequest;
-import com.bayu.billingservice.dto.customer.CreateCustomerListResponse;
-import com.bayu.billingservice.dto.customer.CreateCustomerRequest;
-import com.bayu.billingservice.dto.customer.CustomerDTO;
+import com.bayu.billingservice.dto.customer.*;
 import com.bayu.billingservice.dto.datachange.BillingDataChangeDTO;
 import com.bayu.billingservice.service.CustomerService;
 import lombok.RequiredArgsConstructor;
@@ -72,6 +69,25 @@ public class CustomerController {
                 .code(HttpStatus.OK.value())
                 .message(HttpStatus.OK.getReasonPhrase())
                 .payload(createCustomerListResponse)
+                .build();
+        return ResponseEntity.ok(response);
+    }
+
+    @PutMapping(path = "/update-list")
+    public ResponseEntity<ResponseDTO<UpdateCustomerListResponse>> updateList(@RequestBody UpdateCustomerListRequest request) {
+        BillingDataChangeDTO dataChangeDTO = BillingDataChangeDTO.builder()
+                .methodHttp(HttpMethod.PUT.name())
+                .endpoint("/api/customer/update/approve")
+                .isRequestBody(true)
+                .isRequestParam(false)
+                .isPathVariable(false)
+                .menu(MENU_CUSTOMER)
+                .build();
+        UpdateCustomerListResponse updateCustomerListResponse = customerService.updateList(request, dataChangeDTO);
+        ResponseDTO<UpdateCustomerListResponse> response = ResponseDTO.<UpdateCustomerListResponse>builder()
+                .code(HttpStatus.OK.value())
+                .message(HttpStatus.OK.getReasonPhrase())
+                .payload(updateCustomerListResponse)
                 .build();
         return ResponseEntity.ok(response);
     }
