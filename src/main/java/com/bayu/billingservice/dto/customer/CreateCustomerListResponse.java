@@ -1,5 +1,6 @@
 package com.bayu.billingservice.dto.customer;
 
+import com.bayu.billingservice.dto.ErrorMessageDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,8 +17,6 @@ public class CreateCustomerListResponse {
     private Integer totalDataSuccess;
     private Integer totalDataFailed;
 
-    private List<ErrorMessageCustomerDTO> errorMessageCustomerDTOList;
-
-
+    private List<ErrorMessageDTO> errorMessageDTOList;
 
 }
