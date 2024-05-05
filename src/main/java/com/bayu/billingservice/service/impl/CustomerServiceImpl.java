@@ -1,10 +1,7 @@
 package com.bayu.billingservice.service.impl;
 
 import com.bayu.billingservice.dto.ErrorMessageDTO;
-import com.bayu.billingservice.dto.customer.CreateCustomerListRequest;
-import com.bayu.billingservice.dto.customer.CreateCustomerListResponse;
-import com.bayu.billingservice.dto.customer.CreateCustomerRequest;
-import com.bayu.billingservice.dto.customer.CustomerDTO;
+import com.bayu.billingservice.dto.customer.*;
 import com.bayu.billingservice.dto.datachange.BillingDataChangeDTO;
 import com.bayu.billingservice.dto.investmentmanagement.InvestmentManagementDTO;
 import com.bayu.billingservice.exception.ConnectionDatabaseException;
@@ -211,6 +208,17 @@ public class CustomerServiceImpl implements CustomerService {
             handleDataChangeException(e);
         }
         return new CreateCustomerListResponse(totalDataSuccess, totalDataFailed, errorMessageList);
+    }
+
+    @Override
+    public UpdateCustomerListResponse updateList(UpdateCustomerListRequest request, BillingDataChangeDTO dataChangeDTO) {
+        log.info("Update list billing customer with request: {}", request);
+        int totalDataSuccess = 0;
+        int totalDataFailed = 0;
+        List<ErrorMessageDTO> errorMessageList = new ArrayList<>();
+
+        // kita buat mirip seperti create list
+        return null;
     }
 
     private Customer createCustomer(CustomerDTO customerDTO) {
