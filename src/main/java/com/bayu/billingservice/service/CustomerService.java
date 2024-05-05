@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface CustomerService {
 
-    CustomerDTO create(CreateCustomerRequest request);
+    boolean isCodeAlreadyExists(String code);
 
     List<CustomerDTO> getAll();
 

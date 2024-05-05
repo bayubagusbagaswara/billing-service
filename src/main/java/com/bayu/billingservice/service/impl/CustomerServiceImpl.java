@@ -1,7 +1,9 @@
 package com.bayu.billingservice.service.impl;
 
+import com.bayu.billingservice.dto.customer.CreateCustomerListResponse;
 import com.bayu.billingservice.dto.customer.CreateCustomerRequest;
 import com.bayu.billingservice.dto.customer.CustomerDTO;
+import com.bayu.billingservice.dto.datachange.BillingDataChangeDTO;
 import com.bayu.billingservice.exception.ConnectionDatabaseException;
 import com.bayu.billingservice.model.Customer;
 import com.bayu.billingservice.repository.CustomerRepository;
@@ -23,28 +25,13 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public CustomerDTO create(CreateCustomerRequest request) {
-        log.info("Create Kyc : {}", request);
+    public boolean isCodeAlreadyExists(String code) {
+        return customerRepository.existsByCustomerCode(code);
+    }
 
-        BigDecimal minimumFee = request.getCustomerMinimumFee().isEmpty() ? BigDecimal.ZERO : new BigDecimal(request.getCustomerMinimumFee());
-        BigDecimal customerFee = request.getCustomerSafekeepingFee().isEmpty() ? BigDecimal.ZERO : new BigDecimal(request.getCustomerSafekeepingFee());
-
-        Customer customer = Customer.builder()
-                .investmentManagementName(request.getInvestmentManagementName())
-                .accountName(request.getAccountName())
-                .accountNumber(request.getAccountNumber())
-                .accountBank(request.getAccountBank())
-                .customerCode(request.getCustomerCode())
-                .kseiSafeCode(request.getKseiSafeCode())
-                .customerMinimumFee(minimumFee)
-                .customerSafekeepingFee(customerFee)
-
-                .billingCategory(request.getBillingCategory())
-                .billingType(request.getBillingType())
-                .billingTemplate(request.getBillingTemplate())
-                .build();
-
-        return mapToDTO(customerRepository.save(customer));
+    @Override
+    public CreateCustomerListResponse createSingleData(CreateCustomerRequest request, BillingDataChangeDTO dataChangeDTO) {
+        return null;
     }
 
     @Override
@@ -64,7 +51,7 @@ public class CustomerServiceImpl implements CustomerService {
             customerRepository.deleteAll();
             return "Successfully deleted all Kyc Customer";
         } catch (Exception e) {
-            log.error("Error when delete all Kyc Customer : " + e.getMessage());
+            log.error("Error when delete all Kyc Customer : {}", e.getMessage(), e);
             throw new ConnectionDatabaseException("Error when delete all Kyc Customer");
         }
     }
