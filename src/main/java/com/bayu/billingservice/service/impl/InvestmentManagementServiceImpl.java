@@ -446,6 +446,18 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
                 .toList();
     }
 
+    private InvestmentManagement createInvestmentManagementEntity(InvestmentManagementDTO investmentManagementDTO) {
+        return InvestmentManagement.builder()
+                .code(investmentManagementDTO.getCode())
+                .name(investmentManagementDTO.getName())
+                .email(investmentManagementDTO.getEmail())
+                .address1(investmentManagementDTO.getAddress1())
+                .address2(investmentManagementDTO.getAddress2())
+                .address3(investmentManagementDTO.getAddress3())
+                .address4(investmentManagementDTO.getAddress4())
+                .build();
+    }
+
     private void updateInvestmentManagement(InvestmentManagement existingInvestment, InvestmentManagementDTO updatedDTO) {
         if (!updatedDTO.getCode().isEmpty()) {
             existingInvestment.setCode(updatedDTO.getCode());
@@ -468,18 +480,6 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
         if (!updatedDTO.getAddress4().isEmpty()) {
             existingInvestment.setAddress4(updatedDTO.getAddress4());
         }
-    }
-
-    private InvestmentManagement createInvestmentManagementEntity(InvestmentManagementDTO investmentManagementDTO) {
-        return InvestmentManagement.builder()
-                .code(investmentManagementDTO.getCode())
-                .name(investmentManagementDTO.getName())
-                .email(investmentManagementDTO.getEmail())
-                .address1(investmentManagementDTO.getAddress1())
-                .address2(investmentManagementDTO.getAddress2())
-                .address3(investmentManagementDTO.getAddress3())
-                .address4(investmentManagementDTO.getAddress4())
-                .build();
     }
 
     private void handleGeneralError(Exception e) {
