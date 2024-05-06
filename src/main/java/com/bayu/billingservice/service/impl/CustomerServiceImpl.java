@@ -8,13 +8,16 @@ import com.bayu.billingservice.exception.ConnectionDatabaseException;
 import com.bayu.billingservice.exception.DataChangeException;
 import com.bayu.billingservice.exception.DataNotFoundException;
 import com.bayu.billingservice.model.Customer;
+import com.bayu.billingservice.model.InvestmentManagement;
 import com.bayu.billingservice.repository.CustomerRepository;
+import com.bayu.billingservice.repository.InvestmentManagementRepository;
 import com.bayu.billingservice.service.BillingDataChangeService;
 import com.bayu.billingservice.service.CustomerService;
 import com.bayu.billingservice.service.InvestmentManagementService;
 import com.bayu.billingservice.util.EnumValidator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -36,6 +39,7 @@ public class CustomerServiceImpl implements CustomerService {
     private final InvestmentManagementService investmentManagementService;
     private final Validator validator;
     private final ObjectMapper objectMapper;
+    private final InvestmentManagementRepository investmentManagementRepository;
 
     @Override
     public boolean isCodeAlreadyExists(String code) {
@@ -61,33 +65,30 @@ public class CustomerServiceImpl implements CustomerService {
                     .currency(request.getCurrency())
                     .build();
 
-            List<String> errorMessages = new ArrayList<>();
+            List<String> validationErrors = new ArrayList<>();
             Errors errors = validateBillingCustomerUsingValidator(customerDTO);
             if (errors.hasErrors()) {
-                errors.getAllErrors().forEach(objectError -> errorMessages.add(objectError.getDefaultMessage()));
+                errors.getAllErrors().forEach(objectError -> validationErrors.add(objectError.getDefaultMessage()));
             }
 
-            validationCustomerCodeAlreadyExists(customerDTO, errorMessages);
-            
-            InvestmentManagementDTO investmentManagementDTO = investmentManagementService.getByCode(customerDTO.getInvestmentManagementCode());
-            customerDTO.setInvestmentManagementName(investmentManagementDTO.getName());
+            InvestmentManagement investmentManagement = investmentManagementRepository.findByCode(customerDTO.getInvestmentManagementCode()).orElse(null);
+            if (investmentManagement == null) {
+                validationErrors.add("Investment Management not found with code: " + customerDTO.getInvestmentManagementCode());
+            }
+            customerDTO.setInvestmentManagementName(investmentManagement.getName());
 
-            dataChangeDTO.setInputId(request.getInputId());
-            dataChangeDTO.setInputIPAddress(request.getInputIPAddress());
-            dataChangeDTO.setJsonDataAfter(objectMapper.writeValueAsString(customerDTO));
-
-            if (errorMessages.isEmpty()) {
+            if (validationErrors.isEmpty()) {
+                dataChangeDTO.setInputId(request.getInputId());
+                dataChangeDTO.setInputIPAddress(request.getInputIPAddress());
+                dataChangeDTO.setJsonDataAfter(objectMapper.writeValueAsString(customerDTO));
                 dataChangeService.createChangeActionADD(dataChangeDTO, Customer.class);
                 totalDataSuccess++;
             } else {
                 totalDataFailed++;
-                ErrorMessageDTO errorMessageDTO = new ErrorMessageDTO(customerDTO.getCustomerCode(), errorMessages);
+                ErrorMessageDTO errorMessageDTO = new ErrorMessageDTO(customerDTO.getCustomerCode(), validationErrors);
                 errorMessageList.add(errorMessageDTO);
             }
             return new CreateCustomerListResponse(totalDataSuccess, totalDataFailed, errorMessageList);
-        } catch (DataNotFoundException e) {
-          totalDataFailed = getTotalDataFailed(e, errorMessageList, totalDataFailed);
-          return new CreateCustomerListResponse(totalDataSuccess, totalDataFailed, errorMessageList);
         } catch (JsonProcessingException e) {
             handleJsonProcessingException(e);
         } catch (Exception e) {
@@ -338,4 +339,181 @@ public class CustomerServiceImpl implements CustomerService {
         errorMessageList.add(new ErrorMessageDTO(customerDTO.getCustomerCode(), errorMessages));
     }
 
+    public CreateCustomerListResponse createSingleDataNew(@Valid CreateCustomerRequest request, BillingDataChangeDTO dataChangeDTO) {
+        int totalDataSuccess = 0;
+        int totalDataFailed = 0;
+        List<ErrorMessageDTO> errorMessageList = new ArrayList<>();
+        CustomerDTO customerDTO = CustomerDTO.builder()
+                .customerCode(request.getCustomerCode())
+                .customerName(request.getCustomerName())
+                .investmentManagementCode(request.getInvestmentManagementCode())
+                .billingCategory(request.getBillingCategory())
+                .billingType(request.getBillingType())
+                .billingTemplate(request.getBillingTemplate())
+                .sellingAgentCode(request.getSellingAgentCode())
+                .currency(request.getCurrency())
+                .build(); // Initialize customerDTO outside try block
+
+        try {
+            // Validate CustomerDTO using Spring Validator
+            Errors errors = validateBillingCustomerUsingValidator(customerDTO);
+
+            List<String> validationErrors = new ArrayList<>();
+            if (errors.hasErrors()) {
+                errors.getAllErrors().forEach(objectError -> validationErrors.add(objectError.getDefaultMessage()));
+            }
+
+            // Check if InvestmentManagement exists
+            InvestmentManagement investmentManagement = investmentManagementRepository.findByCode(customerDTO.getInvestmentManagementCode())
+                    .orElseThrow(() -> new IllegalArgumentException("Investment Management not found with code: " + customerDTO.getInvestmentManagementCode()));
+
+            // Set investment management name
+            customerDTO.setInvestmentManagementName(investmentManagement.getName());
+
+            if (validationErrors.isEmpty()) {
+                // Prepare dataChangeDTO
+                dataChangeDTO.setInputId(request.getInputId());
+                dataChangeDTO.setInputIPAddress(request.getInputIPAddress());
+
+                // Use ObjectMapper to serialize customerDTO to JSON string
+                String jsonDataAfter = objectMapper.writeValueAsString(customerDTO);
+                dataChangeDTO.setJsonDataAfter(jsonDataAfter);
+
+                // Create change action using dataChangeService
+                dataChangeService.createChangeActionADD(dataChangeDTO, Customer.class);
+
+                // Increment totalDataSuccess
+                totalDataSuccess++;
+            } else {
+                // Add error message with customer code to errorMessageList
+                ErrorMessageDTO errorMessageDTO = new ErrorMessageDTO(customerDTO.getCustomerCode(), validationErrors);
+                errorMessageList.add(errorMessageDTO);
+
+                // Increment totalDataFailed
+                totalDataFailed++;
+            }
+
+        } catch (IllegalArgumentException e) {
+            // Log error using logger
+            log.error("Investment Management not found with code: {}", customerDTO != null ? customerDTO.getInvestmentManagementCode() : "unknown", e);
+
+            // Handle IllegalArgumentException
+            List<String> validationErrors = new ArrayList<>();
+            validationErrors.add("Investment Management not found with code: " + (customerDTO != null ? customerDTO.getInvestmentManagementCode() : "unknown"));
+
+            // Add error message with customer code to errorMessageList
+            ErrorMessageDTO errorMessageDTO = new ErrorMessageDTO(customerDTO != null ? customerDTO.getCustomerCode() : "unknown", validationErrors);
+            errorMessageList.add(errorMessageDTO);
+
+            // Increment totalDataFailed
+            totalDataFailed++;
+        } catch (Exception e) {
+            // Log error using logger
+            log.error("An unexpected error occurred", e);
+
+            // Handle general exception
+            List<String> validationErrors = new ArrayList<>();
+            validationErrors.add("An unexpected error occurred: " + e.getMessage());
+
+            // Add error message with customer code to errorMessageList
+            ErrorMessageDTO errorMessageDTO = new ErrorMessageDTO(customerDTO != null ? customerDTO.getCustomerCode() : "unknown", validationErrors);
+            errorMessageList.add(errorMessageDTO);
+
+            // Increment totalDataFailed
+            totalDataFailed++;
+        }
+
+        // Return CreateCustomerListResponse with totalDataSuccess and totalDataFailed
+        return new CreateCustomerListResponse(totalDataSuccess, totalDataFailed, errorMessageList);
+    }
+
+    public CreateCustomerListResponse createMultipleData(List<CreateCustomerRequest> requests, List<BillingDataChangeDTO> dataChangeDTOs) {
+        int totalDataSuccess = 0;
+        int totalDataFailed = 0;
+        List<ErrorMessageDTO> errorMessageList = new ArrayList<>();
+
+        for (int i = 0; i < requests.size(); i++) {
+            CreateCustomerRequest request = requests.get(i);
+            BillingDataChangeDTO dataChangeDTO = dataChangeDTOs.get(i);
+
+            CustomerDTO customerDTO = CustomerDTO.builder()
+                    .customerCode(request.getCustomerCode())
+                    .customerName(request.getCustomerName())
+                    .investmentManagementCode(request.getInvestmentManagementCode())
+                    .billingCategory(request.getBillingCategory())
+                    .billingType(request.getBillingType())
+                    .billingTemplate(request.getBillingTemplate())
+                    .sellingAgentCode(request.getSellingAgentCode())
+                    .currency(request.getCurrency())
+                    .build();
+
+            try {
+                // Validate CustomerDTO using Spring Validator
+                Errors errors = validateBillingCustomerUsingValidator(customerDTO);
+
+                List<String> validationErrors = new ArrayList<>();
+                if (errors.hasErrors()) {
+                    errors.getAllErrors().forEach(objectError -> validationErrors.add(objectError.getDefaultMessage()));
+                }
+
+                // Check if InvestmentManagement exists
+                InvestmentManagement investmentManagement = investmentManagementRepository.findByCode(customerDTO.getInvestmentManagementCode())
+                        .orElseThrow(() -> new IllegalArgumentException("Investment Management not found with code: " + customerDTO.getInvestmentManagementCode()));
+
+                // Set investment management name
+                customerDTO.setInvestmentManagementName(investmentManagement.getName());
+
+                if (validationErrors.isEmpty()) {
+                    // Prepare dataChangeDTO
+                    dataChangeDTO.setInputId(request.getInputId());
+                    dataChangeDTO.setInputIPAddress(request.getInputIPAddress());
+
+                    // Perform data change action using dataChangeService
+                    dataChangeService.createChangeActionADD(dataChangeDTO, Customer.class);
+
+                    // Increment totalDataSuccess
+                    totalDataSuccess++;
+                } else {
+                    // Add error message with customer code to errorMessageList
+                    ErrorMessageDTO errorMessageDTO = new ErrorMessageDTO(customerDTO.getCustomerCode(), validationErrors);
+                    errorMessageList.add(errorMessageDTO);
+
+                    // Increment totalDataFailed
+                    totalDataFailed++;
+                }
+
+            } catch (IllegalArgumentException e) {
+                // Log error using logger
+                log.error("Investment Management not found with code: {}", customerDTO != null ? customerDTO.getInvestmentManagementCode() : "unknown", e);
+
+                // Handle IllegalArgumentException
+                List<String> validationErrors = new ArrayList<>();
+                validationErrors.add("Investment Management not found with code: " + (customerDTO != null ? customerDTO.getInvestmentManagementCode() : "unknown"));
+
+                // Add error message with customer code to errorMessageList
+                ErrorMessageDTO errorMessageDTO = new ErrorMessageDTO(customerDTO != null ? customerDTO.getCustomerCode() : "unknown", validationErrors);
+                errorMessageList.add(errorMessageDTO);
+
+                // Increment totalDataFailed
+                totalDataFailed++;
+            } catch (Exception e) {
+                // Log error using logger
+                log.error("An unexpected error occurred", e);
+
+                // Handle general exception
+                List<String> validationErrors = new ArrayList<>();
+                validationErrors.add("An unexpected error occurred: " + e.getMessage());
+
+                // Add error message with customer code to errorMessageList
+                ErrorMessageDTO errorMessageDTO = new ErrorMessageDTO(customerDTO != null ? customerDTO.getCustomerCode() : "unknown", validationErrors);
+                errorMessageList.add(errorMessageDTO);
+
+                // Increment totalDataFailed
+                totalDataFailed++;
+            }
+        }
+
+        // Create and return DataProcessingResponse
+        return new CreateCustomerListResponse(totalDataSuccess, totalDataFailed, errorMessageList);
+    }
 }
