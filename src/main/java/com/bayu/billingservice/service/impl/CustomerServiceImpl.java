@@ -15,6 +15,7 @@ import com.bayu.billingservice.service.BillingDataChangeService;
 import com.bayu.billingservice.service.CustomerService;
 import com.bayu.billingservice.service.InvestmentManagementService;
 import com.bayu.billingservice.util.EnumValidator;
+import com.bayu.billingservice.util.StringUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.Valid;
@@ -168,8 +169,10 @@ public class CustomerServiceImpl implements CustomerService {
 
                     validationCustomerCodeAlreadyExists(customerDTO, validationErrors);
 
-                    InvestmentManagementDTO investmentManagementDTO = investmentManagementService.getByCode(customerDTO.getInvestmentManagementCode());
-                    customerDTO.setInvestmentManagementName(investmentManagementDTO.getName());
+                    InvestmentManagement investmentManagement = investmentManagementRepository.findByCode(customerDTO.getInvestmentManagementCode())
+                            .orElseThrow(() -> new DataNotFoundException("Investment Management not found with code: " + customerDTO.getInvestmentManagementCode()));
+
+                    customerDTO.setInvestmentManagementName(investmentManagement.getName());
 
                     if (!validationErrors.isEmpty()) {
                         BillingDataChangeDTO dataChangeDTO = BillingDataChangeDTO.builder()
@@ -177,6 +180,7 @@ public class CustomerServiceImpl implements CustomerService {
                                 .approveId(request.getApproveId())
                                 .approveIPAddress(request.getApproveIPAddress())
                                 .jsonDataAfter(objectMapper.writeValueAsString(customerDTO))
+                                .description(StringUtil.joinStrings(validationErrors))
                                 .build();
                         dataChangeService.approvalStatusIsRejected(dataChangeDTO, validationErrors);
                         totalDataFailed++;
@@ -197,7 +201,14 @@ public class CustomerServiceImpl implements CustomerService {
                         totalDataSuccess++;
                     }
                 } catch (DataNotFoundException e) {
-                    handleDataNotFoundError(customerDTO, errorMessageList, e);
+                    log.error("Investment Management not found with code: {}", customerDTO != null ? customerDTO.getInvestmentManagementCode() : "unknown", e);
+
+                    List<String> validationErrors = new ArrayList<>();
+                    validationErrors.add("Investment Management not found with code: " + (customerDTO != null ? customerDTO.getInvestmentManagementCode() : "unknown"));
+
+                    ErrorMessageDTO errorMessageDTO = new ErrorMessageDTO(customerDTO != null ? customerDTO.getCustomerCode() : "unknown", validationErrors);
+                    errorMessageList.add(errorMessageDTO);
+
                     totalDataFailed++;
                 } catch (JsonProcessingException e) {
                     handleJsonProcessingException(e);
@@ -515,5 +526,90 @@ public class CustomerServiceImpl implements CustomerService {
 
         // Create and return DataProcessingResponse
         return new CreateCustomerListResponse(totalDataSuccess, totalDataFailed, errorMessageList);
+    }
+
+    public CreateCustomerListResponse createApprove(CreateCustomerListRequest request) {
+        log.info("Approve for create billing customer with request: {}", request);
+
+        int totalDataSuccess = 0;
+        int totalDataFailed = 0;
+        List<ErrorMessageDTO> errorMessageList = new ArrayList<>();
+
+        try {
+            validateDataChangeIds(request.getCustomerDTOList());
+
+            for (CustomerDTO customerDTO : request.getCustomerDTOList()) {
+                try {
+                    List<String> validationErrors = new ArrayList<>();
+
+                    // Validate CustomerDTO using validator
+                    Errors errors = validateBillingCustomerUsingValidator(customerDTO);
+                    if (errors.hasErrors()) {
+                        errors.getAllErrors().forEach(objectError -> validationErrors.add(objectError.getDefaultMessage()));
+                    }
+
+                    // Additional custom validations
+                    validateBillingEnums(customerDTO, validationErrors);
+                    validateCustomerCodeAlreadyExists(customerDTO, validationErrors);
+
+                    // Retrieve and set InvestmentManagement
+                    InvestmentManagement investmentManagement = investmentManagementRepository.findByCode(customerDTO.getInvestmentManagementCode())
+                            .orElseThrow(() -> new DataNotFoundException("Investment Management not found with code: " + customerDTO.getInvestmentManagementCode()));
+                    customerDTO.setInvestmentManagementName(investmentManagement.getName());
+
+                    if (!validationErrors.isEmpty()) {
+                        // Data change approval status is rejected
+                        BillingDataChangeDTO dataChangeDTO = createRejectedDataChangeDTO(customerDTO, request, validationErrors);
+                        dataChangeService.approvalStatusIsRejected(dataChangeDTO, validationErrors);
+                        errorMessageList.add(new ErrorMessageDTO(customerDTO.getCustomerCode(), validationErrors));
+                        totalDataFailed++;
+                    } else {
+                        // Create and save Customer entity
+                        Customer customer = createCustomer(customerDTO);
+                        customerRepository.save(customer);
+
+                        // Data change approval status is approved
+                        BillingDataChangeDTO dataChangeDTO = createApprovedDataChangeDTO(customerDTO, request, customer);
+                        dataChangeService.approvalStatusIsApproved(dataChangeDTO);
+                        totalDataSuccess++;
+                    }
+                } catch (DataNotFoundException e) {
+                    handleDataNotFoundException(customerDTO, e, errorMessageList);
+                    totalDataFailed++;
+                } catch (JsonProcessingException e) {
+                    handleJsonProcessingException(e);
+                    totalDataFailed++;
+                } catch (Exception e) {
+                    handleGeneralError(e);
+                    totalDataFailed++;
+                }
+            }
+        } catch (DataChangeException e) {
+            handleDataChangeException(e);
+            // If overall data change exception, all data might be considered failed
+            totalDataFailed = request.getCustomerDTOList().size();
+        }
+
+        // Return response with total success, total failed, and error messages
+        return new CreateCustomerListResponse(totalDataSuccess, totalDataFailed, errorMessageList);
+    }
+
+    private BillingDataChangeDTO createRejectedDataChangeDTO(CustomerDTO customerDTO, CreateCustomerListRequest request, List<String> validationErrors) throws JsonProcessingException {
+        return BillingDataChangeDTO.builder()
+                .id(customerDTO.getDataChangeId())
+                .approveId(request.getApproveId())
+                .approveIPAddress(request.getApproveIPAddress())
+                .jsonDataAfter(objectMapper.writeValueAsString(customerDTO))
+                .description(StringUtil.joinStrings(validationErrors))
+                .build();
+    }
+
+    private void handleDataNotFoundException(CustomerDTO customerDTO, DataNotFoundException e, List<ErrorMessageDTO> errorMessageList) {
+        log.error("Investment Management not found with code: {}", customerDTO != null ? customerDTO.getInvestmentManagementCode() : "unknown", e);
+
+        List<String> validationErrors = new ArrayList<>();
+        validationErrors.add("Investment Management not found with code: " + (customerDTO != null ? customerDTO.getInvestmentManagementCode() : "unknown"));
+
+        errorMessageList.add(new ErrorMessageDTO(customerDTO != null ? customerDTO.getCustomerCode() : "unknown", validationErrors));
     }
 }
