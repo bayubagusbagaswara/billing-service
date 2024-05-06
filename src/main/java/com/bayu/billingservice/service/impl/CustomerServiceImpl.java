@@ -21,6 +21,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.Errors;
@@ -29,6 +30,7 @@ import org.springframework.validation.Validator;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -528,7 +530,7 @@ public class CustomerServiceImpl implements CustomerService {
         return new CreateCustomerListResponse(totalDataSuccess, totalDataFailed, errorMessageList);
     }
 
-    public CreateCustomerListResponse createApprove(CreateCustomerListRequest request) {
+    public CreateCustomerListResponse createApproveNew(CreateCustomerListRequest request) {
         log.info("Approve for create billing customer with request: {}", request);
 
         int totalDataSuccess = 0;
@@ -537,7 +539,6 @@ public class CustomerServiceImpl implements CustomerService {
 
         try {
             validateDataChangeIds(request.getCustomerDTOList());
-
             for (CustomerDTO customerDTO : request.getCustomerDTOList()) {
                 try {
                     List<String> validationErrors = new ArrayList<>();
@@ -594,6 +595,23 @@ public class CustomerServiceImpl implements CustomerService {
         return new CreateCustomerListResponse(totalDataSuccess, totalDataFailed, errorMessageList);
     }
 
+    private BillingDataChangeDTO createApprovedDataChangeDTO(CustomerDTO customerDTO, CreateCustomerListRequest request, Customer customer) throws JsonProcessingException {
+        return BillingDataChangeDTO.builder()
+                .id(customerDTO.getDataChangeId())
+                .approveId(request.getApproveId())
+                .approveIPAddress(request.getApproveIPAddress())
+                .entityId(customer.getId().toString())
+                .jsonDataAfter(objectMapper.writeValueAsString(customer))
+                .description("Successfully approve data create billing customer data")
+                .build();
+    }
+
+    private void validateCustomerCodeAlreadyExists(CustomerDTO customerDTO, List<String> validationErrors) {
+        if (isCodeAlreadyExists(customerDTO.getCustomerCode())) {
+            validationErrors.add("Customer is already taken with customer code: " + customerDTO.getCustomerCode());
+        }
+    }
+
     private BillingDataChangeDTO createRejectedDataChangeDTO(CustomerDTO customerDTO, CreateCustomerListRequest request, List<String> validationErrors) throws JsonProcessingException {
         return BillingDataChangeDTO.builder()
                 .id(customerDTO.getDataChangeId())
@@ -611,5 +629,79 @@ public class CustomerServiceImpl implements CustomerService {
         validationErrors.add("Investment Management not found with code: " + (customerDTO != null ? customerDTO.getInvestmentManagementCode() : "unknown"));
 
         errorMessageList.add(new ErrorMessageDTO(customerDTO != null ? customerDTO.getCustomerCode() : "unknown", validationErrors));
+    }
+
+    public CreateCustomerListResponse createApproveV3(CreateCustomerListRequest request) {
+        log.info("Approve for create billing customer with request: {}", request);
+        int totalDataSuccess = 0;
+        int totalDataFailed = 0;
+        List<ErrorMessageDTO> errorMessageList = new ArrayList<>();
+
+        boolean allIdsExist = validateDataChangeIdsNew(request.getCustomerDTOList());
+
+        if (!allIdsExist) {
+            log.info("Not all Data Change ids exist in the database");
+            // Handle the case where not all ids exist (e.g., return an error response)
+            throw new DataChangeException("Not all Data Change ids exist in the database");
+        }
+
+        // Process each CustomerDTO
+        for (CustomerDTO customerDTO : request.getCustomerDTOList()) {
+            try {
+                List<String> validationErrors = new ArrayList<>();
+
+                // Validate CustomerDTO using validator
+                Errors errors = validateBillingCustomerUsingValidator(customerDTO);
+                if (errors.hasErrors()) {
+                    errors.getAllErrors().forEach(objectError -> validationErrors.add(objectError.getDefaultMessage()));
+                }
+
+                // Additional custom validations
+                validateBillingEnums(customerDTO, validationErrors);
+                validateCustomerCodeAlreadyExists(customerDTO, validationErrors);
+
+                // Retrieve and set InvestmentManagement
+                InvestmentManagement investmentManagement = investmentManagementRepository.findByCode(customerDTO.getInvestmentManagementCode())
+                        .orElseThrow(() -> new DataNotFoundException("Investment Management not found with code: " + customerDTO.getInvestmentManagementCode()));
+                customerDTO.setInvestmentManagementName(investmentManagement.getName());
+
+                if (!validationErrors.isEmpty()) {
+                    // Data change approval status is rejected
+                    BillingDataChangeDTO dataChangeDTO = createRejectedDataChangeDTO(customerDTO, request, validationErrors);
+                    dataChangeService.approvalStatusIsRejected(dataChangeDTO, validationErrors);
+                    errorMessageList.add(new ErrorMessageDTO(customerDTO.getCustomerCode(), validationErrors));
+                    totalDataFailed++;
+                } else {
+                    // Create and save Customer entity
+                    Customer customer = createCustomer(customerDTO);
+                    customerRepository.save(customer);
+
+                    // Data change approval status is approved
+                    BillingDataChangeDTO dataChangeDTO = createApprovedDataChangeDTO(customerDTO, request, customer);
+                    dataChangeService.approvalStatusIsApproved(dataChangeDTO);
+                    totalDataSuccess++;
+                }
+            } catch (DataNotFoundException e) {
+                handleDataNotFoundException(customerDTO, e, errorMessageList);
+                totalDataFailed++;
+            } catch (JsonProcessingException e) {
+                handleJsonProcessingException(e);
+                totalDataFailed++;
+            } catch (Exception e) {
+                handleGeneralError(e);
+                totalDataFailed++;
+            }
+        }
+
+        // Return response with total success, total failed, and error messages
+        return new CreateCustomerListResponse(totalDataSuccess, totalDataFailed, errorMessageList);
+    }
+
+    private boolean validateDataChangeIdsNew(List<CustomerDTO> customerDTOList) {
+        List<Long> idDataChangeList = customerDTOList.stream()
+                .map(CustomerDTO::getDataChangeId)
+                .toList();
+
+        return dataChangeService.areAllIdsExistInDatabase(idDataChangeList);
     }
 }
