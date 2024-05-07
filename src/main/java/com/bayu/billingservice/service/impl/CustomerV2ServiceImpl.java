@@ -138,7 +138,7 @@ public class CustomerV2ServiceImpl implements CustomerV2Service {
         int totalDataFailed = 0;
         List<ErrorMessageDTO> errorMessageDTOList = new ArrayList<>();
 
-        boolean allIdsExists = validateDataChangeIdsNew(request.getCustomerDTOList());
+        boolean allIdsExists = validateDataChangeIds(request.getCustomerDTOList());
         if (!allIdsExists) {
             log.error("Not all Data Change ids exist in the database");
             throw new DataChangeException("Not all Data Change ids exists in the database");
@@ -234,7 +234,7 @@ public class CustomerV2ServiceImpl implements CustomerV2Service {
         }
     }
 
-    private boolean validateDataChangeIdsNew(List<CustomerDTO> customerDTOList) {
+    private boolean validateDataChangeIds(List<CustomerDTO> customerDTOList) {
         List<Long> idDataChangeList = customerDTOList.stream()
                 .map(CustomerDTO::getDataChangeId)
                 .toList();
