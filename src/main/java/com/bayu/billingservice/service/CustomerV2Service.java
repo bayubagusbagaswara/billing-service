@@ -15,18 +15,18 @@ public interface CustomerV2Service {
 
     CreateCustomerListResponse createSingleData(CreateCustomerRequest request, BillingDataChangeDTO dataChangeDTO);
 
-    CreateCustomerListResponse createListData(CreateCustomerListRequest request, BillingDataChangeDTO dataChangeDTO);
+    CreateCustomerListResponse createMultipleData(CreateCustomerListRequest request, BillingDataChangeDTO dataChangeDTO);
 
-    CreateCustomerListResponse createListApprove(CreateCustomerListRequest request);
+    CreateCustomerListResponse createMultipleApprove(CreateCustomerListRequest request);
 
     UpdateCustomerListResponse updateSingleData(UpdateCustomerListRequest request, BillingDataChangeDTO dataChangeDTO);
 
-    UpdateCustomerListResponse updateListData(UpdateCustomerListRequest request, BillingDataChangeDTO dataChangeDTO);
+    UpdateCustomerListResponse updateMultipleData(UpdateCustomerListRequest request, BillingDataChangeDTO dataChangeDTO);
 
-    UpdateCustomerListResponse updateListApprove(UpdateCustomerListRequest request);
+    UpdateCustomerListResponse updateMultipleApprove(UpdateCustomerListRequest request);
 
     DeleteCustomerListResponse deleteSingleData(DeleteCustomerRequest request, BillingDataChangeDTO dataChangeDTO);
 
-    DeleteCustomerListResponse deleteListApprove(DeleteCustomerListRequest request);
+    DeleteCustomerListResponse deleteMultipleApprove(DeleteCustomerListRequest request);
 
 }
