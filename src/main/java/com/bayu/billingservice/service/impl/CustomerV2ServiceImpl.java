@@ -133,7 +133,26 @@ public class CustomerV2ServiceImpl implements CustomerV2Service {
 
     @Override
     public CreateCustomerListResponse createMultipleApprove(CreateCustomerListRequest request) {
-        return null;
+        log.info("Approve multiple for create billing customer with request: {}", request);
+        int totalDataSuccess = 0;
+        int totalDataFailed = 0;
+        List<ErrorMessageDTO> errorMessageDTOList = new ArrayList<>();
+
+        boolean allIdsExists = validateDataChangeIdsNew(request.getCustomerDTOList());
+        if (!allIdsExists) {
+            log.error("Not all Data Change ids exist in the database");
+            throw new DataChangeException("Not all Data Change ids exists in the database");
+        }
+
+        // Process each CustomerDTO
+        for (CustomerDTO customerDTO : request.getCustomerDTOList()) {
+            // disini dilakukan proses validasi dan pengecekan mi code ada atau tidak
+            // validasi data enums
+
+            // dan juga dilakukan pengecekan customerIsAlreadyTaken, karena ditakutkan ada 2 data yang pending dengan 2 data customerCode yang sama
+
+        }
+        return new CreateCustomerListResponse(totalDataSuccess, totalDataFailed, errorMessageDTOList);
     }
 
     @Override
@@ -213,6 +232,14 @@ public class CustomerV2ServiceImpl implements CustomerV2Service {
         if (isCodeAlreadyExists(customerCode)) {
             validationErrors.add("Billing Customer already taken with code: " + customerCode);
         }
+    }
+
+    private boolean validateDataChangeIdsNew(List<CustomerDTO> customerDTOList) {
+        List<Long> idDataChangeList = customerDTOList.stream()
+                .map(CustomerDTO::getDataChangeId)
+                .toList();
+
+        return dataChangeService.areAllIdsExistInDatabase(idDataChangeList);
     }
 
 }
