@@ -73,35 +73,22 @@ public class CustomerV2ServiceImpl implements CustomerV2Service {
         try {
             List<String> validationErrors = new ArrayList<>();
             validationCustomerCodeAlreadyExists(customerDTO.getCustomerCode(), validationErrors);
-            // dia cuma ngecek customer code already exist atau gak
-            // jika sudah tersedia, maka error dimasukkan kedalam validationErrors
-            // tidak perlu validasi data dan cek investment code (dilakukan saat approve)
-            // Check if InvestmentManagement exists
             if (validationErrors.isEmpty()) {
-                // Prepare dataChangeDTO
                 dataChangeDTO.setInputId(request.getInputId());
                 dataChangeDTO.setInputIPAddress(request.getInputIPAddress());
-
-                // Use ObjectMapper to serialize customerDTO to JSON string
                 String jsonDataAfter = objectMapper.writeValueAsString(customerDTO);
                 dataChangeDTO.setJsonDataAfter(jsonDataAfter);
 
-                // Create change action using dataChangeService
                 dataChangeService.createChangeActionADD(dataChangeDTO, Customer.class);
-
-                // Increment totalDataSuccess
                 totalDataSuccess++;
             } else {
-                // Add error message with customer code to errorMessageList
                 ErrorMessageDTO errorMessageDTO = new ErrorMessageDTO(customerDTO.getCustomerCode(), validationErrors);
                 errorMessageDTOList.add(errorMessageDTO);
 
-                // Increment totalDataFailed
                 totalDataFailed++;
             }
         } catch (Exception e) {
             log.error("An unexpected error occurred", e);
-            // Handle general exception
             handleGeneralError(e);
         }
         return new CreateCustomerListResponse(totalDataSuccess, totalDataFailed, errorMessageDTOList);
