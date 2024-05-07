@@ -21,7 +21,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.Errors;
@@ -30,7 +29,6 @@ import org.springframework.validation.Validator;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -43,6 +41,8 @@ public class CustomerServiceImpl implements CustomerService {
     private final Validator validator;
     private final ObjectMapper objectMapper;
     private final InvestmentManagementRepository investmentManagementRepository;
+
+    private static final String CODE_NOT_FOUND = "Investment Management not found with code: ";
 
     @Override
     public boolean isCodeAlreadyExists(String code) {
@@ -70,14 +70,16 @@ public class CustomerServiceImpl implements CustomerService {
 
             List<String> validationErrors = new ArrayList<>();
             Errors errors = validateBillingCustomerUsingValidator(customerDTO);
+
             if (errors.hasErrors()) {
                 errors.getAllErrors().forEach(objectError -> validationErrors.add(objectError.getDefaultMessage()));
             }
 
             InvestmentManagement investmentManagement = investmentManagementRepository.findByCode(customerDTO.getInvestmentManagementCode()).orElse(null);
             if (investmentManagement == null) {
-                validationErrors.add("Investment Management not found with code: " + customerDTO.getInvestmentManagementCode());
+                validationErrors.add(CODE_NOT_FOUND + customerDTO.getInvestmentManagementCode());
             }
+
             customerDTO.setInvestmentManagementName(investmentManagement.getName());
 
             if (validationErrors.isEmpty()) {
