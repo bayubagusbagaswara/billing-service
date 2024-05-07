@@ -3,9 +3,7 @@ package com.bayu.billingservice.service.impl;
 import com.bayu.billingservice.dto.ErrorMessageDTO;
 import com.bayu.billingservice.dto.customer.*;
 import com.bayu.billingservice.dto.datachange.BillingDataChangeDTO;
-import com.bayu.billingservice.dto.investmentmanagement.InvestmentManagementDTO;
 import com.bayu.billingservice.exception.DataChangeException;
-import com.bayu.billingservice.exception.DataNotFoundException;
 import com.bayu.billingservice.model.Customer;
 import com.bayu.billingservice.repository.CustomerRepository;
 import com.bayu.billingservice.service.BillingDataChangeService;
@@ -87,6 +85,9 @@ public class CustomerV2ServiceImpl implements CustomerV2Service {
 
                 totalDataFailed++;
             }
+        } catch (JsonProcessingException e) {
+            log.error("Json Processing error occurred", e);
+            handleJsonProcessingException(e);
         } catch (Exception e) {
             log.error("An unexpected error occurred", e);
             handleGeneralError(e);
@@ -96,7 +97,38 @@ public class CustomerV2ServiceImpl implements CustomerV2Service {
 
     @Override
     public CreateCustomerListResponse createMultipleData(CreateCustomerListRequest request, BillingDataChangeDTO dataChangeDTO) {
-        return null;
+        log.info("Create billing customer multiple data with request: {}", request);
+        int totalDataSuccess = 0;
+        int totalDataFailed = 0;
+        List<ErrorMessageDTO> errorMessageDTOList = new ArrayList<>();
+
+        for (CustomerDTO customerDTO : request.getCustomerDTOList()) {
+            try {
+                List<String> validationErrors = new ArrayList<>();
+                validationCustomerCodeAlreadyExists(customerDTO.getCustomerCode(), validationErrors);
+                if (validationErrors.isEmpty()) {
+                    dataChangeDTO.setInputId(request.getInputId());
+                    dataChangeDTO.setInputIPAddress(request.getInputIPAddress());
+                    String jsonDataAfter = objectMapper.writeValueAsString(customerDTO);
+                    dataChangeDTO.setJsonDataAfter(jsonDataAfter);
+
+                    dataChangeService.createChangeActionADD(dataChangeDTO, Customer.class);
+                    totalDataSuccess++;
+                } else {
+                    ErrorMessageDTO errorMessageDTO = new ErrorMessageDTO(customerDTO.getCustomerCode(), validationErrors);
+                    errorMessageDTOList.add(errorMessageDTO);
+
+                    totalDataFailed++;
+                }
+
+            } catch (JsonProcessingException e) {
+                handleJsonProcessingException(e);
+            } catch (Exception e) {
+                log.error("An unexpected error occurred", e);
+                handleGeneralError(e);
+            }
+        }
+        return new CreateCustomerListResponse(totalDataSuccess, totalDataFailed, errorMessageDTOList);
     }
 
     @Override
