@@ -17,9 +17,17 @@ public interface CustomerService {
 
     CreateCustomerListResponse createSingleData(CreateCustomerRequest request, BillingDataChangeDTO dataChangeDTO);
 
-    CreateCustomerListResponse createList(CreateCustomerListRequest request, BillingDataChangeDTO dataChangeDTO);
+    CreateCustomerListResponse createMultipleData(CreateCustomerListRequest request, BillingDataChangeDTO dataChangeDTO);
 
-    CreateCustomerListResponse createApprove(CreateCustomerListRequest request);
+    CreateCustomerListResponse createMultipleApprove(CreateCustomerListRequest request);
 
-    UpdateCustomerListResponse updateList(UpdateCustomerListRequest request, BillingDataChangeDTO dataChangeDTO);
+    UpdateCustomerListResponse updateSingleData(UpdateCustomerListRequest request, BillingDataChangeDTO dataChangeDTO);
+
+    UpdateCustomerListResponse updateMultipleData(UpdateCustomerListRequest updateCustomerListRequest, BillingDataChangeDTO dataChangeDTO);
+
+    UpdateCustomerListResponse updateMultipleApprove(UpdateCustomerListRequest updateCustomerListRequest);
+
+    DeleteCustomerListResponse deleteSingleData(DeleteCustomerRequest deleteCustomerRequest, BillingDataChangeDTO dataChangeDTO);
+
+    DeleteCustomerListResponse deleteMultipleApprove(DeleteCustomerListRequest deleteCustomerListRequest);
 }
