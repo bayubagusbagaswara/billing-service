@@ -1,6 +1,9 @@
 package com.bayu.billingservice.model.base;
 
+import com.bayu.billingservice.model.enumerator.ApprovalStatus;
 import jakarta.persistence.Column;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.MappedSuperclass;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,6 +16,10 @@ import java.util.Date;
 @NoArgsConstructor
 @SuperBuilder
 public abstract class Approval {
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "approval_status")
+    private ApprovalStatus approvalStatus;
 
     @Column(name = "input_id")
     private String inputId;
