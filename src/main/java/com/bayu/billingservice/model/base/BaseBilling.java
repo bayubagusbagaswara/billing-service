@@ -1,6 +1,9 @@
 package com.bayu.billingservice.model.base;
 
+import com.bayu.billingservice.model.enumerator.BillingStatus;
 import jakarta.persistence.Column;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.MappedSuperclass;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -12,13 +15,13 @@ import lombok.experimental.SuperBuilder;
 @Data
 @NoArgsConstructor
 @SuperBuilder
-public abstract class BaseBilling extends BaseAudit {
+public abstract class BaseBilling extends Approval {
 
-    @Column(name = "approval_status")
-    private String approvalStatus;
+    @Enumerated(EnumType.STRING)
+    private BillingStatus billingStatus;
 
-    @Column(name = "aid")
-    private String aid;
+    @Column(name = "customer_code")
+    private String customerCode;
 
     @Column(name = "month")
     private String month;
@@ -26,6 +29,17 @@ public abstract class BaseBilling extends BaseAudit {
     @Column(name = "year")
     private Integer year;
 
+    @Column(name = "bill_category")
+    private String billingCategory;
+
+    @Column(name = "bill_type")
+    private String billingType;
+
+    @Column(name = "bill_template")
+    private String billingTemplate;
+
+
+    // Data in PDF Template
     @Column(name = "bill_number")
     private String billingNumber;
 
@@ -38,33 +52,27 @@ public abstract class BaseBilling extends BaseAudit {
     @Column(name = "bill_payment_due_date")
     private String billingPaymentDueDate; // tanggal billing di generate ditambah 14 hari
 
-    @Column(name = "bill_category")
-    private String billingCategory;
 
-    @Column(name = "bill_type")
-    private String billingType;
-
-    @Column(name = "bill_template")
-    private String billingTemplate;
+    // Data Investment Management in PDF Template
+    @Column(name = "mi_code")
+    private String investmentManagementCode;
 
     @Column(name = "mi_name")
     private String investmentManagementName;
 
-    @Column(name = "mi_address_building")
-    private String investmentManagementAddressBuilding;
+    @Column(name = "mi_address_1")
+    private String investmentManagementAddress1;
 
-    @Column(name = "mi_address_street")
-    private String investmentManagementAddressStreet;
+    @Column(name = "mi_address_2")
+    private String investmentManagementAddress2;
 
-    @Column(name = "mi_address_city")
-    private String investmentManagementAddressCity;
+    @Column(name = "mi_address_3")
+    private String investmentManagementAddress3;
 
-    @Column(name = "mi_address_province")
-    private String investmentManagementAddressProvince;
+    @Column(name = "mi_address_4")
+    private String investmentManagementAddress4;
 
-//    @Column(name = "product_name")
-//    private String productName; // or security name
-
+    // Data Account Customer in PDF Template
     @Column(name = "account_name")
     private String accountName; // this is same with GL Name
 
