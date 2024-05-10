@@ -486,3 +486,18 @@ public CreateInvestmentManagementListResponse createList(CreateInvestmentManagem
 
 
     @Column(name = "json_data_before", columnDefinition = "nvarchar(max)")
+
+
+@GetMapping("/download")
+public ResponseEntity<FileSystemResource> downloadFile() {
+String fileName = "file.zip"; // Nama file yang akan diunduh
+File file = new File(DOWNLOAD_FOLDER + "/" + fileName);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+        headers.setContentDispositionFormData("attachment", fileName);
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(new FileSystemResource(file));
+    }
