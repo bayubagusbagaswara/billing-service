@@ -66,7 +66,7 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
             if (validationErrors.isEmpty()) {
                 dataChangeDTO.setInputId(request.getInputId());
                 dataChangeDTO.setInputIPAddress(request.getInputIPAddress());
-                dataChangeDTO.setJsonDataAfter(objectMapper.writeValueAsString(investmentManagementDTO));
+                dataChangeDTO.setJsonDataAfter(JsonUtil.cleanedJsonData(objectMapper.writeValueAsString(investmentManagementDTO)));
                 dataChangeService.createChangeActionADD(dataChangeDTO, InvestmentManagement.class);
                 totalDataSuccess++;
             } else {
@@ -97,7 +97,7 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
 
                 dataChangeDTO.setInputId(requestList.getInputId());
                 dataChangeDTO.setInputIPAddress(requestList.getInputIPAddress());
-                dataChangeDTO.setJsonDataAfter(objectMapper.writeValueAsString(investmentManagementDTO));
+                dataChangeDTO.setJsonDataAfter(JsonUtil.cleanedJsonData(objectMapper.writeValueAsString(investmentManagementDTO)));
 
                 if (validationErrors.isEmpty()) {
                     dataChangeService.createChangeActionADD(dataChangeDTO, InvestmentManagement.class);
@@ -142,7 +142,7 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
                 dataChangeDTO.setApproveDate(ConvertDateUtil.getDate());
 
                 if (!errorMessages.isEmpty()) {
-                    dataChangeDTO.setJsonDataAfter(objectMapper.writeValueAsString(investmentManagementDTO));
+                    dataChangeDTO.setJsonDataAfter(JsonUtil.cleanedJsonData(objectMapper.writeValueAsString(investmentManagementDTO)));
 
                     dataChangeService.approvalStatusIsRejected(dataChangeDTO, errorMessages);
                     totalDataFailed++;
@@ -195,7 +195,7 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
             dataChangeDTO.setInputId(request.getInputId());
             dataChangeDTO.setInputIPAddress(request.getInputIPAddress());
             dataChangeDTO.setJsonDataBefore(JsonUtil.cleanedJsonData(objectMapper.writeValueAsString(investmentManagement)));
-            dataChangeDTO.setJsonDataAfter(objectMapper.writeValueAsString(investmentManagementDTO));
+            dataChangeDTO.setJsonDataAfter(JsonUtil.cleanedJsonData(objectMapper.writeValueAsString(investmentManagementDTO)));
 
             dataChangeService.createChangeActionEDIT(dataChangeDTO, InvestmentManagement.class);
             totalDataSuccess++;
@@ -226,7 +226,7 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
                 dataChangeDTO.setInputId(requestList.getInputId());
                 dataChangeDTO.setInputIPAddress(requestList.getInputIPAddress());
                 dataChangeDTO.setJsonDataBefore(JsonUtil.cleanedJsonData(objectMapper.writeValueAsString(investmentManagement)));
-                dataChangeDTO.setJsonDataAfter(objectMapper.writeValueAsString(investmentManagementDTO));
+                dataChangeDTO.setJsonDataAfter(JsonUtil.cleanedJsonData(objectMapper.writeValueAsString(investmentManagementDTO)));
 
                 dataChangeService.createChangeActionEDIT(dataChangeDTO, InvestmentManagement.class);
                 totalDataSuccess++;
@@ -273,7 +273,7 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
                 dataChangeDTO.setEntityId(investmentManagement.getId().toString());
 
                 if (!validationErrors.isEmpty()) {
-                    dataChangeDTO.setJsonDataAfter(objectMapper.writeValueAsString(investmentManagementDTO));
+                    dataChangeDTO.setJsonDataAfter(JsonUtil.cleanedJsonData(objectMapper.writeValueAsString(investmentManagementDTO)));
                     dataChangeService.approvalStatusIsRejected(dataChangeDTO, validationErrors);
                     totalDataFailed++;
                 } else {
@@ -313,7 +313,7 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
 
             dataChangeDTO.setInputId(request.getInputId());
             dataChangeDTO.setInputIPAddress(request.getInputIPAddress());
-            dataChangeDTO.setJsonDataBefore(objectMapper.writeValueAsString(investmentManagement));
+            dataChangeDTO.setJsonDataBefore(JsonUtil.cleanedJsonData(objectMapper.writeValueAsString(investmentManagement)));
             dataChangeDTO.setJsonDataAfter("");
             dataChangeDTO.setEntityId(investmentManagement.getId().toString());
 
@@ -351,7 +351,7 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
                 dataChangeDTO.setApproveId(requestList.getApproveId());
                 dataChangeDTO.setApproveIPAddress(requestList.getApproveIPAddress());
                 dataChangeDTO.setApproveDate(new Date());
-                dataChangeDTO.setJsonDataBefore(objectMapper.writeValueAsString(investmentManagement));
+                dataChangeDTO.setJsonDataBefore(JsonUtil.cleanedJsonData(objectMapper.writeValueAsString(investmentManagement)));
                 dataChangeDTO.setDescription("Successfully approve data change and delete data entity");
 
                 dataChangeService.approvalStatusIsApproved(dataChangeDTO);
