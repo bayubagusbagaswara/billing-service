@@ -9,16 +9,16 @@ public interface InvestmentManagementService {
 
     boolean isCodeAlreadyExists(String code);
 
-    CreateInvestmentManagementListResponse create(CreateInvestmentManagementRequest request, BillingDataChangeDTO dataChangeDTO);
-    CreateInvestmentManagementListResponse createList(CreateInvestmentManagementListRequest investmentManagementListRequest, BillingDataChangeDTO dataChangeDTO);
-    CreateInvestmentManagementListResponse createListApprove(CreateInvestmentManagementListRequest investmentManagementListRequest);
+    CreateInvestmentManagementListResponse createSingleData(CreateInvestmentManagementRequest request, BillingDataChangeDTO dataChangeDTO);
+    CreateInvestmentManagementListResponse createMultipleData(CreateInvestmentManagementListRequest requestList, BillingDataChangeDTO dataChangeDTO);
+    CreateInvestmentManagementListResponse createMultipleApprove(CreateInvestmentManagementListRequest requestList);
 
-    UpdateInvestmentManagementListResponse updateSingle(UpdateInvestmentManagementRequest request, BillingDataChangeDTO dataChangeDTO);
-    UpdateInvestmentManagementListResponse updateList(UpdateInvestmentManagementListRequest investmentManagementListRequest, BillingDataChangeDTO dataChangeDTO);
-    UpdateInvestmentManagementListResponse updateListApprove(UpdateInvestmentManagementListRequest investmentManagementListRequest);
+    UpdateInvestmentManagementListResponse updateSingleData(UpdateInvestmentManagementRequest request, BillingDataChangeDTO dataChangeDTO);
+    UpdateInvestmentManagementListResponse updateMultipleData(UpdateInvestmentManagementListRequest requestList, BillingDataChangeDTO dataChangeDTO);
+    UpdateInvestmentManagementListResponse updateMultipleApprove(UpdateInvestmentManagementListRequest request);
 
-    DeleteInvestmentManagementListResponse deleteSingle(DeleteInvestmentManagementRequest request, BillingDataChangeDTO dataChangeDTO);
-    DeleteInvestmentManagementListResponse deleteListApprove(DeleteInvestmentManagementListRequest request);
+    DeleteInvestmentManagementListResponse deleteSingleData(DeleteInvestmentManagementRequest request, BillingDataChangeDTO dataChangeDTO);
+    DeleteInvestmentManagementListResponse deleteMultipleApprove(DeleteInvestmentManagementListRequest requestList);
 
     String deleteAll();
 

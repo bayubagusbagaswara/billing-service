@@ -33,7 +33,7 @@ public class InvestmentManagementController {
                 .isPathVariable(false)
                 .menu(MENU_INVESTMENT_MANAGEMENT)
                 .build();
-        CreateInvestmentManagementListResponse createInvestmentManagementListResponse = investmentManagementService.create(request, dataChangeDTO);
+        CreateInvestmentManagementListResponse createInvestmentManagementListResponse = investmentManagementService.createSingleData(request, dataChangeDTO);
         ResponseDTO<CreateInvestmentManagementListResponse> response = ResponseDTO.<CreateInvestmentManagementListResponse>builder()
                 .code(HttpStatus.OK.value())
                 .message(HttpStatus.OK.getReasonPhrase())
@@ -52,7 +52,7 @@ public class InvestmentManagementController {
                 .isPathVariable(false)
                 .menu(MENU_INVESTMENT_MANAGEMENT)
                 .build();
-        CreateInvestmentManagementListResponse list = investmentManagementService.createList(request, dataChangeDTO);
+        CreateInvestmentManagementListResponse list = investmentManagementService.createMultipleData(request, dataChangeDTO);
 
         ResponseDTO<CreateInvestmentManagementListResponse> response = ResponseDTO.<CreateInvestmentManagementListResponse>builder()
                 .code(HttpStatus.CREATED.value())
@@ -65,7 +65,7 @@ public class InvestmentManagementController {
 
     @PostMapping(path = "/create/approve")
     public ResponseEntity<ResponseDTO<CreateInvestmentManagementListResponse>> createListApprove(@RequestBody CreateInvestmentManagementListRequest request) {
-        CreateInvestmentManagementListResponse listApprove = investmentManagementService.createListApprove(request);
+        CreateInvestmentManagementListResponse listApprove = investmentManagementService.createMultipleApprove(request);
         ResponseDTO<CreateInvestmentManagementListResponse> response = ResponseDTO.<CreateInvestmentManagementListResponse>builder()
                 .code(HttpStatus.OK.value())
                 .message(HttpStatus.OK.getReasonPhrase())
@@ -84,7 +84,7 @@ public class InvestmentManagementController {
                 .isPathVariable(false)
                 .menu(MENU_INVESTMENT_MANAGEMENT)
                 .build();
-        UpdateInvestmentManagementListResponse updateInvestmentManagementListResponse = investmentManagementService.updateSingle(request, dataChangeDTO);
+        UpdateInvestmentManagementListResponse updateInvestmentManagementListResponse = investmentManagementService.updateSingleData(request, dataChangeDTO);
         ResponseDTO<UpdateInvestmentManagementListResponse> response = ResponseDTO.<UpdateInvestmentManagementListResponse>builder()
                 .code(HttpStatus.OK.value())
                 .message(HttpStatus.OK.getReasonPhrase())
@@ -103,7 +103,7 @@ public class InvestmentManagementController {
                 .isPathVariable(false)
                 .menu(MENU_INVESTMENT_MANAGEMENT)
                 .build();
-        UpdateInvestmentManagementListResponse updateInvestmentManagementListResponse = investmentManagementService.updateList(request, dataChangeDTO);
+        UpdateInvestmentManagementListResponse updateInvestmentManagementListResponse = investmentManagementService.updateMultipleData(request, dataChangeDTO);
         ResponseDTO<UpdateInvestmentManagementListResponse> response = ResponseDTO.<UpdateInvestmentManagementListResponse>builder()
                 .code(HttpStatus.OK.value())
                 .message(HttpStatus.OK.getReasonPhrase())
@@ -114,7 +114,7 @@ public class InvestmentManagementController {
 
     @PutMapping(path = "/update/approve")
     public ResponseEntity<ResponseDTO<UpdateInvestmentManagementListResponse>> updateListApprove(@RequestBody UpdateInvestmentManagementListRequest request) {
-        UpdateInvestmentManagementListResponse updateInvestmentManagementListResponse = investmentManagementService.updateListApprove(request);
+        UpdateInvestmentManagementListResponse updateInvestmentManagementListResponse = investmentManagementService.updateMultipleApprove(request);
         ResponseDTO<UpdateInvestmentManagementListResponse> response = ResponseDTO.<UpdateInvestmentManagementListResponse>builder()
                 .code(HttpStatus.OK.value())
                 .message(HttpStatus.OK.getReasonPhrase())
@@ -133,7 +133,7 @@ public class InvestmentManagementController {
                 .isPathVariable(false)
                 .menu(MENU_INVESTMENT_MANAGEMENT)
                 .build();
-        DeleteInvestmentManagementListResponse deleteInvestmentManagementListResponse = investmentManagementService.deleteSingle(request, dataChangeDTO);
+        DeleteInvestmentManagementListResponse deleteInvestmentManagementListResponse = investmentManagementService.deleteSingleData(request, dataChangeDTO);
         ResponseDTO<DeleteInvestmentManagementListResponse> response = ResponseDTO.<DeleteInvestmentManagementListResponse>builder()
                 .code(HttpStatus.OK.value())
                 .message(HttpStatus.OK.getReasonPhrase())
@@ -144,7 +144,7 @@ public class InvestmentManagementController {
 
     @DeleteMapping(path = "/delete/approve")
     public ResponseEntity<ResponseDTO<DeleteInvestmentManagementListResponse>> deleteApprove(@RequestBody DeleteInvestmentManagementListRequest request) {
-        DeleteInvestmentManagementListResponse deleteInvestmentManagementListResponse = investmentManagementService.deleteListApprove(request);
+        DeleteInvestmentManagementListResponse deleteInvestmentManagementListResponse = investmentManagementService.deleteMultipleApprove(request);
         ResponseDTO<DeleteInvestmentManagementListResponse> response = ResponseDTO.<DeleteInvestmentManagementListResponse>builder()
                 .code(HttpStatus.OK.value())
                 .message(HttpStatus.OK.getReasonPhrase())

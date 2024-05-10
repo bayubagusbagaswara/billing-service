@@ -40,4 +40,11 @@ public class InvestmentManagementDTO {
 
     private String address4;
 
+    private String approvalStatus;
+    private String inputId;
+    private String inputIPAddress;
+    private String inputDate;
+    private String approveId;
+    private String approveIPAddress;
+    private String approveDate;
 }
