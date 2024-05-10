@@ -14,6 +14,7 @@ public class JsonUtil {
     public static String cleanedJsonData(String jsonDataFull) throws JsonProcessingException {
         JsonNode jsonNode = objectMapper.readTree(jsonDataFull);
 
+        ((ObjectNode) jsonNode).remove("dataChangeId");
         ((ObjectNode) jsonNode).remove("approvalStatus");
         ((ObjectNode) jsonNode).remove("inputId");
         ((ObjectNode) jsonNode).remove("inputIPAddress");
