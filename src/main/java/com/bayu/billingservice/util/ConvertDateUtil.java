@@ -1,8 +1,8 @@
 package com.bayu.billingservice.util;
 
-import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import java.time.*;
 import java.time.format.DateTimeFormatter;
@@ -15,7 +15,7 @@ import java.util.Locale;
 import java.util.Map;
 
 @Slf4j
-@UtilityClass
+@Component
 public class ConvertDateUtil {
 
     @Value("${spring.jackson.time-zone}")
@@ -34,7 +34,7 @@ public class ConvertDateUtil {
         }
     }
 
-    public static LocalDate getLatestDateOfMonthYear(String monthYear) {
+    public LocalDate getLatestDateOfMonthYear(String monthYear) {
         DateTimeFormatter formatter = new DateTimeFormatterBuilder()
                 .parseCaseInsensitive()
                 .appendPattern(APPEND_PATTERN)
@@ -49,7 +49,7 @@ public class ConvertDateUtil {
         return latestDateOfMonth;
     }
 
-    public static LocalDate getFirstDateOfMonthYear(String monthYear) {
+    public LocalDate getFirstDateOfMonthYear(String monthYear) {
         DateTimeFormatter formatter = new DateTimeFormatterBuilder()
                 .parseCaseInsensitive()
                 .appendPattern(APPEND_PATTERN)
@@ -64,7 +64,7 @@ public class ConvertDateUtil {
         return firstDateOfMonth;
     }
 
-    public static Map<String, String> extractMonthYearInformation(String monthYear) {
+    public Map<String, String> extractMonthYearInformation(String monthYear) {
         LocalDate firstDateOfMonthYear = getFirstDateOfMonthYear(monthYear);
 
         // Month
@@ -84,7 +84,7 @@ public class ConvertDateUtil {
         return monthYearMap;
     }
 
-    public class MonthYearQuery implements TemporalQuery<LocalDate> {
+    public static class MonthYearQuery implements TemporalQuery<LocalDate> {
         @Override
         public LocalDate queryFrom(TemporalAccessor temporal) {
             int year = temporal.get(ChronoField.YEAR);
@@ -100,7 +100,7 @@ public class ConvertDateUtil {
                 .toFormatter(new Locale("id", "ID"));
 
         TemporalAccessor temporalAccessor = formatter.parse(monthYear);
-        LocalDate parsedDate = LocalDate.from(new ConvertDateUtil.MonthYearQuery().queryFrom(temporalAccessor));
+        LocalDate parsedDate = LocalDate.from(new MonthYearQuery().queryFrom(temporalAccessor));
 
         // Format the parsed date into the desired output format
         DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("MMMM-yyyy", Locale.ENGLISH);
@@ -111,19 +111,16 @@ public class ConvertDateUtil {
         return formattedDate.split("-");
     }
 
-    public static String convertInstantToString(Instant instant) {
+    public String convertInstantToString(Instant instant) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d-MMM-yy")
                 .withLocale(Locale.forLanguageTag("id-ID"));
 
         ZoneId jakartaZone = ZoneId.of(timeZone);
 
-        String formattedString = formatter.format(instant.atZone(jakartaZone));
-        log.info("Formatted Instant to String : {}", formattedString);
-
-        return formattedString;
+        return formatter.format(instant.atZone(jakartaZone));
     }
 
-    public static String convertInstantToStringPlus14Days(Instant instant) {
+    public String convertInstantToStringPlus14Days(Instant instant) {
         Instant newInstant = instant.plus(Duration.ofDays(14));
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d-MMM-yy")
                 .withLocale(Locale.forLanguageTag("id-ID"));
@@ -141,15 +138,16 @@ public class ConvertDateUtil {
         return Locale.getDefault();
     }
 
-    public static Date convertLocalDateTimeToDate(LocalDateTime localDateTime) {
+    public Date convertLocalDateTimeToDate(LocalDateTime localDateTime) {
         if (localDateTime == null) {
             return null;
         }
+        log.info("Time Zone: {}", timeZone);
         ZoneId jakartaZoneId = ZoneId.of(timeZone);
         return Date.from(localDateTime.atZone(jakartaZoneId).toInstant());
     }
 
-    public static Date getDate() {
+    public Date getDate() {
         return convertLocalDateTimeToDate(LocalDateTime.now());
     }
 }

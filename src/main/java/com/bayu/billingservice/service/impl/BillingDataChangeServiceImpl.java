@@ -26,6 +26,7 @@ import java.util.stream.Collectors;
 public class BillingDataChangeServiceImpl implements BillingDataChangeService {
 
     private final BillingDataChangeRepository dataChangeRepository;
+    private final ConvertDateUtil convertDateUtil;
 
     private static final String ID_NOT_FOUND = "Data Change not found with id: ";
 
@@ -107,7 +108,7 @@ public class BillingDataChangeServiceImpl implements BillingDataChangeService {
         billingDataChange.setApprovalStatus(ApprovalStatus.REJECTED);
         billingDataChange.setApproveId(dataChangeDTO.getApproveId());
         billingDataChange.setApproveIPAddress(dataChangeDTO.getApproveIPAddress());
-        billingDataChange.setApproveDate(ConvertDateUtil.getDate());
+        billingDataChange.setApproveDate(convertDateUtil.getDate());
         billingDataChange.setJsonDataAfter(dataChangeDTO.getJsonDataAfter() == null ? "" : dataChangeDTO.getJsonDataAfter());
         billingDataChange.setJsonDataBefore(dataChangeDTO.getJsonDataBefore() == null ? "" : dataChangeDTO.getJsonDataBefore());
         billingDataChange.setEntityId(dataChangeDTO.getEntityId() == null ? "" : dataChangeDTO.getEntityId());
@@ -125,7 +126,7 @@ public class BillingDataChangeServiceImpl implements BillingDataChangeService {
         billingDataChange.setApprovalStatus(ApprovalStatus.APPROVED);
         billingDataChange.setApproveId(dataChangeDTO.getApproveId());
         billingDataChange.setApproveIPAddress(dataChangeDTO.getApproveIPAddress());
-        billingDataChange.setApproveDate(ConvertDateUtil.getDate());
+        billingDataChange.setApproveDate(convertDateUtil.getDate());
         billingDataChange.setJsonDataAfter(dataChangeDTO.getJsonDataAfter() == null ? "" : dataChangeDTO.getJsonDataAfter());
         billingDataChange.setJsonDataBefore(dataChangeDTO.getJsonDataBefore() == null ? "" : dataChangeDTO.getJsonDataBefore());
         billingDataChange.setEntityId(dataChangeDTO.getEntityId());
@@ -166,7 +167,7 @@ public class BillingDataChangeServiceImpl implements BillingDataChangeService {
         BillingDataChange dataChange = BillingDataChange.builder()
                 .approvalStatus(ApprovalStatus.PENDING)
                 .inputId(dataChangeDTO.getInputId())
-                .inputDate(ConvertDateUtil.getDate())
+                .inputDate(convertDateUtil.getDate())
                 .inputIPAddress(dataChangeDTO.getInputIPAddress())
                 .approveId("")
                 .approveDate(null)

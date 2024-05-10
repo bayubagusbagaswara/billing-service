@@ -33,6 +33,7 @@ public class KseiSafekeepingFeeServiceImpl implements KseiSafekeepingFeeService 
 
     private final KseiSafekeepingFeeRepository kseiSafekeepingFeeRepository;
     private final FeeParameterService feeParameterService;
+    private final ConvertDateUtil convertDateUtil;
 
     @Override
     public List<KseiSafekeepingFee> create(List<CreateKseiSafeRequest> requestList) {
@@ -115,7 +116,7 @@ public class KseiSafekeepingFeeServiceImpl implements KseiSafekeepingFeeService 
     @Override
     public BigDecimal calculateAmountFeeForLast3Months(String customerCode, String month, int year) {
         String monthYear = month + " " + year;
-        LocalDate firstDateOfMonthYear = ConvertDateUtil.getFirstDateOfMonthYear(monthYear);
+        LocalDate firstDateOfMonthYear = convertDateUtil.getFirstDateOfMonthYear(monthYear);
 
         LocalDate endDate = firstDateOfMonthYear.with(TemporalAdjusters.lastDayOfMonth());
         LocalDate startDate = endDate.minusMonths(2).with(TemporalAdjusters.lastDayOfMonth()); // 3 bulan kebelakang

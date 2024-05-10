@@ -33,6 +33,7 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
     private final Validator validator;
     private final ObjectMapper objectMapper;
     private final ModelMapperUtil modelMapperUtil;
+    private final ConvertDateUtil convertDateUtil;
 
     private static final String ID_NOT_FOUND = "Investment Management not found with id: ";
     private static final String CODE_NOT_FOUND = "Investment Management not found with code: ";
@@ -139,7 +140,6 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
                 BillingDataChangeDTO dataChangeDTO = dataChangeService.getById(investmentManagementDTO.getDataChangeId());
                 dataChangeDTO.setApproveId(requestList.getApproveId());
                 dataChangeDTO.setApproveIPAddress(requestList.getApproveIPAddress());
-                dataChangeDTO.setApproveDate(ConvertDateUtil.getDate());
 
                 if (!errorMessages.isEmpty()) {
                     dataChangeDTO.setJsonDataAfter(JsonUtil.cleanedJsonData(objectMapper.writeValueAsString(investmentManagementDTO)));

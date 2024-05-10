@@ -36,6 +36,7 @@ public class FundCalculateCalculateServiceImpl implements FundCalculateService {
     private final FeeParameterService feeParameterService;
     private final BillingNumberService billingNumberService;
     private final BillingFundRepository billingFundRepository;
+    private final ConvertDateUtil convertDateUtil;
 
     @Override
     public String calculate(List<FeeReportRequest> request, String month, Integer year) {
@@ -111,8 +112,8 @@ public class FundCalculateCalculateServiceImpl implements FundCalculateService {
                                 .month(month)
                                 .year(year)
                                 .billingPeriod(month + " " + year)
-                                .billingStatementDate(ConvertDateUtil.convertInstantToString(dateNow))
-                                .billingPaymentDueDate(ConvertDateUtil.convertInstantToStringPlus14Days(dateNow))
+                                .billingStatementDate(convertDateUtil.convertInstantToString(dateNow))
+                                .billingPaymentDueDate(convertDateUtil.convertInstantToStringPlus14Days(dateNow))
                                 .billingCategory(customerDTO.getBillingCategory())
                                 .billingType(customerDTO.getBillingType())
                                 .billingTemplate(customerDTO.getBillingTemplate())

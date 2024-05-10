@@ -42,6 +42,7 @@ public class FundGeneratePDFServiceImpl implements FundGeneratePDFService {
     private final BillingFundRepository billingFundRepository;
     private final SpringTemplateEngine templateEngine;
     private final PdfGenerator pdfGenerator;
+    private final ConvertDateUtil convertDateUtil;
 
     @Override
     public List<BillingFundDTO> getAll() {
@@ -94,7 +95,7 @@ public class FundGeneratePDFServiceImpl implements FundGeneratePDFService {
             String outputPath;
 
             try {
-                monthYearMap = ConvertDateUtil.extractMonthYearInformation(fundDTO.getBillingPeriod());
+                monthYearMap = convertDateUtil.extractMonthYearInformation(fundDTO.getBillingPeriod());
                 yearMonthFormat = monthYearMap.get("year") + monthYearMap.get("monthValue");
 
                 htmlContent = renderThymeleafTemplate(fundDTO);
@@ -150,9 +151,8 @@ public class FundGeneratePDFServiceImpl implements FundGeneratePDFService {
         context.setVariable(KSEI_VALUE_FREQUENCY, fundDTO.getKseiValueFrequency());
         context.setVariable(KSEI_TRANSACTION_FEE, fundDTO.getKseiTransactionFee());
         context.setVariable(TOTAL_AMOUNT_DUE, fundDTO.getTotalAmountDue());
-        // tambahkan Image URL
+
         String imageUrlHeader = "file:///" + folderPathImage + "/danamon_header.png";
-//        String imageUrlFooter = "file:///" + folderPathImage + "/danamon_footer.png";
         String imageUrlFooter = "file:///" + folderPathImage + "/test.png";
         context.setVariable("imageUrlHeader", imageUrlHeader);
         context.setVariable("imageUrlFooter", imageUrlFooter);

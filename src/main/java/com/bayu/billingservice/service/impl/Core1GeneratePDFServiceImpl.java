@@ -39,6 +39,7 @@ public class Core1GeneratePDFServiceImpl implements Core1GeneratePDFService {
     private final BillingCoreRepository billingCoreRepository;
     private final SpringTemplateEngine templateEngine;
     private final PdfGenerator pdfGenerator;
+    private final ConvertDateUtil convertDateUtil;
 
     @Override
     public List<Core1DTO> getAll() {
@@ -85,7 +86,7 @@ public class Core1GeneratePDFServiceImpl implements Core1GeneratePDFService {
             String outputPath;
 
             try {
-                monthYearMap = ConvertDateUtil.extractMonthYearInformation(core1DTO.getBillingPeriod());
+                monthYearMap = convertDateUtil.extractMonthYearInformation(core1DTO.getBillingPeriod());
                 yearMonthFormat = monthYearMap.get("year") + monthYearMap.get("monthValue");
 
                 htmlContent = renderThymeleafTemplate(core1DTO);

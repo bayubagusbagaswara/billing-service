@@ -22,6 +22,7 @@ import java.util.List;
 public class SfValCoreIIGServiceImpl implements SfValCoreIIGService {
 
     private final SfValCoreIIGRepository sfValCoreIIGRepository;
+    private final ConvertDateUtil convertDateUtil;
 
     @Override
     public String create(CreateSfValCoreIIGRequest request) {
@@ -88,7 +89,7 @@ public class SfValCoreIIGServiceImpl implements SfValCoreIIGService {
     @Override
     public List<SfValCoreIIG> getAllByAidAndMonthYear(String aid, String monthYear) {
         List<SfValCoreIIG> sfValCoreIIGList = sfValCoreIIGRepository.findAllByCustomerCodeOrderByDateAsc(aid);
-        LocalDate lastDate = ConvertDateUtil.getLatestDateOfMonthYear(monthYear);
+        LocalDate lastDate = convertDateUtil.getLatestDateOfMonthYear(monthYear);
         int dayOfMonth = lastDate.getDayOfMonth();
 
         return sfValCoreIIGList.stream()

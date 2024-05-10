@@ -34,6 +34,7 @@ public class Core1CalculateServiceImpl implements Core1CalculateService {
     private final SfValRgDailyService sfValRgDailyService;
     private final BillingNumberService billingNumberService;
     private final BillingCoreRepository billingCoreRepository;
+    private final ConvertDateUtil convertDateUtil;
 
     @Override
     public String calculate(CoreCalculateRequest request) {
@@ -107,8 +108,8 @@ public class Core1CalculateServiceImpl implements Core1CalculateService {
                         .month(monthName)
                         .year(year)
                         .billingPeriod(monthName + " " + year)
-                        .billingStatementDate(ConvertDateUtil.convertInstantToString(dateNow))
-                        .billingPaymentDueDate(ConvertDateUtil.convertInstantToStringPlus14Days(dateNow))
+                        .billingStatementDate(convertDateUtil.convertInstantToString(dateNow))
+                        .billingPaymentDueDate(convertDateUtil.convertInstantToStringPlus14Days(dateNow))
                         .billingCategory(customerDTO.getBillingCategory())
                         .billingType(customerDTO.getBillingType())
                         .billingTemplate(customerDTO.getBillingTemplate())

@@ -35,6 +35,7 @@ public class Core4CalculateServiceImpl implements Core4CalculateService {
     private final KseiSafekeepingFeeService kseiSafekeepingFeeService;
     private final BillingNumberService billingNumberService;
     private final BillingCoreRepository billingCoreRepository;
+    private final ConvertDateUtil convertDateUtil;
 
     @Override
     public String calculate(CoreCalculateRequest request) {
@@ -66,16 +67,12 @@ public class Core4CalculateServiceImpl implements Core4CalculateService {
                 String billingTemplate = customerDTO.getBillingTemplate();
                 String billingTemplateFormat = billingCategory + "_" + billingTemplate;
 
-                // TODO: Get SK Transaction
                 List<SkTransaction> skTransactionList = skTransactionService.getAllByAidAndMonthAndYear(aid, monthName, year);
 
-                // TODO: Get SfVal RG Daily
                 List<SfValRgDaily> sfValRgDailyList = sfValRgDailyService.getAllByAidAndMonthAndYear(aid, monthName, year);
 
-                // TODO: Get Amount KSEI Safekeeping
                 BigDecimal kseiSafeFeeAmount = kseiSafekeepingFeeService.calculateAmountFeeByCustomerCodeAndMonthAndYear(kseiSafeCode, monthName, year);
 
-                // TODO: Check by Billing Template
                 BillingCore billingCore;
                 Instant dateNow = Instant.now();
                 if (BillingTemplate.CORE_TEMPLATE_5.getValue().equalsIgnoreCase(billingTemplateFormat)) {
@@ -91,8 +88,8 @@ public class Core4CalculateServiceImpl implements Core4CalculateService {
                 billingCore.setMonth(monthName);
                 billingCore.setYear(year);
                 billingCore.setBillingPeriod(monthName + " " + year);
-                billingCore.setBillingStatementDate(ConvertDateUtil.convertInstantToString(dateNow));
-                billingCore.setBillingPaymentDueDate(ConvertDateUtil.convertInstantToStringPlus14Days(dateNow));
+                billingCore.setBillingStatementDate(convertDateUtil.convertInstantToString(dateNow));
+                billingCore.setBillingPaymentDueDate(convertDateUtil.convertInstantToStringPlus14Days(dateNow));
                 billingCore.setBillingCategory(customerDTO.getBillingCategory());
                 billingCore.setBillingType(customerDTO.getBillingType());
                 billingCore.setBillingTemplate(customerDTO.getBillingTemplate());
