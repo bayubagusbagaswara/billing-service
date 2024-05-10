@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface BillingDataChangeService {
 
-    List<BillingDataChange> getAll();
+    List<BillingDataChangeDTO> getAll();
 
     String deleteAll();
 
