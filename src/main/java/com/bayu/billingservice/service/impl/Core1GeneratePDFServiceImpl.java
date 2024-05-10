@@ -150,10 +150,8 @@ public class Core1GeneratePDFServiceImpl implements Core1GeneratePDFService {
 
     private static Core1DTO mapToDTO(BillingCore billingCore) {
         return Core1DTO.builder()
-                .createdAt(billingCore.getCreatedAt())
-                .updatedAt(billingCore.getUpdatedAt())
-                .approvalStatus(billingCore.getApprovalStatus())
-                .aid(billingCore.getAid())
+                .approvalStatus(billingCore.getApprovalStatus().getStatus())
+                .aid(billingCore.getCustomerCode())
                 .month(billingCore.getMonth())
                 .year(String.valueOf(billingCore.getYear()))
                 .billingNumber(billingCore.getBillingNumber())
@@ -164,7 +162,7 @@ public class Core1GeneratePDFServiceImpl implements Core1GeneratePDFService {
                 .billingType(billingCore.getBillingType())
                 .billingTemplate(billingCore.getBillingTemplate())
                 .investmentManagementName(billingCore.getInvestmentManagementName())
-                .investmentManagementAddress(billingCore.getInvestmentManagementAddressBuilding())
+                .investmentManagementAddress(billingCore.getInvestmentManagementAddress1())
                 .accountName(billingCore.getAccountName())
                 .accountNumber(billingCore.getAccountNumber())
                 .accountBank(billingCore.getAccountBank())

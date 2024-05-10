@@ -32,6 +32,38 @@ public class BillingDataChangeServiceImpl implements BillingDataChangeService {
     }
 
     @Override
+    public BillingDataChangeDTO getById(Long dataChangeId) {
+        BillingDataChange dataChange = dataChangeRepository.findById(dataChangeId)
+                .orElseThrow(() -> new DataNotFoundException("Data Change not found with id: " + dataChangeId));
+        return mapToDTO(dataChange);
+    }
+
+    @Override
+    public void update(BillingDataChangeDTO dataChangeDTO) {
+        log.info("Data Change dto: {}", dataChangeDTO);
+        BillingDataChange dataChange = dataChangeRepository.findById(dataChangeDTO.getId())
+                .orElseThrow(() -> new DataNotFoundException("Data Change not found with id: " + dataChangeDTO.getId()));
+        log.info("Data Change: {}", dataChangeDTO);
+
+        dataChange.setApprovalStatus(dataChangeDTO.getApprovalStatus());
+        dataChange.setInputId(dataChangeDTO.getInputId());
+        dataChange.setInputIPAddress(dataChangeDTO.getInputIPAddress());
+        dataChange.setInputDate(dataChangeDTO.getInputDate());
+        dataChange.setApproveId(dataChangeDTO.getApproveId());
+        dataChange.setApproveIPAddress(dataChangeDTO.getApproveIPAddress());
+        dataChange.setApproveDate(dataChangeDTO.getApproveDate());
+        dataChange.setDescription(dataChangeDTO.getDescription());
+        if (!dataChangeDTO.getJsonDataAfter().isEmpty()) {
+            dataChange.setJsonDataAfter(dataChangeDTO.getJsonDataAfter());
+        }
+        if (!dataChangeDTO.getJsonDataBefore().isEmpty()) {
+            dataChange.setJsonDataBefore(dataChangeDTO.getJsonDataBefore());
+        }
+
+        dataChangeRepository.save(dataChange);
+    }
+
+    @Override
     public String deleteAll() {
         dataChangeRepository.deleteAll();
         return "Successfully delete all data change";

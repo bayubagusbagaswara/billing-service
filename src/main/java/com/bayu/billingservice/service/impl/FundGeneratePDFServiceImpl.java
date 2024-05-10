@@ -157,7 +157,7 @@ public class FundGeneratePDFServiceImpl implements FundGeneratePDFService {
         context.setVariable("imageUrlHeader", imageUrlHeader);
         context.setVariable("imageUrlFooter", imageUrlFooter);
 
-        return templateEngine.process(BillingTemplate.FUND_TEMPLATE.getValue(), context);
+        return templateEngine.process(BillingTemplate.FUND_TEMPLATE_1.getValue(), context);
     }
 
     private String generateFileName(String investmentManagementName, String aid, String yearMonth) {
@@ -166,10 +166,8 @@ public class FundGeneratePDFServiceImpl implements FundGeneratePDFService {
 
     private static BillingFundDTO mapToDTO(BillingFund billingFund) {
         return BillingFundDTO.builder()
-                .createdAt(billingFund.getCreatedAt())
-                .updatedAt(billingFund.getUpdatedAt())
-                .approvalStatus(billingFund.getApprovalStatus())
-                .aid(billingFund.getAid())
+                .approvalStatus(billingFund.getApprovalStatus().getStatus())
+                .aid(billingFund.getCustomerCode())
                 .month(billingFund.getMonth())
                 .year(String.valueOf(billingFund.getYear()))
                 .billingNumber(billingFund.getBillingNumber())
@@ -180,10 +178,6 @@ public class FundGeneratePDFServiceImpl implements FundGeneratePDFService {
                 .billingType(billingFund.getBillingType())
                 .billingTemplate(billingFund.getBillingTemplate())
                 .investmentManagementName(billingFund.getInvestmentManagementName())
-                .investmentManagementAddressBuilding(billingFund.getInvestmentManagementAddressBuilding())
-                .investmentManagementAddressStreet(billingFund.getInvestmentManagementAddressStreet())
-                .investmentManagementAddressCity(billingFund.getInvestmentManagementAddressCity())
-                .investmentManagementAddressProvince(billingFund.getInvestmentManagementAddressProvince())
                 .accountName(billingFund.getAccountName())
                 .accountNumber(billingFund.getAccountNumber())
                 .customerFee(ConvertBigDecimalUtil.formattedBigDecimalToString(billingFund.getCustomerFee()))

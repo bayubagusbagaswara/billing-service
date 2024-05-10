@@ -105,10 +105,9 @@ public class FundCalculateCalculateServiceImpl implements FundCalculateService {
 
                         Instant dateNow = Instant.now();
                         BillingFund billingFund = BillingFund.builder()
-                                .createdAt(dateNow)
-                                .updatedAt(dateNow)
-                                .approvalStatus(PENDING.getStatus())
-                                .aid(aid)
+
+                                .approvalStatus(PENDING)
+                                .customerCode(aid)
                                 .month(month)
                                 .year(year)
                                 .billingPeriod(month + " " + year)

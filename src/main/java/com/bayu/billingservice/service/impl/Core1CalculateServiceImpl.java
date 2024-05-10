@@ -102,10 +102,8 @@ public class Core1CalculateServiceImpl implements Core1CalculateService {
 
                 Instant dateNow = Instant.now();
                 BillingCore billingCore = BillingCore.builder()
-                        .createdAt(dateNow)
-                        .updatedAt(dateNow)
-                        .approvalStatus(PENDING.getStatus())
-                        .aid(customerDTO.getCustomerCode())
+                        .approvalStatus(PENDING)
+                        .customerCode(customerDTO.getCustomerCode())
                         .month(monthName)
                         .year(year)
                         .billingPeriod(monthName + " " + year)

@@ -53,7 +53,7 @@ public class CustomerController {
                 .isPathVariable(false)
                 .menu(MENU_CUSTOMER)
                 .build();
-        CreateCustomerListResponse createCustomerListResponse = customerService.createList(request, dataChangeDTO);
+        CreateCustomerListResponse createCustomerListResponse = customerService.createMultipleData(request, dataChangeDTO);
         ResponseDTO<CreateCustomerListResponse> response = ResponseDTO.<CreateCustomerListResponse>builder()
                 .code(HttpStatus.OK.value())
                 .message(HttpStatus.OK.getReasonPhrase())
@@ -64,7 +64,7 @@ public class CustomerController {
 
     @PostMapping(path = "/create/approve")
     public ResponseEntity<ResponseDTO<CreateCustomerListResponse>> createApprove(@RequestBody CreateCustomerListRequest request) {
-        CreateCustomerListResponse createCustomerListResponse = customerService.createApprove(request);
+        CreateCustomerListResponse createCustomerListResponse = customerService.createMultipleApprove(request);
         ResponseDTO<CreateCustomerListResponse> response = ResponseDTO.<CreateCustomerListResponse>builder()
                 .code(HttpStatus.OK.value())
                 .message(HttpStatus.OK.getReasonPhrase())
@@ -83,7 +83,7 @@ public class CustomerController {
                 .isPathVariable(false)
                 .menu(MENU_CUSTOMER)
                 .build();
-        UpdateCustomerListResponse updateCustomerListResponse = customerService.updateList(request, dataChangeDTO);
+        UpdateCustomerListResponse updateCustomerListResponse = customerService.updateMultipleData(request, dataChangeDTO);
         ResponseDTO<UpdateCustomerListResponse> response = ResponseDTO.<UpdateCustomerListResponse>builder()
                 .code(HttpStatus.OK.value())
                 .message(HttpStatus.OK.getReasonPhrase())

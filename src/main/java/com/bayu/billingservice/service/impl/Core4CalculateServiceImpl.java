@@ -87,9 +87,7 @@ public class Core4CalculateServiceImpl implements Core4CalculateService {
                 }
 
                 // TODO: Set fields common to BillingCore, common to Core 4 (EB and ITAMA)
-                billingCore.setCreatedAt(dateNow);
-                billingCore.setUpdatedAt(dateNow);
-                billingCore.setApprovalStatus(ApprovalStatus.PENDING.getStatus());
+                billingCore.setApprovalStatus(ApprovalStatus.PENDING);
                 billingCore.setMonth(monthName);
                 billingCore.setYear(year);
                 billingCore.setBillingPeriod(monthName + " " + year);
@@ -185,7 +183,7 @@ public class Core4CalculateServiceImpl implements Core4CalculateService {
         BigDecimal totalAmountDueITAMA = calculateTotalAmountDueITAMA(aid, safekeepingAmountDue, vatAmountDue);
 
         return BillingCore.builder()
-                .aid(aid)
+                .customerCode(aid)
                 .billingTemplate(billingTemplate)
                 .safekeepingValueFrequency(safekeepingValueFrequency)
                 .safekeepingFee(customerSafekeepingFee)
@@ -225,7 +223,7 @@ public class Core4CalculateServiceImpl implements Core4CalculateService {
         BigDecimal totalAmountDueEB = calculateTotalAmountDueEB(aid, kseiSafeFeeAmount, kseiTransactionAmountDue);
 
         return BillingCore.builder()
-                .aid(aid)
+                .customerCode(aid)
                 .billingTemplate(billingTemplate)
                 .kseiSafekeepingAmountDue(kseiSafeFeeAmount)
                 .kseiTransactionValueFrequency(kseiTransactionValueFrequency)
