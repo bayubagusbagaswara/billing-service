@@ -2,15 +2,14 @@ package com.bayu.billingservice.util;
 
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 
-import java.time.Duration;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.ZoneId;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.format.TextStyle;
 import java.time.temporal.*;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -18,6 +17,9 @@ import java.util.Map;
 @Slf4j
 @UtilityClass
 public class ConvertDateUtil {
+
+    @Value("${spring.jackson.time-zone}")
+    private String timeZone;
 
     private static final String APPEND_PATTERN = "[MMM ][MMMM ]yyyy";
 
@@ -27,7 +29,7 @@ public class ConvertDateUtil {
             log.info("Result Parse Date : {}", parse);
             return parse;
         } catch (Exception e) {
-            log.error("Parse Date is Failed : " + e.getMessage(), e);
+            log.error("Parse Date is Failed : {}", e.getMessage(), e);
             return null;
         }
     }
@@ -113,7 +115,7 @@ public class ConvertDateUtil {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d-MMM-yy")
                 .withLocale(Locale.forLanguageTag("id-ID"));
 
-        ZoneId jakartaZone = ZoneId.of("Asia/Jakarta");
+        ZoneId jakartaZone = ZoneId.of(timeZone);
 
         String formattedString = formatter.format(instant.atZone(jakartaZone));
         log.info("Formatted Instant to String : {}", formattedString);
@@ -126,7 +128,7 @@ public class ConvertDateUtil {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d-MMM-yy")
                 .withLocale(Locale.forLanguageTag("id-ID"));
 
-        ZoneId jakartaZone = ZoneId.of("Asia/Jakarta");
+        ZoneId jakartaZone = ZoneId.of(timeZone);
 
         String formattedString = formatter.format(newInstant.atZone(jakartaZone));
         log.info("Formatted Instant to String : {}", formattedString);
@@ -135,6 +137,19 @@ public class ConvertDateUtil {
     }
 
     private static Locale getLocaleID() {
-        return new Locale("id", "ID");
+//        return new Locale("id", "ID");
+        return Locale.getDefault();
+    }
+
+    public static Date convertLocalDateTimeToDate(LocalDateTime localDateTime) {
+        if (localDateTime == null) {
+            return null;
+        }
+        ZoneId jakartaZoneId = ZoneId.of(timeZone);
+        return Date.from(localDateTime.atZone(jakartaZoneId).toInstant());
+    }
+
+    public static Date getDate() {
+        return convertLocalDateTimeToDate(LocalDateTime.now());
     }
 }
