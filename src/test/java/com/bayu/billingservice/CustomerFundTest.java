@@ -32,7 +32,7 @@ class CustomerFundTest {
                 .kseiSafeCode("")
                 .billingCategory(BillingCategory.FUND.getValue())
                 .billingType(BillingType.TYPE_1.getValue())
-                .billingTemplate(BillingTemplate.FUND_TEMPLATE.getValue())
+                .billingTemplate(BillingTemplate.FUND_TEMPLATE_1.getValue())
                 .build();
 
     }
