@@ -501,3 +501,9 @@ File file = new File(DOWNLOAD_FOLDER + "/" + fileName);
                 .headers(headers)
                 .body(new FileSystemResource(file));
     }
+
+# Tomorrow
+- Perbaiki model billing dengan menambahkan Approval
+- Perbaiki service billing (Fund, Core, Retail) dengan menambahkan inputId, inputIPAddress, inputDate, approveId, approveIPAddress, approveDate
+- Bagaimana approve billingnya? soalnya ketika approve juga membawa approveId dan approveIPAddress
+- Lanjut menambahkan Data Change pada maintenance
