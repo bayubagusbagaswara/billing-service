@@ -7,6 +7,10 @@ import java.util.List;
 
 public interface CustomerV2Service {
 
+    CustomerDTO testCreate(CustomerDTO dto);
+
+    List<CustomerDTO> getAllTest();
+
     boolean isCodeAlreadyExists(String code);
 
     List<CustomerDTO> getAll();

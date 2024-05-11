@@ -3,12 +3,15 @@ package com.bayu.billingservice.service.impl;
 import com.bayu.billingservice.dto.ErrorMessageDTO;
 import com.bayu.billingservice.dto.customer.*;
 import com.bayu.billingservice.dto.datachange.BillingDataChangeDTO;
+import com.bayu.billingservice.dto.investmentmanagement.InvestmentManagementDTO;
 import com.bayu.billingservice.exception.DataChangeException;
 import com.bayu.billingservice.model.Customer;
 import com.bayu.billingservice.repository.CustomerRepository;
 import com.bayu.billingservice.service.BillingDataChangeService;
 import com.bayu.billingservice.service.CustomerV2Service;
 import com.bayu.billingservice.service.InvestmentManagementService;
+import com.bayu.billingservice.service.SellingAgentService;
+import com.bayu.billingservice.util.CustomerMapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -29,11 +32,28 @@ public class CustomerV2ServiceImpl implements CustomerV2Service {
     private final CustomerRepository customerRepository;
     private final BillingDataChangeService dataChangeService;
     private final InvestmentManagementService investmentManagementService;
+    private final SellingAgentService sellingAgentService;
     private final Validator validator;
     private final ObjectMapper objectMapper;
+    private final CustomerMapper customerMapper;
 
     private static final String ID_NOT_FOUND = "Billing Customer not found with id: ";
     private static final String CODE_NOT_FOUND = "Billing Customer not found with code: ";
+    private static final String UNKNOWN = "unknown";
+
+    @Override
+    public CustomerDTO testCreate(CustomerDTO dto) {
+        Customer customer = customerMapper.mapToEntity(dto);
+        log.info("Customer: {}", customer);
+        customerRepository.save(customer);
+        return customerMapper.mapToDTO(customer);
+    }
+
+    @Override
+    public List<CustomerDTO> getAllTest() {
+        List<Customer> all = customerRepository.findAll();
+        return customerMapper.mapToDTOList(all);
+    }
 
     @Override
     public boolean isCodeAlreadyExists(String code) {
@@ -57,6 +77,7 @@ public class CustomerV2ServiceImpl implements CustomerV2Service {
         int totalDataSuccess = 0;
         int totalDataFailed = 0;
         List<ErrorMessageDTO> errorMessageDTOList = new ArrayList<>();
+
         CustomerDTO customerDTO = CustomerDTO.builder()
                 .customerCode(request.getCustomerCode())
                 .customerName(request.getCustomerName())
@@ -71,6 +92,7 @@ public class CustomerV2ServiceImpl implements CustomerV2Service {
         try {
             List<String> validationErrors = new ArrayList<>();
             validationCustomerCodeAlreadyExists(customerDTO.getCustomerCode(), validationErrors);
+
             if (validationErrors.isEmpty()) {
                 dataChangeDTO.setInputId(request.getInputId());
                 dataChangeDTO.setInputIPAddress(request.getInputIPAddress());
@@ -85,12 +107,9 @@ public class CustomerV2ServiceImpl implements CustomerV2Service {
 
                 totalDataFailed++;
             }
-        } catch (JsonProcessingException e) {
-            log.error("Json Processing error occurred", e);
-            handleJsonProcessingException(e);
         } catch (Exception e) {
-            log.error("An unexpected error occurred", e);
-            handleGeneralError(e);
+            handleGeneralError(customerDTO, e, errorMessageDTOList);
+            totalDataFailed++;
         }
         return new CreateCustomerListResponse(totalDataSuccess, totalDataFailed, errorMessageDTOList);
     }
@@ -121,11 +140,9 @@ public class CustomerV2ServiceImpl implements CustomerV2Service {
                     totalDataFailed++;
                 }
 
-            } catch (JsonProcessingException e) {
-                handleJsonProcessingException(e);
             } catch (Exception e) {
                 log.error("An unexpected error occurred", e);
-                handleGeneralError(e);
+                handleGeneralError(customerDTO, e, errorMessageDTOList);
             }
         }
         return new CreateCustomerListResponse(totalDataSuccess, totalDataFailed, errorMessageDTOList);
@@ -207,21 +224,6 @@ public class CustomerV2ServiceImpl implements CustomerV2Service {
                 .toList();
     }
 
-    private void handleDataChangeException(DataChangeException e) {
-        log.error("Data Change exception occurred: {}", e.getMessage());
-        throw new DataChangeException("Data Change exception occurred: " + e.getMessage());
-    }
-
-    private void handleJsonProcessingException(JsonProcessingException e) {
-        log.error("Error processing JSON during data change logging: {}", e.getMessage(), e);
-        throw new DataChangeException("Error processing JSON during data change logging", e);
-    }
-
-    private void handleGeneralError(Exception e) {
-        log.error("An unexpected error occurred: {}", e.getMessage(), e);
-        throw new DataChangeException("An unexpected error occurred: " + e.getMessage());
-    }
-
     public Errors validateCustomerUsingValidator(CustomerDTO dto) {
         Errors errors = new BeanPropertyBindingResult(dto, "customerDTO");
         validator.validate(dto, errors);
@@ -240,6 +242,13 @@ public class CustomerV2ServiceImpl implements CustomerV2Service {
                 .toList();
 
         return dataChangeService.areAllIdsExistInDatabase(idDataChangeList);
+    }
+
+    private void handleGeneralError(CustomerDTO customerDTO, Exception e, List<ErrorMessageDTO> errorMessageList) {
+        log.error("An unexpected error occurred: {}", e.getMessage(), e);
+        List<String> validationErrors = new ArrayList<>();
+        validationErrors.add("An unexpected error occurred: " + e.getMessage());
+        errorMessageList.add(new ErrorMessageDTO(customerDTO != null ? customerDTO.getCustomerCode() : UNKNOWN, validationErrors));
     }
 
 }

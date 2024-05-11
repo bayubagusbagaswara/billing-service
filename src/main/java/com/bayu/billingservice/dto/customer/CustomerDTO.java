@@ -64,7 +64,7 @@ public class CustomerDTO {
     private String customerSafekeepingFee;
 
     // need a pattern must be numeric because big decimal
-    private String transactionHandling;
+    private String customerTransactionHandling;
 
     // need a pattern, must be numeric for string
     private String npwpNumber;
@@ -83,4 +83,5 @@ public class CustomerDTO {
 
     // need a pattern (numeric & alphabet, not special character)
     private String sellingAgentCode;
+
 }

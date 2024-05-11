@@ -15,7 +15,7 @@ public class SellingAgentServiceImpl implements SellingAgentService {
 
     @Override
     public boolean isCodeAlreadyExists(String sellingAgentCode) {
-        return sellingAgentRepository.existsByCustomerCode(sellingAgentCode);
+        return sellingAgentRepository.existsByCode(sellingAgentCode);
     }
 
 }
