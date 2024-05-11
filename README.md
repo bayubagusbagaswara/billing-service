@@ -507,3 +507,13 @@ File file = new File(DOWNLOAD_FOLDER + "/" + fileName);
 - Perbaiki service billing (Fund, Core, Retail) dengan menambahkan inputId, inputIPAddress, inputDate, approveId, approveIPAddress, approveDate
 - Bagaimana approve billingnya? soalnya ketika approve juga membawa approveId dan approveIPAddress
 - Lanjut menambahkan Data Change pada maintenance
+- Pindahi Transaction Handling yang diambil dari Customer
+
+# Yang perlu Data Change
+- Investment Management
+- Customer
+- Fee Parameter (Edit dan Upload (create List) untuk data change)
+- Nasabah Transfer Asset (semua ada, kecuali upload atau create list)
+- Fee Schedule (semua ada, kecuali upload atau create list)
+- Selling Agent (semua ada, kecuali upload atau create list)
+- Exchange Rate (hanya edit)
