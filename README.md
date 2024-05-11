@@ -575,3 +575,12 @@ File file = new File(DOWNLOAD_FOLDER + "/" + fileName);
   "sellingAgentCode": "String"
 }
 ```
+
+# Handle Json Processing Exception
+
+    private void handleJsonProcessingException(InvestmentManagementDTO investmentManagementDTO, JsonProcessingException e, List<ErrorMessageDTO> errorMessageList) {
+        log.error("Error processing JSON during data change logging: {}", e.getMessage(), e);
+        List<String> validationErrors = new ArrayList<>();
+        validationErrors.add("Error processing JSON during data change logging: " + e.getMessage());
+        errorMessageList.add(new ErrorMessageDTO(investmentManagementDTO != null ? investmentManagementDTO.getCode() : UNKNOWN, validationErrors));
+    }
