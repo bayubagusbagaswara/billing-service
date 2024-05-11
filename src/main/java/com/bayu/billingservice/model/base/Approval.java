@@ -30,12 +30,12 @@ public abstract class Approval {
     @Column(name = "input_date")
     private Date inputDate;
 
-    @Column(name = "approval_id")
-    private String approvalId;
+    @Column(name = "approve_id")
+    private String approveId;
 
-    @Column(name = "approval_ip_address")
-    private String approvalIPAddress;
+    @Column(name = "approve_ip_address")
+    private String approveIPAddress;
 
-    @Column(name = "approval_date")
-    private Date approvalDate;
+    @Column(name = "approve_date")
+    private Date approveDate;
 }
