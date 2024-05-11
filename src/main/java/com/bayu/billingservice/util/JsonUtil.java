@@ -19,9 +19,9 @@ public class JsonUtil {
         ((ObjectNode) jsonNode).remove("inputId");
         ((ObjectNode) jsonNode).remove("inputIPAddress");
         ((ObjectNode) jsonNode).remove("inputDate");
-        ((ObjectNode) jsonNode).remove("approvalId");
-        ((ObjectNode) jsonNode).remove("approvalIPAddress");
-        ((ObjectNode) jsonNode).remove("approvalDate");
+        ((ObjectNode) jsonNode).remove("approveId");
+        ((ObjectNode) jsonNode).remove("approveIPAddress");
+        ((ObjectNode) jsonNode).remove("approveDate");
 
         return objectMapper.writeValueAsString(jsonNode);
     }
