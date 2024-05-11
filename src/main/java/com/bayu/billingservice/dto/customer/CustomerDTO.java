@@ -33,6 +33,8 @@ public class CustomerDTO {
     @NotNull(message = "Customer Safekeeping Fee cannot be null")
     private BigDecimal customerSafekeepingFee;
 
+    private BigDecimal transactionHandling;
+
     @NotBlank(message = "MI Code cannot be empty")
     private String investmentManagementCode;
     private String investmentManagementName;
