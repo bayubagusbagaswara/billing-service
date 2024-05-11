@@ -3,31 +3,20 @@ package com.bayu.billingservice.service.impl;
 import com.bayu.billingservice.dto.ErrorMessageDTO;
 import com.bayu.billingservice.dto.customer.*;
 import com.bayu.billingservice.dto.datachange.BillingDataChangeDTO;
-import com.bayu.billingservice.dto.investmentmanagement.InvestmentManagementDTO;
-import com.bayu.billingservice.exception.ConnectionDatabaseException;
 import com.bayu.billingservice.exception.DataChangeException;
-import com.bayu.billingservice.exception.DataNotFoundException;
 import com.bayu.billingservice.model.Customer;
-import com.bayu.billingservice.model.InvestmentManagement;
 import com.bayu.billingservice.repository.CustomerRepository;
-import com.bayu.billingservice.repository.InvestmentManagementRepository;
 import com.bayu.billingservice.service.BillingDataChangeService;
 import com.bayu.billingservice.service.CustomerService;
 import com.bayu.billingservice.service.InvestmentManagementService;
 import com.bayu.billingservice.util.EnumValidator;
-import com.bayu.billingservice.util.StringUtil;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.BeanPropertyBindingResult;
-import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -120,13 +109,13 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     private void validateBillingEnums(CustomerDTO customerDTO, List<String> validationErrors) {
-        if (!EnumValidator.validateEnumBillingCategory(customerDTO.getBillingCategory())) {
+        if (EnumValidator.validateEnumBillingCategory(customerDTO.getBillingCategory())) {
             validationErrors.add("Billing Category enum not found with value: " + customerDTO.getBillingCategory());
         }
-        if (!EnumValidator.validateEnumBillingType(customerDTO.getBillingType())) {
+        if (EnumValidator.validateEnumBillingType(customerDTO.getBillingType())) {
             validationErrors.add("Billing Type enum not found with value: " + customerDTO.getBillingType());
         }
-        if (!EnumValidator.validateEnumBillingTemplate(customerDTO.getBillingTemplate())) {
+        if (EnumValidator.validateEnumBillingTemplate(customerDTO.getBillingTemplate())) {
             validationErrors.add("Billing Template enum not found with value '" + customerDTO.getBillingTemplate());
         }
     }

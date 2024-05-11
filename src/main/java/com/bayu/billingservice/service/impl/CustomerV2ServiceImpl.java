@@ -4,7 +4,7 @@ import com.bayu.billingservice.dto.ErrorMessageDTO;
 import com.bayu.billingservice.dto.customer.*;
 import com.bayu.billingservice.dto.datachange.BillingDataChangeDTO;
 import com.bayu.billingservice.dto.investmentmanagement.InvestmentManagementDTO;
-import com.bayu.billingservice.exception.DataChangeException;
+import com.bayu.billingservice.exception.DataNotFoundException;
 import com.bayu.billingservice.model.Customer;
 import com.bayu.billingservice.repository.CustomerRepository;
 import com.bayu.billingservice.service.BillingDataChangeService;
@@ -12,7 +12,8 @@ import com.bayu.billingservice.service.CustomerV2Service;
 import com.bayu.billingservice.service.InvestmentManagementService;
 import com.bayu.billingservice.service.SellingAgentService;
 import com.bayu.billingservice.util.CustomerMapper;
-import com.fasterxml.jackson.core.JsonProcessingException;
+import com.bayu.billingservice.util.EnumValidator;
+import com.bayu.billingservice.util.JsonUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -62,7 +63,7 @@ public class CustomerV2ServiceImpl implements CustomerV2Service {
 
     @Override
     public List<CustomerDTO> getAll() {
-        return mapToDTOList(customerRepository.findAll());
+        return List.of();
     }
 
     @Override
@@ -78,33 +79,22 @@ public class CustomerV2ServiceImpl implements CustomerV2Service {
         int totalDataFailed = 0;
         List<ErrorMessageDTO> errorMessageDTOList = new ArrayList<>();
 
-        CustomerDTO customerDTO = CustomerDTO.builder()
-                .customerCode(request.getCustomerCode())
-                .customerName(request.getCustomerName())
-                .investmentManagementCode(request.getInvestmentManagementCode())
-                .billingCategory(request.getBillingCategory())
-                .billingType(request.getBillingType())
-                .billingTemplate(request.getBillingTemplate())
-                .sellingAgentCode(request.getSellingAgentCode())
-                .currency(request.getCurrency())
-                .build();
-
+        CustomerDTO customerDTO = customerMapper.mapFromCreateCustomerRequestToDTO(request);
         try {
             List<String> validationErrors = new ArrayList<>();
             validationCustomerCodeAlreadyExists(customerDTO.getCustomerCode(), validationErrors);
+            validationInvestmentManagementCodeAlreadyExists(customerDTO.getInvestmentManagementCode(), validationErrors);
 
             if (validationErrors.isEmpty()) {
                 dataChangeDTO.setInputId(request.getInputId());
                 dataChangeDTO.setInputIPAddress(request.getInputIPAddress());
-                String jsonDataAfter = objectMapper.writeValueAsString(customerDTO);
-                dataChangeDTO.setJsonDataAfter(jsonDataAfter);
+                dataChangeDTO.setJsonDataAfter(JsonUtil.cleanedJsonData(objectMapper.writeValueAsString(customerDTO)));
 
                 dataChangeService.createChangeActionADD(dataChangeDTO, Customer.class);
                 totalDataSuccess++;
             } else {
                 ErrorMessageDTO errorMessageDTO = new ErrorMessageDTO(customerDTO.getCustomerCode(), validationErrors);
                 errorMessageDTOList.add(errorMessageDTO);
-
                 totalDataFailed++;
             }
         } catch (Exception e) {
@@ -125,49 +115,83 @@ public class CustomerV2ServiceImpl implements CustomerV2Service {
             try {
                 List<String> validationErrors = new ArrayList<>();
                 validationCustomerCodeAlreadyExists(customerDTO.getCustomerCode(), validationErrors);
+                validationInvestmentManagementCodeAlreadyExists(customerDTO.getInvestmentManagementCode(), validationErrors);
+
                 if (validationErrors.isEmpty()) {
                     dataChangeDTO.setInputId(request.getInputId());
                     dataChangeDTO.setInputIPAddress(request.getInputIPAddress());
-                    String jsonDataAfter = objectMapper.writeValueAsString(customerDTO);
-                    dataChangeDTO.setJsonDataAfter(jsonDataAfter);
+                    dataChangeDTO.setJsonDataAfter(JsonUtil.cleanedJsonData(objectMapper.writeValueAsString(customerDTO)));
 
                     dataChangeService.createChangeActionADD(dataChangeDTO, Customer.class);
                     totalDataSuccess++;
                 } else {
                     ErrorMessageDTO errorMessageDTO = new ErrorMessageDTO(customerDTO.getCustomerCode(), validationErrors);
                     errorMessageDTOList.add(errorMessageDTO);
-
                     totalDataFailed++;
                 }
-
             } catch (Exception e) {
-                log.error("An unexpected error occurred", e);
                 handleGeneralError(customerDTO, e, errorMessageDTOList);
+                totalDataFailed++;
             }
         }
         return new CreateCustomerListResponse(totalDataSuccess, totalDataFailed, errorMessageDTOList);
     }
 
     @Override
-    public CreateCustomerListResponse createMultipleApprove(CreateCustomerListRequest request) {
-        log.info("Approve multiple for create billing customer with request: {}", request);
+    public CreateCustomerListResponse createMultipleApprove(CreateCustomerListRequest requestList) {
+        log.info("Approve multiple for create billing customer with request: {}", requestList);
         int totalDataSuccess = 0;
         int totalDataFailed = 0;
         List<ErrorMessageDTO> errorMessageDTOList = new ArrayList<>();
 
-        boolean allIdsExists = validateDataChangeIds(request.getCustomerDTOList());
-        if (!allIdsExists) {
-            log.error("Not all Data Change ids exist in the database");
-            throw new DataChangeException("Not all Data Change ids exists in the database");
-        }
+        validateDataChangeIds(requestList.getCustomerDTOList());
 
-        // Process each CustomerDTO
-        for (CustomerDTO customerDTO : request.getCustomerDTOList()) {
-            // disini dilakukan proses validasi dan pengecekan mi code ada atau tidak
-            // validasi data enums
+        for (CustomerDTO customerDTO : requestList.getCustomerDTOList()) {
+            try {
+                List<String> validationErrors = new ArrayList<>();
+                Errors errors = validateCustomerUsingValidator(customerDTO);
+                if (errors.hasErrors()) {
+                    errors.getAllErrors().forEach(error -> validationErrors.add(error.getDefaultMessage()));
+                }
 
-            // dan juga dilakukan pengecekan customerIsAlreadyTaken, karena ditakutkan ada 2 data yang pending dengan 2 data customerCode yang sama
+                // validasi customer code gak boleh ada yg duplikat di database
+                validationCustomerCodeAlreadyExists(customerDTO.getCustomerCode(), validationErrors);
 
+                // validasi mi code
+                validationInvestmentManagementCodeAlreadyExists(customerDTO.getInvestmentManagementCode(), validationErrors);
+                InvestmentManagementDTO investmentManagementDTO = investmentManagementService.getByCode(customerDTO.getInvestmentManagementCode());
+                customerDTO.setInvestmentManagementName(investmentManagementDTO.getName());
+
+                // validasi selling agent
+                validationSellingAgentCodeAlreadyExists(customerDTO.getSellingAgentCode(), validationErrors);
+
+                // validasi enum
+                validateBillingEnums(customerDTO, validationErrors);
+
+                // get data change by id
+                BillingDataChangeDTO dataChangeDTO = dataChangeService.getById(investmentManagementDTO.getDataChangeId());
+                dataChangeDTO.setApproveId(requestList.getApproveId());
+                dataChangeDTO.setApproveIPAddress(requestList.getApproveIPAddress());
+
+                if (!validationErrors.isEmpty()) {
+                    dataChangeDTO.setJsonDataAfter(JsonUtil.cleanedJsonData(objectMapper.writeValueAsString(customerDTO)));
+                    dataChangeService.approvalStatusIsRejected(dataChangeDTO, validationErrors);
+                    totalDataFailed++;
+                } else {
+                    Customer customer = customerMapper.createEntity(customerDTO, dataChangeDTO);
+                    customerRepository.save(customer);
+
+                    dataChangeDTO.setDescription("Successfully approve data change and save data investment management");
+                    dataChangeDTO.setJsonDataAfter(JsonUtil.cleanedJsonData(objectMapper.writeValueAsString(customer)));
+                    dataChangeDTO.setEntityId(customer.getId().toString());
+
+                    dataChangeService.approvalStatusIsApproved(dataChangeDTO);
+                    totalDataSuccess++;
+                }
+            } catch (Exception e) {
+                handleGeneralError(customerDTO, e, errorMessageDTOList);
+                totalDataFailed++;
+            }
         }
         return new CreateCustomerListResponse(totalDataSuccess, totalDataFailed, errorMessageDTOList);
     }
@@ -197,33 +221,6 @@ public class CustomerV2ServiceImpl implements CustomerV2Service {
         return null;
     }
 
-    private static CustomerDTO mapToDTO(Customer customer) {
-        return CustomerDTO.builder()
-                .id(customer.getId())
-                .customerCode(customer.getCustomerCode())
-                .customerName(customer.getCustomerName())
-                .investmentManagementCode(customer.getInvestmentManagementCode())
-                .investmentManagementName(customer.getInvestmentManagementName())
-                .accountName(customer.getAccountName())
-//                .accountNumber(customer.getAccountNumber())
-//                .accountBank(customer.getAccountBank())
-                .kseiSafeCode(customer.getKseiSafeCode())
-//                .customerMinimumFee(customer.getCustomerMinimumFee())
-//                .customerSafekeepingFee(customer.getCustomerSafekeepingFee())
-                .billingCategory(customer.getBillingCategory())
-                .billingType(customer.getBillingType())
-                .billingTemplate(customer.getBillingTemplate())
-                .currency(customer.getCurrency())
-                .sellingAgentCode(customer.getSellingAgentCode())
-                .build();
-    }
-
-    private static List<CustomerDTO> mapToDTOList(List<Customer> customerList) {
-        return customerList.stream()
-                .map(CustomerV2ServiceImpl::mapToDTO)
-                .toList();
-    }
-
     public Errors validateCustomerUsingValidator(CustomerDTO dto) {
         Errors errors = new BeanPropertyBindingResult(dto, "customerDTO");
         validator.validate(dto, errors);
@@ -236,12 +233,27 @@ public class CustomerV2ServiceImpl implements CustomerV2Service {
         }
     }
 
-    private boolean validateDataChangeIds(List<CustomerDTO> customerDTOList) {
+    private void validationInvestmentManagementCodeAlreadyExists(String investmentManagementCode, List<String> validationErrors) {
+        if (!investmentManagementService.isCodeAlreadyExists(investmentManagementCode)) {
+            validationErrors.add("Investment Management not found with code: " + investmentManagementCode);
+        }
+    }
+
+    private void validationSellingAgentCodeAlreadyExists(String sellingAgentCode, List<String> validationErrors) {
+        if (!sellingAgentService.isCodeAlreadyExists(sellingAgentCode)) {
+            validationErrors.add("Selling Agent not found with code: " + sellingAgentCode);
+        }
+    }
+
+    private void validateDataChangeIds(List<CustomerDTO> customerDTOList) {
         List<Long> idDataChangeList = customerDTOList.stream()
                 .map(CustomerDTO::getDataChangeId)
                 .toList();
 
-        return dataChangeService.areAllIdsExistInDatabase(idDataChangeList);
+        if (!dataChangeService.areAllIdsExistInDatabase(idDataChangeList)) {
+            log.info("Data Change ids not found");
+            throw new DataNotFoundException("Data Change ids not found");
+        }
     }
 
     private void handleGeneralError(CustomerDTO customerDTO, Exception e, List<ErrorMessageDTO> errorMessageList) {
@@ -250,5 +262,21 @@ public class CustomerV2ServiceImpl implements CustomerV2Service {
         validationErrors.add("An unexpected error occurred: " + e.getMessage());
         errorMessageList.add(new ErrorMessageDTO(customerDTO != null ? customerDTO.getCustomerCode() : UNKNOWN, validationErrors));
     }
+
+    private void validateBillingEnums(CustomerDTO customerDTO, List<String> validationErrors) {
+        if (EnumValidator.validateEnumBillingCategory(customerDTO.getBillingCategory())) {
+            validationErrors.add("Billing Category enum not found with value: " + customerDTO.getBillingCategory());
+        }
+        if (EnumValidator.validateEnumBillingType(customerDTO.getBillingType())) {
+            validationErrors.add("Billing Type enum not found with value: " + customerDTO.getBillingType());
+        }
+        if (EnumValidator.validateEnumBillingTemplate(customerDTO.getBillingTemplate())) {
+            validationErrors.add("Billing Template enum not found with value '" + customerDTO.getBillingTemplate());
+        }
+        if (EnumValidator.validateEnumCurrency(customerDTO.getCurrency())) {
+            validationErrors.add("Currency enum not found with value '" + customerDTO.getCurrency());
+        }
+    }
+
 
 }
