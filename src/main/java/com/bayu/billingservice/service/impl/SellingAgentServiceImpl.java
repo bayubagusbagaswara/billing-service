@@ -1,5 +1,7 @@
 package com.bayu.billingservice.service.impl;
 
+import com.bayu.billingservice.dto.sellingagent.SellingAgentDTO;
+import com.bayu.billingservice.model.SellingAgent;
 import com.bayu.billingservice.repository.SellingAgentRepository;
 import com.bayu.billingservice.service.SellingAgentService;
 import lombok.RequiredArgsConstructor;
@@ -18,4 +20,17 @@ public class SellingAgentServiceImpl implements SellingAgentService {
         return sellingAgentRepository.existsByCode(sellingAgentCode);
     }
 
+    @Override
+    public SellingAgentDTO getBySellingAgentCode(String sellingAgentCode) {
+
+        return null;
+    }
+
+    private SellingAgentDTO mapToDTO(SellingAgent sellingAgent) {
+        return SellingAgentDTO.builder()
+                .id(sellingAgent.getId())
+                .code(sellingAgent.getCode())
+                .name(sellingAgent.getName())
+                .build();
+    }
 }
