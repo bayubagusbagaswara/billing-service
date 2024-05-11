@@ -512,7 +512,7 @@ File file = new File(DOWNLOAD_FOLDER + "/" + fileName);
 # Yang perlu Data Change
 - Investment Management (DONE)
 - Customer (DONE)
-- Fee Parameter (Edit dan Upload (create List) untuk data change)
+- Fee Parameter (Edit dan Upload (create List) untuk data change). Yg masuk data change hanya edit 
 - Nasabah Transfer Asset (semua ada, kecuali upload atau create list). Create nya satu per satu
 - Fee Schedule (semua ada, kecuali upload atau create list). Create nya satu per satu
 - Selling Agent (semua ada, kecuali upload atau create list). Create nya satu per satu
