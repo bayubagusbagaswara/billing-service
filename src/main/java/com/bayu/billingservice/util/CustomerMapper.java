@@ -2,6 +2,7 @@ package com.bayu.billingservice.util;
 
 import com.bayu.billingservice.dto.customer.CreateCustomerRequest;
 import com.bayu.billingservice.dto.customer.CustomerDTO;
+import com.bayu.billingservice.dto.datachange.BillingDataChangeDTO;
 import com.bayu.billingservice.model.Customer;
 import org.springframework.stereotype.Component;
 
@@ -40,4 +41,16 @@ public class CustomerMapper {
         return customerDTO;
     }
 
+    public Customer createEntity(CustomerDTO customerDTO, BillingDataChangeDTO dataChangeDTO) {
+        Customer customer = new Customer();
+        modelMapperUtil.mapObjects(customerDTO, customer);
+        customer.setApprovalStatus(dataChangeDTO.getApprovalStatus());
+        customer.setInputId(dataChangeDTO.getInputId());
+        customer.setInputIPAddress(dataChangeDTO.getInputIPAddress());
+        customer.setInputDate(dataChangeDTO.getInputDate());
+        customer.setApprovalId(dataChangeDTO.getApproveId());
+        customer.setApprovalIPAddress(dataChangeDTO.getApproveIPAddress());
+        customer.setApprovalDate(dataChangeDTO.getApproveDate());
+        return customer;
+    }
 }
