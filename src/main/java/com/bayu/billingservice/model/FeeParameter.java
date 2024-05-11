@@ -9,9 +9,7 @@ import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 
 @Entity
-@Table(name = "fee_parameter", uniqueConstraints = {
-        @UniqueConstraint(name = "fee_parameter_name_unique", columnNames = "name")
-})
+@Table(name = "fee_parameter")
 @Data
 @Builder
 @NoArgsConstructor
@@ -21,6 +19,9 @@ public class FeeParameter {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(name = "code")
+    private String code;
 
     @Column(name = "name")
     private String name;
