@@ -22,7 +22,6 @@ public class CreateInvestmentManagementListRequest {
 
     private String approveIPAddress; // use when approve
 
-    @Valid
     private List<InvestmentManagementDTO> investmentManagementRequestList;
 
 }
