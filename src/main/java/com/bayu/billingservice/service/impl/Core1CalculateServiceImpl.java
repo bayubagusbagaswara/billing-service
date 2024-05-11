@@ -38,121 +38,122 @@ public class Core1CalculateServiceImpl implements Core1CalculateService {
 
     @Override
     public String calculate(CoreCalculateRequest request) {
-        log.info("Start calculate billing core with request : {}", request);
-        try {
-            String categoryUpperCase = request.getCategory().toUpperCase();
-            String typeUpperCase = StringUtil.replaceBlanksWithUnderscores(request.getType());
-            String[] monthFormat = ConvertDateUtil.convertToYearMonthFormat(request.getMonthYear());
-            String monthName = monthFormat[0];
-            int year = Integer.parseInt(monthFormat[1]);
-
-            // Initialization variable
-            int transactionHandlingValueFrequency;
-            BigDecimal transactionHandlingAmountDue;
-            BigDecimal safekeepingValueFrequency;
-            BigDecimal safekeepingAmountDue;
-            BigDecimal subTotal;
-            BigDecimal vatAmountDue;
-            BigDecimal totalAmountDue;
-            List<BillingCore> billingCoreList = new ArrayList<>();
-
-            // Get data KYC Customer
-            List<CustomerDTO> customerDTOList = customerService.getByBillingCategoryAndBillingType(categoryUpperCase, typeUpperCase);
-
-            // Get data Fee Parameter
-            List<String> feeParamList = new ArrayList<>();
-            feeParamList.add(TRANSACTION_HANDLING_IDR.getValue());
-            feeParamList.add(VAT.getValue());
-
-            Map<String, BigDecimal> feeParamMap = feeParameterService.getValueByNameList(feeParamList);
-            BigDecimal transactionHandlingFee = feeParamMap.get(TRANSACTION_HANDLING_IDR.getValue());
-            BigDecimal vatFee = feeParamMap.get(VAT.getValue());
-
-            for (CustomerDTO customerDTO : customerDTOList) {
-                String aid = customerDTO.getCustomerCode();
-                String billingCategory = customerDTO.getBillingCategory();
-                String billingType = customerDTO.getBillingType();
-
-                List<SkTransaction> skTransactionList = skTransactionService.getAllByAidAndMonthAndYear(aid, monthName, year);
-
-                List<SfValRgDaily> sfValRgDailyList = sfValRgDailyService.getAllByAidAndMonthAndYear(aid, monthName, year);
-
-                transactionHandlingValueFrequency = calculateTransactionHandlingValueFrequency(aid, skTransactionList);
-
-                transactionHandlingAmountDue = calculateTransactionHandlingAmountDue(aid, transactionHandlingFee, transactionHandlingValueFrequency);
-
-                safekeepingValueFrequency = calculateSafekeepingValueFrequency(aid, sfValRgDailyList);
-
-                safekeepingAmountDue = calculateSafekeepingAmountDue(aid, sfValRgDailyList);
-
-                subTotal = calculateSubTotalAmountDue(aid, transactionHandlingAmountDue, safekeepingAmountDue);
-
-                vatAmountDue = calculateVatAmountDue(aid, subTotal, vatFee);
-
-                totalAmountDue = calculateTotalAmountDue(aid, subTotal, vatAmountDue);
-
-                Optional<BillingCore> existingBillingCore = billingCoreRepository.findByAidAndBillingCategoryAndBillingTypeAndMonthAndYear(aid, billingCategory, billingType, monthName, year);
-
-                if (existingBillingCore.isPresent()) {
-                    // Update existing record
-                    BillingCore existBillingCore = existingBillingCore.get();
-                    String billingNumber = existBillingCore.getBillingNumber();
-                    billingCoreRepository.delete(existBillingCore);
-                    billingNumberService.deleteByBillingNumber(billingNumber);
-                }
-
-                Instant dateNow = Instant.now();
-                BillingCore billingCore = BillingCore.builder()
-                        .approvalStatus(PENDING)
-                        .customerCode(customerDTO.getCustomerCode())
-                        .month(monthName)
-                        .year(year)
-                        .billingPeriod(monthName + " " + year)
-                        .billingStatementDate(convertDateUtil.convertInstantToString(dateNow))
-                        .billingPaymentDueDate(convertDateUtil.convertInstantToStringPlus14Days(dateNow))
-                        .billingCategory(customerDTO.getBillingCategory())
-                        .billingType(customerDTO.getBillingType())
-                        .billingTemplate(customerDTO.getBillingTemplate())
-                        .investmentManagementName(customerDTO.getInvestmentManagementName())
-//                        .investmentManagementAddress(billingCustomerDTO.getInvestmentManagementAddress())
-                        .accountName(customerDTO.getAccountName())
-                        .accountNumber(customerDTO.getAccountNumber())
-                        .accountBank(customerDTO.getAccountBank())
-                        .currency(IDR.getValue())
-                        .minimumFee(customerDTO.getCustomerMinimumFee())
-                        .transactionHandlingValueFrequency(transactionHandlingValueFrequency)
-                        .transactionHandlingFee(transactionHandlingFee)
-                        .transactionHandlingAmountDue(transactionHandlingAmountDue)
-                        .safekeepingValueFrequency(safekeepingValueFrequency)
-                        .safekeepingFee(customerDTO.getCustomerSafekeepingFee())
-                        .safekeepingAmountDue(safekeepingAmountDue)
-                        .subTotal(subTotal)
-                        .vatFee(vatFee)
-                        .vatAmountDue(vatAmountDue)
-                        .totalAmountDue(totalAmountDue)
-                        .build();
-
-                billingCoreList.add(billingCore);
-            }
-
-            int billingCoreListSize = billingCoreList.size();
-            List<String> numberList = billingNumberService.generateNumberList(billingCoreListSize, monthName, year);
-
-            for (int i = 0; i < billingCoreListSize; i++) {
-                BillingCore billingCore = billingCoreList.get(i);
-                String billingNumber = numberList.get(i);
-                billingCore.setBillingNumber(billingNumber);
-            }
-
-            billingCoreRepository.saveAll(billingCoreList);
-            billingNumberService.saveAll(numberList);
-
-            log.info("Finished calculate Billing Core type 1 with month '{}' and year '{}'", monthName, year);
-            return "Successfully calculated Billing Core type 1 with a total : " + billingCoreListSize;
-        } catch (Exception e) {
-            log.error("Error when calculate Billing Core type 1 : " + e.getMessage(), e);
-            throw new CalculateBillingException("Error when calculate Billing Core type 1 : " + e.getMessage());
-        }
+//        log.info("Start calculate billing core with request : {}", request);
+//        try {
+//            String categoryUpperCase = request.getCategory().toUpperCase();
+//            String typeUpperCase = StringUtil.replaceBlanksWithUnderscores(request.getType());
+//            String[] monthFormat = ConvertDateUtil.convertToYearMonthFormat(request.getMonthYear());
+//            String monthName = monthFormat[0];
+//            int year = Integer.parseInt(monthFormat[1]);
+//
+//            // Initialization variable
+//            int transactionHandlingValueFrequency;
+//            BigDecimal transactionHandlingAmountDue;
+//            BigDecimal safekeepingValueFrequency;
+//            BigDecimal safekeepingAmountDue;
+//            BigDecimal subTotal;
+//            BigDecimal vatAmountDue;
+//            BigDecimal totalAmountDue;
+//            List<BillingCore> billingCoreList = new ArrayList<>();
+//
+//            // Get data KYC Customer
+//            List<CustomerDTO> customerDTOList = customerService.getByBillingCategoryAndBillingType(categoryUpperCase, typeUpperCase);
+//
+//            // Get data Fee Parameter
+//            List<String> feeParamList = new ArrayList<>();
+//            feeParamList.add(TRANSACTION_HANDLING_IDR.getValue());
+//            feeParamList.add(VAT.getValue());
+//
+//            Map<String, BigDecimal> feeParamMap = feeParameterService.getValueByNameList(feeParamList);
+//            BigDecimal transactionHandlingFee = feeParamMap.get(TRANSACTION_HANDLING_IDR.getValue());
+//            BigDecimal vatFee = feeParamMap.get(VAT.getValue());
+//
+//            for (CustomerDTO customerDTO : customerDTOList) {
+//                String aid = customerDTO.getCustomerCode();
+//                String billingCategory = customerDTO.getBillingCategory();
+//                String billingType = customerDTO.getBillingType();
+//
+//                List<SkTransaction> skTransactionList = skTransactionService.getAllByAidAndMonthAndYear(aid, monthName, year);
+//
+//                List<SfValRgDaily> sfValRgDailyList = sfValRgDailyService.getAllByAidAndMonthAndYear(aid, monthName, year);
+//
+//                transactionHandlingValueFrequency = calculateTransactionHandlingValueFrequency(aid, skTransactionList);
+//
+//                transactionHandlingAmountDue = calculateTransactionHandlingAmountDue(aid, transactionHandlingFee, transactionHandlingValueFrequency);
+//
+//                safekeepingValueFrequency = calculateSafekeepingValueFrequency(aid, sfValRgDailyList);
+//
+//                safekeepingAmountDue = calculateSafekeepingAmountDue(aid, sfValRgDailyList);
+//
+//                subTotal = calculateSubTotalAmountDue(aid, transactionHandlingAmountDue, safekeepingAmountDue);
+//
+//                vatAmountDue = calculateVatAmountDue(aid, subTotal, vatFee);
+//
+//                totalAmountDue = calculateTotalAmountDue(aid, subTotal, vatAmountDue);
+//
+//                Optional<BillingCore> existingBillingCore = billingCoreRepository.findByAidAndBillingCategoryAndBillingTypeAndMonthAndYear(aid, billingCategory, billingType, monthName, year);
+//
+//                if (existingBillingCore.isPresent()) {
+//                    // Update existing record
+//                    BillingCore existBillingCore = existingBillingCore.get();
+//                    String billingNumber = existBillingCore.getBillingNumber();
+//                    billingCoreRepository.delete(existBillingCore);
+//                    billingNumberService.deleteByBillingNumber(billingNumber);
+//                }
+//
+//                Instant dateNow = Instant.now();
+//                BillingCore billingCore = BillingCore.builder()
+//                        .approvalStatus(PENDING)
+//                        .customerCode(customerDTO.getCustomerCode())
+//                        .month(monthName)
+//                        .year(year)
+//                        .billingPeriod(monthName + " " + year)
+//                        .billingStatementDate(convertDateUtil.convertInstantToString(dateNow))
+//                        .billingPaymentDueDate(convertDateUtil.convertInstantToStringPlus14Days(dateNow))
+//                        .billingCategory(customerDTO.getBillingCategory())
+//                        .billingType(customerDTO.getBillingType())
+//                        .billingTemplate(customerDTO.getBillingTemplate())
+//                        .investmentManagementName(customerDTO.getInvestmentManagementName())
+////                        .investmentManagementAddress(billingCustomerDTO.getInvestmentManagementAddress())
+//                        .accountName(customerDTO.getAccountName())
+//                        .accountNumber(customerDTO.getAccountNumber())
+//                        .accountBank(customerDTO.getAccountBank())
+//                        .currency(IDR.getValue())
+//                        .minimumFee(customerDTO.getCustomerMinimumFee())
+//                        .transactionHandlingValueFrequency(transactionHandlingValueFrequency)
+//                        .transactionHandlingFee(transactionHandlingFee)
+//                        .transactionHandlingAmountDue(transactionHandlingAmountDue)
+//                        .safekeepingValueFrequency(safekeepingValueFrequency)
+//                        .safekeepingFee(customerDTO.getCustomerSafekeepingFee())
+//                        .safekeepingAmountDue(safekeepingAmountDue)
+//                        .subTotal(subTotal)
+//                        .vatFee(vatFee)
+//                        .vatAmountDue(vatAmountDue)
+//                        .totalAmountDue(totalAmountDue)
+//                        .build();
+//
+//                billingCoreList.add(billingCore);
+//            }
+//
+//            int billingCoreListSize = billingCoreList.size();
+//            List<String> numberList = billingNumberService.generateNumberList(billingCoreListSize, monthName, year);
+//
+//            for (int i = 0; i < billingCoreListSize; i++) {
+//                BillingCore billingCore = billingCoreList.get(i);
+//                String billingNumber = numberList.get(i);
+//                billingCore.setBillingNumber(billingNumber);
+//            }
+//
+//            billingCoreRepository.saveAll(billingCoreList);
+//            billingNumberService.saveAll(numberList);
+//
+//            log.info("Finished calculate Billing Core type 1 with month '{}' and year '{}'", monthName, year);
+//            return "Successfully calculated Billing Core type 1 with a total : " + billingCoreListSize;
+//        } catch (Exception e) {
+//            log.error("Error when calculate Billing Core type 1 : " + e.getMessage(), e);
+//            throw new CalculateBillingException("Error when calculate Billing Core type 1 : " + e.getMessage());
+//        }
+        return null;
     }
 
     private static int calculateTransactionHandlingValueFrequency(String aid, List<SkTransaction> skTransactionList) {

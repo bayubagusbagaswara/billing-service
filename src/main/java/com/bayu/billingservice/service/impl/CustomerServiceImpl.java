@@ -64,7 +64,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public List<CustomerDTO> getByBillingCategoryAndBillingType(String billingCategory, String billingType) {
+    public List<Customer> getByBillingCategoryAndBillingType(String billingCategory, String billingType) {
         return List.of();
     }
 

@@ -2,6 +2,7 @@ package com.bayu.billingservice.service;
 
 import com.bayu.billingservice.dto.customer.*;
 import com.bayu.billingservice.dto.datachange.BillingDataChangeDTO;
+import com.bayu.billingservice.model.Customer;
 
 import java.util.List;
 
@@ -11,7 +12,7 @@ public interface CustomerService {
 
     List<CustomerDTO> getAll();
 
-    List<CustomerDTO> getByBillingCategoryAndBillingType(String billingCategory, String billingType);
+    List<Customer> getByBillingCategoryAndBillingType(String billingCategory, String billingType);
 
     String deleteAll();
 

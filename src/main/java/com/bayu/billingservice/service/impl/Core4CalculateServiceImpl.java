@@ -39,87 +39,88 @@ public class Core4CalculateServiceImpl implements Core4CalculateService {
 
     @Override
     public String calculate(CoreCalculateRequest request) {
-        try {
-            String categoryUpperCase = request.getCategory().toUpperCase();
-            String typeUpperCase = StringUtil.replaceBlanksWithUnderscores(request.getType());
-            String[] monthFormat = ConvertDateUtil.convertToYearMonthFormat(request.getMonthYear());
-            String monthName = monthFormat[0];
-            int year = Integer.parseInt(monthFormat[1]);
-
-            List<BillingCore> billingCoreList = new ArrayList<>();
-
-            List<CustomerDTO> customerDTOList = customerService.getByBillingCategoryAndBillingType(categoryUpperCase, typeUpperCase);
-
-            // Get data Fee Parameter
-            List<String> feeParamList = new ArrayList<>();
-            feeParamList.add(KSEI.getValue());
-            feeParamList.add(VAT.getValue());
-
-            Map<String, BigDecimal> feeParamMap = feeParameterService.getValueByNameList(feeParamList);
-            BigDecimal kseiTransactionFee = feeParamMap.get(KSEI.getValue());
-            BigDecimal vatFee = feeParamMap.get(VAT.getValue());
-
-            for (CustomerDTO customerDTO : customerDTOList) {
-                String aid = customerDTO.getCustomerCode();
-                String kseiSafeCode = customerDTO.getKseiSafeCode();
-                BigDecimal customerSafekeepingFee = customerDTO.getCustomerSafekeepingFee();
-                String billingCategory = customerDTO.getBillingCategory();
-                String billingTemplate = customerDTO.getBillingTemplate();
-                String billingTemplateFormat = billingCategory + "_" + billingTemplate;
-
-                List<SkTransaction> skTransactionList = skTransactionService.getAllByAidAndMonthAndYear(aid, monthName, year);
-
-                List<SfValRgDaily> sfValRgDailyList = sfValRgDailyService.getAllByAidAndMonthAndYear(aid, monthName, year);
-
-                BigDecimal kseiSafeFeeAmount = kseiSafekeepingFeeService.calculateAmountFeeByCustomerCodeAndMonthAndYear(kseiSafeCode, monthName, year);
-
-                BillingCore billingCore;
-                Instant dateNow = Instant.now();
-                if (BillingTemplate.CORE_TEMPLATE_5.getValue().equalsIgnoreCase(billingTemplateFormat)) {
-                    // calculate EB
-                    billingCore = calculateEB(aid, billingTemplate, kseiSafeFeeAmount, kseiTransactionFee, skTransactionList);
-                } else {
-                    // calculate ITAMA
-                    billingCore = calculateITAMA(aid, billingTemplate, customerSafekeepingFee, vatFee, sfValRgDailyList);
-                }
-
-                // TODO: Set fields common to BillingCore, common to Core 4 (EB and ITAMA)
-                billingCore.setApprovalStatus(ApprovalStatus.PENDING);
-                billingCore.setMonth(monthName);
-                billingCore.setYear(year);
-                billingCore.setBillingPeriod(monthName + " " + year);
-                billingCore.setBillingStatementDate(convertDateUtil.convertInstantToString(dateNow));
-                billingCore.setBillingPaymentDueDate(convertDateUtil.convertInstantToStringPlus14Days(dateNow));
-                billingCore.setBillingCategory(customerDTO.getBillingCategory());
-                billingCore.setBillingType(customerDTO.getBillingType());
-                billingCore.setBillingTemplate(customerDTO.getBillingTemplate());
-                billingCore.setInvestmentManagementName(customerDTO.getInvestmentManagementName());
-//                billingCore.setInvestmentManagementAddress(billingCustomerDTO.getInvestmentManagementAddress());
-                billingCore.setAccountName(customerDTO.getAccountName());
-                billingCore.setAccountNumber(customerDTO.getAccountNumber());
-                billingCore.setCostCenter(customerDTO.getCostCenter()); // EB
-                billingCore.setAccountBank(customerDTO.getAccountBank()); // ITAMA
-
-                billingCoreList.add(billingCore);
-            }
-
-            int billingCoreListSize = billingCoreList.size();
-            List<String> numberList = billingNumberService.generateNumberList(billingCoreListSize, monthName, year);
-
-            for (int i = 0; i < billingCoreListSize; i++) {
-                BillingCore billingCore = billingCoreList.get(i);
-                String billingNumber = numberList.get(i);
-                billingCore.setBillingNumber(billingNumber);
-            }
-
-            List<BillingCore> billingCoreSaved = billingCoreRepository.saveAll(billingCoreList);
-
-            log.info("Finished calculate Billing Core type 4 with period '{}'", request.getMonthYear());
-            return "Successfully calculated Billing Core type 4 with a total : " + billingCoreSaved.size();
-        } catch (Exception e) {
-            log.error("Error when calculate Billing Core type 4 : " + e.getMessage(), e);
-            throw new CalculateBillingException("Error when calculate Billing Core type 4 : " + e.getMessage());
-        }
+//        try {
+//            String categoryUpperCase = request.getCategory().toUpperCase();
+//            String typeUpperCase = StringUtil.replaceBlanksWithUnderscores(request.getType());
+//            String[] monthFormat = ConvertDateUtil.convertToYearMonthFormat(request.getMonthYear());
+//            String monthName = monthFormat[0];
+//            int year = Integer.parseInt(monthFormat[1]);
+//
+//            List<BillingCore> billingCoreList = new ArrayList<>();
+//
+//            List<CustomerDTO> customerDTOList = customerService.getByBillingCategoryAndBillingType(categoryUpperCase, typeUpperCase);
+//
+//            // Get data Fee Parameter
+//            List<String> feeParamList = new ArrayList<>();
+//            feeParamList.add(KSEI.getValue());
+//            feeParamList.add(VAT.getValue());
+//
+//            Map<String, BigDecimal> feeParamMap = feeParameterService.getValueByNameList(feeParamList);
+//            BigDecimal kseiTransactionFee = feeParamMap.get(KSEI.getValue());
+//            BigDecimal vatFee = feeParamMap.get(VAT.getValue());
+//
+//            for (CustomerDTO customerDTO : customerDTOList) {
+//                String aid = customerDTO.getCustomerCode();
+//                String kseiSafeCode = customerDTO.getKseiSafeCode();
+//                BigDecimal customerSafekeepingFee = customerDTO.getCustomerSafekeepingFee();
+//                String billingCategory = customerDTO.getBillingCategory();
+//                String billingTemplate = customerDTO.getBillingTemplate();
+//                String billingTemplateFormat = billingCategory + "_" + billingTemplate;
+//
+//                List<SkTransaction> skTransactionList = skTransactionService.getAllByAidAndMonthAndYear(aid, monthName, year);
+//
+//                List<SfValRgDaily> sfValRgDailyList = sfValRgDailyService.getAllByAidAndMonthAndYear(aid, monthName, year);
+//
+//                BigDecimal kseiSafeFeeAmount = kseiSafekeepingFeeService.calculateAmountFeeByCustomerCodeAndMonthAndYear(kseiSafeCode, monthName, year);
+//
+//                BillingCore billingCore;
+//                Instant dateNow = Instant.now();
+//                if (BillingTemplate.CORE_TEMPLATE_5.getValue().equalsIgnoreCase(billingTemplateFormat)) {
+//                    // calculate EB
+//                    billingCore = calculateEB(aid, billingTemplate, kseiSafeFeeAmount, kseiTransactionFee, skTransactionList);
+//                } else {
+//                    // calculate ITAMA
+//                    billingCore = calculateITAMA(aid, billingTemplate, customerSafekeepingFee, vatFee, sfValRgDailyList);
+//                }
+//
+//                // TODO: Set fields common to BillingCore, common to Core 4 (EB and ITAMA)
+//                billingCore.setApprovalStatus(ApprovalStatus.PENDING);
+//                billingCore.setMonth(monthName);
+//                billingCore.setYear(year);
+//                billingCore.setBillingPeriod(monthName + " " + year);
+//                billingCore.setBillingStatementDate(convertDateUtil.convertInstantToString(dateNow));
+//                billingCore.setBillingPaymentDueDate(convertDateUtil.convertInstantToStringPlus14Days(dateNow));
+//                billingCore.setBillingCategory(customerDTO.getBillingCategory());
+//                billingCore.setBillingType(customerDTO.getBillingType());
+//                billingCore.setBillingTemplate(customerDTO.getBillingTemplate());
+//                billingCore.setInvestmentManagementName(customerDTO.getInvestmentManagementName());
+////                billingCore.setInvestmentManagementAddress(billingCustomerDTO.getInvestmentManagementAddress());
+//                billingCore.setAccountName(customerDTO.getAccountName());
+//                billingCore.setAccountNumber(customerDTO.getAccountNumber());
+//                billingCore.setCostCenter(customerDTO.getCostCenter()); // EB
+//                billingCore.setAccountBank(customerDTO.getAccountBank()); // ITAMA
+//
+//                billingCoreList.add(billingCore);
+//            }
+//
+//            int billingCoreListSize = billingCoreList.size();
+//            List<String> numberList = billingNumberService.generateNumberList(billingCoreListSize, monthName, year);
+//
+//            for (int i = 0; i < billingCoreListSize; i++) {
+//                BillingCore billingCore = billingCoreList.get(i);
+//                String billingNumber = numberList.get(i);
+//                billingCore.setBillingNumber(billingNumber);
+//            }
+//
+//            List<BillingCore> billingCoreSaved = billingCoreRepository.saveAll(billingCoreList);
+//
+//            log.info("Finished calculate Billing Core type 4 with period '{}'", request.getMonthYear());
+//            return "Successfully calculated Billing Core type 4 with a total : " + billingCoreSaved.size();
+//        } catch (Exception e) {
+//            log.error("Error when calculate Billing Core type 4 : " + e.getMessage(), e);
+//            throw new CalculateBillingException("Error when calculate Billing Core type 4 : " + e.getMessage());
+//        }
+        return null;
     }
 
     // TODO: [ITAMA] Calculate Safekeeping Value Frequency [DONE]

@@ -188,16 +188,16 @@ public class CustomerV2ServiceImpl implements CustomerV2Service {
                 .investmentManagementCode(customer.getInvestmentManagementCode())
                 .investmentManagementName(customer.getInvestmentManagementName())
                 .accountName(customer.getAccountName())
-                .accountNumber(customer.getAccountNumber())
-                .accountBank(customer.getAccountBank())
+//                .accountNumber(customer.getAccountNumber())
+//                .accountBank(customer.getAccountBank())
                 .kseiSafeCode(customer.getKseiSafeCode())
-                .customerMinimumFee(customer.getCustomerMinimumFee())
-                .customerSafekeepingFee(customer.getCustomerSafekeepingFee())
+//                .customerMinimumFee(customer.getCustomerMinimumFee())
+//                .customerSafekeepingFee(customer.getCustomerSafekeepingFee())
                 .billingCategory(customer.getBillingCategory())
                 .billingType(customer.getBillingType())
                 .billingTemplate(customer.getBillingTemplate())
                 .currency(customer.getCurrency())
-                .sellingAgentCode(customer.getSellingAgent())
+                .sellingAgentCode(customer.getSellingAgentCode())
                 .build();
     }
 
