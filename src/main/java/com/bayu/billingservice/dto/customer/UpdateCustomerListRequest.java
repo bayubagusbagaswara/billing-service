@@ -20,5 +20,5 @@ public class UpdateCustomerListRequest {
     private String approveId;
     private String approveIPAddress;
 
-    private List<InvestmentManagementDTO> investmentManagementDTOList;
+    private List<CustomerDTO> customerDTOList;
 }

@@ -12,7 +12,7 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
 
     Boolean existsByCustomerCode(String code);
 
-    Optional<Customer> findByCustomerCode(String aid);
+    Optional<Customer> findByCustomerCode(String code);
 
     Optional<Customer> findByKseiSafeCode(String kseiSafeCode);
 

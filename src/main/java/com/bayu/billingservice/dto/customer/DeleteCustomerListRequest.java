@@ -24,5 +24,5 @@ public class DeleteCustomerListRequest {
 
     private String approveIPAddress;
 
-    private List<DeleteCustomerDTO> investmentManagementDTOList;
+    private List<DeleteCustomerDTO> customerDTOList;
 }

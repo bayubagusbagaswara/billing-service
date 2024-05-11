@@ -2,6 +2,7 @@ package com.bayu.billingservice.mapper;
 
 import com.bayu.billingservice.dto.customer.CreateCustomerRequest;
 import com.bayu.billingservice.dto.customer.CustomerDTO;
+import com.bayu.billingservice.dto.customer.UpdateCustomerListRequest;
 import com.bayu.billingservice.dto.datachange.BillingDataChangeDTO;
 import com.bayu.billingservice.model.Customer;
 import com.bayu.billingservice.model.enumerator.ApprovalStatus;
@@ -82,4 +83,9 @@ public class CustomerMapper {
         return customer;
     }
 
+    public CustomerDTO mapFromUpdateRequestToDto(UpdateCustomerListRequest updateCustomerListRequest) {
+        CustomerDTO customerDTO = new CustomerDTO();
+        modelMapperUtil.mapObjects(updateCustomerListRequest, customerDTO);
+        return customerDTO;
+    }
 }
