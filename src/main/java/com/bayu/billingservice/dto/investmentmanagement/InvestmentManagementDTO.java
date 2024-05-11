@@ -25,6 +25,9 @@ public class InvestmentManagementDTO extends ApprovalDTO {
     @Pattern(regexp = "^[a-zA-Z0-9]*$", message = "Name must contain only letters and digits")
     private String code;
 
+    // @Pattern(regexp = "^[0-9]*$", message = "Code must contain only numeric digits") Hanya ANGKA
+//    @Pattern(regexp = "^[0-9.-]*$", message = "Input must contain only numbers, dots, or dashes")
+//    @Pattern(regexp = "^[a-zA-Z ]*$", message = "Input must contain only alphabetic characters and spaces")
     @NotBlank(message = "Name cannot be empty")
     private String name;
 
