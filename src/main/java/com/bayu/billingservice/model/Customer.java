@@ -21,44 +21,50 @@ public class Customer extends Approval {
     private Long id;
 
     @Column(name = "customer_code")
-    private String customerCode; // aid
+    private String customerCode;
 
     @Column(name = "customer_name")
     private String customerName;
 
-    @Column(name = "customer_minimum_fee")
-    private BigDecimal customerMinimumFee; // 5.000.000 etc
+    @Column(name = "billing_category")
+    private String billingCategory;
 
-    @Column(name = "customer_safekeeping_fee")
-    private BigDecimal customerSafekeepingFee; // 0.5 etc
+    @Column(name = "billing_type")
+    private String billingType;
 
-    // MI information
+    @Column(name = "billing_template")
+    private String billingTemplate;
+
+    @Column(name = "currency")
+    private String currency;
+
     @Column(name = "mi_code")
     private String investmentManagementCode;
 
     @Column(name = "mi_name")
     private String investmentManagementName;
 
-    // Account Transaction information
+    @Column(name = "account")
+    private String account;
+
+    @Column(name = "cost_center_debit")
+    private String costCenterDebit;
+
     @Column(name = "account_name")
     private String accountName;
 
-    @Column(name = "account_number")
-    private String accountNumber; //  GL 812017 tapi perlu dicek apakah accountNumber ini ada isinya atau tidak
+    @Column(name = "gl_account_hasil")
+    private String glAccountHasil;
 
-    @Column(name = "cost_center")
-    private String costCenter; // CC 943371
+    @Column(name = "customer_minimum_fee")
+    private BigDecimal customerMinimumFee;
 
-    @Column(name = "account_bank")
-    private String accountBank;
+    @Column(name = "customer_safekeeping_fee")
+    private BigDecimal customerSafekeepingFee;
 
-    @Column(name = "debit_transfer")
-    private BigDecimal debitTransfer;
+    @Column(name = "customer_transaction_handling")
+    private BigDecimal customerTransactionHandling;
 
-    @Column(name = "gl_account_result")
-    private String glAccountResult;
-
-    // NPWP information
     @Column(name = "npwp_number")
     private String npwpNumber;
 
@@ -68,26 +74,13 @@ public class Customer extends Approval {
     @Column(name = "npwp_address")
     private String npwpAddress;
 
-    // KSEI Safekeeping Fee information
+    @Column(name = "cost_center")
+    private String costCenter;
+
     @Column(name = "ksei_safe_code")
     private String kseiSafeCode;
 
-    // Selling Agent information
-    @Column(name = "selling_agent")
-    private String sellingAgent;
-
-    // Other information
-    @Column(name = "currency")
-    private String currency;
-
-    // Billing Information
-    @Column(name = "billing_category")
-    private String billingCategory;
-
-    @Column(name = "billing_type")
-    private String billingType;
-
-    @Column(name = "billing_template")
-    private String billingTemplate;
+    @Column(name = "selling_agent_code")
+    private String sellingAgentCode;
 
 }
