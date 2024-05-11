@@ -12,9 +12,12 @@ import java.util.Optional;
 @Repository
 public interface FeeParameterRepository extends JpaRepository<FeeParameter, Long> {
 
-    Optional<FeeParameter> findByName(String name);
+    @Query(value = "SELECT * FROM fee_parameter AS f WHERE f.name = :name", nativeQuery = true)
+    Optional<FeeParameter> findByName(@Param("name") String name);
 
-    @Query(value = "SELECT * FROM fee_parameter AS f " +
-            "WHERE f.name IN :names", nativeQuery = true)
+    @Query(value = "SELECT * FROM fee_parameter AS f WHERE f.code = :code", nativeQuery = true)
+    Optional<FeeParameter> findByCode(@Param("code") String code);
+
+    @Query(value = "SELECT * FROM fee_parameter AS f WHERE f.name IN :names", nativeQuery = true)
     List<FeeParameter> findFeeParameterByNameList(@Param("names") List<String> names);
 }
