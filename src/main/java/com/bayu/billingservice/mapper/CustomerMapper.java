@@ -48,9 +48,9 @@ public class CustomerMapper {
         customer.setInputId(dataChangeDTO.getInputId());
         customer.setInputIPAddress(dataChangeDTO.getInputIPAddress());
         customer.setInputDate(dataChangeDTO.getInputDate());
-        customer.setApprovalId(dataChangeDTO.getApproveId());
-        customer.setApprovalIPAddress(dataChangeDTO.getApproveIPAddress());
-        customer.setApprovalDate(dataChangeDTO.getApproveDate());
+        customer.setApproveId(dataChangeDTO.getApproveId());
+        customer.setApproveIPAddress(dataChangeDTO.getApproveIPAddress());
+        customer.setApproveDate(dataChangeDTO.getApproveDate());
         return customer;
     }
 }
