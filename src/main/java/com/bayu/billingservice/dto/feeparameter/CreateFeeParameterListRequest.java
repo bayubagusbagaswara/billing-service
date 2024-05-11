@@ -1,25 +1,27 @@
 package com.bayu.billingservice.dto.feeparameter;
 
+import com.bayu.billingservice.dto.investmentmanagement.InvestmentManagementDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateFeeParameterRequest {
+public class CreateFeeParameterListRequest {
 
     private String inputId;
 
     private String inputIPAddress;
 
-    private String code;
+    private String approveId;
 
-    private String name;
+    private String approveIPAddress;
 
-    private String description;
+    private List<FeeParameterDTO> feeParameterDTOList;
 
-    private String value;
 }

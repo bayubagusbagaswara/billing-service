@@ -9,17 +9,15 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateFeeParameterRequest {
+public class UpdateFeeParameterRequest {
 
     private String inputId;
-
     private String inputIPAddress;
 
+    private Long id;
+
     private String code;
-
     private String name;
-
     private String description;
-
     private String value;
 }

@@ -1,17 +1,22 @@
 package com.bayu.billingservice.dto.feeparameter;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.bayu.billingservice.dto.approval.ApprovalDTO;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.*;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class FeeParameterDTO {
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class FeeParameterDTO extends ApprovalDTO  {
 
-    private String id;
+    private Long dataChangeId;
+
+    private Long id;
+
+    private String code;
 
     private String name;
 
