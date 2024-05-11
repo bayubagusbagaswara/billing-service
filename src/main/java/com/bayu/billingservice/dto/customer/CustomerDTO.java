@@ -1,19 +1,19 @@
 package com.bayu.billingservice.dto.customer;
 
+import com.bayu.billingservice.dto.approval.ApprovalDTO;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
-@Builder
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class CustomerDTO {
+public class CustomerDTO extends ApprovalDTO {
 
     private Long dataChangeId;
 
@@ -83,5 +83,6 @@ public class CustomerDTO {
 
     // need a pattern (numeric & alphabet, not special character)
     private String sellingAgentCode;
+
 
 }
