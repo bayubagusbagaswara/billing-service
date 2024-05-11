@@ -11,6 +11,16 @@ public interface FeeParameterService {
 
     FeeParameterDTO create(CreateFeeParameterRequest request);
 
+    // create list
+
+    // create approve
+
+    // edit single data
+
+    // edit multiple
+
+    // edit approve
+
     List<FeeParameterDTO> getAll();
 
     FeeParameterDTO getByName(String name);
