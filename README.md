@@ -510,13 +510,13 @@ File file = new File(DOWNLOAD_FOLDER + "/" + fileName);
 - Pindahi Transaction Handling yang diambil dari Customer
 
 # Yang perlu Data Change
-- Investment Management
-- Customer
+- Investment Management (DONE)
+- Customer (DONE)
 - Fee Parameter (Edit dan Upload (create List) untuk data change)
-- Nasabah Transfer Asset (semua ada, kecuali upload atau create list)
-- Fee Schedule (semua ada, kecuali upload atau create list)
-- Selling Agent (semua ada, kecuali upload atau create list)
-- Exchange Rate (hanya edit)
+- Nasabah Transfer Asset (semua ada, kecuali upload atau create list). Create nya satu per satu
+- Fee Schedule (semua ada, kecuali upload atau create list). Create nya satu per satu
+- Selling Agent (semua ada, kecuali upload atau create list). Create nya satu per satu
+- Exchange Rate (hanya edit). Edit masuk data change. Dan edit approve
 
 # Customer DT0
 
