@@ -37,7 +37,7 @@ public class CustomerMapper {
 
     public CustomerDTO mapFromCreateCustomerRequestToDTO(CreateCustomerRequest createCustomerRequest) {
         CustomerDTO customerDTO = new CustomerDTO();
-        modelMapperUtil.mapObjects(createCustomerRequest, createCustomerRequest);
+        modelMapperUtil.mapObjects(createCustomerRequest, customerDTO);
         return customerDTO;
     }
 
