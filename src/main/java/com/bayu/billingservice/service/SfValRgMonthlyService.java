@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface SfValRgMonthlyService {
 
-    String readFileAndInsertToDB(String filePath);
+    String readFileAndInsertToDB(String filePath, String monthYear);
 
     List<SfValRgMonthly> getAll();
 

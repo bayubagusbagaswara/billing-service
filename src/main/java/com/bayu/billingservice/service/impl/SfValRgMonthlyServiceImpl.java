@@ -5,30 +5,35 @@ import com.bayu.billingservice.exception.DataNotFoundException;
 import com.bayu.billingservice.model.SfValRgMonthly;
 import com.bayu.billingservice.repository.SfValRgMonthlyRepository;
 import com.bayu.billingservice.service.SfValRgMonthlyService;
+import com.bayu.billingservice.util.ConvertDateUtil;
 import com.bayu.billingservice.util.CsvDataMapper;
 import com.bayu.billingservice.util.CsvReaderUtil;
 import com.opencsv.exceptions.CsvException;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.util.List;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class SfValRgMonthlyServiceImpl implements SfValRgMonthlyService {
 
     private final SfValRgMonthlyRepository sfValRgMonthlyRepository;
 
-    public SfValRgMonthlyServiceImpl(SfValRgMonthlyRepository sfValRgMonthlyRepository) {
-        this.sfValRgMonthlyRepository = sfValRgMonthlyRepository;
-    }
-
+    @Transactional
     @Override
-    public String readFileAndInsertToDB(String filePath) {
+    public String readFileAndInsertToDB(String filePath, String monthYear) {
         log.info("Start read and insert SfVal RG Monthly to the database : {}", filePath);
-
         try {
+            String[] monthFormat = ConvertDateUtil.convertToYearMonthFormat(monthYear);
+            String monthName = monthFormat[0];
+            int year = Integer.parseInt(monthFormat[1]);
+            sfValRgMonthlyRepository.deleteByMonthAndYearNative(monthName, year);
+
             List<String[]> rows = CsvReaderUtil.readCsvFile(filePath);
 
             List<SfValRgMonthly> sfValRgMonthlyList = CsvDataMapper.mapCsvSfValRgMonthly(rows);
@@ -60,13 +65,14 @@ public class SfValRgMonthlyServiceImpl implements SfValRgMonthlyService {
                 .orElseThrow(() -> new DataNotFoundException("SfVal RG Monthly not found with Aid : " + aid + " and Security Name : " + securityName));
     }
 
+    @Transactional
     @Override
     public String deleteAll() {
         try {
             sfValRgMonthlyRepository.deleteAll();
             return "Successfully deleted all Sf Val RG Monthly data";
         } catch (Exception e) {
-            log.error("Error when delete all Sf Val RG Monthly : " + e.getMessage(), e);
+            log.error("Error when delete all Sf Val RG Monthly : {}", e.getMessage(), e);
             throw new ConnectionDatabaseException("Error when delete all Sf Val RG Monthly");
         }
     }

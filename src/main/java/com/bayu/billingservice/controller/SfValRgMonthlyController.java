@@ -7,6 +7,7 @@ import com.bayu.billingservice.service.SfValRgMonthlyService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -28,8 +29,8 @@ public class SfValRgMonthlyController {
     private final SfValRgMonthlyService sfValRgMonthlyService;
 
     @GetMapping(path = "/read-insert")
-    public ResponseEntity<ResponseDTO<String>> readAndInsertToDB() {
-        String status = sfValRgMonthlyService.readFileAndInsertToDB(filePath);
+    public ResponseEntity<ResponseDTO<String>> readAndInsertToDB(@Param("monthYear") String monthYear) {
+        String status = sfValRgMonthlyService.readFileAndInsertToDB(filePath, monthYear);
 
         ResponseDTO<String> response = ResponseDTO.<String>builder()
                 .code(HttpStatus.OK.value())
