@@ -517,3 +517,61 @@ File file = new File(DOWNLOAD_FOLDER + "/" + fileName);
 - Fee Schedule (semua ada, kecuali upload atau create list)
 - Selling Agent (semua ada, kecuali upload atau create list)
 - Exchange Rate (hanya edit)
+
+# Customer DT0
+
+```json
+{
+  "id": "Long", 
+  "customerCode": "String",
+  "customerName": "String", 
+  "billingCategory": "String", 
+  "billingType": "String", 
+  "billingTemplate": "String", 
+  "currency": "String", 
+  "investmentManagementCode": "String", 
+  "investmentManagementName": "String",
+  "account": "String", 
+  "costCenterDebit": "String", 
+  "accountName": "String", 
+  "glAccountHasil": "String", 
+  "customerMinimumFee": "String", 
+  "customerSafekeepingFee": "String", 
+  "transactionHandling": "String", 
+  "npwpNumber": "String", 
+  "npwpName": "String", 
+  "npwpAddress": "String",
+  "costCenter": "String", 
+  "kseiSafeCode": "String", 
+  "sellingAgentCode": "String"
+}
+```
+
+# Customer Entity
+
+```json
+{
+  "id": "Long",
+  "customerCode": "String",
+  "customerName": "String",
+  "billingCategory": "String",
+  "billingType": "String",
+  "billingTemplate": "String",
+  "currency": "String",
+  "investmentManagementCode": "String",
+  "investmentManagementName": "String",
+  "account": "String",
+  "costCenterDebit": "String",
+  "accountName": "String",
+  "glAccountHasil": "String",
+  "customerMinimumFee": "Big Decimal",
+  "customerSafekeepingFee": "Big Decimal",
+  "transactionHandling": "Big Decimal",
+  "npwpNumber": "String",
+  "npwpName": "String",
+  "npwpAddress": "String",
+  "costCenter": "String",
+  "kseiSafeCode": "String",
+  "sellingAgentCode": "String"
+}
+```
