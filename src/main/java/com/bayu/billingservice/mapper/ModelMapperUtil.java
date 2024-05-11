@@ -1,4 +1,4 @@
-package com.bayu.billingservice.util;
+package com.bayu.billingservice.mapper;
 
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;

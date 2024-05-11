@@ -11,7 +11,7 @@ import com.bayu.billingservice.service.BillingDataChangeService;
 import com.bayu.billingservice.service.CustomerV2Service;
 import com.bayu.billingservice.service.InvestmentManagementService;
 import com.bayu.billingservice.service.SellingAgentService;
-import com.bayu.billingservice.util.CustomerMapper;
+import com.bayu.billingservice.mapper.CustomerMapper;
 import com.bayu.billingservice.util.EnumValidator;
 import com.bayu.billingservice.util.JsonUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;

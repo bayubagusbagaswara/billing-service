@@ -9,7 +9,7 @@ import com.bayu.billingservice.repository.InvestmentManagementRepository;
 import com.bayu.billingservice.service.BillingDataChangeService;
 import com.bayu.billingservice.service.InvestmentManagementService;
 import com.bayu.billingservice.util.JsonUtil;
-import com.bayu.billingservice.util.ModelMapperUtil;
+import com.bayu.billingservice.mapper.ModelMapperUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -98,9 +98,9 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
                     dataChangeService.createChangeActionADD(dataChangeDTO, InvestmentManagement.class);
                     totalDataSuccess++;
                 } else {
-                    totalDataFailed++;
                     ErrorMessageDTO errorMessageDTO = new ErrorMessageDTO(investmentManagementDTO.getCode(), validationErrors);
                     errorMessageList.add(errorMessageDTO);
+                    totalDataFailed++;
                 }
             } catch (Exception e) {
                 handleGeneralError(investmentManagementDTO, e, errorMessageList);

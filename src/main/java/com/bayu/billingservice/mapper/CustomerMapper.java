@@ -1,4 +1,4 @@
-package com.bayu.billingservice.util;
+package com.bayu.billingservice.mapper;
 
 import com.bayu.billingservice.dto.customer.CreateCustomerRequest;
 import com.bayu.billingservice.dto.customer.CustomerDTO;
