@@ -9,7 +9,6 @@ import com.bayu.billingservice.model.InvestmentManagement;
 import com.bayu.billingservice.repository.InvestmentManagementRepository;
 import com.bayu.billingservice.service.BillingDataChangeService;
 import com.bayu.billingservice.service.InvestmentManagementService;
-import com.bayu.billingservice.util.ConvertDateUtil;
 import com.bayu.billingservice.util.JsonUtil;
 import com.bayu.billingservice.mapper.ModelMapperUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -33,7 +32,6 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
     private final ObjectMapper objectMapper;
     private final ModelMapperUtil modelMapperUtil;
     private final InvestmentManagementMapper investmentManagementMapper;
-    private final ConvertDateUtil convertDateUtil;
 
     private static final String ID_NOT_FOUND = "Investment Management not found with id: ";
     private static final String CODE_NOT_FOUND = "Investment Management not found with code: ";
@@ -179,7 +177,7 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
 
     @Override
     public UpdateInvestmentManagementListResponse updateMultipleData(UpdateInvestmentManagementListRequest requestList, BillingDataChangeDTO dataChangeDTO) {
-        log.info("Update investment management list with request: {}", requestList);
+        log.info("Update multiple investment management with request: {}", requestList);
         int totalDataSuccess = 0;
         int totalDataFailed = 0;
         List<ErrorMessageDTO> errorMessageList = new ArrayList<>();
@@ -267,8 +265,8 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
                 .id(request.getId())
                 .build();
         try {
-            InvestmentManagement investmentManagement= investmentManagementRepository.findById(request.getId())
-                    .orElseThrow(() -> new DataNotFoundException(ID_NOT_FOUND + request.getId()));
+            InvestmentManagement investmentManagement= investmentManagementRepository.findById(investmentManagementDTO.getId())
+                    .orElseThrow(() -> new DataNotFoundException(ID_NOT_FOUND + investmentManagementDTO.getId()));
 
             dataChangeDTO.setInputId(request.getInputId());
             dataChangeDTO.setInputIPAddress(request.getInputIPAddress());
@@ -291,6 +289,7 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
         int totalDataSuccess = 0;
         int totalDataFailed = 0;
         List<ErrorMessageDTO> errorMessageList = new ArrayList<>();
+
 
         validateDataChangeIds(requestList.getInvestmentManagementDTOList()
                 .stream()
@@ -322,7 +321,7 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
                 dataChangeDTO.setApproveIPAddress(requestList.getApproveIPAddress());
                 dataChangeDTO.setApproveDate(new Date());
                 List<String> validationErrors = new ArrayList<>();
-                validationErrors.add("Billing customer not found with id: " + investmentManagementDTO.getId());
+                validationErrors.add(ID_NOT_FOUND + investmentManagementDTO.getId());
 
                 dataChangeService.approvalStatusIsRejected(dataChangeDTO, validationErrors);
                 totalDataFailed++;
