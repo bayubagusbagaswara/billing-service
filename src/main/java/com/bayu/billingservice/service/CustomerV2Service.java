@@ -23,7 +23,7 @@ public interface CustomerV2Service {
 
     CreateCustomerListResponse createMultipleApprove(CreateCustomerListRequest request);
 
-    UpdateCustomerListResponse updateSingleData(UpdateCustomerListRequest request, BillingDataChangeDTO dataChangeDTO);
+    UpdateCustomerListResponse updateSingleData(UpdateCustomerRequest request, BillingDataChangeDTO dataChangeDTO);
 
     UpdateCustomerListResponse updateMultipleData(UpdateCustomerListRequest request, BillingDataChangeDTO dataChangeDTO);
 

@@ -15,6 +15,7 @@ import com.bayu.billingservice.service.SellingAgentService;
 import com.bayu.billingservice.mapper.CustomerMapper;
 import com.bayu.billingservice.util.EnumValidator;
 import com.bayu.billingservice.util.JsonUtil;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +25,7 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -78,11 +80,40 @@ public class CustomerV2ServiceImpl implements CustomerV2Service {
     @Override
     public CreateCustomerListResponse createSingleData(CreateCustomerRequest request, BillingDataChangeDTO dataChangeDTO) {
         log.info("Create single data billing customer with request: {}", request);
+        return processDataChangeForCustomer(request, dataChangeDTO);
+    }
+
+    @Override
+    public CreateCustomerListResponse createMultipleData(CreateCustomerListRequest request, BillingDataChangeDTO dataChangeDTO) {
+        log.info("Create billing customer multiple data with request: {}", request);
+        return processDataChangeForCustomerList(request.getCustomerDTOList(), dataChangeDTO);
+    }
+
+    private CreateCustomerListResponse processDataChangeForCustomer(CreateCustomerRequest request, BillingDataChangeDTO dataChangeDTO) {
+        CustomerDTO customerDTO = customerMapper.mapFromCreateCustomerRequestToDTO(request);
+        return processDataChangeForCustomerDTO(customerDTO, dataChangeDTO);
+    }
+
+    private CreateCustomerListResponse processDataChangeForCustomerList(List<CustomerDTO> customerDTOList, BillingDataChangeDTO dataChangeDTO) {
         int totalDataSuccess = 0;
         int totalDataFailed = 0;
         List<ErrorMessageDTO> errorMessageDTOList = new ArrayList<>();
 
-        CustomerDTO customerDTO = customerMapper.mapFromCreateCustomerRequestToDTO(request);
+        for (CustomerDTO customerDTO : customerDTOList) {
+            CreateCustomerListResponse response = processDataChangeForCustomerDTO(customerDTO, dataChangeDTO);
+            totalDataSuccess += response.getTotalDataSuccess();
+            totalDataFailed += response.getTotalDataFailed();
+            errorMessageDTOList.addAll(response.getErrorMessageDTOList());
+        }
+
+        return new CreateCustomerListResponse(totalDataSuccess, totalDataFailed, errorMessageDTOList);
+    }
+
+    private CreateCustomerListResponse processDataChangeForCustomerDTO(CustomerDTO customerDTO, BillingDataChangeDTO dataChangeDTO) {
+        int totalDataSuccess = 0;
+        int totalDataFailed = 0;
+        List<ErrorMessageDTO> errorMessageDTOList = new ArrayList<>();
+
         try {
             List<String> validationErrors = new ArrayList<>();
             validationCustomerCodeAlreadyExists(customerDTO.getCustomerCode(), validationErrors);
@@ -91,8 +122,8 @@ public class CustomerV2ServiceImpl implements CustomerV2Service {
             customerDTO.setInvestmentManagementCode(investmentManagementDTO.getCode());
 
             if (validationErrors.isEmpty()) {
-                dataChangeDTO.setInputId(request.getInputId());
-                dataChangeDTO.setInputIPAddress(request.getInputIPAddress());
+                dataChangeDTO.setInputId(dataChangeDTO.getInputId());
+                dataChangeDTO.setInputIPAddress(dataChangeDTO.getInputIPAddress());
                 dataChangeDTO.setJsonDataAfter(JsonUtil.cleanedJsonData(objectMapper.writeValueAsString(customerDTO)));
 
                 dataChangeService.createChangeActionADD(dataChangeDTO, Customer.class);
@@ -106,41 +137,7 @@ public class CustomerV2ServiceImpl implements CustomerV2Service {
             handleGeneralError(customerDTO, e, errorMessageDTOList);
             totalDataFailed++;
         }
-        return new CreateCustomerListResponse(totalDataSuccess, totalDataFailed, errorMessageDTOList);
-    }
 
-    @Override
-    public CreateCustomerListResponse createMultipleData(CreateCustomerListRequest request, BillingDataChangeDTO dataChangeDTO) {
-        log.info("Create billing customer multiple data with request: {}", request);
-        int totalDataSuccess = 0;
-        int totalDataFailed = 0;
-        List<ErrorMessageDTO> errorMessageDTOList = new ArrayList<>();
-
-        for (CustomerDTO customerDTO : request.getCustomerDTOList()) {
-            try {
-                List<String> validationErrors = new ArrayList<>();
-                validationCustomerCodeAlreadyExists(customerDTO.getCustomerCode(), validationErrors);
-
-                InvestmentManagementDTO investmentManagementDTO = investmentManagementService.getByCode(customerDTO.getInvestmentManagementCode());
-                customerDTO.setInvestmentManagementCode(investmentManagementDTO.getCode());
-
-                if (validationErrors.isEmpty()) {
-                    dataChangeDTO.setInputId(request.getInputId());
-                    dataChangeDTO.setInputIPAddress(request.getInputIPAddress());
-                    dataChangeDTO.setJsonDataAfter(JsonUtil.cleanedJsonData(objectMapper.writeValueAsString(customerDTO)));
-
-                    dataChangeService.createChangeActionADD(dataChangeDTO, Customer.class);
-                    totalDataSuccess++;
-                } else {
-                    ErrorMessageDTO errorMessageDTO = new ErrorMessageDTO(customerDTO.getCustomerCode(), validationErrors);
-                    errorMessageDTOList.add(errorMessageDTO);
-                    totalDataFailed++;
-                }
-            } catch (Exception e) {
-                handleGeneralError(customerDTO, e, errorMessageDTOList);
-                totalDataFailed++;
-            }
-        }
         return new CreateCustomerListResponse(totalDataSuccess, totalDataFailed, errorMessageDTOList);
     }
 
@@ -205,63 +202,53 @@ public class CustomerV2ServiceImpl implements CustomerV2Service {
     }
 
     @Override
-    public UpdateCustomerListResponse updateSingleData(UpdateCustomerListRequest request, BillingDataChangeDTO dataChangeDTO) {
+    public UpdateCustomerListResponse updateSingleData(UpdateCustomerRequest request, BillingDataChangeDTO dataChangeDTO) {
         log.info("Update billing customer by id with request: {}", request);
-        int totalDataSuccess = 0;
-        int totalDataFailed = 0;
-        List<ErrorMessageDTO> errorMessageList = new ArrayList<>();
-
+        dataChangeDTO.setInputId(request.getInputId());
+        dataChangeDTO.setInputIPAddress(request.getInputIPAddress());
         CustomerDTO customerDTO = customerMapper.mapFromUpdateRequestToDto(request);
-        try {
-            Customer customer = customerRepository.findById(customerDTO.getId())
-                    .orElseThrow(() -> new DataNotFoundException(ID_NOT_FOUND + customerDTO.getId()));
-
-            InvestmentManagementDTO investmentManagementDTO = investmentManagementService.getByCode(customerDTO.getInvestmentManagementCode());
-            customerDTO.setInvestmentManagementCode(investmentManagementDTO.getCode());
-
-            // error yang kita kehendaki adalah MI Code tidak ada di database
-            dataChangeDTO.setInputId(request.getInputId());
-            dataChangeDTO.setInputIPAddress(request.getInputIPAddress());
-            dataChangeDTO.setJsonDataBefore(JsonUtil.cleanedJsonData(objectMapper.writeValueAsString(customer)));
-            dataChangeDTO.setJsonDataAfter(JsonUtil.cleanedJsonData(objectMapper.writeValueAsString(customerDTO)));
-
-            dataChangeService.createChangeActionEDIT(dataChangeDTO, Customer.class);
-            totalDataSuccess++;
-        } catch (Exception e) {
-            handleGeneralError(customerDTO, e, errorMessageList);
-            totalDataFailed++;
-        }
-        return new UpdateCustomerListResponse(totalDataSuccess, totalDataFailed, errorMessageList);
+        return processUpdateForCustomerList(Collections.singletonList(customerDTO), dataChangeDTO);
     }
 
     @Override
     public UpdateCustomerListResponse updateMultipleData(UpdateCustomerListRequest updateCustomerListRequest, BillingDataChangeDTO dataChangeDTO) {
         log.info("Update multiple billing customer with request: {}", updateCustomerListRequest);
+        dataChangeDTO.setInputId(updateCustomerListRequest.getInputId());
+        dataChangeDTO.setInputIPAddress(updateCustomerListRequest.getInputIPAddress());
+        return processUpdateForCustomerList(updateCustomerListRequest.getCustomerDTOList(), dataChangeDTO);
+    }
+
+    private UpdateCustomerListResponse processUpdateForCustomerList(List<CustomerDTO> customerDTOList, BillingDataChangeDTO dataChangeDTO) {
         int totalDataSuccess = 0;
         int totalDataFailed = 0;
         List<ErrorMessageDTO> errorMessageList = new ArrayList<>();
 
-        for (CustomerDTO customerDTO : updateCustomerListRequest.getCustomerDTOList()) {
+        for (CustomerDTO customerDTO : customerDTOList) {
             try {
                 Customer customer = customerRepository.findById(customerDTO.getId())
-                        .orElseThrow(() -> new DataNotFoundException(ID_NOT_FOUND + customerDTO.getId()));
+                        .orElseThrow(() -> new DataNotFoundException("Customer not found with ID: " + customerDTO.getId()));
 
                 InvestmentManagementDTO investmentManagementDTO = investmentManagementService.getByCode(customerDTO.getInvestmentManagementCode());
                 customerDTO.setInvestmentManagementCode(investmentManagementDTO.getCode());
 
-                dataChangeDTO.setInputId(updateCustomerListRequest.getInputId());
-                dataChangeDTO.setInputIPAddress(updateCustomerListRequest.getInputIPAddress());
-                dataChangeDTO.setJsonDataBefore(JsonUtil.cleanedJsonData(objectMapper.writeValueAsString(customer)));
-                dataChangeDTO.setJsonDataAfter(JsonUtil.cleanedJsonData(objectMapper.writeValueAsString(customerDTO)));
-
-                dataChangeService.createChangeActionEDIT(dataChangeDTO, Customer.class);
+                updateCustomerAndDataChange(customer, customerDTO, dataChangeDTO);
                 totalDataSuccess++;
             } catch (Exception e) {
                 handleGeneralError(customerDTO, e, errorMessageList);
                 totalDataFailed++;
             }
         }
+
         return new UpdateCustomerListResponse(totalDataSuccess, totalDataFailed, errorMessageList);
+    }
+
+    private void updateCustomerAndDataChange(Customer customer, CustomerDTO customerDTO, BillingDataChangeDTO dataChangeDTO) throws JsonProcessingException {
+        dataChangeDTO.setInputId(dataChangeDTO.getInputId());
+        dataChangeDTO.setInputIPAddress(dataChangeDTO.getInputIPAddress());
+        dataChangeDTO.setJsonDataBefore(JsonUtil.cleanedJsonData(objectMapper.writeValueAsString(customer)));
+        dataChangeDTO.setJsonDataAfter(JsonUtil.cleanedJsonData(objectMapper.writeValueAsString(customerDTO)));
+
+        dataChangeService.createChangeActionEDIT(dataChangeDTO, Customer.class);
     }
 
     @Override
@@ -280,7 +267,7 @@ public class CustomerV2ServiceImpl implements CustomerV2Service {
                 Customer customer = customerRepository.findByCustomerCode(customerDTO.getCustomerCode())
                         .orElseThrow(() -> new DataNotFoundException(CODE_NOT_FOUND + customerDTO.getCustomerCode()));
 
-                modelMapperUtil.mapObjects(customerDTO, customer);
+                customerMapper.mapObjects(customerDTO, customer);
                 log.info("Customer after mapper: {}", customer);
 
                 Errors errors = validateCustomerUsingValidator(customerMapper.mapFromEntityToDto(customer));
