@@ -1,21 +1,21 @@
 package com.bayu.billingservice.model;
 
+import com.bayu.billingservice.model.base.Approval;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+@EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "exchange_rate")
 @Data
-@Builder
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ExchangeRate {
+public class ExchangeRate extends Approval {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
