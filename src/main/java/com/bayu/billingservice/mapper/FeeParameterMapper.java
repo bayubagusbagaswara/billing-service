@@ -3,11 +3,10 @@ package com.bayu.billingservice.mapper;
 import com.bayu.billingservice.dto.datachange.BillingDataChangeDTO;
 import com.bayu.billingservice.dto.feeparameter.CreateFeeParameterRequest;
 import com.bayu.billingservice.dto.feeparameter.FeeParameterDTO;
-import com.bayu.billingservice.dto.feeparameter.UpdateFeeParameterListRequest;
+import com.bayu.billingservice.dto.feeparameter.UpdateFeeParameterRequest;
 import com.bayu.billingservice.model.FeeParameter;
 import com.bayu.billingservice.model.enumerator.ApprovalStatus;
 import com.bayu.billingservice.util.ConvertDateUtil;
-import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
 import org.springframework.stereotype.Component;
@@ -15,20 +14,20 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-@RequiredArgsConstructor
 public class FeeParameterMapper {
 
-    private final ModelMapperUtil modelMapperUtil;
+    private final ModelMapper modelMapper;
     private final ConvertDateUtil convertDateUtil;
 
-    public FeeParameter mapFromDtoToEntity(FeeParameterDTO feeParameterDTO) {
-        FeeParameter feeParameter = new FeeParameter();
-        modelMapperUtil.mapObjects(feeParameterDTO, feeParameter);
-        return feeParameter;
+    public FeeParameterMapper(ModelMapper modelMapper, ConvertDateUtil convertDateUtil) {
+        this.modelMapper = modelMapper;
+        this.convertDateUtil = convertDateUtil;
+        configureMapper();
     }
 
-    public FeeParameterDTO mapFromEntityToDto(FeeParameter feeParameter) {
-        ModelMapper modelMapper = modelMapperUtil.getModelMapper();
+    private void configureMapper() {
+        modelMapper.getConfiguration().setSkipNullEnabled(true);
+
         modelMapper.addMappings(new PropertyMap<FeeParameter, FeeParameterDTO>() {
             @Override
             protected void configure() {
@@ -41,6 +40,13 @@ public class FeeParameterMapper {
                 skip(destination.getApproveDate());
             }
         });
+    }
+
+    public FeeParameter mapFromDtoToEntity(FeeParameterDTO feeParameterDTO) {
+        return modelMapper.map(feeParameterDTO, FeeParameter.class);
+    }
+
+    public FeeParameterDTO mapFromEntityToDto(FeeParameter feeParameter) {
         return modelMapper.map(feeParameter, FeeParameterDTO.class);
     }
 
@@ -50,15 +56,16 @@ public class FeeParameterMapper {
                 .toList();
     }
 
-    public FeeParameterDTO mapFromCreateFeeParameterRequestToDto(CreateFeeParameterRequest createFeeParameterRequest) {
-        FeeParameterDTO feeParameterDTO = new FeeParameterDTO();
-        modelMapperUtil.mapObjects(createFeeParameterRequest, feeParameterDTO);
-        return feeParameterDTO;
+    public FeeParameterDTO mapFromCreateRequestToDto(CreateFeeParameterRequest createFeeParameterRequest) {
+        return modelMapper.map(createFeeParameterRequest, FeeParameterDTO.class);
+    }
+
+    public FeeParameterDTO mapFromUpdateRequestToDto(UpdateFeeParameterRequest updateFeeParameterRequest) {
+        return modelMapper.map(updateFeeParameterRequest, FeeParameterDTO.class);
     }
 
     public FeeParameter createEntity(FeeParameterDTO feeParameterDTO, BillingDataChangeDTO dataChangeDTO) {
-        FeeParameter feeParameter = new FeeParameter();
-        modelMapperUtil.mapObjects(feeParameterDTO, feeParameter);
+        FeeParameter feeParameter = modelMapper.map(feeParameterDTO, FeeParameter.class);
         feeParameter.setApprovalStatus(ApprovalStatus.APPROVED);
         feeParameter.setInputId(dataChangeDTO.getInputId());
         feeParameter.setInputIPAddress(dataChangeDTO.getInputIPAddress());
@@ -70,8 +77,7 @@ public class FeeParameterMapper {
     }
 
     public FeeParameter updateEntity(FeeParameter feeParameterUpdated, BillingDataChangeDTO dataChangeDTO) {
-        FeeParameter feeParameter = new FeeParameter();
-        modelMapperUtil.mapObjects(feeParameterUpdated, feeParameter);
+        FeeParameter feeParameter = modelMapper.map(feeParameterUpdated, FeeParameter.class);
         feeParameter.setApprovalStatus(ApprovalStatus.APPROVED);
         feeParameter.setInputId(dataChangeDTO.getInputId());
         feeParameter.setInputIPAddress(dataChangeDTO.getInputIPAddress());
@@ -82,14 +88,8 @@ public class FeeParameterMapper {
         return feeParameter;
     }
 
-    public FeeParameterDTO mapFromUpdateRequestToDto(UpdateFeeParameterListRequest updateFeeParameterListRequest) {
-        FeeParameterDTO feeParameterDTO = new FeeParameterDTO();
-        modelMapperUtil.mapObjects(updateFeeParameterListRequest, feeParameterDTO);
-        return feeParameterDTO;
-    }
-
     public void mapObjects(FeeParameterDTO feeParameterDTOSource, FeeParameter feeParameterTarget) {
-        modelMapperUtil.mapObjects(feeParameterDTOSource, feeParameterTarget);
+        modelMapper.map(feeParameterDTOSource, feeParameterTarget);
     }
 
 }

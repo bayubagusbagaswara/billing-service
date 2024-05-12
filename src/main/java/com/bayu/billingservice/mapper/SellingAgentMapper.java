@@ -28,7 +28,7 @@ public class SellingAgentMapper {
     }
 
     public SellingAgentDTO mapFromEntityToDto(SellingAgent sellingAgent) {
-        ModelMapper modelMapper = modelMapperUtil.getModelMapper();
+        ModelMapper modelMapper = new ModelMapper();
         modelMapper.addMappings(new PropertyMap<SellingAgent, SellingAgentDTO>() {
             @Override
             protected void configure() {

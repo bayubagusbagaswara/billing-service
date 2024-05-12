@@ -3,11 +3,11 @@ package com.bayu.billingservice.mapper;
 import com.bayu.billingservice.dto.customer.CreateCustomerRequest;
 import com.bayu.billingservice.dto.customer.CustomerDTO;
 import com.bayu.billingservice.dto.customer.UpdateCustomerListRequest;
+import com.bayu.billingservice.dto.customer.UpdateCustomerRequest;
 import com.bayu.billingservice.dto.datachange.BillingDataChangeDTO;
 import com.bayu.billingservice.model.Customer;
 import com.bayu.billingservice.model.enumerator.ApprovalStatus;
 import com.bayu.billingservice.util.ConvertDateUtil;
-import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
 import org.springframework.stereotype.Component;
@@ -15,20 +15,19 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-@RequiredArgsConstructor
 public class CustomerMapper {
-
-    private final ModelMapperUtil modelMapperUtil;
+    private final ModelMapper modelMapper;
     private final ConvertDateUtil convertDateUtil;
 
-    public Customer mapFromDtoToEntity(CustomerDTO customerDTO) {
-        Customer customer = new Customer();
-        modelMapperUtil.mapObjects(customerDTO, customer);
-        return customer;
+    public CustomerMapper(ModelMapper modelMapper, ConvertDateUtil convertDateUtil) {
+        this.modelMapper = modelMapper;
+        this.convertDateUtil = convertDateUtil;
+        configureMapper();
     }
 
-    public CustomerDTO mapFromEntityToDto(Customer customer) {
-        ModelMapper modelMapper = new ModelMapper();
+    private void configureMapper() {
+        modelMapper.getConfiguration().setSkipNullEnabled(true);
+
         modelMapper.addMappings(new PropertyMap<Customer, CustomerDTO>() {
             @Override
             protected void configure() {
@@ -41,7 +40,13 @@ public class CustomerMapper {
                 skip(destination.getApproveDate());
             }
         });
+    }
 
+    public Customer mapFromDtoToEntity(CustomerDTO customerDTO) {
+        return modelMapper.map(customerDTO, Customer.class);
+    }
+
+    public CustomerDTO mapFromEntityToDto(Customer customer) {
         return modelMapper.map(customer, CustomerDTO.class);
     }
 
@@ -52,18 +57,18 @@ public class CustomerMapper {
     }
 
     public CustomerDTO mapFromCreateCustomerRequestToDTO(CreateCustomerRequest createCustomerRequest) {
-        CustomerDTO customerDTO = new CustomerDTO();
-        modelMapperUtil.mapObjects(createCustomerRequest, customerDTO);
-        return customerDTO;
+        return modelMapper.map(createCustomerRequest, CustomerDTO.class);
     }
 
     public Customer createEntity(CustomerDTO customerDTO, BillingDataChangeDTO dataChangeDTO) {
-        Customer customer = new Customer();
-        modelMapperUtil.mapObjects(customerDTO, customer);
+        Customer customer = modelMapper.map(customerDTO, Customer.class);
+        // Set approval status to APPROVED
         customer.setApprovalStatus(ApprovalStatus.APPROVED);
+        // Set input details from dataChangeDTO
         customer.setInputId(dataChangeDTO.getInputId());
         customer.setInputIPAddress(dataChangeDTO.getInputIPAddress());
         customer.setInputDate(dataChangeDTO.getInputDate());
+        // Set approve details from dataChangeDTO
         customer.setApproveId(dataChangeDTO.getApproveId());
         customer.setApproveIPAddress(dataChangeDTO.getApproveIPAddress());
         customer.setApproveDate(convertDateUtil.getDate());
@@ -71,8 +76,7 @@ public class CustomerMapper {
     }
 
     public Customer updateEntity(Customer customerUpdated, BillingDataChangeDTO dataChangeDTO) {
-        Customer customer = new Customer();
-        modelMapperUtil.mapObjects(customerUpdated, customer);
+        Customer customer = modelMapper.map(customerUpdated, Customer.class);
         customer.setApprovalStatus(dataChangeDTO.getApprovalStatus());
         customer.setInputId(dataChangeDTO.getInputId());
         customer.setInputIPAddress(dataChangeDTO.getInputIPAddress());
@@ -83,9 +87,11 @@ public class CustomerMapper {
         return customer;
     }
 
-    public CustomerDTO mapFromUpdateRequestToDto(UpdateCustomerListRequest updateCustomerListRequest) {
-        CustomerDTO customerDTO = new CustomerDTO();
-        modelMapperUtil.mapObjects(updateCustomerListRequest, customerDTO);
-        return customerDTO;
+    public CustomerDTO mapFromUpdateRequestToDto(UpdateCustomerRequest updateCustomerRequest) {
+        return modelMapper.map(updateCustomerRequest, CustomerDTO.class);
+    }
+
+    public void mapObjects(CustomerDTO customerDTOSource, Customer customerTarget) {
+        modelMapper.map(customerDTOSource, customerTarget);
     }
 }

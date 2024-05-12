@@ -16,22 +16,18 @@ import java.util.List;
 @Component
 public class InvestmentManagementMapper {
 
-    private final ModelMapperUtil modelMapperUtil;
+    private final ModelMapper modelMapper;
     private final ConvertDateUtil convertDateUtil;
 
-    public InvestmentManagementMapper(ModelMapperUtil modelMapperUtil, ConvertDateUtil convertDateUtil) {
-        this.modelMapperUtil = modelMapperUtil;
+    public InvestmentManagementMapper(ModelMapper modelMapper, ConvertDateUtil convertDateUtil) {
+        this.modelMapper = modelMapper;
         this.convertDateUtil = convertDateUtil;
+        configureMapper();
     }
 
-    public InvestmentManagement mapFromDtoToEntity(InvestmentManagementDTO investmentManagementDTO) {
-        InvestmentManagement investmentManagement = new InvestmentManagement();
-        modelMapperUtil.mapObjects(investmentManagementDTO, investmentManagement);
-        return investmentManagement;
-    }
+    private void configureMapper() {
+        modelMapper.getConfiguration().setSkipNullEnabled(true);
 
-    public InvestmentManagementDTO mapFromEntityToDto(InvestmentManagement investmentManagement) {
-        ModelMapper modelMapper = new ModelMapper();
         modelMapper.addMappings(new PropertyMap<InvestmentManagement, InvestmentManagementDTO>() {
             @Override
             protected void configure() {
@@ -44,7 +40,13 @@ public class InvestmentManagementMapper {
                 skip(destination.getApproveDate());
             }
         });
+    }
 
+    public InvestmentManagement mapFromDtoToEntity(InvestmentManagementDTO investmentManagementDTO) {
+        return modelMapper.map(investmentManagementDTO, InvestmentManagement.class);
+    }
+
+    public InvestmentManagementDTO mapFromEntityToDto(InvestmentManagement investmentManagement) {
         return modelMapper.map(investmentManagement, InvestmentManagementDTO.class);
     }
 
@@ -55,20 +57,15 @@ public class InvestmentManagementMapper {
     }
 
     public InvestmentManagementDTO mapFromCreateRequestToDto(CreateInvestmentManagementRequest createInvestmentManagementRequest) {
-        InvestmentManagementDTO investmentManagementDTO = new InvestmentManagementDTO();
-        modelMapperUtil.mapObjects(createInvestmentManagementRequest, investmentManagementDTO);
-        return investmentManagementDTO;
+        return modelMapper.map(createInvestmentManagementRequest, InvestmentManagementDTO.class);
     }
 
     public InvestmentManagementDTO mapFromUpdateRequestToDto(UpdateInvestmentManagementRequest updateInvestmentManagementRequest) {
-        InvestmentManagementDTO investmentManagementDTO = new InvestmentManagementDTO();
-        modelMapperUtil.mapObjects(updateInvestmentManagementRequest, investmentManagementDTO);
-        return investmentManagementDTO;
+        return modelMapper.map(updateInvestmentManagementRequest, InvestmentManagementDTO.class);
     }
 
     public InvestmentManagement createEntity(InvestmentManagementDTO investmentManagementDTO, BillingDataChangeDTO dataChangeDTO) {
-        InvestmentManagement investmentManagement = new InvestmentManagement();
-        modelMapperUtil.mapObjects(investmentManagementDTO, investmentManagement);
+        InvestmentManagement investmentManagement = modelMapper.map(investmentManagementDTO, InvestmentManagement.class);
         investmentManagement.setApprovalStatus(ApprovalStatus.APPROVED);
         investmentManagement.setInputId(dataChangeDTO.getInputId());
         investmentManagement.setInputIPAddress(dataChangeDTO.getInputIPAddress());
@@ -80,8 +77,7 @@ public class InvestmentManagementMapper {
     }
 
     public InvestmentManagement updateEntity(InvestmentManagement investmentManagementUpdated, BillingDataChangeDTO dataChangeDTO) {
-        InvestmentManagement investmentManagement = new InvestmentManagement();
-        modelMapperUtil.mapObjects(investmentManagementUpdated, investmentManagement);
+        InvestmentManagement investmentManagement = modelMapper.map(investmentManagementUpdated, InvestmentManagement.class);
         investmentManagement.setApprovalStatus(ApprovalStatus.APPROVED);
         investmentManagement.setInputId(dataChangeDTO.getInputId());
         investmentManagement.setInputIPAddress(dataChangeDTO.getInputIPAddress());
@@ -91,4 +87,9 @@ public class InvestmentManagementMapper {
         investmentManagement.setApproveDate(convertDateUtil.getDate());
         return investmentManagement;
     }
+
+    public void mapObjects(InvestmentManagementDTO investmentManagementDTOSource, InvestmentManagement investmentManagementTarget) {
+        modelMapper.map(investmentManagementDTOSource, investmentManagementTarget);
+    }
+
 }

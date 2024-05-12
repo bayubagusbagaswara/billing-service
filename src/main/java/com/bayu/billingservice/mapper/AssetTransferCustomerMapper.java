@@ -28,7 +28,7 @@ public class AssetTransferCustomerMapper {
     }
 
     public  AssetTransferCustomerDTO mapFromEntityToDto( AssetTransferCustomer assetTransferCustomer) {
-        ModelMapper modelMapper = modelMapperUtil.getModelMapper();
+        ModelMapper modelMapper = new ModelMapper();
         modelMapper.addMappings(new PropertyMap<AssetTransferCustomer,  AssetTransferCustomerDTO>() {
             @Override
             protected void configure() {

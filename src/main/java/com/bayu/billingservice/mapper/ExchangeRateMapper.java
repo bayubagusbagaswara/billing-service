@@ -28,7 +28,7 @@ public class ExchangeRateMapper {
     }
 
     public ExchangeRateDTO mapFromEntityToDto(ExchangeRate exchangeRate) {
-        ModelMapper modelMapper = modelMapperUtil.getModelMapper();
+        ModelMapper modelMapper = new ModelMapper();
         modelMapper.addMappings(new PropertyMap<ExchangeRate, ExchangeRateDTO>() {
             @Override
             protected void configure() {

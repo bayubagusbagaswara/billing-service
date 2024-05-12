@@ -28,7 +28,7 @@ public class FeeScheduleMapper {
     }
 
     public FeeScheduleDTO mapFromEntityToDto(FeeSchedule feeSchedule) {
-        ModelMapper modelMapper = modelMapperUtil.getModelMapper();
+        ModelMapper modelMapper = new ModelMapper();
         modelMapper.addMappings(new PropertyMap<FeeSchedule, FeeScheduleDTO>() {
             @Override
             protected void configure() {
