@@ -1,6 +1,5 @@
 package com.bayu.billingservice.dto.investmentmanagement;
 
-import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
