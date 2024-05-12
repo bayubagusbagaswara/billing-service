@@ -15,14 +15,14 @@ public class ConvertBigDecimalUtil {
     public static BigDecimal parseBigDecimalOrDefault(String value) {
         try {
             String normalized;
-            if (null == value || 0 == value.trim().length()) {
+            if (null == value || value.trim().isEmpty()) {
                 normalized = "0";
             } else {
                 normalized = value;
             }
             return new BigDecimal(normalized);
         } catch (Exception e) {
-            log.error("Parse BigDecimal is Failed : " + e.getMessage(), e);
+            log.error("Parse BigDecimal is Failed : {}", e.getMessage(), e);
             return null;
         }
     }
