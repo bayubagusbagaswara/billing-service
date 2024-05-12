@@ -1,11 +1,12 @@
 package com.bayu.billingservice.controller;
 
 import com.bayu.billingservice.dto.ResponseDTO;
-import com.bayu.billingservice.dto.feeparameter.CreateFeeParameterRequest;
-import com.bayu.billingservice.dto.feeparameter.FeeParameterDTO;
+import com.bayu.billingservice.dto.datachange.BillingDataChangeDTO;
+import com.bayu.billingservice.dto.feeparameter.*;
 import com.bayu.billingservice.service.FeeParameterService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,18 +22,86 @@ import java.util.Map;
 public class FeeParameterController {
 
     private final FeeParameterService feeParameterService;
+    private static final String MENU_FEE_PARAMETER = "Fee Parameter";
 
-    @GetMapping(path = "/create")
-    public ResponseEntity<ResponseDTO<FeeParameterDTO>> create(@RequestBody CreateFeeParameterRequest request) {
-        FeeParameterDTO feeParameterDTO = feeParameterService.create(request);
+    @PostMapping(path = "/create")
+    public ResponseEntity<ResponseDTO<CreateFeeParameterListResponse>> createSingleData(@RequestBody CreateFeeParameterRequest createFeeParameterRequest) {
+        BillingDataChangeDTO dataChangeDTO = BillingDataChangeDTO.builder()
+                .methodHttp(HttpMethod.POST.name())
+                .endpoint("/api/fee-parameter/create/approve")
+                .isRequestBody(true)
+                .isRequestParam(false)
+                .isPathVariable(false)
+                .menu(MENU_FEE_PARAMETER)
+                .build();
+        CreateFeeParameterListResponse list = feeParameterService.createSingleData(createFeeParameterRequest, dataChangeDTO);
+        ResponseDTO<CreateFeeParameterListResponse> response = ResponseDTO.<CreateFeeParameterListResponse>builder()
+                .code(HttpStatus.OK.value())
+                .message(HttpStatus.OK.getReasonPhrase())
+                .payload(list)
+                .build();
+        return ResponseEntity.ok().body(response);
+    }
 
-        ResponseDTO<FeeParameterDTO> response = ResponseDTO.<FeeParameterDTO>builder()
-                .code(HttpStatus.CREATED.value())
-                .message(HttpStatus.CREATED.getReasonPhrase())
-                .payload(feeParameterDTO)
+    @PostMapping(path = "/create-list")
+    public ResponseEntity<ResponseDTO<CreateFeeParameterListResponse>> createList(@RequestBody CreateFeeParameterListRequest createFeeParameterListRequest) {
+        BillingDataChangeDTO dataChangeDTO = BillingDataChangeDTO.builder()
+                .methodHttp(HttpMethod.POST.name())
+                .endpoint("/api/fee-parameter/create/approve")
+                .isRequestBody(true)
+                .isRequestParam(false)
+                .isPathVariable(false)
+                .menu(MENU_FEE_PARAMETER)
                 .build();
 
-        return ResponseEntity.ok().body(response);
+        CreateFeeParameterListResponse list = feeParameterService.createMultipleData(createFeeParameterListRequest, dataChangeDTO);
+        ResponseDTO<CreateFeeParameterListResponse> response = ResponseDTO.<CreateFeeParameterListResponse>builder()
+                .code(HttpStatus.OK.value())
+                .message(HttpStatus.OK.getReasonPhrase())
+                .payload(list)
+                .build();
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping(path = "/create/approve")
+    public ResponseEntity<ResponseDTO<CreateFeeParameterListResponse>> createMultipleApprove(@RequestBody CreateFeeParameterListRequest createFeeParameterListRequest) {
+        CreateFeeParameterListResponse listApprove = feeParameterService.createMultipleApprove(createFeeParameterListRequest);
+        ResponseDTO<CreateFeeParameterListResponse> response = ResponseDTO.<CreateFeeParameterListResponse>builder()
+                .code(HttpStatus.OK.value())
+                .message(HttpStatus.OK.getReasonPhrase())
+                .payload(listApprove)
+                .build();
+        return ResponseEntity.ok(response);
+    }
+
+    @PutMapping(path = "/update-list")
+    public ResponseEntity<ResponseDTO<UpdateFeeParameterListResponse>> updateMultipleData(@RequestBody UpdateFeeParameterListRequest updateFeeParameterListRequest) {
+        BillingDataChangeDTO dataChangeDTO = BillingDataChangeDTO.builder()
+                .methodHttp(HttpMethod.PUT.name())
+                .endpoint("/api/fee-parameter/update/approve")
+                .isRequestBody(true)
+                .isRequestParam(false)
+                .isPathVariable(false)
+                .menu(MENU_FEE_PARAMETER)
+                .build();
+        UpdateFeeParameterListResponse list = feeParameterService.updateMultipleData(updateFeeParameterListRequest, dataChangeDTO);
+        ResponseDTO<UpdateFeeParameterListResponse> response = ResponseDTO.<UpdateFeeParameterListResponse>builder()
+                .code(HttpStatus.OK.value())
+                .message(HttpStatus.OK.getReasonPhrase())
+                .payload(list)
+                .build();
+        return ResponseEntity.ok(response);
+    }
+
+    @PutMapping(path = "/update/approve")
+    public ResponseEntity<ResponseDTO<UpdateFeeParameterListResponse>> updateMultipleApprove(@RequestBody UpdateFeeParameterListRequest updateFeeParameterListRequest) {
+        UpdateFeeParameterListResponse listApprove = feeParameterService.updateMultipleApprove(updateFeeParameterListRequest);
+        ResponseDTO<UpdateFeeParameterListResponse> response = ResponseDTO.<UpdateFeeParameterListResponse>builder()
+                .code(HttpStatus.OK.value())
+                .message(HttpStatus.OK.getReasonPhrase())
+                .payload(listApprove)
+                .build();
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping(path = "/all")
@@ -91,11 +160,4 @@ public class FeeParameterController {
         return ResponseEntity.ok().body(response);
     }
 
-    // create list
-
-    // create list approve
-
-    // update list
-
-    // update list approve
 }

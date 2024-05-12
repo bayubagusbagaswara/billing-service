@@ -1,7 +1,7 @@
 package com.bayu.billingservice.service.impl;
 
-import com.bayu.billingservice.dto.feeparameter.CreateFeeParameterRequest;
-import com.bayu.billingservice.dto.feeparameter.FeeParameterDTO;
+import com.bayu.billingservice.dto.datachange.BillingDataChangeDTO;
+import com.bayu.billingservice.dto.feeparameter.*;
 import com.bayu.billingservice.exception.ConnectionDatabaseException;
 import com.bayu.billingservice.exception.DataNotFoundException;
 import com.bayu.billingservice.model.FeeParameter;
@@ -25,17 +25,33 @@ public class FeeParameterServiceImpl implements FeeParameterService {
     private final FeeParameterRepository feeParameterRepository;
 
     @Override
-    public FeeParameterDTO create(CreateFeeParameterRequest request) {
+    public boolean isCodeAlreadyExists(String code) {
+        return false;
+    }
 
-        BigDecimal value = request.getValue().isEmpty() ? BigDecimal.ZERO :  new BigDecimal(request.getValue());
+    @Override
+    public CreateFeeParameterListResponse createSingleData(CreateFeeParameterRequest createFeeParameterRequest, BillingDataChangeDTO dataChangeDTO) {
+        return null;
+    }
 
-        FeeParameter feeParameter = FeeParameter.builder()
-                .name(request.getName())
-                .description(request.getDescription())
-                .value(value)
-                .build();
+    @Override
+    public CreateFeeParameterListResponse createMultipleData(CreateFeeParameterListRequest createFeeParameterListRequest, BillingDataChangeDTO dataChangeDTO) {
+        return null;
+    }
 
-        return mapToDTO(feeParameterRepository.save(feeParameter));
+    @Override
+    public CreateFeeParameterListResponse createMultipleApprove(CreateFeeParameterListRequest createFeeParameterListRequest) {
+        return null;
+    }
+
+    @Override
+    public UpdateFeeParameterListResponse updateMultipleData(UpdateFeeParameterListRequest updateFeeParameterListRequest, BillingDataChangeDTO dataChangeDTO) {
+        return null;
+    }
+
+    @Override
+    public UpdateFeeParameterListResponse updateMultipleApprove(UpdateFeeParameterListRequest updateFeeParameterListRequest) {
+        return null;
     }
 
     @Override
@@ -105,7 +121,7 @@ public class FeeParameterServiceImpl implements FeeParameterService {
 
     private static FeeParameterDTO mapToDTO(FeeParameter feeParameter) {
         return FeeParameterDTO.builder()
-                .id(String.valueOf(feeParameter.getId()))
+//                .id(String.valueOf(feeParameter.getId()))
                 .name(feeParameter.getName())
                 .value(String.valueOf(feeParameter.getValue()))
                 .description(feeParameter.getDescription())
