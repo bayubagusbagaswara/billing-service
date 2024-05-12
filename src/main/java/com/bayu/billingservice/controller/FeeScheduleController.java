@@ -132,11 +132,11 @@ public class FeeScheduleController {
     // Delete Multiple Approve
     @DeleteMapping(path = "/delete/approve")
     public ResponseEntity<ResponseDTO<DeleteFeeScheduleListResponse>> deleteMultipleApprove(@RequestBody DeleteFeeScheduleListRequest deleteFeeScheduleListRequest) {
-        DeleteFeeScheduleListResponse deleteResponse = feeScheduleService.deleteMultipleApprove(deleteFeeScheduleListRequest);
+        DeleteFeeScheduleListResponse listApprove = feeScheduleService.deleteMultipleApprove(deleteFeeScheduleListRequest);
         ResponseDTO<DeleteFeeScheduleListResponse> response = ResponseDTO.<DeleteFeeScheduleListResponse>builder()
                 .code(HttpStatus.OK.value())
                 .message(HttpStatus.OK.getReasonPhrase())
-                .payload(deleteResponse)
+                .payload(listApprove)
                 .build();
         return ResponseEntity.ok(response);
     }
