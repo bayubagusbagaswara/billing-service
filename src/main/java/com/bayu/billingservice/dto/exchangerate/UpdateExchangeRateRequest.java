@@ -9,11 +9,13 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateExchangeRateRequest {
+public class UpdateExchangeRateRequest {
 
     private String inputId;
 
     private String inputIPAddress;
+
+    private Long id;
 
     private String date; // yyyy-MM-dd
 
