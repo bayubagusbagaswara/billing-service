@@ -18,5 +18,5 @@ public class CreateInvestmentManagementListResponse {
 
     private Integer totalDataFailed;
 
-    private List<ErrorMessageDTO> errorMessages;
+    private List<ErrorMessageDTO> errorMessageList;
 }

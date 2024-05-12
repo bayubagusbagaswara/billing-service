@@ -1,19 +1,20 @@
 package com.bayu.billingservice.dto.fund;
 
-import jakarta.persistence.Column;
+import com.bayu.billingservice.dto.approval.ApprovalDTO;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.experimental.SuperBuilder;
 
 import java.time.Instant;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
 @SuperBuilder
-public abstract class BillingFundBaseDTO {
+public abstract class BillingFundBaseDTO extends ApprovalDTO {
 
     private Instant createdAt;
     private Instant updatedAt;
 
-    private String approvalStatus;
     private String aid;
     private String month;
     private String year;
