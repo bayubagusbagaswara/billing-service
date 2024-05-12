@@ -8,6 +8,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.Locale;
 
 @Configuration
 public class ApplicationConfig {
@@ -22,6 +25,9 @@ public class ApplicationConfig {
         // Konfigurasi konversi kustom untuk String to BigDecimal
         modelMapper.addConverter(stringToBigDecimalConverter());
 
+        // Konfigurasi konversi kustom untuk BigDecimal to formatted String
+        modelMapper.addConverter(bigDecimalToStringConverter());
+
         return modelMapper;
     }
 
@@ -31,6 +37,25 @@ public class ApplicationConfig {
         return new AbstractConverter<String, BigDecimal>() {
             protected BigDecimal convert(String source) {
                 return source != null ? new BigDecimal(source) : null;
+            }
+        };
+    }
+
+    @Bean
+    public Converter<BigDecimal, String> bigDecimalToStringConverter() {
+        return new AbstractConverter<BigDecimal, String>() {
+            protected String convert(BigDecimal value) {
+                if (BigDecimal.ZERO.compareTo(value) == 0) {
+                    return "0";
+                } else {
+                    DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.getDefault());
+                    symbols.setGroupingSeparator(',');
+                    symbols.setDecimalSeparator('.');
+
+                    DecimalFormat decimalFormat = new DecimalFormat("#,##0.00", symbols);
+
+                    return decimalFormat.format(value);
+                }
             }
         };
     }
