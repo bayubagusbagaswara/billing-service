@@ -1,20 +1,20 @@
 package com.bayu.billingservice.model;
 
+import com.bayu.billingservice.model.base.Approval;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.math.BigDecimal;
 
+@EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "fee_parameter")
 @Data
-@Builder
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class FeeParameter {
+public class FeeParameter extends Approval {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
