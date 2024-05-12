@@ -1,18 +1,19 @@
 package com.bayu.billingservice.dto.sellingagent;
 
-import com.bayu.billingservice.dto.approval.ApprovalDTO;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@EqualsAndHashCode(callSuper = true)
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class SellingAgentDTO extends ApprovalDTO {
+public class CreateSellingAgentRequest {
 
-    private Long dataChangeId;
+    private String inputId;
 
-    private Long id;
+    private String inputIPAddress;
 
     private String code;
 
