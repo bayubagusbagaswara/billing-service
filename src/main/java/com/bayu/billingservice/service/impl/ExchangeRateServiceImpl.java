@@ -1,7 +1,7 @@
 package com.bayu.billingservice.service.impl;
 
-import com.bayu.billingservice.dto.exchangerate.CreateExchangeRateRequest;
-import com.bayu.billingservice.dto.exchangerate.ExchangeRateDTO;
+import com.bayu.billingservice.dto.datachange.BillingDataChangeDTO;
+import com.bayu.billingservice.dto.exchangerate.*;
 import com.bayu.billingservice.exception.DataNotFoundException;
 import com.bayu.billingservice.model.ExchangeRate;
 import com.bayu.billingservice.repository.ExchangeRateRepository;
@@ -57,6 +57,26 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
         ExchangeRate exchangeRate = exchangeRateRepository.findLatestExchangeRate()
                 .orElseThrow(() -> new DataNotFoundException("Exchange Rate not found"));
         return mapToDTO(exchangeRate);
+    }
+
+    @Override
+    public CreateExchangeRateListResponse createSingleData(CreateExchangeRateRequest createExchangeRateRequest, BillingDataChangeDTO dataChangeDTO) {
+        return null;
+    }
+
+    @Override
+    public UpdateExchangeRateListResponse updateSingleData(UpdateExchangeRateRequest updateExchangeRateRequest, BillingDataChangeDTO dataChangeDTO) {
+        return null;
+    }
+
+    @Override
+    public UpdateExchangeRateListResponse updateApprove(UpdateExchangeRateRequest updateExchangeRateRequest) {
+        return null;
+    }
+
+    @Override
+    public String deleteAll() {
+        return "";
     }
 
     private static ExchangeRateDTO mapToDTO(ExchangeRate exchangeRate) {
