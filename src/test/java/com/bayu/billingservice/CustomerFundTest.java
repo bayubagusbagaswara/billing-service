@@ -1,18 +1,14 @@
 package com.bayu.billingservice;
 
-import com.bayu.billingservice.dto.customer.CustomerDTO;
 import com.bayu.billingservice.dto.customer.CreateCustomerRequest;
 import com.bayu.billingservice.model.enumerator.BillingCategory;
 import com.bayu.billingservice.model.enumerator.BillingTemplate;
 import com.bayu.billingservice.model.enumerator.BillingType;
-import com.bayu.billingservice.service.CustomerService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.math.BigDecimal;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 class CustomerFundTest {

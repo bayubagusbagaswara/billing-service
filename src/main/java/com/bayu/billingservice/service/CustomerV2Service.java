@@ -17,20 +17,20 @@ public interface CustomerV2Service {
 
     String deleteAll();
 
-    CreateCustomerListResponse createSingleData(CreateCustomerRequest request, BillingDataChangeDTO dataChangeDTO);
+    CustomerResponse createSingleData(CreateCustomerRequest request, BillingDataChangeDTO dataChangeDTO);
 
-    CreateCustomerListResponse createMultipleData(CreateCustomerListRequest request, BillingDataChangeDTO dataChangeDTO);
+    CustomerResponse createMultipleData(CreateCustomerListRequest request, BillingDataChangeDTO dataChangeDTO);
 
-    CreateCustomerListResponse createMultipleApprove(CreateCustomerListRequest request);
+    CustomerResponse createSingleApprove(CreateCustomerApproveRequest request);
 
-    UpdateCustomerListResponse updateSingleData(UpdateCustomerRequest request, BillingDataChangeDTO dataChangeDTO);
+    CustomerResponse updateSingleData(UpdateCustomerRequest request, BillingDataChangeDTO dataChangeDTO);
 
-    UpdateCustomerListResponse updateMultipleData(UpdateCustomerListRequest request, BillingDataChangeDTO dataChangeDTO);
+    CustomerResponse updateMultipleData(UpdateCustomerListRequest request, BillingDataChangeDTO dataChangeDTO);
 
-    UpdateCustomerListResponse updateMultipleApprove(UpdateCustomerListRequest request);
+    CustomerResponse updateSingleApprove(UpdateCustomerApproveRequest request);
 
-    DeleteCustomerListResponse deleteSingleData(DeleteCustomerRequest request, BillingDataChangeDTO dataChangeDTO);
+    CustomerResponse deleteSingleData(DeleteCustomerRequest request, BillingDataChangeDTO dataChangeDTO);
 
-    DeleteCustomerListResponse deleteMultipleApprove(DeleteCustomerListRequest request);
+    CustomerResponse deleteSingleApprove(DeleteCustomerApproveRequest request);
 
 }

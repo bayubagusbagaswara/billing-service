@@ -12,11 +12,11 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateCustomerListResponse {
+public class CustomerResponse {
 
     private Integer totalDataSuccess;
+
     private Integer totalDataFailed;
 
     private List<ErrorMessageDTO> errorMessageDTOList;
-
 }

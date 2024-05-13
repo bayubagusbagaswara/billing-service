@@ -5,24 +5,16 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
-/**
- * digunakan ketika approve lebih dari 1
- */
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class DeleteCustomerListRequest {
-
-    private String inputId;
-
-    private String inputIPAddress;
+public class UpdateCustomerApproveRequest {
 
     private String approveId;
-
     private String approveIPAddress;
 
-    private List<DeleteCustomerDTO> customerDTOList;
+    private String dataChangeId;
+
+    private CustomerDTO data;
 }

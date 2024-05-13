@@ -28,7 +28,6 @@ import static com.bayu.billingservice.model.enumerator.FeeParameter.*;
 @RequiredArgsConstructor
 public class Core4CalculateServiceImpl implements Core4CalculateService {
 
-    private final CustomerService customerService;
     private final FeeParameterService feeParameterService;
     private final SkTransactionService skTransactionService;
     private final SfValRgDailyService sfValRgDailyService;

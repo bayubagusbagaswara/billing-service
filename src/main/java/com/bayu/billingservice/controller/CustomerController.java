@@ -3,7 +3,6 @@ package com.bayu.billingservice.controller;
 import com.bayu.billingservice.dto.ResponseDTO;
 import com.bayu.billingservice.dto.customer.*;
 import com.bayu.billingservice.dto.datachange.BillingDataChangeDTO;
-import com.bayu.billingservice.service.CustomerService;
 import com.bayu.billingservice.service.CustomerV2Service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,13 +19,12 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CustomerController {
 
-    private final CustomerService customerService;
-    private final CustomerV2Service customerV2Service;
+    private final CustomerV2Service customerService;
     private static final String MENU_CUSTOMER = "Customer";
 
     @PostMapping(path = "/create-test")
     public ResponseEntity<ResponseDTO<CustomerDTO>> createTest(@RequestBody CustomerDTO request) {
-        CustomerDTO customerDTO = customerV2Service.testCreate(request);
+        CustomerDTO customerDTO = customerService.testCreate(request);
         ResponseDTO<CustomerDTO> response = ResponseDTO.<CustomerDTO>builder()
                 .code(HttpStatus.OK.value())
                 .message("Successfully created customer with id: " + customerDTO.getId())
@@ -39,7 +37,7 @@ public class CustomerController {
     @GetMapping(path = "/all-test")
     public ResponseEntity<ResponseDTO<List<CustomerDTO>>> getAllTest() {
 
-        List<CustomerDTO> customerDTOList = customerV2Service.getAllTest();
+        List<CustomerDTO> customerDTOList = customerService.getAllTest();
 
         ResponseDTO<List<CustomerDTO>> response = ResponseDTO.<List<CustomerDTO>>builder()
                 .code(HttpStatus.OK.value())
@@ -52,7 +50,7 @@ public class CustomerController {
 
 
     @PostMapping(path = "/create")
-    public ResponseEntity<ResponseDTO<CreateCustomerListResponse>> create(@RequestBody CreateCustomerRequest request) {
+    public ResponseEntity<ResponseDTO<CustomerResponse>> create(@RequestBody CreateCustomerRequest request) {
         BillingDataChangeDTO dataChangeDTO = BillingDataChangeDTO.builder()
                 .methodHttp(HttpMethod.POST.name())
                 .endpoint("/api/customer/create/approve")
@@ -61,9 +59,9 @@ public class CustomerController {
                 .isPathVariable(false)
                 .menu(MENU_CUSTOMER)
                 .build();
-        CreateCustomerListResponse createCustomerListResponse = customerService.createSingleData(request, dataChangeDTO);
+        CustomerResponse createCustomerListResponse = customerService.createSingleData(request, dataChangeDTO);
 
-        ResponseDTO<CreateCustomerListResponse> response = ResponseDTO.<CreateCustomerListResponse>builder()
+        ResponseDTO<CustomerResponse> response = ResponseDTO.<CustomerResponse>builder()
                 .code(HttpStatus.OK.value())
                 .message(HttpStatus.OK.getReasonPhrase())
                 .payload(createCustomerListResponse)
@@ -73,7 +71,7 @@ public class CustomerController {
     }
 
     @PostMapping(path = "/create-list")
-    public ResponseEntity<ResponseDTO<CreateCustomerListResponse>> createList(@RequestBody CreateCustomerListRequest request) {
+    public ResponseEntity<ResponseDTO<CustomerResponse>> createList(@RequestBody CreateCustomerListRequest request) {
         BillingDataChangeDTO dataChangeDTO = BillingDataChangeDTO.builder()
                 .methodHttp(HttpMethod.POST.name())
                 .endpoint("/api/customer/create/approve")
@@ -82,8 +80,8 @@ public class CustomerController {
                 .isPathVariable(false)
                 .menu(MENU_CUSTOMER)
                 .build();
-        CreateCustomerListResponse createCustomerListResponse = customerService.createMultipleData(request, dataChangeDTO);
-        ResponseDTO<CreateCustomerListResponse> response = ResponseDTO.<CreateCustomerListResponse>builder()
+        CustomerResponse createCustomerListResponse = customerService.createMultipleData(request, dataChangeDTO);
+        ResponseDTO<CustomerResponse> response = ResponseDTO.<CustomerResponse>builder()
                 .code(HttpStatus.OK.value())
                 .message(HttpStatus.OK.getReasonPhrase())
                 .payload(createCustomerListResponse)
@@ -92,9 +90,9 @@ public class CustomerController {
     }
 
     @PostMapping(path = "/create/approve")
-    public ResponseEntity<ResponseDTO<CreateCustomerListResponse>> createApprove(@RequestBody CreateCustomerListRequest request) {
-        CreateCustomerListResponse createCustomerListResponse = customerService.createMultipleApprove(request);
-        ResponseDTO<CreateCustomerListResponse> response = ResponseDTO.<CreateCustomerListResponse>builder()
+    public ResponseEntity<ResponseDTO<CustomerResponse>> createApprove(@RequestBody CreateCustomerApproveRequest request) {
+        CustomerResponse createCustomerListResponse = customerService.createSingleApprove(request);
+        ResponseDTO<CustomerResponse> response = ResponseDTO.<CustomerResponse>builder()
                 .code(HttpStatus.OK.value())
                 .message(HttpStatus.OK.getReasonPhrase())
                 .payload(createCustomerListResponse)
@@ -103,7 +101,7 @@ public class CustomerController {
     }
 
     @PutMapping(path = "/update-list")
-    public ResponseEntity<ResponseDTO<UpdateCustomerListResponse>> updateList(@RequestBody UpdateCustomerListRequest request) {
+    public ResponseEntity<ResponseDTO<CustomerResponse>> updateList(@RequestBody UpdateCustomerListRequest request) {
         BillingDataChangeDTO dataChangeDTO = BillingDataChangeDTO.builder()
                 .methodHttp(HttpMethod.PUT.name())
                 .endpoint("/api/customer/update/approve")
@@ -112,8 +110,8 @@ public class CustomerController {
                 .isPathVariable(false)
                 .menu(MENU_CUSTOMER)
                 .build();
-        UpdateCustomerListResponse updateCustomerListResponse = customerService.updateMultipleData(request, dataChangeDTO);
-        ResponseDTO<UpdateCustomerListResponse> response = ResponseDTO.<UpdateCustomerListResponse>builder()
+        CustomerResponse updateCustomerListResponse = customerService.updateMultipleData(request, dataChangeDTO);
+        ResponseDTO<CustomerResponse> response = ResponseDTO.<CustomerResponse>builder()
                 .code(HttpStatus.OK.value())
                 .message(HttpStatus.OK.getReasonPhrase())
                 .payload(updateCustomerListResponse)

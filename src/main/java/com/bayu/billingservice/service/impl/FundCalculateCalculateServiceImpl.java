@@ -31,7 +31,6 @@ import static com.bayu.billingservice.model.enumerator.FeeParameter.*;
 @RequiredArgsConstructor
 public class FundCalculateCalculateServiceImpl implements FundCalculateService {
 
-    private final CustomerService customerService;
     private final SkTransactionService skTransactionService;
     private final FeeParameterService feeParameterService;
     private final BillingNumberService billingNumberService;

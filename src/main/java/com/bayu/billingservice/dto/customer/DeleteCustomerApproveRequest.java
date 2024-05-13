@@ -5,16 +5,16 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateCustomerListRequest {
+public class DeleteCustomerApproveRequest {
 
-    private String inputId;
-    private String inputIPAddress;
+    private String approveId;
+    private String approveIPAddress;
 
-    private List<CustomerDTO> customerDTOList;
+    private String dataChangeId;
+
+    private CustomerDTO data;
 }

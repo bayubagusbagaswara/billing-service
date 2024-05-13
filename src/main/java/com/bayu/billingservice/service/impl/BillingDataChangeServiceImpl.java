@@ -198,6 +198,11 @@ public class BillingDataChangeServiceImpl implements BillingDataChangeService {
     }
 
     @Override
+    public boolean existById(Long id) {
+        return dataChangeRepository.existsById(id);
+    }
+
+    @Override
     public boolean areAllIdsExistInDatabase(List<Long> idList) {
         long countOfExistingIds = dataChangeRepository.countByIdIn(idList);
         List<BillingDataChange> existingDataChanges = dataChangeRepository.findByIdIn(idList);

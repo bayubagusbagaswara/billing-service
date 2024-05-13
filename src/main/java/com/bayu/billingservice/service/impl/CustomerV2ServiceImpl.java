@@ -78,38 +78,38 @@ public class CustomerV2ServiceImpl implements CustomerV2Service {
     }
 
     @Override
-    public CreateCustomerListResponse createSingleData(CreateCustomerRequest request, BillingDataChangeDTO dataChangeDTO) {
+    public CustomerResponse createSingleData(CreateCustomerRequest request, BillingDataChangeDTO dataChangeDTO) {
         log.info("Create single data billing customer with request: {}", request);
         return processDataChangeForCustomer(request, dataChangeDTO);
     }
 
     @Override
-    public CreateCustomerListResponse createMultipleData(CreateCustomerListRequest request, BillingDataChangeDTO dataChangeDTO) {
+    public CustomerResponse createMultipleData(CreateCustomerListRequest request, BillingDataChangeDTO dataChangeDTO) {
         log.info("Create billing customer multiple data with request: {}", request);
         return processDataChangeForCustomerList(request.getCustomerDTOList(), dataChangeDTO);
     }
 
-    private CreateCustomerListResponse processDataChangeForCustomer(CreateCustomerRequest request, BillingDataChangeDTO dataChangeDTO) {
+    private CustomerResponse processDataChangeForCustomer(CreateCustomerRequest request, BillingDataChangeDTO dataChangeDTO) {
         CustomerDTO customerDTO = customerMapper.mapFromCreateCustomerRequestToDTO(request);
         return processDataChangeForCustomerDTO(customerDTO, dataChangeDTO);
     }
 
-    private CreateCustomerListResponse processDataChangeForCustomerList(List<CustomerDTO> customerDTOList, BillingDataChangeDTO dataChangeDTO) {
+    private CustomerResponse processDataChangeForCustomerList(List<CustomerDTO> customerDTOList, BillingDataChangeDTO dataChangeDTO) {
         int totalDataSuccess = 0;
         int totalDataFailed = 0;
         List<ErrorMessageDTO> errorMessageDTOList = new ArrayList<>();
 
         for (CustomerDTO customerDTO : customerDTOList) {
-            CreateCustomerListResponse response = processDataChangeForCustomerDTO(customerDTO, dataChangeDTO);
+            CustomerResponse response = processDataChangeForCustomerDTO(customerDTO, dataChangeDTO);
             totalDataSuccess += response.getTotalDataSuccess();
             totalDataFailed += response.getTotalDataFailed();
             errorMessageDTOList.addAll(response.getErrorMessageDTOList());
         }
 
-        return new CreateCustomerListResponse(totalDataSuccess, totalDataFailed, errorMessageDTOList);
+        return new CustomerResponse(totalDataSuccess, totalDataFailed, errorMessageDTOList);
     }
 
-    private CreateCustomerListResponse processDataChangeForCustomerDTO(CustomerDTO customerDTO, BillingDataChangeDTO dataChangeDTO) {
+    private CustomerResponse processDataChangeForCustomerDTO(CustomerDTO customerDTO, BillingDataChangeDTO dataChangeDTO) {
         int totalDataSuccess = 0;
         int totalDataFailed = 0;
         List<ErrorMessageDTO> errorMessageDTOList = new ArrayList<>();
@@ -138,71 +138,70 @@ public class CustomerV2ServiceImpl implements CustomerV2Service {
             totalDataFailed++;
         }
 
-        return new CreateCustomerListResponse(totalDataSuccess, totalDataFailed, errorMessageDTOList);
+        return new CustomerResponse(totalDataSuccess, totalDataFailed, errorMessageDTOList);
     }
 
     @Override
-    public CreateCustomerListResponse createMultipleApprove(CreateCustomerListRequest requestList) {
+    public CustomerResponse createSingleApprove(CreateCustomerApproveRequest requestList) {
         log.info("Approve multiple for create billing customer with request: {}", requestList);
         int totalDataSuccess = 0;
         int totalDataFailed = 0;
         List<ErrorMessageDTO> errorMessageDTOList = new ArrayList<>();
 
-        validateDataChangeIds(requestList.getCustomerDTOList());
+        validateDataChangeId(requestList.getDataChangeId());
 
-        for (CustomerDTO customerDTO : requestList.getCustomerDTOList()) {
-            try {
-                List<String> validationErrors = new ArrayList<>();
+        CustomerDTO customerDTO = requestList.getData();
+        try {
+            List<String> validationErrors = new ArrayList<>();
 
-                // validasi not empty
-                Errors errors = validateCustomerUsingValidator(customerDTO);
-                if (errors.hasErrors()) {
-                    errors.getAllErrors().forEach(error -> validationErrors.add(error.getDefaultMessage()));
-                }
-
-                // validasi customer code gak boleh ada yg duplikat di database
-                validationCustomerCodeAlreadyExists(customerDTO.getCustomerCode(), validationErrors);
-
-                // validasi mi code dan dapatkan nilai name
-                InvestmentManagementDTO investmentManagementDTO = investmentManagementService.getByCode(customerDTO.getInvestmentManagementCode());
-                customerDTO.setInvestmentManagementCode(investmentManagementDTO.getCode());
-                customerDTO.setInvestmentManagementName(investmentManagementDTO.getName());
-
-                // validasi selling agent
-                validationSellingAgentCodeAlreadyExists(customerDTO.getSellingAgentCode(), validationErrors);
-
-                // validasi enum
-                validateBillingEnums(customerDTO, validationErrors);
-
-                // get data change by id
-                BillingDataChangeDTO dataChangeDTO = dataChangeService.getById(investmentManagementDTO.getDataChangeId());
-                dataChangeDTO.setApproveId(requestList.getApproveId());
-                dataChangeDTO.setApproveIPAddress(requestList.getApproveIPAddress());
-
-                if (!validationErrors.isEmpty()) {
-                    dataChangeDTO.setJsonDataAfter(JsonUtil.cleanedJsonData(objectMapper.writeValueAsString(customerDTO)));
-                    dataChangeService.approvalStatusIsRejected(dataChangeDTO, validationErrors);
-                    totalDataFailed++;
-                } else {
-                    Customer customer = customerMapper.createEntity(customerDTO, dataChangeDTO);
-                    customerRepository.save(customer);
-
-                    dataChangeDTO.setDescription("Successfully approve data change and save data investment management");
-                    dataChangeDTO.setJsonDataAfter(JsonUtil.cleanedJsonData(objectMapper.writeValueAsString(customer)));
-                    dataChangeDTO.setEntityId(customer.getId().toString());
-                    dataChangeService.approvalStatusIsApproved(dataChangeDTO);
-                    totalDataSuccess++;
-                }
-            } catch (Exception e) {
-                handleGeneralError(customerDTO, e, errorMessageDTOList);
-                totalDataFailed++;
+            // validasi not empty
+            Errors errors = validateCustomerUsingValidator(customerDTO);
+            if (errors.hasErrors()) {
+                errors.getAllErrors().forEach(error -> validationErrors.add(error.getDefaultMessage()));
             }
+
+            // validasi customer code gak boleh ada yg duplikat di database
+            validationCustomerCodeAlreadyExists(customerDTO.getCustomerCode(), validationErrors);
+
+            // validasi mi code dan dapatkan nilai name
+            InvestmentManagementDTO investmentManagementDTO = investmentManagementService.getByCode(customerDTO.getInvestmentManagementCode());
+            customerDTO.setInvestmentManagementCode(investmentManagementDTO.getCode());
+            customerDTO.setInvestmentManagementName(investmentManagementDTO.getName());
+
+            // validasi selling agent
+            validationSellingAgentCodeAlreadyExists(customerDTO.getSellingAgentCode(), validationErrors);
+
+            // validasi enum
+            validateBillingEnums(customerDTO, validationErrors);
+
+            // get data change by id
+            BillingDataChangeDTO dataChangeDTO = dataChangeService.getById(investmentManagementDTO.getDataChangeId());
+            dataChangeDTO.setApproveId(requestList.getApproveId());
+            dataChangeDTO.setApproveIPAddress(requestList.getApproveIPAddress());
+
+            if (!validationErrors.isEmpty()) {
+                dataChangeDTO.setJsonDataAfter(JsonUtil.cleanedJsonData(objectMapper.writeValueAsString(customerDTO)));
+                dataChangeService.approvalStatusIsRejected(dataChangeDTO, validationErrors);
+                totalDataFailed++;
+            } else {
+                Customer customer = customerMapper.createEntity(customerDTO, dataChangeDTO);
+                customerRepository.save(customer);
+
+                dataChangeDTO.setDescription("Successfully approve data change and save data investment management");
+                dataChangeDTO.setJsonDataAfter(JsonUtil.cleanedJsonData(objectMapper.writeValueAsString(customer)));
+                dataChangeDTO.setEntityId(customer.getId().toString());
+                dataChangeService.approvalStatusIsApproved(dataChangeDTO);
+                totalDataSuccess++;
+            }
+        } catch (Exception e) {
+            handleGeneralError(customerDTO, e, errorMessageDTOList);
+            totalDataFailed++;
         }
-        return new CreateCustomerListResponse(totalDataSuccess, totalDataFailed, errorMessageDTOList);
+        return new CustomerResponse(totalDataSuccess, totalDataFailed, errorMessageDTOList);
     }
 
     @Override
-    public UpdateCustomerListResponse updateSingleData(UpdateCustomerRequest request, BillingDataChangeDTO dataChangeDTO) {
+    public CustomerResponse updateSingleData(UpdateCustomerRequest request, BillingDataChangeDTO dataChangeDTO) {
         log.info("Update billing customer by id with request: {}", request);
         dataChangeDTO.setInputId(request.getInputId());
         dataChangeDTO.setInputIPAddress(request.getInputIPAddress());
@@ -211,14 +210,14 @@ public class CustomerV2ServiceImpl implements CustomerV2Service {
     }
 
     @Override
-    public UpdateCustomerListResponse updateMultipleData(UpdateCustomerListRequest updateCustomerListRequest, BillingDataChangeDTO dataChangeDTO) {
+    public CustomerResponse updateMultipleData(UpdateCustomerListRequest updateCustomerListRequest, BillingDataChangeDTO dataChangeDTO) {
         log.info("Update multiple billing customer with request: {}", updateCustomerListRequest);
         dataChangeDTO.setInputId(updateCustomerListRequest.getInputId());
         dataChangeDTO.setInputIPAddress(updateCustomerListRequest.getInputIPAddress());
         return processUpdateForCustomerList(updateCustomerListRequest.getCustomerDTOList(), dataChangeDTO);
     }
 
-    private UpdateCustomerListResponse processUpdateForCustomerList(List<CustomerDTO> customerDTOList, BillingDataChangeDTO dataChangeDTO) {
+    private CustomerResponse processUpdateForCustomerList(List<CustomerDTO> customerDTOList, BillingDataChangeDTO dataChangeDTO) {
         int totalDataSuccess = 0;
         int totalDataFailed = 0;
         List<ErrorMessageDTO> errorMessageList = new ArrayList<>();
@@ -238,8 +237,7 @@ public class CustomerV2ServiceImpl implements CustomerV2Service {
                 totalDataFailed++;
             }
         }
-
-        return new UpdateCustomerListResponse(totalDataSuccess, totalDataFailed, errorMessageList);
+        return new CustomerResponse(totalDataSuccess, totalDataFailed, errorMessageList);
     }
 
     private void updateCustomerAndDataChange(Customer customer, CustomerDTO customerDTO, BillingDataChangeDTO dataChangeDTO) throws JsonProcessingException {
@@ -252,68 +250,68 @@ public class CustomerV2ServiceImpl implements CustomerV2Service {
     }
 
     @Override
-    public UpdateCustomerListResponse updateMultipleApprove(UpdateCustomerListRequest updateCustomerListRequest) {
-        log.info("Approve multiple update billing customer with request: {}", updateCustomerListRequest);
+    public CustomerResponse updateSingleApprove(UpdateCustomerApproveRequest updateCustomerApproveRequest) {
+        log.info("Approve multiple update billing customer with request: {}", updateCustomerApproveRequest);
         int totalDataSuccess = 0;
         int totalDataFailed = 0;
         List<ErrorMessageDTO> errorMessageList = new ArrayList<>();
 
-        validateDataChangeIds(updateCustomerListRequest.getCustomerDTOList());
-        for (CustomerDTO customerDTO : updateCustomerListRequest.getCustomerDTOList()) {
-            try {
-                List<String> validationErrors = new ArrayList<>();
+        validateDataChangeId(updateCustomerApproveRequest.getDataChangeId());
 
-                // get customer by code, object Customer inilah yang akan diupdate
-                Customer customer = customerRepository.findByCustomerCode(customerDTO.getCustomerCode())
-                        .orElseThrow(() -> new DataNotFoundException(CODE_NOT_FOUND + customerDTO.getCustomerCode()));
+        CustomerDTO customerDTO = updateCustomerApproveRequest.getData();
+        try {
+            List<String> validationErrors = new ArrayList<>();
 
-                customerMapper.mapObjects(customerDTO, customer);
-                log.info("Customer after mapper: {}", customer);
+            // get customer by code, object Customer inilah yang akan diupdate
+            Customer customer = customerRepository.findByCustomerCode(customerDTO.getCustomerCode())
+                    .orElseThrow(() -> new DataNotFoundException(CODE_NOT_FOUND + customerDTO.getCustomerCode()));
 
-                Errors errors = validateCustomerUsingValidator(customerMapper.mapFromEntityToDto(customer));
-                if (errors.hasErrors()) {
-                    errors.getAllErrors().forEach(error -> validationErrors.add(error.getDefaultMessage()));
-                }
+            customerMapper.mapObjects(customerDTO, customer);
+            log.info("Customer after mapper: {}", customer);
 
-                // validasi mi code dan dapatkan nilai name
-                InvestmentManagementDTO investmentManagementDTO = investmentManagementService.getByCode(customer.getInvestmentManagementCode());
-                customer.setInvestmentManagementCode(investmentManagementDTO.getCode());
-                customer.setInvestmentManagementName(investmentManagementDTO.getCode());
-
-                // validasi selling agent
-                validationSellingAgentCodeAlreadyExists(customerDTO.getSellingAgentCode(), validationErrors);
-
-                // validasi enum
-                validateBillingEnums(customerDTO, validationErrors);
-
-                // Retrieve and set billing data change
-                BillingDataChangeDTO dataChangeDTO = dataChangeService.getById(customerDTO.getDataChangeId());
-                dataChangeDTO.setApproveId(updateCustomerListRequest.getApproveId());
-                dataChangeDTO.setApproveIPAddress(updateCustomerListRequest.getApproveIPAddress());
-                dataChangeDTO.setEntityId(customer.getId().toString());
-
-                if (!validationErrors.isEmpty()) {
-                    dataChangeDTO.setJsonDataAfter(JsonUtil.cleanedJsonData(objectMapper.writeValueAsString(customerDTO)));
-                    dataChangeService.approvalStatusIsRejected(dataChangeDTO, validationErrors);
-                } else {
-                    Customer customerUpdated = customerMapper.updateEntity(customer, dataChangeDTO);
-                    Customer customerSaved = customerRepository.save(customerUpdated);
-
-                    dataChangeDTO.setJsonDataAfter(JsonUtil.cleanedJsonData(objectMapper.writeValueAsString(customerSaved)));
-                    dataChangeDTO.setDescription("Successfully approved and update data entity");
-                    dataChangeService.approvalStatusIsApproved(dataChangeDTO);
-                    totalDataSuccess++;
-                }
-            } catch (Exception e) {
-                handleGeneralError(customerDTO, e, errorMessageList);
-                totalDataFailed++;
+            Errors errors = validateCustomerUsingValidator(customerMapper.mapFromEntityToDto(customer));
+            if (errors.hasErrors()) {
+                errors.getAllErrors().forEach(error -> validationErrors.add(error.getDefaultMessage()));
             }
+
+            // validasi mi code dan dapatkan nilai name
+            InvestmentManagementDTO investmentManagementDTO = investmentManagementService.getByCode(customer.getInvestmentManagementCode());
+            customer.setInvestmentManagementCode(investmentManagementDTO.getCode());
+            customer.setInvestmentManagementName(investmentManagementDTO.getCode());
+
+            // validasi selling agent
+            validationSellingAgentCodeAlreadyExists(customerDTO.getSellingAgentCode(), validationErrors);
+
+            // validasi enum
+            validateBillingEnums(customerDTO, validationErrors);
+
+            // Retrieve and set billing data change
+            BillingDataChangeDTO dataChangeDTO = dataChangeService.getById(customerDTO.getDataChangeId());
+            dataChangeDTO.setApproveId(updateCustomerApproveRequest.getApproveId());
+            dataChangeDTO.setApproveIPAddress(updateCustomerApproveRequest.getApproveIPAddress());
+            dataChangeDTO.setEntityId(customer.getId().toString());
+
+            if (!validationErrors.isEmpty()) {
+                dataChangeDTO.setJsonDataAfter(JsonUtil.cleanedJsonData(objectMapper.writeValueAsString(customerDTO)));
+                dataChangeService.approvalStatusIsRejected(dataChangeDTO, validationErrors);
+            } else {
+                Customer customerUpdated = customerMapper.updateEntity(customer, dataChangeDTO);
+                Customer customerSaved = customerRepository.save(customerUpdated);
+
+                dataChangeDTO.setJsonDataAfter(JsonUtil.cleanedJsonData(objectMapper.writeValueAsString(customerSaved)));
+                dataChangeDTO.setDescription("Successfully approved and update data entity");
+                dataChangeService.approvalStatusIsApproved(dataChangeDTO);
+                totalDataSuccess++;
+            }
+        } catch (Exception e) {
+            handleGeneralError(customerDTO, e, errorMessageList);
+            totalDataFailed++;
         }
-        return new UpdateCustomerListResponse(totalDataSuccess, totalDataFailed, errorMessageList);
+        return new CustomerResponse(totalDataSuccess, totalDataFailed, errorMessageList);
     }
 
     @Override
-    public DeleteCustomerListResponse deleteSingleData(DeleteCustomerRequest deleteCustomerRequest, BillingDataChangeDTO dataChangeDTO) {
+    public CustomerResponse deleteSingleData(DeleteCustomerRequest deleteCustomerRequest, BillingDataChangeDTO dataChangeDTO) {
         log.info("Delete single data billing customer with request: {}", deleteCustomerRequest);
         int totalDataSuccess = 0;
         int totalDataFailed = 0;
@@ -338,57 +336,47 @@ public class CustomerV2ServiceImpl implements CustomerV2Service {
             handleGeneralError(customerDTO, e, errorMessageList);
             totalDataFailed++;
         }
-        return new DeleteCustomerListResponse(totalDataSuccess, totalDataFailed, errorMessageList);
+        return new CustomerResponse(totalDataSuccess, totalDataFailed, errorMessageList);
     }
 
     @Override
-    public DeleteCustomerListResponse deleteMultipleApprove(DeleteCustomerListRequest deleteCustomerListRequest) {
+    public CustomerResponse deleteSingleApprove(DeleteCustomerApproveRequest deleteCustomerListRequest) {
         log.info("Approve delete multiple billing customer with request: {}", deleteCustomerListRequest);
         int totalDataSuccess = 0;
         int totalDataFailed = 0;
         List<ErrorMessageDTO> errorMessageList = new ArrayList<>();
 
-        validateDataChangeIds(deleteCustomerListRequest.getCustomerDTOList()
-                .stream()
-                .map(d -> CustomerDTO.builder().dataChangeId(d.getDataChangeId()).build())
-                .toList());
+        validateDataChangeId(deleteCustomerListRequest.getDataChangeId());
+        CustomerDTO customerDTO = deleteCustomerListRequest.getData();
+        BillingDataChangeDTO dataChangeDTO = dataChangeService.getById(customerDTO.getDataChangeId());
 
-        for (DeleteCustomerDTO deleteCustomerDTO : deleteCustomerListRequest.getCustomerDTOList()) {
-            CustomerDTO customerDTO = CustomerDTO.builder()
-                    .dataChangeId(deleteCustomerDTO.getDataChangeId())
-                    .id(deleteCustomerDTO.getId())
-                    .build();
-            BillingDataChangeDTO dataChangeDTO = dataChangeService.getById(customerDTO.getDataChangeId());
-            try {
-                Customer customer = customerRepository.findById(customerDTO.getId())
-                        .orElseThrow(() -> new DataNotFoundException(ID_NOT_FOUND + customerDTO.getId()));
+        try {
+            Customer customer = customerRepository.findById(customerDTO.getId())
+                    .orElseThrow(() -> new DataNotFoundException(ID_NOT_FOUND + customerDTO.getId()));
 
-                dataChangeDTO.setApproveId(deleteCustomerListRequest.getApproveId());
-                dataChangeDTO.setApproveIPAddress(deleteCustomerListRequest.getApproveIPAddress());
-                dataChangeDTO.setApproveDate(new Date());
-                dataChangeDTO.setJsonDataBefore(JsonUtil.cleanedJsonData(objectMapper.writeValueAsString(customer)));
-                dataChangeDTO.setDescription("Successfully approve data change and delete data entity");
+            dataChangeDTO.setApproveId(deleteCustomerListRequest.getApproveId());
+            dataChangeDTO.setApproveIPAddress(deleteCustomerListRequest.getApproveIPAddress());
+            dataChangeDTO.setApproveDate(new Date());
+            dataChangeDTO.setJsonDataBefore(JsonUtil.cleanedJsonData(objectMapper.writeValueAsString(customer)));
+            dataChangeDTO.setDescription("Successfully approve data change and delete data entity");
 
-                dataChangeService.approvalStatusIsApproved(dataChangeDTO);
-                customerRepository.delete(customer);
-                totalDataSuccess++;
-            } catch (DataNotFoundException e) {
-                handleDataNotFoundException(customerDTO, e, errorMessageList);
-                dataChangeDTO.setApproveId(deleteCustomerListRequest.getApproveId());
-                dataChangeDTO.setApproveIPAddress(deleteCustomerListRequest.getApproveIPAddress());
-                dataChangeDTO.setApproveDate(new Date());
-                List<String> validationErrors = new ArrayList<>();
-                validationErrors.add(ID_NOT_FOUND + customerDTO.getId());
-
-                dataChangeService.approvalStatusIsRejected(dataChangeDTO, validationErrors);
-                totalDataFailed++;
-            } catch (Exception e) {
-                handleGeneralError(customerDTO, e, errorMessageList);
-                totalDataFailed++;
-            }
+            dataChangeService.approvalStatusIsApproved(dataChangeDTO);
+            customerRepository.delete(customer);
+            totalDataSuccess++;
+        } catch (DataNotFoundException e) {
+            handleDataNotFoundException(customerDTO, e, errorMessageList);
+            dataChangeDTO.setApproveId(deleteCustomerListRequest.getApproveId());
+            dataChangeDTO.setApproveIPAddress(deleteCustomerListRequest.getApproveIPAddress());
+            dataChangeDTO.setApproveDate(new Date());
+            List<String> validationErrors = new ArrayList<>();
+            validationErrors.add(ID_NOT_FOUND + customerDTO.getId());
+            dataChangeService.approvalStatusIsRejected(dataChangeDTO, validationErrors);
+            totalDataFailed++;
+        } catch (Exception e) {
+            handleGeneralError(customerDTO, e, errorMessageList);
+            totalDataFailed++;
         }
-
-        return new DeleteCustomerListResponse(totalDataSuccess, totalDataFailed, errorMessageList);
+        return new CustomerResponse(totalDataSuccess, totalDataFailed, errorMessageList);
     }
 
     public Errors validateCustomerUsingValidator(CustomerDTO dto) {
@@ -409,12 +397,8 @@ public class CustomerV2ServiceImpl implements CustomerV2Service {
         }
     }
 
-    private void validateDataChangeIds(List<CustomerDTO> customerDTOList) {
-        List<Long> idDataChangeList = customerDTOList.stream()
-                .map(CustomerDTO::getDataChangeId)
-                .toList();
-
-        if (!dataChangeService.areAllIdsExistInDatabase(idDataChangeList)) {
+    private void validateDataChangeId(String dataChangeId) {
+        if (!dataChangeService.existById(Long.valueOf(dataChangeId))) {
             log.info("Data Change ids not found");
             throw new DataNotFoundException("Data Change ids not found");
         }

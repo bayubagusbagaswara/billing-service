@@ -24,6 +24,8 @@ public interface BillingDataChangeService {
 
     Boolean existByIdList(List<Long> idList, Integer idListSize);
 
+    boolean existById(Long id);
+
     boolean areAllIdsExistInDatabase(List<Long> idList);
 
     BillingDataChangeDTO getById(Long dataChangeId);
