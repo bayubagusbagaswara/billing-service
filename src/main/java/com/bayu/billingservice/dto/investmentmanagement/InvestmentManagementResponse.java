@@ -12,11 +12,11 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UpdateInvestmentManagementListResponse {
+public class InvestmentManagementResponse {
 
     private Integer totalDataSuccess;
 
     private Integer totalDataFailed;
 
-    private List<ErrorMessageDTO> errorMessages;
+    private List<ErrorMessageDTO> errorMessageDTOList;
 }

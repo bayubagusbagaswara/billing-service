@@ -584,3 +584,29 @@ File file = new File(DOWNLOAD_FOLDER + "/" + fileName);
         validationErrors.add("Error processing JSON during data change logging: " + e.getMessage());
         errorMessageList.add(new ErrorMessageDTO(investmentManagementDTO != null ? investmentManagementDTO.getCode() : UNKNOWN, validationErrors));
     }
+
+public static void main(String[] args) {
+// JSON string data
+String jsonDataAfter = "{\"code\":\"A002\",\"name\":\"PT Pacific Capital Investment\",\"email\":\"pacific@mail.com\",\"address1\":\"Menara Jamsostek Menara Utara Lantai 12A\",\"address2\":\"Jl. Jendral Gatot Subroto No. 38\",\"address3\":\"\",\"address4\":\"\"}";
+
+        try {
+            // ObjectMapper instance
+            ObjectMapper objectMapper = new ObjectMapper();
+
+            // Convert JSON string to Map
+            Map<String, Object> jsonMap = objectMapper.readValue(jsonDataAfter, new TypeReference<Map<String, Object>>() {});
+
+            // ModelMapper instance
+            ModelMapper modelMapper = new ModelMapper();
+
+            // Convert Map to InvestmentManagementDTO
+            InvestmentManagementDTO investmentManagementDTO = modelMapper.map(jsonMap, InvestmentManagementDTO.class);
+
+            // Print the mapped object
+            System.out.println(investmentManagementDTO);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}

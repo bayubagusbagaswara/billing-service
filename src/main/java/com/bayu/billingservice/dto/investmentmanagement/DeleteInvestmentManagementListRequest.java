@@ -17,9 +17,5 @@ public class DeleteInvestmentManagementListRequest {
 
     private String inputIPAddress;
 
-    private String approveId;
-
-    private String approveIPAddress;
-
     private List<DeleteInvestmentManagementDTO> investmentManagementDTOList;
 }

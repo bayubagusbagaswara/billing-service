@@ -175,7 +175,7 @@ public class CustomerV2ServiceImpl implements CustomerV2Service {
             validateBillingEnums(customerDTO, validationErrors);
 
             // get data change by id
-            BillingDataChangeDTO dataChangeDTO = dataChangeService.getById(investmentManagementDTO.getDataChangeId());
+            BillingDataChangeDTO dataChangeDTO = dataChangeService.getById(customerDTO.getDataChangeId());
             dataChangeDTO.setApproveId(requestList.getApproveId());
             dataChangeDTO.setApproveIPAddress(requestList.getApproveIPAddress());
 

@@ -15,25 +15,23 @@ import lombok.*;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class InvestmentManagementDTO extends ApprovalDTO {
 
-    private Long dataChangeId;
-
     private Long id;
 
-    @NotBlank(message = "Code cannot be empty")
-    @Pattern(regexp = "^[a-zA-Z0-9]*$", message = "Name must contain only letters and digits")
+//    @NotBlank(message = "Code cannot be empty")
+//    @Pattern(regexp = "^[a-zA-Z0-9]*$", message = "Name must contain only letters and digits")
     private String code;
 
     // @Pattern(regexp = "^[0-9]*$", message = "Code must contain only numeric digits") Hanya ANGKA
 //    @Pattern(regexp = "^[0-9.-]*$", message = "Input must contain only numbers, dots, or dashes")
 //    @Pattern(regexp = "^[a-zA-Z ]*$", message = "Input must contain only alphabetic characters and spaces")
-    @NotBlank(message = "Name cannot be empty")
+//    @NotBlank(message = "Name cannot be empty")
     private String name;
 
-    @NotBlank(message = "Email cannot be empty")
-    @Email(message = "Email is not valid")
+//    @NotBlank(message = "Email cannot be empty")
+//    @Email(message = "Email is not valid")
     private String email;
 
-    @NotBlank(message = "Address 1 cannot be empty")
+//    @NotBlank(message = "Address 1 cannot be empty")
     private String address1;
 
     private String address2;

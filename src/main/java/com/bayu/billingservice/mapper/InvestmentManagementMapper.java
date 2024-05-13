@@ -1,9 +1,7 @@
 package com.bayu.billingservice.mapper;
 
 import com.bayu.billingservice.dto.datachange.BillingDataChangeDTO;
-import com.bayu.billingservice.dto.investmentmanagement.CreateInvestmentManagementRequest;
 import com.bayu.billingservice.dto.investmentmanagement.InvestmentManagementDTO;
-import com.bayu.billingservice.dto.investmentmanagement.UpdateInvestmentManagementRequest;
 import com.bayu.billingservice.model.InvestmentManagement;
 import com.bayu.billingservice.model.enumerator.ApprovalStatus;
 import com.bayu.billingservice.util.ConvertDateUtil;
@@ -14,82 +12,90 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-public class InvestmentManagementMapper {
+public class InvestmentManagementMapper extends BaseMapper<InvestmentManagement, InvestmentManagementDTO> {
 
-    private final ModelMapper modelMapper;
     private final ConvertDateUtil convertDateUtil;
 
     public InvestmentManagementMapper(ModelMapper modelMapper, ConvertDateUtil convertDateUtil) {
-        this.modelMapper = modelMapper;
+        super(modelMapper);
         this.convertDateUtil = convertDateUtil;
-        configureMapper();
     }
 
-    private void configureMapper() {
-        modelMapper.getConfiguration().setSkipNullEnabled(true);
-
-        modelMapper.addMappings(new PropertyMap<InvestmentManagement, InvestmentManagementDTO>() {
+    @Override
+    protected PropertyMap<InvestmentManagement, InvestmentManagementDTO> getPropertyMap() {
+        return new PropertyMap<InvestmentManagement, InvestmentManagementDTO>() {
             @Override
             protected void configure() {
-                skip(destination.getApprovalStatus());
-                skip(destination.getInputId());
-                skip(destination.getInputIPAddress());
-                skip(destination.getInputDate());
-                skip(destination.getApproveId());
-                skip(destination.getApproveIPAddress());
-                skip(destination.getApproveDate());
+                skip().setApprovalStatus(null);
+                skip().setInputId(null);
+                skip().setInputIPAddress(null);
+                skip().setInputDate(null);
+                skip().setApproveId(null);
+                skip().setApproveIPAddress(null);
+                skip().setApproveDate(null);
             }
-        });
+        };
     }
 
-    public InvestmentManagement mapFromDtoToEntity(InvestmentManagementDTO investmentManagementDTO) {
-        return modelMapper.map(investmentManagementDTO, InvestmentManagement.class);
+    @Override
+    public InvestmentManagement mapToEntity(InvestmentManagementDTO dto) {
+        return super.mapToEntity(dto);
     }
 
-    public InvestmentManagementDTO mapFromEntityToDto(InvestmentManagement investmentManagement) {
-        return modelMapper.map(investmentManagement, InvestmentManagementDTO.class);
+    @Override
+    public InvestmentManagementDTO mapToDto(InvestmentManagement entity) {
+        return super.mapToDto(entity);
     }
 
-    public List<InvestmentManagementDTO> mapToDTOList(List<InvestmentManagement> investmentManagementList) {
-        return investmentManagementList.stream()
-                .map(this::mapFromEntityToDto)
-                .toList();
+    @Override
+    public List<InvestmentManagementDTO> mapToDTOList(List<InvestmentManagement> entityList) {
+        return super.mapToDTOList(entityList);
     }
 
-    public InvestmentManagementDTO mapFromCreateRequestToDto(CreateInvestmentManagementRequest createInvestmentManagementRequest) {
-        return modelMapper.map(createInvestmentManagementRequest, InvestmentManagementDTO.class);
+    @Override
+    public InvestmentManagement updateEntity(InvestmentManagement updatedEntity, Class<InvestmentManagementDTO> dto, BillingDataChangeDTO dataChangeDTO) {
+        return super.updateEntity(updatedEntity, dto, dataChangeDTO);
     }
 
-    public InvestmentManagementDTO mapFromUpdateRequestToDto(UpdateInvestmentManagementRequest updateInvestmentManagementRequest) {
-        return modelMapper.map(updateInvestmentManagementRequest, InvestmentManagementDTO.class);
+    @Override
+    public InvestmentManagementDTO mapFromCreateRequestToDto(Object createRequest, Class<InvestmentManagementDTO> dtoClass) {
+        return super.mapFromCreateRequestToDto(createRequest, dtoClass);
     }
 
-    public InvestmentManagement createEntity(InvestmentManagementDTO investmentManagementDTO, BillingDataChangeDTO dataChangeDTO) {
-        InvestmentManagement investmentManagement = modelMapper.map(investmentManagementDTO, InvestmentManagement.class);
-        investmentManagement.setApprovalStatus(ApprovalStatus.APPROVED);
-        investmentManagement.setInputId(dataChangeDTO.getInputId());
-        investmentManagement.setInputIPAddress(dataChangeDTO.getInputIPAddress());
-        investmentManagement.setInputDate(dataChangeDTO.getInputDate());
-        investmentManagement.setApproveId(dataChangeDTO.getApproveId());
-        investmentManagement.setApproveIPAddress(dataChangeDTO.getApproveIPAddress());
-        investmentManagement.setApproveDate(convertDateUtil.getDate());
-        return investmentManagement;
+    @Override
+    public InvestmentManagementDTO mapFromUpdateRequestToDto(Object updateRequest, Class<InvestmentManagementDTO> dtoClass) {
+        return super.mapFromUpdateRequestToDto(updateRequest, dtoClass);
     }
 
-    public InvestmentManagement updateEntity(InvestmentManagement investmentManagementUpdated, BillingDataChangeDTO dataChangeDTO) {
-        InvestmentManagement investmentManagement = modelMapper.map(investmentManagementUpdated, InvestmentManagement.class);
-        investmentManagement.setApprovalStatus(ApprovalStatus.APPROVED);
-        investmentManagement.setInputId(dataChangeDTO.getInputId());
-        investmentManagement.setInputIPAddress(dataChangeDTO.getInputIPAddress());
-        investmentManagement.setInputDate(dataChangeDTO.getInputDate());
-        investmentManagement.setApproveId(dataChangeDTO.getApproveId());
-        investmentManagement.setApproveIPAddress(dataChangeDTO.getApproveIPAddress());
-        investmentManagement.setApproveDate(convertDateUtil.getDate());
-        return investmentManagement;
+    @Override
+    public InvestmentManagement createEntity(InvestmentManagementDTO dto, BillingDataChangeDTO dataChangeDTO) {
+        return super.createEntity(dto, dataChangeDTO);
     }
 
-    public void mapObjects(InvestmentManagementDTO investmentManagementDTOSource, InvestmentManagement investmentManagementTarget) {
-        modelMapper.map(investmentManagementDTOSource, investmentManagementTarget);
+    @Override
+    public void mapObjects(InvestmentManagementDTO sourceDto, InvestmentManagement targetEntity) {
+        super.mapObjects(sourceDto, targetEntity);
+    }
+
+    @Override
+    protected Class<InvestmentManagement> getEntityClass() {
+        return InvestmentManagement.class;
+    }
+
+    @Override
+    protected Class<InvestmentManagementDTO> getDtoClass() {
+        return InvestmentManagementDTO.class;
+    }
+
+    @Override
+    protected void setCommonProperties(InvestmentManagement entity, BillingDataChangeDTO dataChangeDTO) {
+        entity.setApprovalStatus(ApprovalStatus.APPROVED);
+        entity.setInputId(dataChangeDTO.getInputId());
+        entity.setInputIPAddress(dataChangeDTO.getInputIPAddress());
+        entity.setInputDate(dataChangeDTO.getInputDate());
+        entity.setApproveId(dataChangeDTO.getApproveId());
+        entity.setApproveIPAddress(dataChangeDTO.getApproveIPAddress());
+        entity.setApproveDate(convertDateUtil.getDate());
     }
 
 }

@@ -2,7 +2,6 @@ package com.bayu.billingservice.mapper;
 
 import com.bayu.billingservice.dto.customer.CreateCustomerRequest;
 import com.bayu.billingservice.dto.customer.CustomerDTO;
-import com.bayu.billingservice.dto.customer.UpdateCustomerListRequest;
 import com.bayu.billingservice.dto.customer.UpdateCustomerRequest;
 import com.bayu.billingservice.dto.datachange.BillingDataChangeDTO;
 import com.bayu.billingservice.model.Customer;
@@ -62,29 +61,24 @@ public class CustomerMapper {
 
     public Customer createEntity(CustomerDTO customerDTO, BillingDataChangeDTO dataChangeDTO) {
         Customer customer = modelMapper.map(customerDTO, Customer.class);
-        // Set approval status to APPROVED
-        customer.setApprovalStatus(ApprovalStatus.APPROVED);
-        // Set input details from dataChangeDTO
-        customer.setInputId(dataChangeDTO.getInputId());
-        customer.setInputIPAddress(dataChangeDTO.getInputIPAddress());
-        customer.setInputDate(dataChangeDTO.getInputDate());
-        // Set approve details from dataChangeDTO
-        customer.setApproveId(dataChangeDTO.getApproveId());
-        customer.setApproveIPAddress(dataChangeDTO.getApproveIPAddress());
-        customer.setApproveDate(convertDateUtil.getDate());
+        setCommonProperties(customer, dataChangeDTO);
         return customer;
     }
 
     public Customer updateEntity(Customer customerUpdated, BillingDataChangeDTO dataChangeDTO) {
         Customer customer = modelMapper.map(customerUpdated, Customer.class);
-        customer.setApprovalStatus(dataChangeDTO.getApprovalStatus());
+        setCommonProperties(customer, dataChangeDTO);
+        return customer;
+    }
+
+    private void setCommonProperties(Customer customer, BillingDataChangeDTO dataChangeDTO) {
+        customer.setApprovalStatus(ApprovalStatus.APPROVED);
         customer.setInputId(dataChangeDTO.getInputId());
         customer.setInputIPAddress(dataChangeDTO.getInputIPAddress());
         customer.setInputDate(dataChangeDTO.getInputDate());
         customer.setApproveId(dataChangeDTO.getApproveId());
         customer.setApproveIPAddress(dataChangeDTO.getApproveIPAddress());
         customer.setApproveDate(convertDateUtil.getDate());
-        return customer;
     }
 
     public CustomerDTO mapFromUpdateRequestToDto(UpdateCustomerRequest updateCustomerRequest) {

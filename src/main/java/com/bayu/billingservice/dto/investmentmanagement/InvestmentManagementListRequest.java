@@ -1,6 +1,5 @@
 package com.bayu.billingservice.dto.investmentmanagement;
 
-import com.bayu.billingservice.dto.ErrorMessageDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,11 +11,12 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class DeleteInvestmentManagementListResponse {
+public class InvestmentManagementListRequest {
 
-    private Integer totalDataSuccess;
+    private String inputId;
 
-    private Integer totalDataFailed;
+    private String inputIPAddress;
 
-    private List<ErrorMessageDTO> errorMessages;
+    private List<InvestmentManagementDTO> investmentManagementRequestList;
+
 }

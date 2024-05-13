@@ -5,22 +5,15 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UpdateInvestmentManagementListRequest {
-
-    private String inputId;
-
-    private String inputIPAddress;
+public class InvestmentManagementApproveRequest {
 
     private String approveId;
-
     private String approveIPAddress;
+    private String dataChangeId;
 
-    private List<InvestmentManagementDTO> investmentManagementRequestList;
-
+    private InvestmentManagementDTO data;
 }
