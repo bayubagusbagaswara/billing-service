@@ -235,6 +235,11 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
             Long dataChangeId = Long.valueOf(approveRequest.getDataChangeId());
             List<String> validationErrors = new ArrayList<>();
 
+            Errors errors = validateInvestmentManagementUsingValidator(investmentManagementDTO);
+            if (errors.hasErrors()) {
+                errors.getAllErrors().forEach(error -> validationErrors.add(error.getDefaultMessage()));
+            }
+
             InvestmentManagement investmentManagement = investmentManagementRepository.findByCode(investmentManagementDTO.getCode())
                     .orElseThrow(() -> new DataNotFoundException(CODE_NOT_FOUND + investmentManagementDTO.getCode()));
 
@@ -242,10 +247,7 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
             investmentManagementMapper.mapObjects(investmentManagementDTO, investmentManagement);
             log.info("Investment Management after copy properties: {}", investmentManagement);
 
-            Errors errors = validateInvestmentManagementUsingValidator(investmentManagementMapper.mapToDto(investmentManagement));
-            if (errors.hasErrors()) {
-                errors.getAllErrors().forEach(error -> validationErrors.add(error.getDefaultMessage()));
-            }
+
 
             // Retrieve and set billing data change
             BillingDataChangeDTO dataChangeDTO = dataChangeService.getById(dataChangeId);
