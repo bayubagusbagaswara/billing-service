@@ -28,37 +28,37 @@ public class SellingAgentServiceImpl implements SellingAgentService {
     }
 
     @Override
-    public CreateSellingAgentListResponse createSingleData(CreateSellingAgentRequest createSellingAgentRequest, BillingDataChangeDTO dataChangeDTO) {
+    public SellingAgentResponse createSingleData(CreateSellingAgentRequest createSellingAgentRequest, BillingDataChangeDTO dataChangeDTO) {
         return null;
     }
 
     @Override
-    public CreateSellingAgentListResponse createMultipleApprove(CreateSellingAgentListRequest createSellingAgentListRequest) {
+    public SellingAgentResponse createSingleApprove(SellingAgentApproveRequest sellingAgentApproveRequest) {
         return null;
     }
 
     @Override
-    public UpdateSellingAgentListResponse updateSingleData(UpdateSellingAgentRequest updateSellingAgentRequest, BillingDataChangeDTO dataChangeDTO) {
+    public SellingAgentResponse updateSingleData(UpdateSellingAgentRequest updateSellingAgentRequest, BillingDataChangeDTO dataChangeDTO) {
         return null;
     }
 
     @Override
-    public UpdateSellingAgentListResponse updateMultipleData(UpdateSellingAgentListRequest updateSellingAgentListRequest, BillingDataChangeDTO dataChangeDTO) {
+    public SellingAgentResponse updateMultipleData(SellingAgentListRequest listRequest, BillingDataChangeDTO dataChangeDTO) {
         return null;
     }
 
     @Override
-    public UpdateSellingAgentListResponse updateMultipleApprove(UpdateSellingAgentListRequest updateSellingAgentListRequest) {
+    public SellingAgentResponse updateSingleApprove(SellingAgentApproveRequest sellingAgentApproveRequest) {
         return null;
     }
 
     @Override
-    public DeleteSellingAgentListResponse deleteSingleData(DeleteSellingAgentRequest deleteSellingAgentRequest, BillingDataChangeDTO dataChangeDTO) {
+    public SellingAgentResponse deleteSingleData(DeleteSellingAgentRequest deleteSellingAgentRequest, BillingDataChangeDTO dataChangeDTO) {
         return null;
     }
 
     @Override
-    public DeleteSellingAgentListResponse deleteMultipleApprove(DeleteSellingAgentListRequest deleteSellingAgentListRequest) {
+    public SellingAgentResponse deleteSingleApprove(SellingAgentApproveRequest approveRequest) {
         return null;
     }
 

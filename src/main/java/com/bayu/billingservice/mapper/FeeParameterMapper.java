@@ -1,6 +1,7 @@
 package com.bayu.billingservice.mapper;
 
 import com.bayu.billingservice.dto.datachange.BillingDataChangeDTO;
+import com.bayu.billingservice.dto.feeparameter.FeeParameterDTO;
 import com.bayu.billingservice.model.FeeParameter;
 import com.bayu.billingservice.model.enumerator.ApprovalStatus;
 import com.bayu.billingservice.util.ConvertDateUtil;
@@ -11,21 +12,18 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-public class FeeParameterMapper {
+public class FeeParameterMapper extends BaseMapper<FeeParameter, FeeParameterDTO> {
 
-    private final ModelMapper modelMapper;
     private final ConvertDateUtil convertDateUtil;
 
     public FeeParameterMapper(ModelMapper modelMapper, ConvertDateUtil convertDateUtil) {
-        this.modelMapper = modelMapper;
+        super(modelMapper);
         this.convertDateUtil = convertDateUtil;
-        configureMapper();
     }
 
-    private void configureMapper() {
-        modelMapper.getConfiguration().setSkipNullEnabled(true);
-
-        modelMapper.addMappings(new PropertyMap<FeeParameter, FeeParameterDTO>() {
+    @Override
+    protected PropertyMap<FeeParameter, FeeParameterDTO> getPropertyMap() {
+        return new PropertyMap<FeeParameter, FeeParameterDTO>() {
             @Override
             protected void configure() {
                 skip(destination.getApprovalStatus());
@@ -36,57 +34,68 @@ public class FeeParameterMapper {
                 skip(destination.getApproveIPAddress());
                 skip(destination.getApproveDate());
             }
-        });
+        };
     }
 
-    public FeeParameter mapFromDtoToEntity(FeeParameterDTO feeParameterDTO) {
-        return modelMapper.map(feeParameterDTO, FeeParameter.class);
+    @Override
+    public FeeParameter mapToEntity(FeeParameterDTO dto) {
+        return super.mapToEntity(dto);
     }
 
-    public FeeParameterDTO mapFromEntityToDto(FeeParameter feeParameter) {
-        return modelMapper.map(feeParameter, FeeParameterDTO.class);
+    @Override
+    public FeeParameterDTO mapToDto(FeeParameter entity) {
+        return super.mapToDto(entity);
     }
 
-    public List<FeeParameterDTO> mapToDTOList(List<FeeParameter> feeParameterList) {
-        return feeParameterList.stream()
-                .map(this::mapFromEntityToDto)
-                .toList();
+    @Override
+    public List<FeeParameterDTO> mapToDTOList(List<FeeParameter> entityList) {
+        return super.mapToDTOList(entityList);
     }
 
-    public FeeParameterDTO mapFromCreateRequestToDto(CreateFeeParameterRequest createFeeParameterRequest) {
-        return modelMapper.map(createFeeParameterRequest, FeeParameterDTO.class);
+    @Override
+    public FeeParameterDTO mapFromCreateRequestToDto(Object createRequest, Class<FeeParameterDTO> dtoClass) {
+        return super.mapFromCreateRequestToDto(createRequest, dtoClass);
     }
 
-    public FeeParameterDTO mapFromUpdateRequestToDto(UpdateFeeParameterRequest updateFeeParameterRequest) {
-        return modelMapper.map(updateFeeParameterRequest, FeeParameterDTO.class);
+    @Override
+    public FeeParameterDTO mapFromUpdateRequestToDto(Object updateRequest, Class<FeeParameterDTO> dtoClass) {
+        return super.mapFromUpdateRequestToDto(updateRequest, dtoClass);
     }
 
-    public FeeParameter createEntity(FeeParameterDTO feeParameterDTO, BillingDataChangeDTO dataChangeDTO) {
-        FeeParameter feeParameter = modelMapper.map(feeParameterDTO, FeeParameter.class);
-        feeParameter.setApprovalStatus(ApprovalStatus.APPROVED);
-        feeParameter.setInputId(dataChangeDTO.getInputId());
-        feeParameter.setInputIPAddress(dataChangeDTO.getInputIPAddress());
-        feeParameter.setInputDate(dataChangeDTO.getInputDate());
-        feeParameter.setApproveId(dataChangeDTO.getApproveId());
-        feeParameter.setApproveIPAddress(dataChangeDTO.getApproveIPAddress());
-        feeParameter.setApproveDate(convertDateUtil.getDate());
-        return feeParameter;
+    @Override
+    public FeeParameter createEntity(FeeParameterDTO dto, BillingDataChangeDTO dataChangeDTO) {
+        return super.createEntity(dto, dataChangeDTO);
     }
 
-    public FeeParameter updateEntity(FeeParameter feeParameterUpdated, BillingDataChangeDTO dataChangeDTO) {
-        FeeParameter feeParameter = modelMapper.map(feeParameterUpdated, FeeParameter.class);
-        feeParameter.setApprovalStatus(ApprovalStatus.APPROVED);
-        feeParameter.setInputId(dataChangeDTO.getInputId());
-        feeParameter.setInputIPAddress(dataChangeDTO.getInputIPAddress());
-        feeParameter.setInputDate(dataChangeDTO.getInputDate());
-        feeParameter.setApproveId(dataChangeDTO.getApproveId());
-        feeParameter.setApproveIPAddress(dataChangeDTO.getApproveIPAddress());
-        feeParameter.setApproveDate(convertDateUtil.getDate());
-        return feeParameter;
+    @Override
+    public FeeParameter updateEntity(FeeParameter updatedEntity, Class<FeeParameterDTO> dto, BillingDataChangeDTO dataChangeDTO) {
+        return super.updateEntity(updatedEntity, dto, dataChangeDTO);
     }
 
-    public void mapObjects(FeeParameterDTO feeParameterDTOSource, FeeParameter feeParameterTarget) {
-        modelMapper.map(feeParameterDTOSource, feeParameterTarget);
+    @Override
+    public void mapObjects(FeeParameterDTO sourceDto, FeeParameter targetEntity) {
+        super.mapObjects(sourceDto, targetEntity);
+    }
+
+    @Override
+    protected Class<FeeParameter> getEntityClass() {
+        return FeeParameter.class;
+    }
+
+    @Override
+    protected Class<FeeParameterDTO> getDtoClass() {
+        return FeeParameterDTO.class;
+    }
+
+    @Override
+    protected void setCommonProperties(FeeParameter entity, BillingDataChangeDTO dataChangeDTO) {
+        entity.setApprovalStatus(ApprovalStatus.APPROVED);
+        entity.setInputId(dataChangeDTO.getInputId());
+        entity.setInputIPAddress(dataChangeDTO.getInputIPAddress());
+        entity.setInputDate(dataChangeDTO.getInputDate());
+        entity.setApproveId(dataChangeDTO.getApproveId());
+        entity.setApproveIPAddress(dataChangeDTO.getApproveIPAddress());
+        entity.setApproveDate(convertDateUtil.getDate());
     }
 
 }

@@ -32,7 +32,7 @@ public abstract class BaseMapper<E, D> {
 
     public List<D> mapToDTOList(List<E> entityList) {
         return entityList.stream()
-                .map(entity -> mapToDto(entity))
+                .map(this::mapToDto)
                 .toList();
     }
 

@@ -11,8 +11,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class CustomerApproveRequest {
 
-    private String approverId;
-    private String approverIPAddress;
+    private String approveId;
+    private String approveIPAddress;
 
     private String dataChangeId;
 

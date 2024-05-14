@@ -23,25 +23,4 @@ public class SellingAgent extends Approval {
 
     @Column(name = "name")
     private String name;
-
-    @Column(name = "gl")
-    private String gl;
-
-    @Column(name = "gl_name")
-    private String glName;
-
-    @Column(name = "account")
-    private String account;
-
-    @Column(name = "account_name")
-    private String accountName;
-
-    @Column(name = "email")
-    private String email;
-
-    @Column(name = "address")
-    private String address;
-
-    @Column(name = "description")
-    private String description;
 }

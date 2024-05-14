@@ -60,17 +60,17 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
     }
 
     @Override
-    public CreateExchangeRateListResponse createSingleData(CreateExchangeRateRequest createExchangeRateRequest, BillingDataChangeDTO dataChangeDTO) {
+    public ExchangeRateResponse createSingleData(CreateExchangeRateRequest createExchangeRateRequest, BillingDataChangeDTO dataChangeDTO) {
         return null;
     }
 
     @Override
-    public UpdateExchangeRateListResponse updateSingleData(UpdateExchangeRateRequest updateExchangeRateRequest, BillingDataChangeDTO dataChangeDTO) {
+    public ExchangeRateResponse updateSingleData(UpdateExchangeRateRequest updateExchangeRateRequest, BillingDataChangeDTO dataChangeDTO) {
         return null;
     }
 
     @Override
-    public UpdateExchangeRateListResponse updateApprove(UpdateExchangeRateRequest updateExchangeRateRequest) {
+    public ExchangeRateResponse updateApprove(ExchangeRateApproveRequest approveRequest) {
         return null;
     }
 

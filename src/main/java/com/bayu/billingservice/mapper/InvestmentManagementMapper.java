@@ -1,6 +1,7 @@
 package com.bayu.billingservice.mapper;
 
 import com.bayu.billingservice.dto.datachange.BillingDataChangeDTO;
+import com.bayu.billingservice.dto.investmentmanagement.InvestmentManagementDTO;
 import com.bayu.billingservice.model.InvestmentManagement;
 import com.bayu.billingservice.model.enumerator.ApprovalStatus;
 import com.bayu.billingservice.util.ConvertDateUtil;
@@ -22,10 +23,10 @@ public class InvestmentManagementMapper extends BaseMapper<InvestmentManagement,
 
     @Override
     protected PropertyMap<InvestmentManagement, InvestmentManagementDTO> getPropertyMap() {
-        return new PropertyMap<InvestmentManagement, InvestmentManagementDTO>() {
+        return new PropertyMap<>() {
             @Override
             protected void configure() {
-                skip().setApprovalStatus(null);
+                skip(destination.getApprovalStatus());
                 skip().setInputId(null);
                 skip().setInputIPAddress(null);
                 skip().setInputDate(null);
@@ -52,11 +53,6 @@ public class InvestmentManagementMapper extends BaseMapper<InvestmentManagement,
     }
 
     @Override
-    public InvestmentManagement updateEntity(InvestmentManagement updatedEntity, Class<InvestmentManagementDTO> dto, BillingDataChangeDTO dataChangeDTO) {
-        return super.updateEntity(updatedEntity, dto, dataChangeDTO);
-    }
-
-    @Override
     public InvestmentManagementDTO mapFromCreateRequestToDto(Object createRequest, Class<InvestmentManagementDTO> dtoClass) {
         return super.mapFromCreateRequestToDto(createRequest, dtoClass);
     }
@@ -69,6 +65,11 @@ public class InvestmentManagementMapper extends BaseMapper<InvestmentManagement,
     @Override
     public InvestmentManagement createEntity(InvestmentManagementDTO dto, BillingDataChangeDTO dataChangeDTO) {
         return super.createEntity(dto, dataChangeDTO);
+    }
+
+    @Override
+    public InvestmentManagement updateEntity(InvestmentManagement updatedEntity, Class<InvestmentManagementDTO> dto, BillingDataChangeDTO dataChangeDTO) {
+        return super.updateEntity(updatedEntity, dto, dataChangeDTO);
     }
 
     @Override

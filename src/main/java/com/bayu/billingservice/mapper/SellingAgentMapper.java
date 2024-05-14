@@ -1,10 +1,10 @@
 package com.bayu.billingservice.mapper;
 
 import com.bayu.billingservice.dto.datachange.BillingDataChangeDTO;
+import com.bayu.billingservice.dto.sellingagent.SellingAgentDTO;
 import com.bayu.billingservice.model.SellingAgent;
 import com.bayu.billingservice.model.enumerator.ApprovalStatus;
 import com.bayu.billingservice.util.ConvertDateUtil;
-import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
 import org.springframework.stereotype.Component;
@@ -12,21 +12,18 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-@RequiredArgsConstructor
-public class SellingAgentMapper {
+public class SellingAgentMapper extends BaseMapper<SellingAgent, SellingAgentDTO> {
 
-    private final ModelMapperUtil modelMapperUtil;
     private final ConvertDateUtil convertDateUtil;
 
-    public SellingAgent mapFromDtoToEntity(SellingAgentDTO sellingAgentDTO) {
-        SellingAgent sellingAgent = new SellingAgent();
-        modelMapperUtil.mapObjects(sellingAgentDTO, sellingAgent);
-        return sellingAgent;
+    public SellingAgentMapper(ModelMapper modelMapper, ConvertDateUtil convertDateUtil) {
+        super(modelMapper);
+        this.convertDateUtil = convertDateUtil;
     }
 
-    public SellingAgentDTO mapFromEntityToDto(SellingAgent sellingAgent) {
-        ModelMapper modelMapper = new ModelMapper();
-        modelMapper.addMappings(new PropertyMap<SellingAgent, SellingAgentDTO>() {
+    @Override
+    protected PropertyMap<SellingAgent, SellingAgentDTO> getPropertyMap() {
+        return new PropertyMap<SellingAgent, SellingAgentDTO>() {
             @Override
             protected void configure() {
                 skip(destination.getApprovalStatus());
@@ -37,57 +34,68 @@ public class SellingAgentMapper {
                 skip(destination.getApproveIPAddress());
                 skip(destination.getApproveDate());
             }
-        });
-
-        return modelMapper.map(sellingAgent, SellingAgentDTO.class);
+        };
     }
 
-    public List<SellingAgentDTO> mapToDTOList(List<SellingAgent> sellingAgentList) {
-        return sellingAgentList.stream()
-                .map(this::mapFromEntityToDto)
-                .toList();
+    @Override
+    public SellingAgent mapToEntity(SellingAgentDTO dto) {
+        return super.mapToEntity(dto);
     }
 
-    public SellingAgentDTO mapFromCreateSellingAgentRequestToDTO(CreateSellingAgentRequest createSellingAgentRequest) {
-        SellingAgentDTO sellingAgentDTO = new SellingAgentDTO();
-        modelMapperUtil.mapObjects(createSellingAgentRequest, sellingAgentDTO);
-        return sellingAgentDTO;
+    @Override
+    public SellingAgentDTO mapToDto(SellingAgent entity) {
+        return super.mapToDto(entity);
     }
 
-    public SellingAgent createEntity(SellingAgentDTO sellingAgentDTO, BillingDataChangeDTO dataChangeDTO) {
-        SellingAgent sellingAgent = new SellingAgent();
-        modelMapperUtil.mapObjects(sellingAgentDTO, sellingAgent);
-        sellingAgent.setApprovalStatus(ApprovalStatus.APPROVED);
-        sellingAgent.setInputId(dataChangeDTO.getInputId());
-        sellingAgent.setInputIPAddress(dataChangeDTO.getInputIPAddress());
-        sellingAgent.setInputDate(dataChangeDTO.getInputDate());
-        sellingAgent.setApproveId(dataChangeDTO.getApproveId());
-        sellingAgent.setApproveIPAddress(dataChangeDTO.getApproveIPAddress());
-        sellingAgent.setApproveDate(convertDateUtil.getDate());
-        return sellingAgent;
+    @Override
+    public List<SellingAgentDTO> mapToDTOList(List<SellingAgent> entityList) {
+        return super.mapToDTOList(entityList);
     }
 
-    public SellingAgent updateEntity(SellingAgent sellingAgentUpdated, BillingDataChangeDTO dataChangeDTO) {
-        SellingAgent sellingAgent = new SellingAgent();
-        modelMapperUtil.mapObjects(sellingAgentUpdated, sellingAgent);
-        sellingAgent.setApprovalStatus(dataChangeDTO.getApprovalStatus());
-        sellingAgent.setInputId(dataChangeDTO.getInputId());
-        sellingAgent.setInputIPAddress(dataChangeDTO.getInputIPAddress());
-        sellingAgent.setInputDate(dataChangeDTO.getInputDate());
-        sellingAgent.setApproveId(dataChangeDTO.getApproveId());
-        sellingAgent.setApproveIPAddress(dataChangeDTO.getApproveIPAddress());
-        sellingAgent.setApproveDate(convertDateUtil.getDate());
-        return sellingAgent;
+    @Override
+    public SellingAgentDTO mapFromCreateRequestToDto(Object createRequest, Class<SellingAgentDTO> dtoClass) {
+        return super.mapFromCreateRequestToDto(createRequest, dtoClass);
     }
 
-    public SellingAgentDTO mapFromUpdateRequestToDto(UpdateSellingAgentListRequest updateSellingAgentListRequest) {
-        SellingAgentDTO sellingAgentDTO = new SellingAgentDTO();
-        modelMapperUtil.mapObjects(updateSellingAgentListRequest, sellingAgentDTO);
-        return sellingAgentDTO;
+    @Override
+    public SellingAgentDTO mapFromUpdateRequestToDto(Object updateRequest, Class<SellingAgentDTO> dtoClass) {
+        return super.mapFromUpdateRequestToDto(updateRequest, dtoClass);
     }
 
-    public void mapObjects(SellingAgentDTO sellingAgentDTOSource, SellingAgent sellingAgentTarget) {
-        modelMapperUtil.mapObjects(sellingAgentDTOSource, sellingAgentTarget);
+    @Override
+    public SellingAgent createEntity(SellingAgentDTO dto, BillingDataChangeDTO dataChangeDTO) {
+        return super.createEntity(dto, dataChangeDTO);
+    }
+
+    @Override
+    public SellingAgent updateEntity(SellingAgent updatedEntity, Class<SellingAgentDTO> dto, BillingDataChangeDTO dataChangeDTO) {
+        return super.updateEntity(updatedEntity, dto, dataChangeDTO);
+    }
+
+    @Override
+    public void mapObjects(SellingAgentDTO sourceDto, SellingAgent targetEntity) {
+        super.mapObjects(sourceDto, targetEntity);
+    }
+
+    @Override
+    protected Class<SellingAgent> getEntityClass() {
+        return SellingAgent.class;
+    }
+
+    @Override
+    protected Class<SellingAgentDTO> getDtoClass() {
+        return SellingAgentDTO.class;
+    }
+
+    @Override
+    protected void setCommonProperties(SellingAgent entity, BillingDataChangeDTO dataChangeDTO) {
+        entity.setApprovalStatus(ApprovalStatus.APPROVED);
+        entity.setInputId(dataChangeDTO.getInputId());
+        entity.setInputIPAddress(dataChangeDTO.getInputIPAddress());
+        entity.setInputDate(dataChangeDTO.getInputDate());
+        entity.setApproveId(dataChangeDTO.getApproveId());
+        entity.setApproveIPAddress(dataChangeDTO.getApproveIPAddress());
+        entity.setApproveDate(convertDateUtil.getDate());
     }
 
 }

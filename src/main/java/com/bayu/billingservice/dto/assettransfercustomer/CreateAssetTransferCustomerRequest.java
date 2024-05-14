@@ -11,9 +11,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class CreateAssetTransferCustomerRequest {
 
-    private String inputerId;
+    private String inputId;
 
-    private String inputerIPAddress;
+    private String inputIPAddress;
 
     private String customerCode;
 

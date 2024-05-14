@@ -18,37 +18,37 @@ public class AssetTransferCustomerServiceImpl implements AssetTransferCustomerSe
     private final AssetTransferCustomerRepository assetTransferCustomerRepository;
 
     @Override
-    public CreateAssetTransferCustomerListResponse createSingleData(CreateAssetTransferCustomerRequest createAssetTransferCustomerRequest, BillingDataChangeDTO dataChangeDTO) {
+    public AssetTransferCustomerResponse createSingleData(CreateAssetTransferCustomerRequest createAssetTransferCustomerRequest, BillingDataChangeDTO dataChangeDTO) {
         return null;
     }
 
     @Override
-    public CreateAssetTransferCustomerListResponse createMultipleApprove(CreateAssetTransferCustomerListRequest createAssetTransferCustomerListRequest) {
+    public AssetTransferCustomerResponse createSingleApprove(AssetTransferCustomerApproveRequest createAssetTransferCustomerListRequest) {
         return null;
     }
 
     @Override
-    public UpdateAssetTransferCustomerListResponse updateSingleData(UpdateAssetTransferCustomerRequest updateAssetTransferCustomerRequest, BillingDataChangeDTO dataChangeDTO) {
+    public AssetTransferCustomerResponse updateSingleData(UpdateAssetTransferCustomerRequest updateAssetTransferCustomerRequest, BillingDataChangeDTO dataChangeDTO) {
         return null;
     }
 
     @Override
-    public UpdateAssetTransferCustomerListResponse updateMultipleData(UpdateAssetTransferCustomerListRequest updateAssetTransferCustomerListRequest, BillingDataChangeDTO dataChangeDTO) {
+    public AssetTransferCustomerResponse updateMultipleData(AssetTransferCustomerListRequest updateAssetTransferCustomerListRequest, BillingDataChangeDTO dataChangeDTO) {
         return null;
     }
 
     @Override
-    public UpdateAssetTransferCustomerListResponse updateMultipleApprove(UpdateAssetTransferCustomerListRequest updateAssetTransferCustomerListRequest) {
+    public AssetTransferCustomerResponse updateSingleApprove(AssetTransferCustomerApproveRequest updateAssetTransferCustomerListRequest) {
         return null;
     }
 
     @Override
-    public DeleteAssetTransferCustomerListResponse deleteSingleData(DeleteAssetTransferCustomerRequest deleteAssetTransferCustomerRequest, BillingDataChangeDTO dataChangeDTO) {
+    public AssetTransferCustomerResponse deleteSingleData(DeleteAssetTransferCustomerRequest deleteAssetTransferCustomerRequest, BillingDataChangeDTO dataChangeDTO) {
         return null;
     }
 
     @Override
-    public DeleteAssetTransferCustomerListResponse deleteMultipleApprove(DeleteAssetTransferCustomerListRequest deleteAssetTransferCustomerListRequest) {
+    public AssetTransferCustomerResponse deleteSingleApprove(AssetTransferCustomerApproveRequest deleteAssetTransferCustomerListRequest) {
         return null;
     }
 

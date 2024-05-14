@@ -1,10 +1,9 @@
 package com.bayu.billingservice.dto.feeparameter;
 
+import com.bayu.billingservice.dto.approval.ApprovalDTO;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.services.billingservice.dto.approval.ApprovalDTO;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
-
-import javax.validation.constraints.NotBlank;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
@@ -16,14 +15,14 @@ public class FeeParameterDTO extends ApprovalDTO {
 
     private Long id;
 
-    @NotBlank(message = "Code cannot be empty")
+    @NotBlank(message = "Code cannot be blank")
     private String code;
 
-    @NotBlank(message = "Name cannot be empty")
+    @NotBlank(message = "Name cannot be blank")
     private String name;
 
     private String description;
 
-    @NotBlank(message = "Value cannot be empty")
+    @NotBlank(message = "Value cannot be blank")
     private String value;
 }

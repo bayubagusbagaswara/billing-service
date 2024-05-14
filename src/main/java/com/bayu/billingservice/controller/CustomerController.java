@@ -71,7 +71,7 @@ public class CustomerController {
     }
 
     @PostMapping(path = "/create-list")
-    public ResponseEntity<ResponseDTO<CustomerResponse>> createList(@RequestBody CreateCustomerListRequest request) {
+    public ResponseEntity<ResponseDTO<CustomerResponse>> createList(@RequestBody CustomerListRequest request) {
         BillingDataChangeDTO dataChangeDTO = BillingDataChangeDTO.builder()
                 .methodHttp(HttpMethod.POST.name())
                 .endpoint("/api/customer/create/approve")
@@ -90,7 +90,7 @@ public class CustomerController {
     }
 
     @PostMapping(path = "/create/approve")
-    public ResponseEntity<ResponseDTO<CustomerResponse>> createApprove(@RequestBody CreateCustomerApproveRequest request) {
+    public ResponseEntity<ResponseDTO<CustomerResponse>> createApprove(@RequestBody CustomerApproveRequest request) {
         CustomerResponse createCustomerListResponse = customerService.createSingleApprove(request);
         ResponseDTO<CustomerResponse> response = ResponseDTO.<CustomerResponse>builder()
                 .code(HttpStatus.OK.value())
@@ -101,7 +101,7 @@ public class CustomerController {
     }
 
     @PutMapping(path = "/update-list")
-    public ResponseEntity<ResponseDTO<CustomerResponse>> updateList(@RequestBody UpdateCustomerListRequest request) {
+    public ResponseEntity<ResponseDTO<CustomerResponse>> updateList(@RequestBody CustomerListRequest request) {
         BillingDataChangeDTO dataChangeDTO = BillingDataChangeDTO.builder()
                 .methodHttp(HttpMethod.PUT.name())
                 .endpoint("/api/customer/update/approve")

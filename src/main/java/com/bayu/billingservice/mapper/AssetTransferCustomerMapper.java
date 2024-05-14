@@ -1,10 +1,10 @@
 package com.bayu.billingservice.mapper;
 
+import com.bayu.billingservice.dto.assettransfercustomer.AssetTransferCustomerDTO;
 import com.bayu.billingservice.dto.datachange.BillingDataChangeDTO;
 import com.bayu.billingservice.model.AssetTransferCustomer;
 import com.bayu.billingservice.model.enumerator.ApprovalStatus;
 import com.bayu.billingservice.util.ConvertDateUtil;
-import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
 import org.springframework.stereotype.Component;
@@ -12,21 +12,18 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-@RequiredArgsConstructor
-public class AssetTransferCustomerMapper {
+public class AssetTransferCustomerMapper extends BaseMapper<AssetTransferCustomer, AssetTransferCustomerDTO> {
 
-    private final ModelMapperUtil modelMapperUtil;
     private final ConvertDateUtil convertDateUtil;
 
-    public AssetTransferCustomer mapFromDtoToEntity(AssetTransferCustomerDTO assetTransferCustomerDTO) {
-        AssetTransferCustomer assetTransferCustomer = new AssetTransferCustomer();
-        modelMapperUtil.mapObjects(assetTransferCustomerDTO, assetTransferCustomer);
-        return assetTransferCustomer;
+    public AssetTransferCustomerMapper(ModelMapper modelMapper, ConvertDateUtil convertDateUtil) {
+        super(modelMapper);
+        this.convertDateUtil = convertDateUtil;
     }
 
-    public  AssetTransferCustomerDTO mapFromEntityToDto( AssetTransferCustomer assetTransferCustomer) {
-        ModelMapper modelMapper = new ModelMapper();
-        modelMapper.addMappings(new PropertyMap<AssetTransferCustomer,  AssetTransferCustomerDTO>() {
+    @Override
+    protected PropertyMap<AssetTransferCustomer, AssetTransferCustomerDTO> getPropertyMap() {
+        return new PropertyMap<AssetTransferCustomer, AssetTransferCustomerDTO>() {
             @Override
             protected void configure() {
                 skip(destination.getApprovalStatus());
@@ -37,57 +34,67 @@ public class AssetTransferCustomerMapper {
                 skip(destination.getApproveIPAddress());
                 skip(destination.getApproveDate());
             }
-        });
-
-        return modelMapper.map(assetTransferCustomer, AssetTransferCustomerDTO.class);
+        };
     }
 
-    public List<AssetTransferCustomerDTO> mapToDTOList(List<AssetTransferCustomer> assetTransferCustomerList) {
-        return assetTransferCustomerList.stream()
-                .map(this::mapFromEntityToDto)
-                .toList();
+    @Override
+    public AssetTransferCustomerDTO mapToDto(AssetTransferCustomer entity) {
+        return super.mapToDto(entity);
     }
 
-    public AssetTransferCustomerDTO mapFromCreateCustomerRequestToDTO(CreateAssetTransferCustomerRequest createAssetTransferCustomerRequest) {
-        AssetTransferCustomerDTO assetTransferCustomerDTO = new  AssetTransferCustomerDTO();
-        modelMapperUtil.mapObjects(createAssetTransferCustomerRequest, assetTransferCustomerDTO);
-        return assetTransferCustomerDTO;
+    @Override
+    public AssetTransferCustomer mapToEntity(AssetTransferCustomerDTO dto) {
+        return super.mapToEntity(dto);
     }
 
-    public AssetTransferCustomer createEntity(AssetTransferCustomerDTO assetTransferCustomerDTO, BillingDataChangeDTO dataChangeDTO) {
-        AssetTransferCustomer assetTransferCustomer = new  AssetTransferCustomer();
-        modelMapperUtil.mapObjects(assetTransferCustomerDTO, assetTransferCustomer);
-        assetTransferCustomer.setApprovalStatus(ApprovalStatus.APPROVED);
-        assetTransferCustomer.setInputId(dataChangeDTO.getInputId());
-        assetTransferCustomer.setInputIPAddress(dataChangeDTO.getInputIPAddress());
-        assetTransferCustomer.setInputDate(dataChangeDTO.getInputDate());
-        assetTransferCustomer.setApproveId(dataChangeDTO.getApproveId());
-        assetTransferCustomer.setApproveIPAddress(dataChangeDTO.getApproveIPAddress());
-        assetTransferCustomer.setApproveDate(convertDateUtil.getDate());
-        return assetTransferCustomer;
+    @Override
+    public List<AssetTransferCustomerDTO> mapToDTOList(List<AssetTransferCustomer> entityList) {
+        return super.mapToDTOList(entityList);
     }
 
-    public AssetTransferCustomer updateEntity(AssetTransferCustomer assetTransferCustomerUpdated, BillingDataChangeDTO dataChangeDTO) {
-        AssetTransferCustomer assetTransferCustomer = new AssetTransferCustomer();
-        modelMapperUtil.mapObjects(assetTransferCustomerUpdated, assetTransferCustomer);
-        assetTransferCustomer.setApprovalStatus(dataChangeDTO.getApprovalStatus());
-        assetTransferCustomer.setInputId(dataChangeDTO.getInputId());
-        assetTransferCustomer.setInputIPAddress(dataChangeDTO.getInputIPAddress());
-        assetTransferCustomer.setInputDate(dataChangeDTO.getInputDate());
-        assetTransferCustomer.setApproveId(dataChangeDTO.getApproveId());
-        assetTransferCustomer.setApproveIPAddress(dataChangeDTO.getApproveIPAddress());
-        assetTransferCustomer.setApproveDate(convertDateUtil.getDate());
-        return assetTransferCustomer;
+    @Override
+    public AssetTransferCustomerDTO mapFromCreateRequestToDto(Object createRequest, Class<AssetTransferCustomerDTO> dtoClass) {
+        return super.mapFromCreateRequestToDto(createRequest, dtoClass);
     }
 
-    public AssetTransferCustomerDTO mapFromUpdateRequestToDto(UpdateAssetTransferCustomerListRequest updateAssetTransferCustomerListRequest) {
-        AssetTransferCustomerDTO assetTransferCustomerDTO = new  AssetTransferCustomerDTO();
-        modelMapperUtil.mapObjects(updateAssetTransferCustomerListRequest, assetTransferCustomerDTO);
-        return assetTransferCustomerDTO;
+    @Override
+    public AssetTransferCustomer createEntity(AssetTransferCustomerDTO dto, BillingDataChangeDTO dataChangeDTO) {
+        return super.createEntity(dto, dataChangeDTO);
     }
 
-    public void mapObjects(AssetTransferCustomerDTO assetTransferCustomerDTOSource, AssetTransferCustomer assetTransferCustomerTarget) {
-        modelMapperUtil.mapObjects(assetTransferCustomerDTOSource, assetTransferCustomerTarget);
+    @Override
+    public AssetTransferCustomerDTO mapFromUpdateRequestToDto(Object updateRequest, Class<AssetTransferCustomerDTO> dtoClass) {
+        return super.mapFromUpdateRequestToDto(updateRequest, dtoClass);
     }
 
+    @Override
+    public AssetTransferCustomer updateEntity(AssetTransferCustomer updatedEntity, Class<AssetTransferCustomerDTO> dto, BillingDataChangeDTO dataChangeDTO) {
+        return super.updateEntity(updatedEntity, dto, dataChangeDTO);
+    }
+
+    @Override
+    public void mapObjects(AssetTransferCustomerDTO sourceDto, AssetTransferCustomer targetEntity) {
+        super.mapObjects(sourceDto, targetEntity);
+    }
+
+    @Override
+    protected Class<AssetTransferCustomer> getEntityClass() {
+        return AssetTransferCustomer.class;
+    }
+
+    @Override
+    protected Class<AssetTransferCustomerDTO> getDtoClass() {
+        return AssetTransferCustomerDTO.class;
+    }
+
+    @Override
+    protected void setCommonProperties(AssetTransferCustomer entity, BillingDataChangeDTO dataChangeDTO) {
+        entity.setApprovalStatus(ApprovalStatus.APPROVED);
+        entity.setInputId(dataChangeDTO.getInputId());
+        entity.setInputIPAddress(dataChangeDTO.getInputIPAddress());
+        entity.setInputDate(dataChangeDTO.getInputDate());
+        entity.setApproveId(dataChangeDTO.getApproveId());
+        entity.setApproveIPAddress(dataChangeDTO.getApproveIPAddress());
+        entity.setApproveDate(convertDateUtil.getDate());
+    }
 }

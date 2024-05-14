@@ -3,6 +3,7 @@ package com.bayu.billingservice.service.impl;
 import com.bayu.billingservice.dto.ErrorMessageDTO;
 import com.bayu.billingservice.dto.customer.*;
 import com.bayu.billingservice.dto.datachange.BillingDataChangeDTO;
+import com.bayu.billingservice.dto.investmentmanagement.InvestmentManagementDTO;
 import com.bayu.billingservice.exception.DataNotFoundException;
 import com.bayu.billingservice.mapper.ModelMapperUtil;
 import com.bayu.billingservice.model.Customer;
@@ -33,18 +34,17 @@ import java.util.List;
 @Slf4j
 public class CustomerV2ServiceImpl implements CustomerV2Service {
 
+    private static final String ID_NOT_FOUND = "Billing Customer not found with id: ";
+    private static final String CODE_NOT_FOUND = "Billing Customer not found with code: ";
+    private static final String UNKNOWN = "unknown";
+
     private final CustomerRepository customerRepository;
     private final BillingDataChangeService dataChangeService;
     private final InvestmentManagementService investmentManagementService;
     private final SellingAgentService sellingAgentService;
     private final Validator validator;
     private final ObjectMapper objectMapper;
-    private final ModelMapperUtil modelMapperUtil;
     private final CustomerMapper customerMapper;
-
-    private static final String ID_NOT_FOUND = "Billing Customer not found with id: ";
-    private static final String CODE_NOT_FOUND = "Billing Customer not found with code: ";
-    private static final String UNKNOWN = "unknown";
 
     @Override
     public CustomerDTO testCreate(CustomerDTO dto) {
@@ -83,7 +83,7 @@ public class CustomerV2ServiceImpl implements CustomerV2Service {
     }
 
     @Override
-    public CustomerResponse createMultipleData(CreateCustomerListRequest request, BillingDataChangeDTO dataChangeDTO) {
+    public CustomerResponse createMultipleData(CustomerListRequest request, BillingDataChangeDTO dataChangeDTO) {
         log.info("Create billing customer multiple data with request: {}", request);
         return processDataChangeForCustomerList(request.getCustomerDTOList(), dataChangeDTO);
     }
@@ -141,15 +141,15 @@ public class CustomerV2ServiceImpl implements CustomerV2Service {
     }
 
     @Override
-    public CustomerResponse createSingleApprove(CreateCustomerApproveRequest requestList) {
-        log.info("Approve multiple for create billing customer with request: {}", requestList);
+    public CustomerResponse createSingleApprove(CustomerApproveRequest approveRequest) {
+        log.info("Approve multiple for create billing customer with request: {}", approveRequest);
         int totalDataSuccess = 0;
         int totalDataFailed = 0;
         List<ErrorMessageDTO> errorMessageDTOList = new ArrayList<>();
 
-        validateDataChangeId(requestList.getDataChangeId());
+        validateDataChangeId(approveRequest.getDataChangeId());
 
-        CustomerDTO customerDTO = requestList.getData();
+        CustomerDTO customerDTO = approveRequest.getData();
         try {
             List<String> validationErrors = new ArrayList<>();
 
@@ -174,9 +174,9 @@ public class CustomerV2ServiceImpl implements CustomerV2Service {
             validateBillingEnums(customerDTO, validationErrors);
 
             // get data change by id
-            BillingDataChangeDTO dataChangeDTO = dataChangeService.getById(customerDTO.getDataChangeId());
-            dataChangeDTO.setApproveId(requestList.getApproveId());
-            dataChangeDTO.setApproveIPAddress(requestList.getApproveIPAddress());
+            BillingDataChangeDTO dataChangeDTO = dataChangeService.getById(Long.valueOf(approveRequest.getDataChangeId()));
+            dataChangeDTO.setApproveId(approveRequest.getApproveId());
+            dataChangeDTO.setApproveIPAddress(approveRequest.getApproveIPAddress());
 
             if (!validationErrors.isEmpty()) {
                 dataChangeDTO.setJsonDataAfter(JsonUtil.cleanedJsonData(objectMapper.writeValueAsString(customerDTO)));
@@ -209,7 +209,7 @@ public class CustomerV2ServiceImpl implements CustomerV2Service {
     }
 
     @Override
-    public CustomerResponse updateMultipleData(UpdateCustomerListRequest updateCustomerListRequest, BillingDataChangeDTO dataChangeDTO) {
+    public CustomerResponse updateMultipleData(CustomerListRequest updateCustomerListRequest, BillingDataChangeDTO dataChangeDTO) {
         log.info("Update multiple billing customer with request: {}", updateCustomerListRequest);
         dataChangeDTO.setInputId(updateCustomerListRequest.getInputId());
         dataChangeDTO.setInputIPAddress(updateCustomerListRequest.getInputIPAddress());
@@ -249,7 +249,7 @@ public class CustomerV2ServiceImpl implements CustomerV2Service {
     }
 
     @Override
-    public CustomerResponse updateSingleApprove(UpdateCustomerApproveRequest updateCustomerApproveRequest) {
+    public CustomerResponse updateSingleApprove(CustomerApproveRequest updateCustomerApproveRequest) {
         log.info("Approve multiple update billing customer with request: {}", updateCustomerApproveRequest);
         int totalDataSuccess = 0;
         int totalDataFailed = 0;
@@ -285,7 +285,7 @@ public class CustomerV2ServiceImpl implements CustomerV2Service {
             validateBillingEnums(customerDTO, validationErrors);
 
             // Retrieve and set billing data change
-            BillingDataChangeDTO dataChangeDTO = dataChangeService.getById(customerDTO.getDataChangeId());
+            BillingDataChangeDTO dataChangeDTO = dataChangeService.getById(Long.valueOf(updateCustomerApproveRequest.getDataChangeId()));
             dataChangeDTO.setApproveId(updateCustomerApproveRequest.getApproveId());
             dataChangeDTO.setApproveIPAddress(updateCustomerApproveRequest.getApproveIPAddress());
             dataChangeDTO.setEntityId(customer.getId().toString());
@@ -339,23 +339,22 @@ public class CustomerV2ServiceImpl implements CustomerV2Service {
     }
 
     @Override
-    public CustomerResponse deleteSingleApprove(DeleteCustomerApproveRequest deleteCustomerListRequest) {
-        log.info("Approve delete multiple billing customer with request: {}", deleteCustomerListRequest);
+    public CustomerResponse deleteSingleApprove(CustomerApproveRequest approveRequest) {
+        log.info("Approve delete multiple billing customer with request: {}", approveRequest);
         int totalDataSuccess = 0;
         int totalDataFailed = 0;
         List<ErrorMessageDTO> errorMessageList = new ArrayList<>();
 
-        validateDataChangeId(deleteCustomerListRequest.getDataChangeId());
-        CustomerDTO customerDTO = deleteCustomerListRequest.getData();
-        BillingDataChangeDTO dataChangeDTO = dataChangeService.getById(customerDTO.getDataChangeId());
+        validateDataChangeId(approveRequest.getDataChangeId());
+        CustomerDTO customerDTO = approveRequest.getData();
+        BillingDataChangeDTO dataChangeDTO = dataChangeService.getById(Long.valueOf(approveRequest.getDataChangeId()));
 
         try {
             Customer customer = customerRepository.findById(customerDTO.getId())
                     .orElseThrow(() -> new DataNotFoundException(ID_NOT_FOUND + customerDTO.getId()));
 
-            dataChangeDTO.setApproveId(deleteCustomerListRequest.getApproveId());
-            dataChangeDTO.setApproveIPAddress(deleteCustomerListRequest.getApproveIPAddress());
-            dataChangeDTO.setApproveDate(new Date());
+            dataChangeDTO.setApproveId(approveRequest.getApproveId());
+            dataChangeDTO.setApproveIPAddress(approveRequest.getApproveIPAddress());
             dataChangeDTO.setJsonDataBefore(JsonUtil.cleanedJsonData(objectMapper.writeValueAsString(customer)));
             dataChangeDTO.setDescription("Successfully approve data change and delete data entity");
 
@@ -364,8 +363,8 @@ public class CustomerV2ServiceImpl implements CustomerV2Service {
             totalDataSuccess++;
         } catch (DataNotFoundException e) {
             handleDataNotFoundException(customerDTO, e, errorMessageList);
-            dataChangeDTO.setApproveId(deleteCustomerListRequest.getApproveId());
-            dataChangeDTO.setApproveIPAddress(deleteCustomerListRequest.getApproveIPAddress());
+            dataChangeDTO.setApproveId(approveRequest.getApproveId());
+            dataChangeDTO.setApproveIPAddress(approveRequest.getApproveIPAddress());
             dataChangeDTO.setApproveDate(new Date());
             List<String> validationErrors = new ArrayList<>();
             validationErrors.add(ID_NOT_FOUND + customerDTO.getId());
@@ -431,6 +430,5 @@ public class CustomerV2ServiceImpl implements CustomerV2Service {
             validationErrors.add("Currency enum not found with value '" + customerDTO.getCurrency());
         }
     }
-
 
 }

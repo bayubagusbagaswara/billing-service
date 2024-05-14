@@ -27,7 +27,7 @@ public class SellingAgentController {
 
     // Create Single Data
     @PostMapping(path = "/create")
-    public ResponseEntity<ResponseDTO<CreateSellingAgentListResponse>> createSingleData(@RequestBody CreateSellingAgentRequest createSellingAgentRequest) {
+    public ResponseEntity<ResponseDTO<SellingAgentResponse>> createSingleData(@RequestBody CreateSellingAgentRequest createSellingAgentRequest) {
         BillingDataChangeDTO dataChangeDTO = BillingDataChangeDTO.builder()
                 .methodHttp(HttpMethod.POST.name())
                 .endpoint("/api/selling-agent/create/approve")
@@ -36,8 +36,8 @@ public class SellingAgentController {
                 .isPathVariable(false)
                 .menu(MENU_SELLING_AGENT)
                 .build();
-        CreateSellingAgentListResponse createResponse = sellingAgentService.createSingleData(createSellingAgentRequest, dataChangeDTO);
-        ResponseDTO<CreateSellingAgentListResponse> response = ResponseDTO.<CreateSellingAgentListResponse>builder()
+        SellingAgentResponse createResponse = sellingAgentService.createSingleData(createSellingAgentRequest, dataChangeDTO);
+        ResponseDTO<SellingAgentResponse> response = ResponseDTO.<SellingAgentResponse>builder()
                 .code(HttpStatus.OK.value())
                 .message(HttpStatus.OK.getReasonPhrase())
                 .payload(createResponse)
@@ -47,9 +47,9 @@ public class SellingAgentController {
 
     // Create Multiple Approve
     @PostMapping(path = "/create/approve")
-    public ResponseEntity<ResponseDTO<CreateSellingAgentListResponse>> createMultipleApprove(@RequestBody CreateSellingAgentListRequest createSellingAgentListRequest) {
-        CreateSellingAgentListResponse listApprove = sellingAgentService.createMultipleApprove(createSellingAgentListRequest);
-        ResponseDTO<CreateSellingAgentListResponse> response = ResponseDTO.<CreateSellingAgentListResponse>builder()
+    public ResponseEntity<ResponseDTO<SellingAgentResponse>> createSingleApprove(@RequestBody SellingAgentApproveRequest createSellingAgentListRequest) {
+        SellingAgentResponse listApprove = sellingAgentService.createSingleApprove(createSellingAgentListRequest);
+        ResponseDTO<SellingAgentResponse> response = ResponseDTO.<SellingAgentResponse>builder()
                 .code(HttpStatus.OK.value())
                 .message(HttpStatus.OK.getReasonPhrase())
                 .payload(listApprove)
@@ -59,7 +59,7 @@ public class SellingAgentController {
 
     // Update Single Data by id
     @PutMapping(path = "/update")
-    public ResponseEntity<ResponseDTO<UpdateSellingAgentListResponse>> updateSingleData(@RequestBody UpdateSellingAgentRequest updateSellingAgentRequest) {
+    public ResponseEntity<ResponseDTO<SellingAgentResponse>> updateSingleData(@RequestBody UpdateSellingAgentRequest updateSellingAgentRequest) {
         BillingDataChangeDTO dataChangeDTO = BillingDataChangeDTO.builder()
                 .methodHttp(HttpMethod.PUT.name())
                 .endpoint("/api/selling-agent/update/approve")
@@ -68,8 +68,8 @@ public class SellingAgentController {
                 .isPathVariable(false)
                 .menu(MENU_SELLING_AGENT)
                 .build();
-        UpdateSellingAgentListResponse updateResponse = sellingAgentService.updateSingleData(updateSellingAgentRequest, dataChangeDTO);
-        ResponseDTO<UpdateSellingAgentListResponse> response = ResponseDTO.<UpdateSellingAgentListResponse>builder()
+        SellingAgentResponse updateResponse = sellingAgentService.updateSingleData(updateSellingAgentRequest, dataChangeDTO);
+        ResponseDTO<SellingAgentResponse> response = ResponseDTO.<SellingAgentResponse>builder()
                 .code(HttpStatus.OK.value())
                 .message(HttpStatus.OK.getReasonPhrase())
                 .payload(updateResponse)
@@ -79,7 +79,7 @@ public class SellingAgentController {
 
     // Update Multiple Data
     @PutMapping(path = "/update-list")
-    public ResponseEntity<ResponseDTO<UpdateSellingAgentListResponse>> updateMultipleData(@RequestBody UpdateSellingAgentListRequest updateSellingAgentListRequest) {
+    public ResponseEntity<ResponseDTO<SellingAgentResponse>> updateMultipleData(@RequestBody SellingAgentListRequest updateSellingAgentListRequest) {
         BillingDataChangeDTO dataChangeDTO = BillingDataChangeDTO.builder()
                 .methodHttp(HttpMethod.PUT.name())
                 .endpoint("/api/selling-agent/update/approve")
@@ -88,8 +88,8 @@ public class SellingAgentController {
                 .isPathVariable(false)
                 .menu(MENU_SELLING_AGENT)
                 .build();
-        UpdateSellingAgentListResponse updateListResponse = sellingAgentService.updateMultipleData(updateSellingAgentListRequest, dataChangeDTO);
-        ResponseDTO<UpdateSellingAgentListResponse> response = ResponseDTO.<UpdateSellingAgentListResponse>builder()
+        SellingAgentResponse updateListResponse = sellingAgentService.updateMultipleData(updateSellingAgentListRequest, dataChangeDTO);
+        ResponseDTO<SellingAgentResponse> response = ResponseDTO.<SellingAgentResponse>builder()
                 .code(HttpStatus.OK.value())
                 .message(HttpStatus.OK.getReasonPhrase())
                 .payload(updateListResponse)
@@ -99,9 +99,9 @@ public class SellingAgentController {
 
     // Update Multiple Approve
     @PutMapping(path = "/update/approve")
-    public ResponseEntity<ResponseDTO<UpdateSellingAgentListResponse>> updateMultipleApprove(@RequestBody UpdateSellingAgentListRequest updateSellingAgentListRequest) {
-        UpdateSellingAgentListResponse listApprove = sellingAgentService.updateMultipleApprove(updateSellingAgentListRequest);
-        ResponseDTO<UpdateSellingAgentListResponse> response = ResponseDTO.<UpdateSellingAgentListResponse>builder()
+    public ResponseEntity<ResponseDTO<SellingAgentResponse>> updateSingleApprove(@RequestBody SellingAgentApproveRequest updateSellingAgentListRequest) {
+        SellingAgentResponse listApprove = sellingAgentService.updateSingleApprove(updateSellingAgentListRequest);
+        ResponseDTO<SellingAgentResponse> response = ResponseDTO.<SellingAgentResponse>builder()
                 .code(HttpStatus.OK.value())
                 .message(HttpStatus.OK.getReasonPhrase())
                 .payload(listApprove)
@@ -111,7 +111,7 @@ public class SellingAgentController {
 
     // Delete Single Data
     @DeleteMapping(path = "/delete")
-    public ResponseEntity<ResponseDTO<DeleteSellingAgentListResponse>> deleteSingleData(@RequestBody DeleteSellingAgentRequest deleteSellingAgentRequest) {
+    public ResponseEntity<ResponseDTO<SellingAgentResponse>> deleteSingleData(@RequestBody DeleteSellingAgentRequest deleteSellingAgentRequest) {
         BillingDataChangeDTO dataChangeDTO = BillingDataChangeDTO.builder()
                 .methodHttp(HttpMethod.DELETE.name())
                 .endpoint("/api/selling-agent/delete/approve")
@@ -120,8 +120,8 @@ public class SellingAgentController {
                 .isPathVariable(false)
                 .menu(MENU_SELLING_AGENT)
                 .build();
-        DeleteSellingAgentListResponse deleteResponse = sellingAgentService.deleteSingleData(deleteSellingAgentRequest, dataChangeDTO);
-        ResponseDTO<DeleteSellingAgentListResponse> response = ResponseDTO.<DeleteSellingAgentListResponse>builder()
+        SellingAgentResponse deleteResponse = sellingAgentService.deleteSingleData(deleteSellingAgentRequest, dataChangeDTO);
+        ResponseDTO<SellingAgentResponse> response = ResponseDTO.<SellingAgentResponse>builder()
                 .code(HttpStatus.OK.value())
                 .message(HttpStatus.OK.getReasonPhrase())
                 .payload(deleteResponse)
@@ -131,9 +131,9 @@ public class SellingAgentController {
 
     // Delete Multiple Approve
     @DeleteMapping(path = "/delete/approve")
-    public ResponseEntity<ResponseDTO<DeleteSellingAgentListResponse>> deleteMultipleApprove(@RequestBody DeleteSellingAgentListRequest deleteSellingAgentListRequest) {
-        DeleteSellingAgentListResponse listApprove = sellingAgentService.deleteMultipleApprove(deleteSellingAgentListRequest);
-        ResponseDTO<DeleteSellingAgentListResponse> response = ResponseDTO.<DeleteSellingAgentListResponse>builder()
+    public ResponseEntity<ResponseDTO<SellingAgentResponse>> deleteSingleApprove(@RequestBody SellingAgentApproveRequest deleteSellingAgentListRequest) {
+        SellingAgentResponse listApprove = sellingAgentService.deleteSingleApprove(deleteSellingAgentListRequest);
+        ResponseDTO<SellingAgentResponse> response = ResponseDTO.<SellingAgentResponse>builder()
                 .code(HttpStatus.OK.value())
                 .message(HttpStatus.OK.getReasonPhrase())
                 .payload(listApprove)

@@ -1,12 +1,11 @@
 package com.bayu.billingservice.dto.customer;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import javax.validation.constraints.NotBlank;
 
 @Data
 @Builder
@@ -61,7 +60,7 @@ public class UpdateCustomerRequest {
     private String customerMinimumFee;
 
     // need a pattern (must be numeric because big decimal)
-    @NotBlank(message = "Customer Safekeeping Fee cannot be empty")
+    @NotBlank(message = "Customer Safekeeping Fee cannot be blank")
     private String customerSafekeepingFee;
 
     // need a pattern must be numeric because big decimal

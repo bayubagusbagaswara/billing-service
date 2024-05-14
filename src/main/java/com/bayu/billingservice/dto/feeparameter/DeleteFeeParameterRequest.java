@@ -11,8 +11,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class DeleteFeeParameterRequest {
 
-    private String inputerId;
-    private String inputerIPAddress;
+    private String inputId;
+    private String inputIPAddress;
 
     private Long id;
 }

@@ -13,8 +13,8 @@ import java.util.List;
 @AllArgsConstructor
 public class SellingAgentListRequest {
 
-    private String inputerId;
-    private String inputerIPAddress;
+    private String inputId;
+    private String inputIPAddress;
 
     private List<SellingAgentDTO> sellingAgentDTOList;
 }

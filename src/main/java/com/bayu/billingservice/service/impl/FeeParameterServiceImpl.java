@@ -4,12 +4,16 @@ import com.bayu.billingservice.dto.datachange.BillingDataChangeDTO;
 import com.bayu.billingservice.dto.feeparameter.*;
 import com.bayu.billingservice.exception.ConnectionDatabaseException;
 import com.bayu.billingservice.exception.DataNotFoundException;
+import com.bayu.billingservice.mapper.FeeParameterMapper;
 import com.bayu.billingservice.model.FeeParameter;
 import com.bayu.billingservice.repository.FeeParameterRepository;
+import com.bayu.billingservice.service.BillingDataChangeService;
 import com.bayu.billingservice.service.FeeParameterService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.Validator;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -22,7 +26,15 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class FeeParameterServiceImpl implements FeeParameterService {
 
+    private static final String ID_NOT_FOUND = "Investment Management not found with id: ";
+    private static final String CODE_NOT_FOUND = "Investment Management not found with code: ";
+    private static final String UNKNOWN = "unknown";
+
     private final FeeParameterRepository feeParameterRepository;
+    private final BillingDataChangeService dataChangeService;
+    private final Validator validator;
+    private final ObjectMapper objectMapper;
+    private final FeeParameterMapper feeParameterMapper;
 
     @Override
     public boolean isCodeAlreadyExists(String code) {
@@ -30,27 +42,27 @@ public class FeeParameterServiceImpl implements FeeParameterService {
     }
 
     @Override
-    public CreateFeeParameterListResponse createSingleData(CreateFeeParameterRequest createFeeParameterRequest, BillingDataChangeDTO dataChangeDTO) {
+    public FeeParameterResponse createSingleData(CreateFeeParameterRequest createFeeParameterRequest, BillingDataChangeDTO dataChangeDTO) {
         return null;
     }
 
     @Override
-    public CreateFeeParameterListResponse createMultipleData(CreateFeeParameterListRequest createFeeParameterListRequest, BillingDataChangeDTO dataChangeDTO) {
+    public FeeParameterResponse createMultipleData(FeeParameterListRequest createFeeParameterListRequest, BillingDataChangeDTO dataChangeDTO) {
         return null;
     }
 
     @Override
-    public CreateFeeParameterListResponse createMultipleApprove(CreateFeeParameterListRequest createFeeParameterListRequest) {
+    public FeeParameterResponse createSingleApprove(FeeParameterApproveRequest createFeeParameterListRequest) {
         return null;
     }
 
     @Override
-    public UpdateFeeParameterListResponse updateMultipleData(UpdateFeeParameterListRequest updateFeeParameterListRequest, BillingDataChangeDTO dataChangeDTO) {
+    public FeeParameterResponse updateMultipleData(FeeParameterListRequest updateFeeParameterListRequest, BillingDataChangeDTO dataChangeDTO) {
         return null;
     }
 
     @Override
-    public UpdateFeeParameterListResponse updateMultipleApprove(UpdateFeeParameterListRequest updateFeeParameterListRequest) {
+    public FeeParameterResponse updateSingleApprove(FeeParameterApproveRequest updateFeeParameterListRequest) {
         return null;
     }
 

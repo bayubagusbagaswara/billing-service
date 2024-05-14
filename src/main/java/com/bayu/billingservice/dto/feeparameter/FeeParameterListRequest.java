@@ -13,9 +13,9 @@ import java.util.List;
 @AllArgsConstructor
 public class FeeParameterListRequest {
 
-    private String inputerId;
+    private String inputId;
 
-    private String inputerIPAddress;
+    private String inputIPAddress;
 
     private List<FeeParameterDTO> feeParameterDTOList;
 }

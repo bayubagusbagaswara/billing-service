@@ -1,10 +1,10 @@
 package com.bayu.billingservice.mapper;
 
 import com.bayu.billingservice.dto.datachange.BillingDataChangeDTO;
+import com.bayu.billingservice.dto.feeschedule.FeeScheduleDTO;
 import com.bayu.billingservice.model.FeeSchedule;
 import com.bayu.billingservice.model.enumerator.ApprovalStatus;
 import com.bayu.billingservice.util.ConvertDateUtil;
-import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
 import org.springframework.stereotype.Component;
@@ -12,21 +12,18 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-@RequiredArgsConstructor
-public class FeeScheduleMapper {
+public class FeeScheduleMapper extends BaseMapper<FeeSchedule, FeeScheduleDTO> {
 
-    private final ModelMapperUtil modelMapperUtil;
     private final ConvertDateUtil convertDateUtil;
 
-    public FeeSchedule mapFromDtoToEntity(FeeScheduleDTO feeScheduleDTO) {
-        FeeSchedule feeSchedule = new FeeSchedule();
-        modelMapperUtil.mapObjects(feeScheduleDTO, feeSchedule);
-        return feeSchedule;
+    public FeeScheduleMapper(ModelMapper modelMapper, ConvertDateUtil convertDateUtil) {
+        super(modelMapper);
+        this.convertDateUtil = convertDateUtil;
     }
 
-    public FeeScheduleDTO mapFromEntityToDto(FeeSchedule feeSchedule) {
-        ModelMapper modelMapper = new ModelMapper();
-        modelMapper.addMappings(new PropertyMap<FeeSchedule, FeeScheduleDTO>() {
+    @Override
+    protected PropertyMap<FeeSchedule, FeeScheduleDTO> getPropertyMap() {
+        return new PropertyMap<FeeSchedule, FeeScheduleDTO>() {
             @Override
             protected void configure() {
                 skip(destination.getApprovalStatus());
@@ -37,56 +34,67 @@ public class FeeScheduleMapper {
                 skip(destination.getApproveIPAddress());
                 skip(destination.getApproveDate());
             }
-        });
-        return modelMapper.map(feeSchedule, FeeScheduleDTO.class);
+        };
     }
 
-    public List<FeeScheduleDTO> mapToDTOList(List<FeeSchedule> feeSchedules) {
-        return feeSchedules.stream()
-                .map(this::mapFromEntityToDto)
-                .toList();
+    @Override
+    public FeeSchedule mapToEntity(FeeScheduleDTO dto) {
+        return super.mapToEntity(dto);
     }
 
-    public FeeScheduleDTO mapFromCreateFeeScheduleRequestToDto(CreateFeeScheduleRequest createFeeScheduleRequest) {
-        FeeScheduleDTO feeScheduleDTO = new FeeScheduleDTO();
-        modelMapperUtil.mapObjects(createFeeScheduleRequest, feeScheduleDTO);
-        return feeScheduleDTO;
+    @Override
+    public FeeScheduleDTO mapToDto(FeeSchedule entity) {
+        return super.mapToDto(entity);
     }
 
-    public FeeSchedule createEntity(FeeScheduleDTO feeScheduleDTO, BillingDataChangeDTO dataChangeDTO) {
-        FeeSchedule feeSchedule = new FeeSchedule();
-        modelMapperUtil.mapObjects(feeScheduleDTO, feeSchedule);
-        feeSchedule.setApprovalStatus(ApprovalStatus.APPROVED);
-        feeSchedule.setInputId(dataChangeDTO.getInputId());
-        feeSchedule.setInputIPAddress(dataChangeDTO.getInputIPAddress());
-        feeSchedule.setInputDate(dataChangeDTO.getInputDate());
-        feeSchedule.setApproveId(dataChangeDTO.getApproveId());
-        feeSchedule.setApproveIPAddress(dataChangeDTO.getApproveIPAddress());
-        feeSchedule.setApproveDate(convertDateUtil.getDate());
-        return feeSchedule;
+    @Override
+    public List<FeeScheduleDTO> mapToDTOList(List<FeeSchedule> entityList) {
+        return super.mapToDTOList(entityList);
     }
 
-    public FeeSchedule updateEntity(FeeSchedule feeScheduleUpdated, BillingDataChangeDTO dataChangeDTO) {
-        FeeSchedule feeSchedule = new FeeSchedule();
-        modelMapperUtil.mapObjects(feeScheduleUpdated, feeSchedule);
-        feeSchedule.setApprovalStatus(ApprovalStatus.APPROVED);
-        feeSchedule.setInputId(dataChangeDTO.getInputId());
-        feeSchedule.setInputIPAddress(dataChangeDTO.getInputIPAddress());
-        feeSchedule.setInputDate(dataChangeDTO.getInputDate());
-        feeSchedule.setApproveId(dataChangeDTO.getApproveId());
-        feeSchedule.setApproveIPAddress(dataChangeDTO.getApproveIPAddress());
-        feeSchedule.setApproveDate(convertDateUtil.getDate());
-        return feeSchedule;
+    @Override
+    public FeeScheduleDTO mapFromCreateRequestToDto(Object createRequest, Class<FeeScheduleDTO> dtoClass) {
+        return super.mapFromCreateRequestToDto(createRequest, dtoClass);
     }
 
-    public FeeScheduleDTO mapFromUpdateRequestToDto(UpdateFeeScheduleListRequest updateFeeScheduleListRequest) {
-        FeeScheduleDTO feeScheduleDTO = new FeeScheduleDTO();
-        modelMapperUtil.mapObjects(updateFeeScheduleListRequest, feeScheduleDTO);
-        return feeScheduleDTO;
+    @Override
+    public FeeScheduleDTO mapFromUpdateRequestToDto(Object updateRequest, Class<FeeScheduleDTO> dtoClass) {
+        return super.mapFromUpdateRequestToDto(updateRequest, dtoClass);
     }
 
-    public void mapObjects(FeeScheduleDTO feeScheduleDTOSource, FeeSchedule feeScheduleTarget) {
-        modelMapperUtil.mapObjects(feeScheduleDTOSource, feeScheduleTarget);
+    @Override
+    public FeeSchedule createEntity(FeeScheduleDTO dto, BillingDataChangeDTO dataChangeDTO) {
+        return super.createEntity(dto, dataChangeDTO);
     }
 
+    @Override
+    protected Class<FeeSchedule> getEntityClass() {
+        return FeeSchedule.class;
+    }
+
+    @Override
+    public FeeSchedule updateEntity(FeeSchedule updatedEntity, Class<FeeScheduleDTO> dto, BillingDataChangeDTO dataChangeDTO) {
+        return super.updateEntity(updatedEntity, dto, dataChangeDTO);
+    }
+
+    @Override
+    public void mapObjects(FeeScheduleDTO sourceDto, FeeSchedule targetEntity) {
+        super.mapObjects(sourceDto, targetEntity);
+    }
+
+    @Override
+    protected Class<FeeScheduleDTO> getDtoClass() {
+        return FeeScheduleDTO.class;
+    }
+
+    @Override
+    protected void setCommonProperties(FeeSchedule entity, BillingDataChangeDTO dataChangeDTO) {
+        entity.setApprovalStatus(ApprovalStatus.APPROVED);
+        entity.setInputId(dataChangeDTO.getInputId());
+        entity.setInputIPAddress(dataChangeDTO.getInputIPAddress());
+        entity.setInputDate(dataChangeDTO.getInputDate());
+        entity.setApproveId(dataChangeDTO.getApproveId());
+        entity.setApproveIPAddress(dataChangeDTO.getApproveIPAddress());
+        entity.setApproveDate(convertDateUtil.getDate());
+    }
 }

@@ -26,7 +26,7 @@ public class ExchangeRateController {
 
     // create single data
     @PostMapping(path = "create")
-    public ResponseEntity<ResponseDTO<CreateExchangeRateListResponse>> createSingleData(@RequestBody CreateExchangeRateRequest createExchangeRateRequest) {
+    public ResponseEntity<ResponseDTO<ExchangeRateResponse>> createSingleData(@RequestBody CreateExchangeRateRequest createExchangeRateRequest) {
         BillingDataChangeDTO dataChangeDTO = BillingDataChangeDTO.builder()
                 .methodHttp(HttpMethod.POST.name())
                 .endpoint(URL_EXCHANGE_RATE + "/create/approve")
@@ -35,8 +35,8 @@ public class ExchangeRateController {
                 .isPathVariable(false)
                 .menu(MENU_EXCHANGE_RATE)
                 .build();
-        CreateExchangeRateListResponse createResponse = exchangeRateService.createSingleData(createExchangeRateRequest, dataChangeDTO);
-        ResponseDTO<CreateExchangeRateListResponse> response = ResponseDTO.<CreateExchangeRateListResponse>builder()
+        ExchangeRateResponse createResponse = exchangeRateService.createSingleData(createExchangeRateRequest, dataChangeDTO);
+        ResponseDTO<ExchangeRateResponse> response = ResponseDTO.<ExchangeRateResponse>builder()
                 .code(HttpStatus.OK.value())
                 .message(HttpStatus.OK.getReasonPhrase())
                 .payload(createResponse)
@@ -46,7 +46,7 @@ public class ExchangeRateController {
 
     // update single data
     @PutMapping(path = "/update")
-    public ResponseEntity<ResponseDTO<UpdateExchangeRateListResponse>> updateSingleData(@RequestBody UpdateExchangeRateRequest updateExchangeRateRequest) {
+    public ResponseEntity<ResponseDTO<ExchangeRateResponse>> updateSingleData(@RequestBody UpdateExchangeRateRequest updateExchangeRateRequest) {
         BillingDataChangeDTO dataChangeDTO = BillingDataChangeDTO.builder()
                 .methodHttp(HttpMethod.PUT.name())
                 .endpoint(URL_EXCHANGE_RATE + "/update/approve")
@@ -55,8 +55,8 @@ public class ExchangeRateController {
                 .isPathVariable(false)
                 .menu(MENU_EXCHANGE_RATE)
                 .build();
-        UpdateExchangeRateListResponse updateResponse = exchangeRateService.updateSingleData(updateExchangeRateRequest, dataChangeDTO);
-        ResponseDTO<UpdateExchangeRateListResponse> response = ResponseDTO.<UpdateExchangeRateListResponse>builder()
+        ExchangeRateResponse updateResponse = exchangeRateService.updateSingleData(updateExchangeRateRequest, dataChangeDTO);
+        ResponseDTO<ExchangeRateResponse> response = ResponseDTO.<ExchangeRateResponse>builder()
                 .code(HttpStatus.OK.value())
                 .message(HttpStatus.OK.getReasonPhrase())
                 .payload(updateResponse)
@@ -66,9 +66,9 @@ public class ExchangeRateController {
 
     // update approve
     @PutMapping(path = "/update/approve")
-    public ResponseEntity<ResponseDTO<UpdateExchangeRateListResponse>> updateApprove(@RequestBody UpdateExchangeRateRequest updateExchangeRateRequest) {
-        UpdateExchangeRateListResponse exchangeRateApprove = exchangeRateService.updateApprove(updateExchangeRateRequest);
-        ResponseDTO<UpdateExchangeRateListResponse> response = ResponseDTO.<UpdateExchangeRateListResponse>builder()
+    public ResponseEntity<ResponseDTO<ExchangeRateResponse>> updateApprove(@RequestBody ExchangeRateApproveRequest updateExchangeRateRequest) {
+        ExchangeRateResponse exchangeRateApprove = exchangeRateService.updateApprove(updateExchangeRateRequest);
+        ResponseDTO<ExchangeRateResponse> response = ResponseDTO.<ExchangeRateResponse>builder()
                 .code(HttpStatus.OK.value())
                 .message(HttpStatus.OK.getReasonPhrase())
                 .payload(exchangeRateApprove)

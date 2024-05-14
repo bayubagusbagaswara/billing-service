@@ -1,7 +1,7 @@
 package com.bayu.billingservice.dto.sellingagent;
 
+import com.bayu.billingservice.dto.approval.ApprovalDTO;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.services.billingservice.dto.approval.ApprovalDTO;
 import lombok.*;
 
 @EqualsAndHashCode(callSuper = true)

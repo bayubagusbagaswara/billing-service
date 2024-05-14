@@ -15,11 +15,12 @@ public class UpdateExchangeRateRequest {
 
     private String inputId;
     private String inputIPAddress;
-    private String approveId;
-    private String approveIPAddress;
-
     // data-data exchange rate yang akan diupdate
     private Long id;
+
+    private String date;
+
+    private String currency;
 
     private BigDecimal value;
 }

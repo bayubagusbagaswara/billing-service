@@ -1,10 +1,9 @@
 package com.bayu.billingservice.dto.exchangerate;
 
+import com.bayu.billingservice.dto.approval.ApprovalDTO;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.services.billingservice.dto.approval.ApprovalDTO;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
-
-import javax.validation.constraints.NotBlank;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
@@ -16,12 +15,12 @@ public class ExchangeRateDTO extends ApprovalDTO {
 
     private Long id;
 
-    @NotBlank(message = "Date cannot be empty")
+    @NotBlank(message = "Date cannot be blank")
     private String date;
 
-    @NotBlank(message = "Currency cannot be empty")
+    @NotBlank(message = "Currency cannot be blank")
     private String currency;
 
-    @NotBlank(message = "Value cannot be empty")
+    @NotBlank(message = "Value cannot be blank")
     private String value;
 }

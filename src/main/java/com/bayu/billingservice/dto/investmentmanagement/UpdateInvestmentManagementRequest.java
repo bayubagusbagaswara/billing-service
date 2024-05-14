@@ -1,13 +1,12 @@
 package com.bayu.billingservice.dto.investmentmanagement;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
 
 @Data
 @Builder
@@ -21,15 +20,15 @@ public class UpdateInvestmentManagementRequest {
     private Long id;
 
     @JsonProperty(value = "MI Code")
-    @NotBlank(message = "Code cannot be empty")
+    @NotBlank(message = "Code cannot be blank")
     private String code;
 
     @JsonProperty(value = "MI Name")
-    @NotBlank(message = "Name cannot be empty")
+    @NotBlank(message = "Name cannot be blank")
     private String name;
 
     @JsonProperty(value = "MI Email")
-    @NotBlank(message = "Email cannot be empty")
+    @NotBlank(message = "Email cannot be blank")
     @Email(message = "Email is not valid")
     private String email;
 

@@ -28,7 +28,7 @@ public class AssetTransferCustomerController {
 
     // Create Single Data
     @PostMapping(path = "/create")
-    public ResponseEntity<ResponseDTO<CreateAssetTransferCustomerListResponse>> createSingleData(@RequestBody CreateAssetTransferCustomerRequest createAssetTransferCustomerRequest) {
+    public ResponseEntity<ResponseDTO<AssetTransferCustomerResponse>> createSingleData(@RequestBody CreateAssetTransferCustomerRequest createAssetTransferCustomerRequest) {
         BillingDataChangeDTO dataChangeDTO = BillingDataChangeDTO.builder()
                 .methodHttp(HttpMethod.POST.name())
                 .endpoint(URL_ASSET_TRANSFER_CUSTOMER + "/create/approve")
@@ -37,8 +37,8 @@ public class AssetTransferCustomerController {
                 .isPathVariable(false)
                 .menu(MENU_ASSET_TRANSFER_CUSTOMER)
                 .build();
-        CreateAssetTransferCustomerListResponse createResponse = assetTransferCustomerService.createSingleData(createAssetTransferCustomerRequest, dataChangeDTO);
-        ResponseDTO<CreateAssetTransferCustomerListResponse> response = ResponseDTO.<CreateAssetTransferCustomerListResponse>builder()
+        AssetTransferCustomerResponse createResponse = assetTransferCustomerService.createSingleData(createAssetTransferCustomerRequest, dataChangeDTO);
+        ResponseDTO<AssetTransferCustomerResponse> response = ResponseDTO.<AssetTransferCustomerResponse>builder()
                 .code(HttpStatus.OK.value())
                 .message(HttpStatus.OK.getReasonPhrase())
                 .payload(createResponse)
@@ -48,9 +48,9 @@ public class AssetTransferCustomerController {
 
     // Create Multiple Approve
     @PostMapping(path = "/create/approve")
-    public ResponseEntity<ResponseDTO<CreateAssetTransferCustomerListResponse>> createMultipleApprove(@RequestBody CreateAssetTransferCustomerListRequest createAssetTransferCustomerListRequest) {
-        CreateAssetTransferCustomerListResponse listApprove = assetTransferCustomerService.createMultipleApprove(createAssetTransferCustomerListRequest);
-        ResponseDTO<CreateAssetTransferCustomerListResponse> response = ResponseDTO.<CreateAssetTransferCustomerListResponse>builder()
+    public ResponseEntity<ResponseDTO<AssetTransferCustomerResponse>> createSingleApprove(@RequestBody AssetTransferCustomerApproveRequest createAssetTransferCustomerListRequest) {
+        AssetTransferCustomerResponse listApprove = assetTransferCustomerService.createSingleApprove(createAssetTransferCustomerListRequest);
+        ResponseDTO<AssetTransferCustomerResponse> response = ResponseDTO.<AssetTransferCustomerResponse>builder()
                 .code(HttpStatus.OK.value())
                 .message(HttpStatus.OK.getReasonPhrase())
                 .payload(listApprove)
@@ -60,7 +60,7 @@ public class AssetTransferCustomerController {
 
     // Update Single Data
     @PutMapping(path = "/update")
-    public ResponseEntity<ResponseDTO<UpdateAssetTransferCustomerListResponse>> updateSingleData(@RequestBody UpdateAssetTransferCustomerRequest updateAssetTransferCustomerRequest) {
+    public ResponseEntity<ResponseDTO<AssetTransferCustomerResponse>> updateSingleData(@RequestBody UpdateAssetTransferCustomerRequest updateAssetTransferCustomerRequest) {
         BillingDataChangeDTO dataChangeDTO = BillingDataChangeDTO.builder()
                 .methodHttp(HttpMethod.PUT.name())
                 .endpoint(URL_ASSET_TRANSFER_CUSTOMER + "/update/approve")
@@ -69,8 +69,8 @@ public class AssetTransferCustomerController {
                 .isPathVariable(false)
                 .menu(MENU_ASSET_TRANSFER_CUSTOMER)
                 .build();
-        UpdateAssetTransferCustomerListResponse updateResponse = assetTransferCustomerService.updateSingleData(updateAssetTransferCustomerRequest, dataChangeDTO);
-        ResponseDTO<UpdateAssetTransferCustomerListResponse> response = ResponseDTO.<UpdateAssetTransferCustomerListResponse>builder()
+        AssetTransferCustomerResponse updateResponse = assetTransferCustomerService.updateSingleData(updateAssetTransferCustomerRequest, dataChangeDTO);
+        ResponseDTO<AssetTransferCustomerResponse> response = ResponseDTO.<AssetTransferCustomerResponse>builder()
                 .code(HttpStatus.OK.value())
                 .message(HttpStatus.OK.getReasonPhrase())
                 .payload(updateResponse)
@@ -80,7 +80,7 @@ public class AssetTransferCustomerController {
 
     // Update Multiple Data
     @PutMapping(path = "/update-list")
-    public ResponseEntity<ResponseDTO<UpdateAssetTransferCustomerListResponse>> updateMultipleData(@RequestBody UpdateAssetTransferCustomerListRequest updateAssetTransferCustomerListRequest) {
+    public ResponseEntity<ResponseDTO<AssetTransferCustomerResponse>> updateMultipleData(@RequestBody AssetTransferCustomerListRequest updateAssetTransferCustomerListRequest) {
         BillingDataChangeDTO dataChangeDTO = BillingDataChangeDTO.builder()
                 .methodHttp(HttpMethod.PUT.name())
                 .endpoint(URL_ASSET_TRANSFER_CUSTOMER + "/update/approve")
@@ -89,8 +89,8 @@ public class AssetTransferCustomerController {
                 .isPathVariable(false)
                 .menu(MENU_ASSET_TRANSFER_CUSTOMER)
                 .build();
-        UpdateAssetTransferCustomerListResponse updateListResponse = assetTransferCustomerService.updateMultipleData(updateAssetTransferCustomerListRequest, dataChangeDTO);
-        ResponseDTO<UpdateAssetTransferCustomerListResponse> response = ResponseDTO.<UpdateAssetTransferCustomerListResponse>builder()
+        AssetTransferCustomerResponse updateListResponse = assetTransferCustomerService.updateMultipleData(updateAssetTransferCustomerListRequest, dataChangeDTO);
+        ResponseDTO<AssetTransferCustomerResponse> response = ResponseDTO.<AssetTransferCustomerResponse>builder()
                 .code(HttpStatus.OK.value())
                 .message(HttpStatus.OK.getReasonPhrase())
                 .payload(updateListResponse)
@@ -100,9 +100,9 @@ public class AssetTransferCustomerController {
 
     // Update Multiple Approve
     @PutMapping(path = "/update/approve")
-    public ResponseEntity<ResponseDTO<UpdateAssetTransferCustomerListResponse>> updateMultipleApprove(@RequestBody UpdateAssetTransferCustomerListRequest updateAssetTransferCustomerListRequest) {
-        UpdateAssetTransferCustomerListResponse updateListResponse = assetTransferCustomerService.updateMultipleApprove(updateAssetTransferCustomerListRequest);
-        ResponseDTO<UpdateAssetTransferCustomerListResponse> response = ResponseDTO.<UpdateAssetTransferCustomerListResponse>builder()
+    public ResponseEntity<ResponseDTO<AssetTransferCustomerResponse>> updateSingleApprove(@RequestBody AssetTransferCustomerApproveRequest updateAssetTransferCustomerListRequest) {
+        AssetTransferCustomerResponse updateListResponse = assetTransferCustomerService.updateSingleApprove(updateAssetTransferCustomerListRequest);
+        ResponseDTO<AssetTransferCustomerResponse> response = ResponseDTO.<AssetTransferCustomerResponse>builder()
                 .code(HttpStatus.OK.value())
                 .message(HttpStatus.OK.getReasonPhrase())
                 .payload(updateListResponse)
@@ -112,7 +112,7 @@ public class AssetTransferCustomerController {
 
     // Delete Single Data
     @DeleteMapping(path = "/delete")
-    public ResponseEntity<ResponseDTO<DeleteAssetTransferCustomerListResponse>> deleteSingleData(@RequestBody DeleteAssetTransferCustomerRequest deleteAssetTransferCustomerRequest) {
+    public ResponseEntity<ResponseDTO<AssetTransferCustomerResponse>> deleteSingleData(@RequestBody DeleteAssetTransferCustomerRequest deleteAssetTransferCustomerRequest) {
         BillingDataChangeDTO dataChangeDTO = BillingDataChangeDTO.builder()
                 .methodHttp(HttpMethod.DELETE.name())
                 .endpoint(URL_ASSET_TRANSFER_CUSTOMER + "/delete/approve")
@@ -121,8 +121,8 @@ public class AssetTransferCustomerController {
                 .isPathVariable(false)
                 .menu(MENU_ASSET_TRANSFER_CUSTOMER)
                 .build();
-        DeleteAssetTransferCustomerListResponse deleteResponse = assetTransferCustomerService.deleteSingleData(deleteAssetTransferCustomerRequest, dataChangeDTO);
-        ResponseDTO<DeleteAssetTransferCustomerListResponse> response = ResponseDTO.<DeleteAssetTransferCustomerListResponse>builder()
+        AssetTransferCustomerResponse deleteResponse = assetTransferCustomerService.deleteSingleData(deleteAssetTransferCustomerRequest, dataChangeDTO);
+        ResponseDTO<AssetTransferCustomerResponse> response = ResponseDTO.<AssetTransferCustomerResponse>builder()
                 .code(HttpStatus.OK.value())
                 .message(HttpStatus.OK.getReasonPhrase())
                 .payload(deleteResponse)
@@ -132,9 +132,9 @@ public class AssetTransferCustomerController {
 
     // Delete Multiple Approve
     @DeleteMapping(path = "/delete/approve")
-    public ResponseEntity<ResponseDTO<DeleteAssetTransferCustomerListResponse>> deleteSingleData(@RequestBody DeleteAssetTransferCustomerListRequest deleteAssetTransferCustomerListRequest) {
-        DeleteAssetTransferCustomerListResponse deleteResponse = assetTransferCustomerService.deleteMultipleApprove(deleteAssetTransferCustomerListRequest);
-        ResponseDTO<DeleteAssetTransferCustomerListResponse> response = ResponseDTO.<DeleteAssetTransferCustomerListResponse>builder()
+    public ResponseEntity<ResponseDTO<AssetTransferCustomerResponse>> deleteSingleData(@RequestBody AssetTransferCustomerApproveRequest deleteAssetTransferCustomerListRequest) {
+        AssetTransferCustomerResponse deleteResponse = assetTransferCustomerService.deleteSingleApprove(deleteAssetTransferCustomerListRequest);
+        ResponseDTO<AssetTransferCustomerResponse> response = ResponseDTO.<AssetTransferCustomerResponse>builder()
                 .code(HttpStatus.OK.value())
                 .message(HttpStatus.OK.getReasonPhrase())
                 .payload(deleteResponse)

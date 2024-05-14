@@ -1,11 +1,10 @@
 package com.bayu.billingservice.dto.customer;
 
+import com.bayu.billingservice.dto.approval.ApprovalDTO;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.services.billingservice.dto.approval.ApprovalDTO;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
-
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
@@ -18,26 +17,26 @@ public class CustomerDTO extends ApprovalDTO {
     private Long id;
 
     // need a pattern (numeric & alphabet, not special character)
-    @NotBlank(message = "Customer Code cannot be empty")
+    @NotBlank(message = "Customer Code cannot be blank")
     private String customerCode;
 
     // need a pattern (numeric & alphabet, not special character)
-    @NotEmpty(message = "Customer Name cannot be empty")
+    @NotBlank(message = "Customer Name cannot be blank")
     private String customerName;
 
-    @NotEmpty(message = "Billing Category cannot be empty")
+    @NotBlank(message = "Billing Category cannot be blank")
     private String billingCategory;
 
-    @NotEmpty(message = "Billing Type cannot be empty")
+    @NotBlank(message = "Billing Type cannot be blank")
     private String billingType;
 
-    @NotEmpty(message = "Billing Template cannot be empty")
+    @NotBlank(message = "Billing Template cannot be blank")
     private String billingTemplate;
 
-    @NotEmpty(message = "Currency cannot be empty")
+    @NotEmpty(message = "Currency cannot be blank")
     private String currency;
 
-    @NotEmpty(message = "MI Code cannot be empty")
+    @NotEmpty(message = "MI Code cannot be blank")
     private String investmentManagementCode;
 
     private String investmentManagementName;

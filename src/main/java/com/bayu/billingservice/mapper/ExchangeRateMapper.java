@@ -1,6 +1,7 @@
 package com.bayu.billingservice.mapper;
 
 import com.bayu.billingservice.dto.datachange.BillingDataChangeDTO;
+import com.bayu.billingservice.dto.exchangerate.ExchangeRateDTO;
 import com.bayu.billingservice.model.ExchangeRate;
 import com.bayu.billingservice.model.enumerator.ApprovalStatus;
 import com.bayu.billingservice.util.ConvertDateUtil;
@@ -12,21 +13,18 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-@RequiredArgsConstructor
-public class ExchangeRateMapper {
+public class ExchangeRateMapper extends BaseMapper<ExchangeRate, ExchangeRateDTO> {
 
-    private final ModelMapperUtil modelMapperUtil;
     private final ConvertDateUtil convertDateUtil;
 
-    public ExchangeRate mapFromDtoToEntity(ExchangeRateDTO exchangeRateDTO) {
-        ExchangeRate exchangeRate = new ExchangeRate();
-        modelMapperUtil.mapObjects(exchangeRateDTO, exchangeRate);
-        return exchangeRate;
+    public ExchangeRateMapper(ModelMapper modelMapper, ConvertDateUtil convertDateUtil) {
+        super(modelMapper);
+        this.convertDateUtil = convertDateUtil;
     }
 
-    public ExchangeRateDTO mapFromEntityToDto(ExchangeRate exchangeRate) {
-        ModelMapper modelMapper = new ModelMapper();
-        modelMapper.addMappings(new PropertyMap<ExchangeRate, ExchangeRateDTO>() {
+    @Override
+    protected PropertyMap<ExchangeRate, ExchangeRateDTO> getPropertyMap() {
+        return new PropertyMap<ExchangeRate, ExchangeRateDTO>() {
             @Override
             protected void configure() {
                 skip(destination.getApprovalStatus());
@@ -37,57 +35,27 @@ public class ExchangeRateMapper {
                 skip(destination.getApproveIPAddress());
                 skip(destination.getApproveDate());
             }
-        });
-
-        return modelMapper.map(exchangeRate, ExchangeRateDTO.class);
+        };
     }
 
-    public List<ExchangeRateDTO> mapToDTOList(List<ExchangeRate> exchangeRateList) {
-        return exchangeRateList.stream()
-                .map(this::mapFromEntityToDto)
-                .toList();
+    @Override
+    protected Class<ExchangeRate> getEntityClass() {
+        return null;
     }
 
-    public ExchangeRateDTO mapFromCreateExchangeRateRequestToDTO(CreateExchangeRateRequest createExchangeRateRequest) {
-        ExchangeRateDTO exchangeRateDTO = new ExchangeRateDTO();
-        modelMapperUtil.mapObjects(createExchangeRateRequest, exchangeRateDTO);
-        return exchangeRateDTO;
+    @Override
+    protected Class<ExchangeRateDTO> getDtoClass() {
+        return null;
     }
 
-    public ExchangeRate createEntity(ExchangeRateDTO exchangeRateDTO, BillingDataChangeDTO dataChangeDTO) {
-        ExchangeRate exchangeRate = new ExchangeRate();
-        modelMapperUtil.mapObjects(exchangeRateDTO, exchangeRate);
-        exchangeRate.setApprovalStatus(ApprovalStatus.APPROVED);
-        exchangeRate.setInputId(dataChangeDTO.getInputId());
-        exchangeRate.setInputIPAddress(dataChangeDTO.getInputIPAddress());
-        exchangeRate.setInputDate(dataChangeDTO.getInputDate());
-        exchangeRate.setApproveId(dataChangeDTO.getApproveId());
-        exchangeRate.setApproveIPAddress(dataChangeDTO.getApproveIPAddress());
-        exchangeRate.setApproveDate(convertDateUtil.getDate());
-        return exchangeRate;
+    @Override
+    protected void setCommonProperties(ExchangeRate entity, BillingDataChangeDTO dataChangeDTO) {
+        entity.setApprovalStatus(ApprovalStatus.APPROVED);
+        entity.setInputId(dataChangeDTO.getInputId());
+        entity.setInputIPAddress(dataChangeDTO.getInputIPAddress());
+        entity.setInputDate(dataChangeDTO.getInputDate());
+        entity.setApproveId(dataChangeDTO.getApproveId());
+        entity.setApproveIPAddress(dataChangeDTO.getApproveIPAddress());
+        entity.setApproveDate(convertDateUtil.getDate());
     }
-
-    public ExchangeRate updateEntity(ExchangeRate exchangeRateUpdated, BillingDataChangeDTO dataChangeDTO) {
-        ExchangeRate exchangeRate = new ExchangeRate();
-        modelMapperUtil.mapObjects(exchangeRateUpdated, exchangeRate);
-        exchangeRate.setApprovalStatus(dataChangeDTO.getApprovalStatus());
-        exchangeRate.setInputId(dataChangeDTO.getInputId());
-        exchangeRate.setInputIPAddress(dataChangeDTO.getInputIPAddress());
-        exchangeRate.setInputDate(dataChangeDTO.getInputDate());
-        exchangeRate.setApproveId(dataChangeDTO.getApproveId());
-        exchangeRate.setApproveIPAddress(dataChangeDTO.getApproveIPAddress());
-        exchangeRate.setApproveDate(convertDateUtil.getDate());
-        return exchangeRate;
-    }
-
-    public ExchangeRateDTO mapFromUpdateRequestToDto(UpdateExchangeRateRequest updateExchangeRateRequest) {
-        ExchangeRateDTO exchangeRateDTO = new ExchangeRateDTO();
-        modelMapperUtil.mapObjects(updateExchangeRateRequest, exchangeRateDTO);
-        return exchangeRateDTO;
-    }
-
-    public void mapObjects(ExchangeRateDTO exchangeRateDTOSource, ExchangeRate exchangeRateTarget) {
-        modelMapperUtil.mapObjects(exchangeRateDTOSource, exchangeRateTarget);
-    }
-
 }

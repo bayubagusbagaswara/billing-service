@@ -25,7 +25,7 @@ public class FeeParameterController {
     private static final String MENU_FEE_PARAMETER = "Fee Parameter";
 
     @PostMapping(path = "/create")
-    public ResponseEntity<ResponseDTO<CreateFeeParameterListResponse>> createSingleData(@RequestBody CreateFeeParameterRequest createFeeParameterRequest) {
+    public ResponseEntity<ResponseDTO<FeeParameterResponse>> createSingleData(@RequestBody CreateFeeParameterRequest createFeeParameterRequest) {
         BillingDataChangeDTO dataChangeDTO = BillingDataChangeDTO.builder()
                 .methodHttp(HttpMethod.POST.name())
                 .endpoint("/api/fee-parameter/create/approve")
@@ -34,8 +34,8 @@ public class FeeParameterController {
                 .isPathVariable(false)
                 .menu(MENU_FEE_PARAMETER)
                 .build();
-        CreateFeeParameterListResponse list = feeParameterService.createSingleData(createFeeParameterRequest, dataChangeDTO);
-        ResponseDTO<CreateFeeParameterListResponse> response = ResponseDTO.<CreateFeeParameterListResponse>builder()
+        FeeParameterResponse list = feeParameterService.createSingleData(createFeeParameterRequest, dataChangeDTO);
+        ResponseDTO<FeeParameterResponse> response = ResponseDTO.<FeeParameterResponse>builder()
                 .code(HttpStatus.OK.value())
                 .message(HttpStatus.OK.getReasonPhrase())
                 .payload(list)
@@ -44,7 +44,7 @@ public class FeeParameterController {
     }
 
     @PostMapping(path = "/create-list")
-    public ResponseEntity<ResponseDTO<CreateFeeParameterListResponse>> createList(@RequestBody CreateFeeParameterListRequest createFeeParameterListRequest) {
+    public ResponseEntity<ResponseDTO<FeeParameterResponse>> createList(@RequestBody FeeParameterListRequest createFeeParameterListRequest) {
         BillingDataChangeDTO dataChangeDTO = BillingDataChangeDTO.builder()
                 .methodHttp(HttpMethod.POST.name())
                 .endpoint("/api/fee-parameter/create/approve")
@@ -54,8 +54,8 @@ public class FeeParameterController {
                 .menu(MENU_FEE_PARAMETER)
                 .build();
 
-        CreateFeeParameterListResponse list = feeParameterService.createMultipleData(createFeeParameterListRequest, dataChangeDTO);
-        ResponseDTO<CreateFeeParameterListResponse> response = ResponseDTO.<CreateFeeParameterListResponse>builder()
+        FeeParameterResponse list = feeParameterService.createMultipleData(createFeeParameterListRequest, dataChangeDTO);
+        ResponseDTO<FeeParameterResponse> response = ResponseDTO.<FeeParameterResponse>builder()
                 .code(HttpStatus.OK.value())
                 .message(HttpStatus.OK.getReasonPhrase())
                 .payload(list)
@@ -64,9 +64,9 @@ public class FeeParameterController {
     }
 
     @PostMapping(path = "/create/approve")
-    public ResponseEntity<ResponseDTO<CreateFeeParameterListResponse>> createMultipleApprove(@RequestBody CreateFeeParameterListRequest createFeeParameterListRequest) {
-        CreateFeeParameterListResponse listApprove = feeParameterService.createMultipleApprove(createFeeParameterListRequest);
-        ResponseDTO<CreateFeeParameterListResponse> response = ResponseDTO.<CreateFeeParameterListResponse>builder()
+    public ResponseEntity<ResponseDTO<FeeParameterResponse>> createSingleApprove(@RequestBody FeeParameterApproveRequest createFeeParameterListRequest) {
+        FeeParameterResponse listApprove = feeParameterService.createSingleApprove(createFeeParameterListRequest);
+        ResponseDTO<FeeParameterResponse> response = ResponseDTO.<FeeParameterResponse>builder()
                 .code(HttpStatus.OK.value())
                 .message(HttpStatus.OK.getReasonPhrase())
                 .payload(listApprove)
@@ -75,7 +75,7 @@ public class FeeParameterController {
     }
 
     @PutMapping(path = "/update-list")
-    public ResponseEntity<ResponseDTO<UpdateFeeParameterListResponse>> updateMultipleData(@RequestBody UpdateFeeParameterListRequest updateFeeParameterListRequest) {
+    public ResponseEntity<ResponseDTO<FeeParameterResponse>> updateMultipleData(@RequestBody FeeParameterListRequest updateFeeParameterListRequest) {
         BillingDataChangeDTO dataChangeDTO = BillingDataChangeDTO.builder()
                 .methodHttp(HttpMethod.PUT.name())
                 .endpoint("/api/fee-parameter/update/approve")
@@ -84,8 +84,8 @@ public class FeeParameterController {
                 .isPathVariable(false)
                 .menu(MENU_FEE_PARAMETER)
                 .build();
-        UpdateFeeParameterListResponse list = feeParameterService.updateMultipleData(updateFeeParameterListRequest, dataChangeDTO);
-        ResponseDTO<UpdateFeeParameterListResponse> response = ResponseDTO.<UpdateFeeParameterListResponse>builder()
+        FeeParameterResponse list = feeParameterService.updateMultipleData(updateFeeParameterListRequest, dataChangeDTO);
+        ResponseDTO<FeeParameterResponse> response = ResponseDTO.<FeeParameterResponse>builder()
                 .code(HttpStatus.OK.value())
                 .message(HttpStatus.OK.getReasonPhrase())
                 .payload(list)
@@ -94,9 +94,9 @@ public class FeeParameterController {
     }
 
     @PutMapping(path = "/update/approve")
-    public ResponseEntity<ResponseDTO<UpdateFeeParameterListResponse>> updateMultipleApprove(@RequestBody UpdateFeeParameterListRequest updateFeeParameterListRequest) {
-        UpdateFeeParameterListResponse listApprove = feeParameterService.updateMultipleApprove(updateFeeParameterListRequest);
-        ResponseDTO<UpdateFeeParameterListResponse> response = ResponseDTO.<UpdateFeeParameterListResponse>builder()
+    public ResponseEntity<ResponseDTO<FeeParameterResponse>> updateSingleApprove(@RequestBody FeeParameterApproveRequest updateFeeParameterListRequest) {
+        FeeParameterResponse listApprove = feeParameterService.updateSingleApprove(updateFeeParameterListRequest);
+        ResponseDTO<FeeParameterResponse> response = ResponseDTO.<FeeParameterResponse>builder()
                 .code(HttpStatus.OK.value())
                 .message(HttpStatus.OK.getReasonPhrase())
                 .payload(listApprove)

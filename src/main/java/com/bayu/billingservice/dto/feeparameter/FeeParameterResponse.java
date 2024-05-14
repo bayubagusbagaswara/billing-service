@@ -1,6 +1,6 @@
 package com.bayu.billingservice.dto.feeparameter;
 
-import com.services.billingservice.dto.ErrorMessageDTO;
+import com.bayu.billingservice.dto.ErrorMessageDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
