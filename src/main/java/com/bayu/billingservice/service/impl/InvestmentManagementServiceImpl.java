@@ -276,21 +276,21 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
     }
 
     @Override
-    public InvestmentManagementResponse deleteSingleData(DeleteInvestmentManagementRequest request, BillingDataChangeDTO dataChangeDTO) {
-        log.info("Delete single investment management with request: {}", request);
+    public InvestmentManagementResponse deleteSingleData(DeleteInvestmentManagementRequest deleteRequest, BillingDataChangeDTO dataChangeDTO) {
+        log.info("Delete single investment management with request: {}", deleteRequest);
         int totalDataSuccess = 0;
         int totalDataFailed = 0;
         List<ErrorMessageDTO> errorMessageList = new ArrayList<>();
 
         InvestmentManagementDTO investmentManagementDTO = InvestmentManagementDTO.builder()
-                .id(request.getId())
+                .id(deleteRequest.getId())
                 .build();
         try {
             InvestmentManagement investmentManagement= investmentManagementRepository.findById(investmentManagementDTO.getId())
                     .orElseThrow(() -> new DataNotFoundException(ID_NOT_FOUND + investmentManagementDTO.getId()));
 
-            dataChangeDTO.setInputId(request.getInputId());
-            dataChangeDTO.setInputIPAddress(request.getInputIPAddress());
+            dataChangeDTO.setInputId(deleteRequest.getInputId());
+            dataChangeDTO.setInputIPAddress(deleteRequest.getInputIPAddress());
             dataChangeDTO.setJsonDataBefore(JsonUtil.cleanedJsonData(objectMapper.writeValueAsString(investmentManagement)));
             dataChangeDTO.setJsonDataAfter("");
             dataChangeDTO.setEntityId(investmentManagement.getId().toString());
