@@ -26,15 +26,15 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Slf4j
 public class InvestmentManagementServiceImpl implements InvestmentManagementService {
 
+    private static final String ID_NOT_FOUND = "Investment Management not found with id: ";
+    private static final String CODE_NOT_FOUND = "Investment Management not found with code: ";
+    private static final String UNKNOWN = "unknown";
+
     private final InvestmentManagementRepository investmentManagementRepository;
     private final BillingDataChangeService dataChangeService;
     private final Validator validator;
     private final ObjectMapper objectMapper;
     private final InvestmentManagementMapper investmentManagementMapper;
-
-    private static final String ID_NOT_FOUND = "Investment Management not found with id: ";
-    private static final String CODE_NOT_FOUND = "Investment Management not found with code: ";
-    private static final String UNKNOWN = "unknown";
 
     @Override
     public boolean isCodeAlreadyExists(String code) {
@@ -42,24 +42,24 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
     }
 
     @Override
-    public InvestmentManagementResponse createSingleData(CreateInvestmentManagementRequest createInvestmentManagementRequest, BillingDataChangeDTO dataChangeDTO) {
-        log.info("Create single data investment management with request: {}", createInvestmentManagementRequest);
-        InvestmentManagementDTO investmentManagementDTO = investmentManagementMapper.mapFromCreateRequestToDto(createInvestmentManagementRequest);
-        dataChangeDTO.setInputId(createInvestmentManagementRequest.getInputId());
-        dataChangeDTO.setInputIPAddress(createInvestmentManagementRequest.getInputIPAddress());
+    public InvestmentManagementResponse createSingleData(CreateInvestmentManagementRequest createRequest, BillingDataChangeDTO dataChangeDTO) {
+        log.info("Create single data investment management with request: {}", createRequest);
+        InvestmentManagementDTO investmentManagementDTO = investmentManagementMapper.mapFromCreateRequestToDto(createRequest);
+        dataChangeDTO.setInputId(createRequest.getInputId());
+        dataChangeDTO.setInputIPAddress(createRequest.getInputIPAddress());
         return processInvestmentManagementCreation(investmentManagementDTO, dataChangeDTO);
     }
 
     @Override
-    public InvestmentManagementResponse createMultipleData(InvestmentManagementListRequest investmentManagementListRequest, BillingDataChangeDTO dataChangeDTO) {
-        log.info("Create investment management list with request: {}", investmentManagementListRequest);
-        dataChangeDTO.setInputId(investmentManagementListRequest.getInputId());
-        dataChangeDTO.setInputIPAddress(investmentManagementListRequest.getInputIPAddress());
+    public InvestmentManagementResponse createMultipleData(InvestmentManagementListRequest createListRequest, BillingDataChangeDTO dataChangeDTO) {
+        log.info("Create multiple investment management with request: {}", createListRequest);
+        dataChangeDTO.setInputId(createListRequest.getInputId());
+        dataChangeDTO.setInputIPAddress(createListRequest.getInputIPAddress());
         int totalDataSuccess = 0;
         int totalDataFailed = 0;
         List<ErrorMessageDTO> errorMessageList = new ArrayList<>();
 
-        for (InvestmentManagementDTO investmentManagementDTO : investmentManagementListRequest.getInvestmentManagementDTOList()) {
+        for (InvestmentManagementDTO investmentManagementDTO : createListRequest.getInvestmentManagementDTOList()) {
             InvestmentManagementResponse response = processInvestmentManagementCreation(investmentManagementDTO, dataChangeDTO);
             totalDataSuccess += response.getTotalDataSuccess();
             totalDataFailed += response.getTotalDataFailed();
@@ -100,7 +100,7 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
 
     @Override
     public InvestmentManagementResponse createSingleApprove(InvestmentManagementApproveRequest approveRequest) {
-        log.info("Create investment management list approve with request: {}", approveRequest);
+        log.info("Approve when create investment management with request: {}", approveRequest);
         int totalDataSuccess = 0;
         int totalDataFailed = 0;
         List<ErrorMessageDTO> errorMessageList = new ArrayList<>();
@@ -147,14 +147,15 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
     }
 
     @Override
-    public InvestmentManagementResponse updateSingleData(UpdateInvestmentManagementRequest updateInvestmentManagementRequest, BillingDataChangeDTO dataChangeDTO) {
-        dataChangeDTO.setInputId(updateInvestmentManagementRequest.getInputId());
-        dataChangeDTO.setInputIPAddress(updateInvestmentManagementRequest.getInputIPAddress());
+    public InvestmentManagementResponse updateSingleData(UpdateInvestmentManagementRequest updateRequest, BillingDataChangeDTO dataChangeDTO) {
+        log.info("Update single data investment management with request: {}", updateRequest);
+        dataChangeDTO.setInputId(updateRequest.getInputId());
+        dataChangeDTO.setInputIPAddress(updateRequest.getInputIPAddress());
         int totalDataSuccess = 0;
         int totalDataFailed = 0;
         List<ErrorMessageDTO> errorMessageList = new ArrayList<>();
 
-        InvestmentManagementDTO investmentManagementDTO = investmentManagementMapper.mapFromUpdateRequestToDto(updateInvestmentManagementRequest);
+        InvestmentManagementDTO investmentManagementDTO = investmentManagementMapper.mapFromUpdateRequestToDto(updateRequest);
         try {
             InvestmentManagement investmentManagement = investmentManagementRepository.findById(investmentManagementDTO.getId())
                     .orElseThrow(() -> new DataNotFoundException(ID_NOT_FOUND + investmentManagementDTO.getId()));
@@ -174,14 +175,15 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
     }
 
     @Override
-    public InvestmentManagementResponse updateMultipleData(InvestmentManagementListRequest updateInvestmentManagementListRequest, BillingDataChangeDTO dataChangeDTO) {
-        dataChangeDTO.setInputId(updateInvestmentManagementListRequest.getInputId());
-        dataChangeDTO.setInputIPAddress(updateInvestmentManagementListRequest.getInputIPAddress());
+    public InvestmentManagementResponse updateMultipleData(InvestmentManagementListRequest updateListRequest, BillingDataChangeDTO dataChangeDTO) {
+        log.info("Update multiple data investment management with request: {}", updateListRequest);
+        dataChangeDTO.setInputId(updateListRequest.getInputId());
+        dataChangeDTO.setInputIPAddress(updateListRequest.getInputIPAddress());
         int totalDataSuccess = 0;
         int totalDataFailed = 0;
         List<ErrorMessageDTO> errorMessageList = new ArrayList<>();
 
-        for (InvestmentManagementDTO investmentManagementDTO : updateInvestmentManagementListRequest.getInvestmentManagementDTOList()) {
+        for (InvestmentManagementDTO investmentManagementDTO : updateListRequest.getInvestmentManagementDTOList()) {
             try {
                 InvestmentManagement investmentManagement = investmentManagementRepository.findByCode(investmentManagementDTO.getCode())
                         .orElseThrow(() -> new DataNotFoundException(CODE_NOT_FOUND + investmentManagementDTO.getCode()));
@@ -224,7 +226,7 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
 
     @Override
     public InvestmentManagementResponse updateSingleApprove(InvestmentManagementApproveRequest approveRequest) {
-        log.info("Request data update approve: {}", approveRequest);
+        log.info("Approve when update investment management with request: {}", approveRequest);
         int totalDataSuccess = 0;
         int totalDataFailed = 0;
         List<ErrorMessageDTO> errorMessageList = new ArrayList<>();
@@ -243,11 +245,9 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
             InvestmentManagement investmentManagement = investmentManagementRepository.findByCode(investmentManagementDTO.getCode())
                     .orElseThrow(() -> new DataNotFoundException(CODE_NOT_FOUND + investmentManagementDTO.getCode()));
 
-            // Disini sudah dilakukan copy data dari DTO ke Entity
+            // Copy data from DTO to Entity
             investmentManagementMapper.mapObjects(investmentManagementDTO, investmentManagement);
             log.info("Investment Management after copy properties: {}", investmentManagement);
-
-
 
             // Retrieve and set billing data change
             BillingDataChangeDTO dataChangeDTO = dataChangeService.getById(dataChangeId);
@@ -261,7 +261,6 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
                 totalDataFailed++;
             } else {
                 InvestmentManagement investmentManagementUpdated = investmentManagementMapper.updateEntity(investmentManagement, dataChangeDTO);
-                // Coba di test apakah terjadi duplikat data. Harusnya hanya akan update data sebelumnya dengan id yang sama
                 InvestmentManagement investmentManagementSaved = investmentManagementRepository.save(investmentManagementUpdated);
 
                 dataChangeDTO.setJsonDataAfter(JsonUtil.cleanedJsonData(objectMapper.writeValueAsString(investmentManagementSaved)));
@@ -278,7 +277,7 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
 
     @Override
     public InvestmentManagementResponse deleteSingleData(DeleteInvestmentManagementRequest request, BillingDataChangeDTO dataChangeDTO) {
-        log.info("Delete investment management by id with request: {}", request);
+        log.info("Delete single investment management with request: {}", request);
         int totalDataSuccess = 0;
         int totalDataFailed = 0;
         List<ErrorMessageDTO> errorMessageList = new ArrayList<>();
@@ -307,11 +306,10 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
 
     @Override
     public InvestmentManagementResponse deleteSingleApprove(InvestmentManagementApproveRequest approveRequest) {
-        log.info("Request data delete approve: {}", approveRequest);
+        log.info("Approve when delete investment management with request: {}", approveRequest);
         int totalDataSuccess = 0;
         int totalDataFailed = 0;
         List<ErrorMessageDTO> errorMessageList = new ArrayList<>();
-
 
         validateDataChangeId(approveRequest.getDataChangeId());
 
