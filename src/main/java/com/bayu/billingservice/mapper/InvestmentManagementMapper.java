@@ -9,7 +9,6 @@ import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
 
 @Component
 public class InvestmentManagementMapper extends BaseMapper<InvestmentManagement, InvestmentManagementDTO> {
@@ -27,54 +26,14 @@ public class InvestmentManagementMapper extends BaseMapper<InvestmentManagement,
             @Override
             protected void configure() {
                 skip(destination.getApprovalStatus());
-                skip().setInputId(null);
-                skip().setInputIPAddress(null);
-                skip().setInputDate(null);
-                skip().setApproveId(null);
-                skip().setApproveIPAddress(null);
-                skip().setApproveDate(null);
+                skip(destination.getInputId());
+                skip(destination.getInputIPAddress());
+                skip(destination.getInputDate());
+                skip(destination.getApproveId());
+                skip(destination.getApproveIPAddress());
+                skip(destination.getApproveDate());
             }
         };
-    }
-
-    @Override
-    public InvestmentManagement mapToEntity(InvestmentManagementDTO dto) {
-        return super.mapToEntity(dto);
-    }
-
-    @Override
-    public InvestmentManagementDTO mapToDto(InvestmentManagement entity) {
-        return super.mapToDto(entity);
-    }
-
-    @Override
-    public List<InvestmentManagementDTO> mapToDTOList(List<InvestmentManagement> entityList) {
-        return super.mapToDTOList(entityList);
-    }
-
-    @Override
-    public InvestmentManagementDTO mapFromCreateRequestToDto(Object createRequest, Class<InvestmentManagementDTO> dtoClass) {
-        return super.mapFromCreateRequestToDto(createRequest, dtoClass);
-    }
-
-    @Override
-    public InvestmentManagementDTO mapFromUpdateRequestToDto(Object updateRequest, Class<InvestmentManagementDTO> dtoClass) {
-        return super.mapFromUpdateRequestToDto(updateRequest, dtoClass);
-    }
-
-    @Override
-    public InvestmentManagement createEntity(InvestmentManagementDTO dto, BillingDataChangeDTO dataChangeDTO) {
-        return super.createEntity(dto, dataChangeDTO);
-    }
-
-    @Override
-    public InvestmentManagement updateEntity(InvestmentManagement updatedEntity, Class<InvestmentManagementDTO> dto, BillingDataChangeDTO dataChangeDTO) {
-        return super.updateEntity(updatedEntity, dto, dataChangeDTO);
-    }
-
-    @Override
-    public void mapObjects(InvestmentManagementDTO sourceDto, InvestmentManagement targetEntity) {
-        super.mapObjects(sourceDto, targetEntity);
     }
 
     @Override

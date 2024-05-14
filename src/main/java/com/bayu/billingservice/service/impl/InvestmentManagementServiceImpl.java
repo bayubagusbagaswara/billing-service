@@ -134,7 +134,7 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
 //                investmentManagementRepository.save(investmentManagement);
 
 
-                InvestmentManagement investmentManagement = investmentManagementMapper.mapToEntity(dto);
+                InvestmentManagement investmentManagement = investmentManagementMapper.createEntity(dto, dataChangeDTO);
                 investmentManagementRepository.save(investmentManagement);
 
                 dataChangeDTO.setDescription("Successfully approve data change and save data investment management");
