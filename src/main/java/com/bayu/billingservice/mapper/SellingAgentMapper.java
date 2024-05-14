@@ -9,8 +9,6 @@ import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-
 @Component
 public class SellingAgentMapper extends BaseMapper<SellingAgent, SellingAgentDTO> {
 
@@ -35,46 +33,6 @@ public class SellingAgentMapper extends BaseMapper<SellingAgent, SellingAgentDTO
                 skip(destination.getApproveDate());
             }
         };
-    }
-
-    @Override
-    public SellingAgent mapToEntity(SellingAgentDTO dto) {
-        return super.mapToEntity(dto);
-    }
-
-    @Override
-    public SellingAgentDTO mapToDto(SellingAgent entity) {
-        return super.mapToDto(entity);
-    }
-
-    @Override
-    public List<SellingAgentDTO> mapToDTOList(List<SellingAgent> entityList) {
-        return super.mapToDTOList(entityList);
-    }
-
-    @Override
-    public SellingAgentDTO mapFromCreateRequestToDto(Object createRequest, Class<SellingAgentDTO> dtoClass) {
-        return super.mapFromCreateRequestToDto(createRequest, dtoClass);
-    }
-
-    @Override
-    public SellingAgentDTO mapFromUpdateRequestToDto(Object updateRequest, Class<SellingAgentDTO> dtoClass) {
-        return super.mapFromUpdateRequestToDto(updateRequest, dtoClass);
-    }
-
-    @Override
-    public SellingAgent createEntity(SellingAgentDTO dto, BillingDataChangeDTO dataChangeDTO) {
-        return super.createEntity(dto, dataChangeDTO);
-    }
-
-    @Override
-    public SellingAgent updateEntity(SellingAgent updatedEntity, Class<SellingAgentDTO> dto, BillingDataChangeDTO dataChangeDTO) {
-        return super.updateEntity(updatedEntity, dto, dataChangeDTO);
-    }
-
-    @Override
-    public void mapObjects(SellingAgentDTO sourceDto, SellingAgent targetEntity) {
-        super.mapObjects(sourceDto, targetEntity);
     }
 
     @Override

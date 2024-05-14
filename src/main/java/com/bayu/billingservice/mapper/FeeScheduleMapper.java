@@ -9,8 +9,6 @@ import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-
 @Component
 public class FeeScheduleMapper extends BaseMapper<FeeSchedule, FeeScheduleDTO> {
 
@@ -38,48 +36,8 @@ public class FeeScheduleMapper extends BaseMapper<FeeSchedule, FeeScheduleDTO> {
     }
 
     @Override
-    public FeeSchedule mapToEntity(FeeScheduleDTO dto) {
-        return super.mapToEntity(dto);
-    }
-
-    @Override
-    public FeeScheduleDTO mapToDto(FeeSchedule entity) {
-        return super.mapToDto(entity);
-    }
-
-    @Override
-    public List<FeeScheduleDTO> mapToDTOList(List<FeeSchedule> entityList) {
-        return super.mapToDTOList(entityList);
-    }
-
-    @Override
-    public FeeScheduleDTO mapFromCreateRequestToDto(Object createRequest, Class<FeeScheduleDTO> dtoClass) {
-        return super.mapFromCreateRequestToDto(createRequest, dtoClass);
-    }
-
-    @Override
-    public FeeScheduleDTO mapFromUpdateRequestToDto(Object updateRequest, Class<FeeScheduleDTO> dtoClass) {
-        return super.mapFromUpdateRequestToDto(updateRequest, dtoClass);
-    }
-
-    @Override
-    public FeeSchedule createEntity(FeeScheduleDTO dto, BillingDataChangeDTO dataChangeDTO) {
-        return super.createEntity(dto, dataChangeDTO);
-    }
-
-    @Override
     protected Class<FeeSchedule> getEntityClass() {
         return FeeSchedule.class;
-    }
-
-    @Override
-    public FeeSchedule updateEntity(FeeSchedule updatedEntity, Class<FeeScheduleDTO> dto, BillingDataChangeDTO dataChangeDTO) {
-        return super.updateEntity(updatedEntity, dto, dataChangeDTO);
-    }
-
-    @Override
-    public void mapObjects(FeeScheduleDTO sourceDto, FeeSchedule targetEntity) {
-        super.mapObjects(sourceDto, targetEntity);
     }
 
     @Override

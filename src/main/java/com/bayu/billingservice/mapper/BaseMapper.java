@@ -36,12 +36,12 @@ public abstract class BaseMapper<E, D> {
                 .toList();
     }
 
-    public D mapFromCreateRequestToDto(Object createRequest, Class<D> dtoClass) {
-        return modelMapper.map(createRequest, dtoClass);
+    public D mapFromCreateRequestToDto(Object createRequest) {
+        return modelMapper.map(createRequest, getDtoClass());
     }
 
-    public D mapFromUpdateRequestToDto(Object updateRequest, Class<D> dtoClass) {
-        return modelMapper.map(updateRequest, dtoClass);
+    public D mapFromUpdateRequestToDto(Object updateRequest) {
+        return modelMapper.map(updateRequest, getDtoClass());
     }
 
 
@@ -51,7 +51,7 @@ public abstract class BaseMapper<E, D> {
         return entity;
     }
 
-    public E updateEntity(E updatedEntity, Class<D> dto, BillingDataChangeDTO dataChangeDTO) {
+    public E updateEntity(E updatedEntity, BillingDataChangeDTO dataChangeDTO) {
         E entity = mapToEntity(mapToDto(updatedEntity));
         setCommonProperties(entity, dataChangeDTO);
         return entity;

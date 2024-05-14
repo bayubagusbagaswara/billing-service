@@ -9,8 +9,6 @@ import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-
 @Component
 public class AssetTransferCustomerMapper extends BaseMapper<AssetTransferCustomer, AssetTransferCustomerDTO> {
 
@@ -35,46 +33,6 @@ public class AssetTransferCustomerMapper extends BaseMapper<AssetTransferCustome
                 skip(destination.getApproveDate());
             }
         };
-    }
-
-    @Override
-    public AssetTransferCustomerDTO mapToDto(AssetTransferCustomer entity) {
-        return super.mapToDto(entity);
-    }
-
-    @Override
-    public AssetTransferCustomer mapToEntity(AssetTransferCustomerDTO dto) {
-        return super.mapToEntity(dto);
-    }
-
-    @Override
-    public List<AssetTransferCustomerDTO> mapToDTOList(List<AssetTransferCustomer> entityList) {
-        return super.mapToDTOList(entityList);
-    }
-
-    @Override
-    public AssetTransferCustomerDTO mapFromCreateRequestToDto(Object createRequest, Class<AssetTransferCustomerDTO> dtoClass) {
-        return super.mapFromCreateRequestToDto(createRequest, dtoClass);
-    }
-
-    @Override
-    public AssetTransferCustomer createEntity(AssetTransferCustomerDTO dto, BillingDataChangeDTO dataChangeDTO) {
-        return super.createEntity(dto, dataChangeDTO);
-    }
-
-    @Override
-    public AssetTransferCustomerDTO mapFromUpdateRequestToDto(Object updateRequest, Class<AssetTransferCustomerDTO> dtoClass) {
-        return super.mapFromUpdateRequestToDto(updateRequest, dtoClass);
-    }
-
-    @Override
-    public AssetTransferCustomer updateEntity(AssetTransferCustomer updatedEntity, Class<AssetTransferCustomerDTO> dto, BillingDataChangeDTO dataChangeDTO) {
-        return super.updateEntity(updatedEntity, dto, dataChangeDTO);
-    }
-
-    @Override
-    public void mapObjects(AssetTransferCustomerDTO sourceDto, AssetTransferCustomer targetEntity) {
-        super.mapObjects(sourceDto, targetEntity);
     }
 
     @Override

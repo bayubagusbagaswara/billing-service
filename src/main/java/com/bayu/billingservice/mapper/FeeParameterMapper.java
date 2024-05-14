@@ -38,46 +38,6 @@ public class FeeParameterMapper extends BaseMapper<FeeParameter, FeeParameterDTO
     }
 
     @Override
-    public FeeParameter mapToEntity(FeeParameterDTO dto) {
-        return super.mapToEntity(dto);
-    }
-
-    @Override
-    public FeeParameterDTO mapToDto(FeeParameter entity) {
-        return super.mapToDto(entity);
-    }
-
-    @Override
-    public List<FeeParameterDTO> mapToDTOList(List<FeeParameter> entityList) {
-        return super.mapToDTOList(entityList);
-    }
-
-    @Override
-    public FeeParameterDTO mapFromCreateRequestToDto(Object createRequest, Class<FeeParameterDTO> dtoClass) {
-        return super.mapFromCreateRequestToDto(createRequest, dtoClass);
-    }
-
-    @Override
-    public FeeParameterDTO mapFromUpdateRequestToDto(Object updateRequest, Class<FeeParameterDTO> dtoClass) {
-        return super.mapFromUpdateRequestToDto(updateRequest, dtoClass);
-    }
-
-    @Override
-    public FeeParameter createEntity(FeeParameterDTO dto, BillingDataChangeDTO dataChangeDTO) {
-        return super.createEntity(dto, dataChangeDTO);
-    }
-
-    @Override
-    public FeeParameter updateEntity(FeeParameter updatedEntity, Class<FeeParameterDTO> dto, BillingDataChangeDTO dataChangeDTO) {
-        return super.updateEntity(updatedEntity, dto, dataChangeDTO);
-    }
-
-    @Override
-    public void mapObjects(FeeParameterDTO sourceDto, FeeParameter targetEntity) {
-        super.mapObjects(sourceDto, targetEntity);
-    }
-
-    @Override
     protected Class<FeeParameter> getEntityClass() {
         return FeeParameter.class;
     }
