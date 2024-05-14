@@ -48,10 +48,10 @@ public class CustomerV2ServiceImpl implements CustomerV2Service {
 
     @Override
     public CustomerDTO testCreate(CustomerDTO dto) {
-        Customer customer = customerMapper.mapFromDtoToEntity(dto);
+        Customer customer = customerMapper.mapToEntity(dto);
         log.info("Customer: {}", customer);
         customerRepository.save(customer);
-        return customerMapper.mapFromEntityToDto(customer);
+        return customerMapper.mapToDto(customer);
     }
 
     @Override
@@ -89,7 +89,7 @@ public class CustomerV2ServiceImpl implements CustomerV2Service {
     }
 
     private CustomerResponse processDataChangeForCustomer(CreateCustomerRequest request, BillingDataChangeDTO dataChangeDTO) {
-        CustomerDTO customerDTO = customerMapper.mapFromCreateCustomerRequestToDTO(request);
+        CustomerDTO customerDTO = customerMapper.mapFromCreateRequestToDto(request);
         return processDataChangeForCustomerDTO(customerDTO, dataChangeDTO);
     }
 
@@ -268,7 +268,7 @@ public class CustomerV2ServiceImpl implements CustomerV2Service {
             customerMapper.mapObjects(customerDTO, customer);
             log.info("Customer after mapper: {}", customer);
 
-            Errors errors = validateCustomerUsingValidator(customerMapper.mapFromEntityToDto(customer));
+            Errors errors = validateCustomerUsingValidator(customerMapper.mapToDto(customer));
             if (errors.hasErrors()) {
                 errors.getAllErrors().forEach(error -> validationErrors.add(error.getDefaultMessage()));
             }
