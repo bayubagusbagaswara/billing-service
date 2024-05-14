@@ -610,3 +610,7 @@ String jsonDataAfter = "{\"code\":\"A002\",\"name\":\"PT Pacific Capital Investm
         }
     }
 }
+
+    // @Pattern(regexp = "^[0-9]*$", message = "Code must contain only numeric digits") Hanya ANGKA
+//    @Pattern(regexp = "^[0-9.-]*$", message = "Input must contain only numbers, dots, or dashes")
+//    @Pattern(regexp = "^[a-zA-Z ]*$", message = "Input must contain only alphabetic characters and spaces")
