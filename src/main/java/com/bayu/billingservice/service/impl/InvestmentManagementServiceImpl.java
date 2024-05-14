@@ -44,7 +44,7 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
     @Override
     public InvestmentManagementResponse createSingleData(CreateInvestmentManagementRequest createInvestmentManagementRequest, BillingDataChangeDTO dataChangeDTO) {
         log.info("Create single data investment management with request: {}", createInvestmentManagementRequest);
-        InvestmentManagementDTO investmentManagementDTO = investmentManagementMapper.mapFromCreateRequestToDto(createInvestmentManagementRequest, InvestmentManagementDTO.class);
+        InvestmentManagementDTO investmentManagementDTO = investmentManagementMapper.mapFromCreateRequestToDto(createInvestmentManagementRequest);
         dataChangeDTO.setInputId(createInvestmentManagementRequest.getInputId());
         dataChangeDTO.setInputIPAddress(createInvestmentManagementRequest.getInputIPAddress());
         return processInvestmentManagementCreation(investmentManagementDTO, dataChangeDTO);
@@ -158,7 +158,7 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
         int totalDataFailed = 0;
         List<ErrorMessageDTO> errorMessageList = new ArrayList<>();
 
-        InvestmentManagementDTO investmentManagementDTO = investmentManagementMapper.mapFromUpdateRequestToDto(updateInvestmentManagementRequest, InvestmentManagementDTO.class);
+        InvestmentManagementDTO investmentManagementDTO = investmentManagementMapper.mapFromUpdateRequestToDto(updateInvestmentManagementRequest);
         try {
             InvestmentManagement investmentManagement = investmentManagementRepository.findById(investmentManagementDTO.getId())
                     .orElseThrow(() -> new DataNotFoundException(ID_NOT_FOUND + investmentManagementDTO.getId()));
@@ -262,7 +262,7 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
                 dataChangeService.approvalStatusIsRejected(dataChangeDTO, validationErrors);
                 totalDataFailed++;
             } else {
-                InvestmentManagement investmentManagementUpdated = investmentManagementMapper.updateEntity(investmentManagement, InvestmentManagementDTO.class, dataChangeDTO);
+                InvestmentManagement investmentManagementUpdated = investmentManagementMapper.updateEntity(investmentManagement, dataChangeDTO);
                 // Coba di test apakah terjadi duplikat data. Harusnya hanya akan update data sebelumnya dengan id yang sama
                 InvestmentManagement investmentManagementSaved = investmentManagementRepository.save(investmentManagementUpdated);
 
