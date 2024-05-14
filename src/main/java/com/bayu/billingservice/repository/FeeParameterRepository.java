@@ -20,4 +20,14 @@ public interface FeeParameterRepository extends JpaRepository<FeeParameter, Long
 
     @Query(value = "SELECT * FROM fee_parameter AS f WHERE f.name IN :names", nativeQuery = true)
     List<FeeParameter> findFeeParameterByNameList(@Param("names") List<String> names);
+
+    @Query(value = "SELECT CASE WHEN COUNT(*) > 0 THEN true ELSE false END "
+            + "FROM fee_parameter "
+            + "WHERE code = :code", nativeQuery = true)
+    boolean existsByCode(String code);
+
+    @Query(value = "SELECT CASE WHEN COUNT(*) > 0 THEN true ELSE false END "
+            + "FROM fee_parameter "
+            + "WHERE name = :name", nativeQuery = true)
+    boolean existsByName(String name);
 }

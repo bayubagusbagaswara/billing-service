@@ -2,6 +2,8 @@ package com.bayu.billingservice.service;
 
 import com.bayu.billingservice.dto.datachange.BillingDataChangeDTO;
 import com.bayu.billingservice.dto.feeparameter.*;
+import com.bayu.billingservice.dto.investmentmanagement.InvestmentManagementResponse;
+import com.bayu.billingservice.dto.investmentmanagement.UpdateInvestmentManagementRequest;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -10,6 +12,8 @@ import java.util.Map;
 public interface FeeParameterService {
 
     boolean isCodeAlreadyExists(String code);
+
+    public boolean isNameAlreadyExists(String name);
 
     List<FeeParameterDTO> getAll();
 
@@ -28,6 +32,8 @@ public interface FeeParameterService {
     FeeParameterResponse createMultipleData(FeeParameterListRequest createFeeParameterListRequest, BillingDataChangeDTO dataChangeDTO);
 
     FeeParameterResponse createSingleApprove(FeeParameterApproveRequest createFeeParameterListRequest);
+
+    FeeParameterResponse updateSingleData(UpdateFeeParameterRequest updateFeeParameterRequest, BillingDataChangeDTO dataChangeDTO);
 
     FeeParameterResponse updateMultipleData(FeeParameterListRequest updateFeeParameterListRequest, BillingDataChangeDTO dataChangeDTO);
 
