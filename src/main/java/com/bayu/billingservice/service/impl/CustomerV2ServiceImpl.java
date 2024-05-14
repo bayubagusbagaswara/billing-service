@@ -5,7 +5,6 @@ import com.bayu.billingservice.dto.customer.*;
 import com.bayu.billingservice.dto.datachange.BillingDataChangeDTO;
 import com.bayu.billingservice.dto.investmentmanagement.InvestmentManagementDTO;
 import com.bayu.billingservice.exception.DataNotFoundException;
-import com.bayu.billingservice.mapper.ModelMapperUtil;
 import com.bayu.billingservice.model.Customer;
 import com.bayu.billingservice.repository.CustomerRepository;
 import com.bayu.billingservice.service.BillingDataChangeService;
@@ -249,45 +248,44 @@ public class CustomerV2ServiceImpl implements CustomerV2Service {
     }
 
     @Override
-    public CustomerResponse updateSingleApprove(CustomerApproveRequest updateCustomerApproveRequest) {
-        log.info("Approve multiple update billing customer with request: {}", updateCustomerApproveRequest);
+    public CustomerResponse updateSingleApprove(CustomerApproveRequest approveRequest) {
+        log.info("Approve multiple update billing customer with request: {}", approveRequest);
         int totalDataSuccess = 0;
         int totalDataFailed = 0;
         List<ErrorMessageDTO> errorMessageList = new ArrayList<>();
 
-        validateDataChangeId(updateCustomerApproveRequest.getDataChangeId());
+        validateDataChangeId(approveRequest.getDataChangeId());
 
-        CustomerDTO customerDTO = updateCustomerApproveRequest.getData();
+        CustomerDTO customerDTO = approveRequest.getData();
         try {
             List<String> validationErrors = new ArrayList<>();
+            Errors errors = validateCustomerUsingValidator(customerDTO);
+            if (errors.hasErrors()) {
+                errors.getAllErrors().forEach(error -> validationErrors.add(error.getDefaultMessage()));
+            }
 
             // get customer by code, object Customer inilah yang akan diupdate
             Customer customer = customerRepository.findByCustomerCode(customerDTO.getCustomerCode())
                     .orElseThrow(() -> new DataNotFoundException(CODE_NOT_FOUND + customerDTO.getCustomerCode()));
 
             customerMapper.mapObjects(customerDTO, customer);
-            log.info("Customer after mapper: {}", customer);
+            log.info("Customer after copy properties: {}", customer);
 
-            Errors errors = validateCustomerUsingValidator(customerMapper.mapToDto(customer));
-            if (errors.hasErrors()) {
-                errors.getAllErrors().forEach(error -> validationErrors.add(error.getDefaultMessage()));
-            }
-
-            // validasi mi code dan dapatkan nilai name
+            // Validation MI code dan get name value
             InvestmentManagementDTO investmentManagementDTO = investmentManagementService.getByCode(customer.getInvestmentManagementCode());
             customer.setInvestmentManagementCode(investmentManagementDTO.getCode());
             customer.setInvestmentManagementName(investmentManagementDTO.getCode());
 
-            // validasi selling agent
+            // Validation selling agent
             validationSellingAgentCodeAlreadyExists(customerDTO.getSellingAgentCode(), validationErrors);
 
-            // validasi enum
+            // Validation ENUM
             validateBillingEnums(customerDTO, validationErrors);
 
             // Retrieve and set billing data change
-            BillingDataChangeDTO dataChangeDTO = dataChangeService.getById(Long.valueOf(updateCustomerApproveRequest.getDataChangeId()));
-            dataChangeDTO.setApproveId(updateCustomerApproveRequest.getApproveId());
-            dataChangeDTO.setApproveIPAddress(updateCustomerApproveRequest.getApproveIPAddress());
+            BillingDataChangeDTO dataChangeDTO = dataChangeService.getById(Long.valueOf(approveRequest.getDataChangeId()));
+            dataChangeDTO.setApproveId(approveRequest.getApproveId());
+            dataChangeDTO.setApproveIPAddress(approveRequest.getApproveIPAddress());
             dataChangeDTO.setEntityId(customer.getId().toString());
 
             if (!validationErrors.isEmpty()) {
