@@ -130,10 +130,6 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
                 dataChangeService.approvalStatusIsRejected(dataChangeDTO, errorMessages);
                 totalDataFailed++;
             } else {
-//                InvestmentManagement investmentManagement = investmentManagementMapper.createEntity(investmentManagementDTO, dataChangeDTO);
-//                investmentManagementRepository.save(investmentManagement);
-
-
                 InvestmentManagement investmentManagement = investmentManagementMapper.createEntity(dto, dataChangeDTO);
                 investmentManagementRepository.save(investmentManagement);
 
