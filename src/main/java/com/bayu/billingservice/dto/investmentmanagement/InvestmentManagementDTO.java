@@ -1,43 +1,43 @@
 package com.bayu.billingservice.dto.investmentmanagement;
 
-import com.bayu.billingservice.dto.approval.ApprovalDTO;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.services.billingservice.dto.approval.ApprovalDTO;
 import lombok.*;
+
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class InvestmentManagementDTO extends ApprovalDTO {
 
     private Long id;
 
-//    @NotBlank(message = "Code cannot be empty")
-//    @Pattern(regexp = "^[a-zA-Z0-9]*$", message = "Name must contain only letters and digits")
+    @JsonProperty(value = "MI Code")
+    @NotBlank(message = "Code cannot be empty")
     private String code;
 
-    // @Pattern(regexp = "^[0-9]*$", message = "Code must contain only numeric digits") Hanya ANGKA
-//    @Pattern(regexp = "^[0-9.-]*$", message = "Input must contain only numbers, dots, or dashes")
-//    @Pattern(regexp = "^[a-zA-Z ]*$", message = "Input must contain only alphabetic characters and spaces")
-//    @NotBlank(message = "Name cannot be empty")
+    @JsonProperty(value = "MI Name")
+    @NotBlank(message = "Name cannot be empty")
     private String name;
 
-//    @NotBlank(message = "Email cannot be empty")
-//    @Email(message = "Email is not valid")
+    @JsonProperty(value = "MI Email")
+    @NotBlank(message = "Email cannot be empty")
+    @Email(message = "Email is not valid")
     private String email;
 
-//    @NotBlank(message = "Address 1 cannot be empty")
+    @JsonProperty(value = "Address 1")
     private String address1;
 
+    @JsonProperty(value = "Address 2")
     private String address2;
 
+    @JsonProperty(value = "Address 3")
     private String address3;
 
+    @JsonProperty(value = "Address 4")
     private String address4;
-
 }

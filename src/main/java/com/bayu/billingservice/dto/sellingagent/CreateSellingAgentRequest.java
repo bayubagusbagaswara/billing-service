@@ -5,31 +5,20 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotBlank;
+
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class CreateSellingAgentRequest {
 
-    private String inputId;
+    private String inputerId;
+    private String inputerIPAddress;
 
-    private String inputIPAddress;
-
+    @NotBlank(message = "Code cannot be empty")
     private String code;
 
+    @NotBlank(message = "Name cannot be empty")
     private String name;
-
-    private String gl;
-
-    private String glName;
-
-    private String account;
-
-    private String accountName;
-
-    private String email;
-
-    private String address;
-
-    private String description;
 }

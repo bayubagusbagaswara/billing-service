@@ -23,13 +23,14 @@ public interface FeeParameterService {
 
     String deleteAll();
 
-    CreateFeeParameterListResponse createSingleData(CreateFeeParameterRequest createFeeParameterRequest, BillingDataChangeDTO dataChangeDTO);
+    FeeParameterResponse createSingleData(CreateFeeParameterRequest createFeeParameterRequest, BillingDataChangeDTO dataChangeDTO);
 
-    CreateFeeParameterListResponse createMultipleData(CreateFeeParameterListRequest createFeeParameterListRequest, BillingDataChangeDTO dataChangeDTO);
+    FeeParameterResponse createMultipleData(FeeParameterListRequest createFeeParameterListRequest, BillingDataChangeDTO dataChangeDTO);
 
-    CreateFeeParameterListResponse createMultipleApprove(CreateFeeParameterListRequest createFeeParameterListRequest);
+    FeeParameterResponse createSingleApprove(FeeParameterApproveRequest createFeeParameterListRequest);
 
-    UpdateFeeParameterListResponse updateMultipleData(UpdateFeeParameterListRequest updateFeeParameterListRequest, BillingDataChangeDTO dataChangeDTO);
+    FeeParameterResponse updateMultipleData(FeeParameterListRequest updateFeeParameterListRequest, BillingDataChangeDTO dataChangeDTO);
 
-    UpdateFeeParameterListResponse updateMultipleApprove(UpdateFeeParameterListRequest updateFeeParameterListRequest);
+    FeeParameterResponse updateSingleApprove(FeeParameterApproveRequest updateFeeParameterListRequest);
+
 }

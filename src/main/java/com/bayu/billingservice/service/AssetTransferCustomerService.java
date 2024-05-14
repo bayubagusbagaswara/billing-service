@@ -6,21 +6,22 @@ import com.bayu.billingservice.dto.datachange.BillingDataChangeDTO;
 import java.util.List;
 
 public interface AssetTransferCustomerService {
-    CreateAssetTransferCustomerListResponse createSingleData(CreateAssetTransferCustomerRequest createAssetTransferCustomerRequest, BillingDataChangeDTO dataChangeDTO);
 
-    CreateAssetTransferCustomerListResponse createMultipleApprove(CreateAssetTransferCustomerListRequest createAssetTransferCustomerListRequest);
+    AssetTransferCustomerResponse createSingleData(CreateAssetTransferCustomerRequest createAssetTransferCustomerRequest, BillingDataChangeDTO dataChangeDTO);
 
-    UpdateAssetTransferCustomerListResponse updateSingleData(UpdateAssetTransferCustomerRequest updateAssetTransferCustomerRequest, BillingDataChangeDTO dataChangeDTO);
+    AssetTransferCustomerResponse createSingleApprove(AssetTransferCustomerApproveRequest createAssetTransferCustomerListRequest);
 
-    UpdateAssetTransferCustomerListResponse updateMultipleData(UpdateAssetTransferCustomerListRequest updateAssetTransferCustomerListRequest, BillingDataChangeDTO dataChangeDTO);
+    AssetTransferCustomerResponse updateSingleData(UpdateAssetTransferCustomerRequest updateAssetTransferCustomerRequest, BillingDataChangeDTO dataChangeDTO);
 
-    UpdateAssetTransferCustomerListResponse updateMultipleApprove(UpdateAssetTransferCustomerListRequest updateAssetTransferCustomerListRequest);
+    AssetTransferCustomerResponse updateMultipleData(AssetTransferCustomerListRequest updateAssetTransferCustomerListRequest, BillingDataChangeDTO dataChangeDTO);
 
-    DeleteAssetTransferCustomerListResponse deleteSingleData(DeleteAssetTransferCustomerRequest deleteAssetTransferCustomerRequest, BillingDataChangeDTO dataChangeDTO);
+    AssetTransferCustomerResponse updateSingleApprove(AssetTransferCustomerApproveRequest updateAssetTransferCustomerListRequest);
 
-    DeleteAssetTransferCustomerListResponse deleteMultipleApprove(DeleteAssetTransferCustomerListRequest deleteAssetTransferCustomerListRequest);
+    AssetTransferCustomerResponse deleteSingleData(DeleteAssetTransferCustomerRequest deleteAssetTransferCustomerRequest, BillingDataChangeDTO dataChangeDTO);
 
-    List<AssetTransferCustomerDTO> getAll();
+    AssetTransferCustomerResponse deleteSingleApprove(AssetTransferCustomerApproveRequest deleteAssetTransferCustomerListRequest);
 
     String deleteAll();
+
+    List<AssetTransferCustomerDTO> getAll();
 }

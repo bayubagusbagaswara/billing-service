@@ -3,24 +3,28 @@ package com.bayu.billingservice.service;
 import com.bayu.billingservice.dto.datachange.BillingDataChangeDTO;
 import com.bayu.billingservice.dto.feeschedule.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public interface FeeScheduleService {
-    CreateFeeScheduleListResponse createSingleData(CreateFeeScheduleRequest createFeeScheduleRequest, BillingDataChangeDTO dataChangeDTO);
 
-    CreateFeeScheduleListResponse createMultipleApprove(CreateFeeScheduleListRequest createFeeScheduleListRequest);
+    FeeScheduleResponse createSingleData(CreateFeeScheduleRequest createFeeScheduleRequest, BillingDataChangeDTO dataChangeDTO);
 
-    UpdateFeeScheduleListResponse updateSingleData(UpdateFeeScheduleRequest updateFeeScheduleRequest, BillingDataChangeDTO dataChangeDTO);
+    FeeScheduleResponse createSingleApprove(FeeScheduleApproveRequest approveRequest);
 
-    UpdateFeeScheduleListResponse updateMultipleData(UpdateFeeScheduleListRequest updateFeeScheduleListRequest, BillingDataChangeDTO dataChangeDTO);
+    FeeScheduleResponse updateSingleData(UpdateFeeScheduleRequest updateFeeScheduleRequest, BillingDataChangeDTO dataChangeDTO);
 
-    UpdateFeeScheduleListResponse updateMultipleApprove(UpdateFeeScheduleListRequest updateFeeScheduleListRequest);
+    FeeScheduleResponse updateMultipleData(FeeScheduleListRequest listRequest, BillingDataChangeDTO dataChangeDTO);
 
-    DeleteFeeScheduleListResponse deleteSingleData(DeleteFeeScheduleRequest deleteFeeScheduleRequest, BillingDataChangeDTO dataChangeDTO);
+    FeeScheduleResponse updateSingleApprove(FeeScheduleApproveRequest approveRequest);
 
-    DeleteFeeScheduleListResponse deleteMultipleApprove(DeleteFeeScheduleListRequest deleteFeeScheduleListRequest);
+    FeeScheduleResponse deleteSingleData(DeleteFeeScheduleRequest deleteFeeScheduleRequest, BillingDataChangeDTO dataChangeDTO);
 
-    String deleteAll();
+    FeeScheduleResponse deleteSingleApprove(FeeScheduleApproveRequest approveRequest);
+
+    BigDecimal checkFeeScheduleAndGetFeeValue(BigDecimal amount);
 
     List<FeeScheduleDTO> getAll();
+
+    String deleteAll();
 }

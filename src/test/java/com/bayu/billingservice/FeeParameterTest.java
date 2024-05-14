@@ -1,7 +1,5 @@
 package com.bayu.billingservice;
 
-import com.bayu.billingservice.dto.feeparameter.CreateFeeParameterRequest;
-import com.bayu.billingservice.dto.feeparameter.FeeParameterDTO;
 import com.bayu.billingservice.repository.FeeParameterRepository;
 import com.bayu.billingservice.service.FeeParameterService;
 import org.junit.jupiter.api.BeforeEach;

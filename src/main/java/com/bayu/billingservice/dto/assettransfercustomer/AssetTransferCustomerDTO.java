@@ -1,7 +1,7 @@
 package com.bayu.billingservice.dto.assettransfercustomer;
 
-import com.bayu.billingservice.dto.approval.ApprovalDTO;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.services.billingservice.dto.approval.ApprovalDTO;
 import lombok.*;
 
 @EqualsAndHashCode(callSuper = true)
@@ -11,8 +11,6 @@ import lombok.*;
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class AssetTransferCustomerDTO extends ApprovalDTO {
-
-    private Long dataChangeId;
 
     private Long id;
 
@@ -27,4 +25,5 @@ public class AssetTransferCustomerDTO extends ApprovalDTO {
     private String transferAssetType;
 
     private String isEnable;
+
 }

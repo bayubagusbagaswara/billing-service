@@ -11,10 +11,11 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateCustomerListRequest {
+public class CustomerListRequest {
 
-    private String inputId;
-    private String inputIPAddress;
+    private String inputerId;
+    private String inputerIPAddress;
 
     private List<CustomerDTO> customerDTOList;
+
 }

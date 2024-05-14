@@ -1,6 +1,5 @@
 package com.bayu.billingservice.dto.feeschedule;
 
-import com.bayu.billingservice.dto.feeparameter.FeeParameterDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,15 +11,10 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UpdateFeeScheduleListRequest {
+public class FeeScheduleListRequest {
 
-    private String inputId;
-
-    private String inputIPAddress;
-
-    private String approveId;
-
-    private String approveIPAddress;
+    private String inputerId;
+    private String inputerIPAddress;
 
     private List<FeeScheduleDTO> feeScheduleDTOList;
 }

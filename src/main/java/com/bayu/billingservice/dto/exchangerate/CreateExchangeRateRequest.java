@@ -11,13 +11,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class CreateExchangeRateRequest {
 
-    private String inputId;
-
-    private String inputIPAddress;
-
     private String date; // yyyy-MM-dd
 
     private String currency;
 
     private String value;
+
 }

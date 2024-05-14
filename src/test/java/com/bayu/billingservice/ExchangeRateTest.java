@@ -1,7 +1,5 @@
 package com.bayu.billingservice;
 
-import com.bayu.billingservice.dto.exchangerate.CreateExchangeRateRequest;
-import com.bayu.billingservice.dto.exchangerate.ExchangeRateDTO;
 import com.bayu.billingservice.repository.ExchangeRateRepository;
 import com.bayu.billingservice.service.ExchangeRateService;
 import org.junit.jupiter.api.*;

@@ -1,6 +1,5 @@
 package com.bayu.billingservice;
 
-import com.bayu.billingservice.dto.customer.CreateCustomerRequest;
 import com.bayu.billingservice.model.enumerator.BillingCategory;
 import com.bayu.billingservice.model.enumerator.BillingTemplate;
 import com.bayu.billingservice.model.enumerator.BillingType;

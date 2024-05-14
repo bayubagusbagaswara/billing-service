@@ -1,6 +1,7 @@
 package com.bayu.billingservice.dto.sellingagent;
 
-import com.bayu.billingservice.dto.approval.ApprovalDTO;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.services.billingservice.dto.approval.ApprovalDTO;
 import lombok.*;
 
 @EqualsAndHashCode(callSuper = true)
@@ -8,9 +9,8 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class SellingAgentDTO extends ApprovalDTO {
-
-    private Long dataChangeId;
 
     private Long id;
 
@@ -18,17 +18,4 @@ public class SellingAgentDTO extends ApprovalDTO {
 
     private String name;
 
-    private String gl;
-
-    private String glName;
-
-    private String account;
-
-    private String accountName;
-
-    private String email;
-
-    private String address;
-
-    private String description;
 }

@@ -11,27 +11,12 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class UpdateSellingAgentRequest {
 
-    private String inputId;
-
-    private String inputIPAddress;
+    private String inputerId;
+    private String inputerIPAddress;
 
     private Long id;
 
     private String code;
 
     private String name;
-
-    private String gl;
-
-    private String glName;
-
-    private String account;
-
-    private String accountName;
-
-    private String email;
-
-    private String address;
-
-    private String description;
 }

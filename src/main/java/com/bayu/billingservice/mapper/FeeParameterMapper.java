@@ -1,9 +1,6 @@
 package com.bayu.billingservice.mapper;
 
 import com.bayu.billingservice.dto.datachange.BillingDataChangeDTO;
-import com.bayu.billingservice.dto.feeparameter.CreateFeeParameterRequest;
-import com.bayu.billingservice.dto.feeparameter.FeeParameterDTO;
-import com.bayu.billingservice.dto.feeparameter.UpdateFeeParameterRequest;
 import com.bayu.billingservice.model.FeeParameter;
 import com.bayu.billingservice.model.enumerator.ApprovalStatus;
 import com.bayu.billingservice.util.ConvertDateUtil;

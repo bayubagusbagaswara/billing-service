@@ -1,8 +1,5 @@
 package com.bayu.billingservice.mapper;
 
-import com.bayu.billingservice.dto.assettransfercustomer.AssetTransferCustomerDTO;
-import com.bayu.billingservice.dto.assettransfercustomer.CreateAssetTransferCustomerRequest;
-import com.bayu.billingservice.dto.assettransfercustomer.UpdateAssetTransferCustomerListRequest;
 import com.bayu.billingservice.dto.datachange.BillingDataChangeDTO;
 import com.bayu.billingservice.model.AssetTransferCustomer;
 import com.bayu.billingservice.model.enumerator.ApprovalStatus;

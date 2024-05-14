@@ -1,6 +1,6 @@
-package com.bayu.billingservice.dto.feeschedule;
+package com.bayu.billingservice.dto.feeparameter;
 
-import com.bayu.billingservice.dto.ErrorMessageDTO;
+import com.services.billingservice.dto.ErrorMessageDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,11 +12,12 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class DeleteFeeScheduleListResponse {
+public class FeeParameterResponse {
 
     private Integer totalDataSuccess;
 
     private Integer totalDataFailed;
 
-    private List<ErrorMessageDTO> errorMessages;
+    private List<ErrorMessageDTO> errorMessageDTOList;
+
 }

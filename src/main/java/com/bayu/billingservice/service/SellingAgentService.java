@@ -11,19 +11,23 @@ public interface SellingAgentService {
 
     SellingAgentDTO getBySellingAgentCode(String sellingAgentCode);
 
-    CreateSellingAgentListResponse createSingleData(CreateSellingAgentRequest createSellingAgentRequest, BillingDataChangeDTO dataChangeDTO);
+    SellingAgentResponse createSingleData(CreateSellingAgentRequest createSellingAgentRequest, BillingDataChangeDTO dataChangeDTO);
 
-    CreateSellingAgentListResponse createMultipleApprove(CreateSellingAgentListRequest createSellingAgentListRequest);
+    // create approve approve
+    SellingAgentResponse createSingleApprove(SellingAgentApproveRequest sellingAgentApproveRequest);
 
-    UpdateSellingAgentListResponse updateSingleData(UpdateSellingAgentRequest updateSellingAgentRequest, BillingDataChangeDTO dataChangeDTO);
+    // update single data
+    SellingAgentResponse updateSingleData(UpdateSellingAgentRequest updateSellingAgentRequest, BillingDataChangeDTO dataChangeDTO);
 
-    UpdateSellingAgentListResponse updateMultipleData(UpdateSellingAgentListRequest updateSellingAgentListRequest, BillingDataChangeDTO dataChangeDTO);
+    // update multiple data
+    SellingAgentResponse updateMultipleData(SellingAgentListRequest listRequest, BillingDataChangeDTO dataChangeDTO);
 
-    UpdateSellingAgentListResponse updateMultipleApprove(UpdateSellingAgentListRequest updateSellingAgentListRequest);
+    // update single approve
+    SellingAgentResponse updateSingleApprove(SellingAgentApproveRequest sellingAgentApproveRequest);
 
-    DeleteSellingAgentListResponse deleteSingleData(DeleteSellingAgentRequest deleteSellingAgentRequest, BillingDataChangeDTO dataChangeDTO);
+    SellingAgentResponse deleteSingleData(DeleteSellingAgentRequest deleteSellingAgentRequest, BillingDataChangeDTO dataChangeDTO);
 
-    DeleteSellingAgentListResponse deleteMultipleApprove(DeleteSellingAgentListRequest deleteSellingAgentListRequest);
+    SellingAgentResponse deleteSingleApprove(SellingAgentApproveRequest approveRequest);
 
     String deleteAll();
 

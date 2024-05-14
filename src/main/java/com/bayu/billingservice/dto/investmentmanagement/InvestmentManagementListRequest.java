@@ -17,6 +17,5 @@ public class InvestmentManagementListRequest {
 
     private String inputIPAddress;
 
-    private List<InvestmentManagementDTO> investmentManagementRequestList;
-
+    private List<InvestmentManagementDTO> investmentManagementDTOList;
 }

@@ -9,12 +9,13 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UpdateCustomerApproveRequest {
+public class CustomerApproveRequest {
 
-    private String approveId;
-    private String approveIPAddress;
+    private String approverId;
+    private String approverIPAddress;
 
     private String dataChangeId;
 
     private CustomerDTO data;
+
 }

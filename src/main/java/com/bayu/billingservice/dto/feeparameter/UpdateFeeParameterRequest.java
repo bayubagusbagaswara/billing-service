@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotBlank;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -16,8 +18,15 @@ public class UpdateFeeParameterRequest {
 
     private Long id;
 
+    @NotBlank(message = "Code cannot be empty")
     private String code;
+
+    @NotBlank(message = "Name cannot be empty")
     private String name;
+
     private String description;
+
+    @NotBlank(message = "Value cannot be empty")
     private String value;
+
 }

@@ -1,10 +1,6 @@
 package com.bayu.billingservice.service.impl;
 
 import com.bayu.billingservice.dto.fund.FeeReportRequest;
-import com.bayu.billingservice.dto.customer.CustomerDTO;
-import com.bayu.billingservice.exception.CalculateBillingException;
-import com.bayu.billingservice.model.BillingFund;
-import com.bayu.billingservice.model.SkTransaction;
 import com.bayu.billingservice.repository.BillingFundRepository;
 import com.bayu.billingservice.service.*;
 import com.bayu.billingservice.util.ConvertDateUtil;
@@ -14,17 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.time.Instant;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
-import static com.bayu.billingservice.model.enumerator.ApprovalStatus.PENDING;
-import static com.bayu.billingservice.model.enumerator.BillingCategory.FUND;
-import static com.bayu.billingservice.model.enumerator.BillingType.TYPE_1;
-import static com.bayu.billingservice.model.enumerator.Currency.IDR;
-import static com.bayu.billingservice.model.enumerator.FeeParameter.*;
 
 @Slf4j
 @Service

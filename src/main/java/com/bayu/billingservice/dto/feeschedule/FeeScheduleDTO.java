@@ -1,8 +1,7 @@
 package com.bayu.billingservice.dto.feeschedule;
 
-import com.bayu.billingservice.dto.approval.ApprovalDTO;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import jakarta.persistence.Column;
+import com.services.billingservice.dto.approval.ApprovalDTO;
 import lombok.*;
 
 @EqualsAndHashCode(callSuper = true)

@@ -1,6 +1,6 @@
-package com.bayu.billingservice.dto.exchangerate;
+package com.bayu.billingservice.dto.feeschedule;
 
-import com.bayu.billingservice.dto.ErrorMessageDTO;
+import com.services.billingservice.dto.ErrorMessageDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,11 +12,11 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateExchangeRateListResponse {
+public class FeeScheduleResponse {
 
     private Integer totalDataSuccess;
 
     private Integer totalDataFailed;
 
-    private List<ErrorMessageDTO> errorMessages;
+    private List<ErrorMessageDTO> errorMessageDTOList;
 }

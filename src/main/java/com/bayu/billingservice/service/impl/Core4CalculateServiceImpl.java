@@ -1,27 +1,19 @@
 package com.bayu.billingservice.service.impl;
 
 import com.bayu.billingservice.dto.CoreCalculateRequest;
-import com.bayu.billingservice.dto.customer.CustomerDTO;
-import com.bayu.billingservice.exception.CalculateBillingException;
 import com.bayu.billingservice.model.BillingCore;
 import com.bayu.billingservice.model.SfValRgDaily;
 import com.bayu.billingservice.model.SkTransaction;
-import com.bayu.billingservice.model.enumerator.ApprovalStatus;
-import com.bayu.billingservice.model.enumerator.BillingTemplate;
 import com.bayu.billingservice.repository.BillingCoreRepository;
 import com.bayu.billingservice.service.*;
 import com.bayu.billingservice.util.ConvertDateUtil;
-import com.bayu.billingservice.util.StringUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.time.Instant;
 import java.util.*;
-
-import static com.bayu.billingservice.model.enumerator.FeeParameter.*;
 
 @Slf4j
 @Service

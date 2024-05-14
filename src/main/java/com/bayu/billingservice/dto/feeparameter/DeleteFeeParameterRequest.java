@@ -1,4 +1,4 @@
-package com.bayu.billingservice.dto.investmentmanagement;
+package com.bayu.billingservice.dto.feeparameter;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class DeleteInvestmentManagementRequest {
+public class DeleteFeeParameterRequest {
 
     private String inputerId;
     private String inputerIPAddress;

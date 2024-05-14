@@ -1,6 +1,5 @@
 package com.bayu.billingservice.dto.assettransfercustomer;
 
-import com.bayu.billingservice.dto.ErrorMessageDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,11 +11,11 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UpdateAssetTransferCustomerListResponse {
+public class AssetTransferCustomerListRequest {
 
-    private Integer totalDataSuccess;
+    private String inputerId;
+    private String inputerIPAddress;
 
-    private Integer totalDataFailed;
+    private List<AssetTransferCustomerDTO> assetTransferCustomerDTOList;
 
-    private List<ErrorMessageDTO> errorMessages;
 }

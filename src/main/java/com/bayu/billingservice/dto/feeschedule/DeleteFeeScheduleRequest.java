@@ -11,9 +11,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class DeleteFeeScheduleRequest {
 
-    private String inputId;
-
-    private String inputIPAddress;
+    private String inputerId;
+    private String inputerIPAddress;
 
     private Long id;
+
 }

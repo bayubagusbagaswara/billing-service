@@ -1,4 +1,4 @@
-package com.bayu.billingservice.dto.customer;
+package com.bayu.billingservice.dto.sellingagent;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,12 +9,12 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateCustomerApproveRequest {
+public class SellingAgentApproveRequest {
 
-    private String approveId;
-    private String approveIPAddress;
+    private String approverId;
+    private String approverIPAddress;
 
     private String dataChangeId;
 
-    private CustomerDTO data;
+    private SellingAgentDTO data;
 }

@@ -1,6 +1,5 @@
 package com.bayu.billingservice.dto.feeparameter;
 
-import com.bayu.billingservice.dto.investmentmanagement.InvestmentManagementDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,16 +11,11 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateFeeParameterListRequest {
+public class FeeParameterListRequest {
 
-    private String inputId;
+    private String inputerId;
 
-    private String inputIPAddress;
-
-    private String approveId;
-
-    private String approveIPAddress;
+    private String inputerIPAddress;
 
     private List<FeeParameterDTO> feeParameterDTOList;
-
 }
