@@ -3,7 +3,7 @@ package com.bayu.billingservice.controller;
 import com.bayu.billingservice.dto.ResponseDTO;
 import com.bayu.billingservice.dto.customer.*;
 import com.bayu.billingservice.dto.datachange.BillingDataChangeDTO;
-import com.bayu.billingservice.service.CustomerV2Service;
+import com.bayu.billingservice.service.CustomerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpMethod;
@@ -19,7 +19,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CustomerController {
 
-    private final CustomerV2Service customerService;
+    private final CustomerService customerService;
     private static final String MENU_CUSTOMER = "Customer";
 
     @PostMapping(path = "/create-test")
