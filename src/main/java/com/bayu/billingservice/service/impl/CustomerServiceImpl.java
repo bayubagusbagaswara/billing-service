@@ -8,7 +8,7 @@ import com.bayu.billingservice.exception.DataNotFoundException;
 import com.bayu.billingservice.model.Customer;
 import com.bayu.billingservice.repository.CustomerRepository;
 import com.bayu.billingservice.service.BillingDataChangeService;
-import com.bayu.billingservice.service.CustomerV2Service;
+import com.bayu.billingservice.service.CustomerService;
 import com.bayu.billingservice.service.InvestmentManagementService;
 import com.bayu.billingservice.service.SellingAgentService;
 import com.bayu.billingservice.mapper.CustomerMapper;
@@ -31,7 +31,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class CustomerV2ServiceImpl implements CustomerV2Service {
+public class CustomerServiceImpl implements CustomerService {
 
     private static final String ID_NOT_FOUND = "Billing Customer not found with id: ";
     private static final String CODE_NOT_FOUND = "Billing Customer not found with code: ";
@@ -67,6 +67,11 @@ public class CustomerV2ServiceImpl implements CustomerV2Service {
     @Override
     public List<CustomerDTO> getAll() {
         return List.of();
+    }
+
+    @Override
+    public List<Customer> getAllByBillingCategoryAndBillingType(String billingCategory, String billingType) {
+        return customerRepository.findAllByBillingCategoryAndBillingType(billingCategory, billingType);
     }
 
     @Override

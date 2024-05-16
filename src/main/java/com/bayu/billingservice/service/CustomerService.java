@@ -2,10 +2,11 @@ package com.bayu.billingservice.service;
 
 import com.bayu.billingservice.dto.customer.*;
 import com.bayu.billingservice.dto.datachange.BillingDataChangeDTO;
+import com.bayu.billingservice.model.Customer;
 
 import java.util.List;
 
-public interface CustomerV2Service {
+public interface CustomerService {
 
     CustomerDTO testCreate(CustomerDTO dto);
 
@@ -14,6 +15,8 @@ public interface CustomerV2Service {
     boolean isCodeAlreadyExists(String code);
 
     List<CustomerDTO> getAll();
+
+    List<Customer> getAllByBillingCategoryAndBillingType(String billingCategory, String billingType);
 
     String deleteAll();
 
