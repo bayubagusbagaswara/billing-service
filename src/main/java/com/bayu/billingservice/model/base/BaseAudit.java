@@ -19,7 +19,7 @@ import java.time.Instant;
         value = { "createdAt", "updatedAt" },
         allowGetters = true
 )
-public abstract class BaseAudit {
+public abstract class BaseAudit extends Approval {
 
     @CreatedDate
     @Column(nullable = false, updatable = false)

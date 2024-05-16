@@ -15,13 +15,16 @@ import lombok.experimental.SuperBuilder;
 @Data
 @NoArgsConstructor
 @SuperBuilder
-public abstract class BaseBilling extends Approval {
+public abstract class BaseBilling extends BaseAudit {
 
     @Enumerated(EnumType.STRING)
     private BillingStatus billingStatus;
 
     @Column(name = "customer_code")
     private String customerCode;
+
+    @Column(name = "customer_name")
+    private String customerName;
 
     @Column(name = "month")
     private String month;
@@ -79,13 +82,14 @@ public abstract class BaseBilling extends Approval {
     @Column(name = "account_number")
     private String accountNumber; // this is same with GL Number (account)
 
-    @Column(name = "cost_center")
-    private String costCenter;
-
     @Column(name = "account_bank")
     private String accountBank; // this is bank name
 
     @Column(name = "currency")
     private String currency;
+
+    private String accountCredit; // yg atas
+
+    private String accountDebit; // yg dibawah (kotak billing)
 
 }
