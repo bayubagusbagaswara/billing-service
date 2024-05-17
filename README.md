@@ -619,3 +619,11 @@ String jsonDataAfter = "{\"code\":\"A002\",\"name\":\"PT Pacific Capital Investm
     @Query(value = "SELECT CASE WHEN COUNT(*) > 0 THEN true ELSE false END "
             + "FROM selling_agent "
             + "WHERE code = :code", nativeQuery = true)
+
+# Tomorrow
+1. Create model and service Report Generator
+2. Repair model Customer, and add some field. Make sure to equal customer DTO
+3. Insert data investment management
+4. Insert data customer
+5. Repair calculate billing Fund
+6. Repair calculate billing Core
