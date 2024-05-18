@@ -6,7 +6,7 @@ import com.bayu.billingservice.model.BillingDataChange;
 import com.bayu.billingservice.model.enumerator.ApprovalStatus;
 import com.bayu.billingservice.model.enumerator.ChangeAction;
 import com.bayu.billingservice.repository.BillingDataChangeRepository;
-import com.bayu.billingservice.service.BillingDataChangeService;
+import com.bayu.billingservice.service.DataChangeService;
 import com.bayu.billingservice.util.ConvertDateUtil;
 import com.bayu.billingservice.util.StringUtil;
 import com.bayu.billingservice.util.TableNameResolver;
@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class BillingDataChangeServiceImpl implements BillingDataChangeService {
+public class DataChangeServiceImpl implements DataChangeService {
 
     private final BillingDataChangeRepository dataChangeRepository;
     private final ConvertDateUtil convertDateUtil;
@@ -241,7 +241,7 @@ public class BillingDataChangeServiceImpl implements BillingDataChangeService {
 
     private static List<BillingDataChangeDTO> mapToDTOList(List<BillingDataChange> dataChangeList) {
         return dataChangeList.stream()
-                .map(BillingDataChangeServiceImpl::mapToDTO)
+                .map(DataChangeServiceImpl::mapToDTO)
                 .toList();
     }
 

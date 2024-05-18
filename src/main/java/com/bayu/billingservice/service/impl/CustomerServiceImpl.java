@@ -7,7 +7,7 @@ import com.bayu.billingservice.dto.investmentmanagement.InvestmentManagementDTO;
 import com.bayu.billingservice.exception.DataNotFoundException;
 import com.bayu.billingservice.model.Customer;
 import com.bayu.billingservice.repository.CustomerRepository;
-import com.bayu.billingservice.service.BillingDataChangeService;
+import com.bayu.billingservice.service.DataChangeService;
 import com.bayu.billingservice.service.CustomerService;
 import com.bayu.billingservice.service.InvestmentManagementService;
 import com.bayu.billingservice.service.SellingAgentService;
@@ -39,7 +39,7 @@ public class CustomerServiceImpl implements CustomerService {
     private static final String UNKNOWN = "unknown";
 
     private final CustomerRepository customerRepository;
-    private final BillingDataChangeService dataChangeService;
+    private final DataChangeService dataChangeService;
     private final InvestmentManagementService investmentManagementService;
     private final SellingAgentService sellingAgentService;
     private final Validator validator;

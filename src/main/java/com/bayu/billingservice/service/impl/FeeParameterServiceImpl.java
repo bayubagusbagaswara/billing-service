@@ -9,7 +9,7 @@ import com.bayu.billingservice.mapper.FeeParameterMapper;
 import com.bayu.billingservice.model.FeeParameter;
 import com.bayu.billingservice.model.InvestmentManagement;
 import com.bayu.billingservice.repository.FeeParameterRepository;
-import com.bayu.billingservice.service.BillingDataChangeService;
+import com.bayu.billingservice.service.DataChangeService;
 import com.bayu.billingservice.service.FeeParameterService;
 import com.bayu.billingservice.util.JsonUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -38,7 +38,7 @@ public class FeeParameterServiceImpl implements FeeParameterService {
     private static final String UNKNOWN = "unknown";
 
     private final FeeParameterRepository feeParameterRepository;
-    private final BillingDataChangeService dataChangeService;
+    private final DataChangeService dataChangeService;
     private final Validator validator;
     private final ObjectMapper objectMapper;
     private final FeeParameterMapper feeParameterMapper;

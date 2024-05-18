@@ -3,15 +3,12 @@ package com.bayu.billingservice.service.impl;
 import com.bayu.billingservice.dto.ErrorMessageDTO;
 import com.bayu.billingservice.dto.datachange.BillingDataChangeDTO;
 import com.bayu.billingservice.dto.feeschedule.*;
-import com.bayu.billingservice.dto.investmentmanagement.InvestmentManagementDTO;
-import com.bayu.billingservice.dto.investmentmanagement.InvestmentManagementListRequest;
-import com.bayu.billingservice.dto.investmentmanagement.InvestmentManagementResponse;
 import com.bayu.billingservice.exception.DataNotFoundException;
 import com.bayu.billingservice.mapper.FeeScheduleMapper;
 import com.bayu.billingservice.model.FeeSchedule;
 import com.bayu.billingservice.model.InvestmentManagement;
 import com.bayu.billingservice.repository.FeeScheduleRepository;
-import com.bayu.billingservice.service.BillingDataChangeService;
+import com.bayu.billingservice.service.DataChangeService;
 import com.bayu.billingservice.service.FeeScheduleService;
 import com.bayu.billingservice.util.JsonUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -38,7 +35,7 @@ public class FeeScheduleServiceImpl implements FeeScheduleService {
     private static final String UNKNOWN = "unknown";
 
     private final FeeScheduleRepository feeScheduleRepository;
-    private final BillingDataChangeService dataChangeService;
+    private final DataChangeService dataChangeService;
     private final Validator validator;
     private final ObjectMapper objectMapper;
     private final FeeScheduleMapper feeScheduleMapper;

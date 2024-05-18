@@ -1,12 +1,10 @@
 package com.bayu.billingservice.service;
 
 import com.bayu.billingservice.dto.datachange.BillingDataChangeDTO;
-import com.bayu.billingservice.model.BillingDataChange;
-import com.bayu.billingservice.model.InvestmentManagement;
 
 import java.util.List;
 
-public interface BillingDataChangeService {
+public interface DataChangeService {
 
     List<BillingDataChangeDTO> getAll();
 

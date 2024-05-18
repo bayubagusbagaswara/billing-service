@@ -2,8 +2,7 @@ package com.bayu.billingservice.controller;
 
 import com.bayu.billingservice.dto.ResponseDTO;
 import com.bayu.billingservice.dto.datachange.BillingDataChangeDTO;
-import com.bayu.billingservice.model.BillingDataChange;
-import com.bayu.billingservice.service.BillingDataChangeService;
+import com.bayu.billingservice.service.DataChangeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -21,7 +20,7 @@ import java.util.List;
 @Slf4j
 public class BillingDataChangeController {
 
-    private final BillingDataChangeService dataChangeService;
+    private final DataChangeService dataChangeService;
 
     @GetMapping(path = "/all")
     public ResponseEntity<ResponseDTO<List<BillingDataChangeDTO>>> getAll() {

@@ -7,7 +7,7 @@ import com.bayu.billingservice.exception.DataNotFoundException;
 import com.bayu.billingservice.mapper.InvestmentManagementMapper;
 import com.bayu.billingservice.model.InvestmentManagement;
 import com.bayu.billingservice.repository.InvestmentManagementRepository;
-import com.bayu.billingservice.service.BillingDataChangeService;
+import com.bayu.billingservice.service.DataChangeService;
 import com.bayu.billingservice.service.InvestmentManagementService;
 import com.bayu.billingservice.util.JsonUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -31,7 +31,7 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
     private static final String UNKNOWN = "unknown";
 
     private final InvestmentManagementRepository investmentManagementRepository;
-    private final BillingDataChangeService dataChangeService;
+    private final DataChangeService dataChangeService;
     private final Validator validator;
     private final ObjectMapper objectMapper;
     private final InvestmentManagementMapper investmentManagementMapper;
