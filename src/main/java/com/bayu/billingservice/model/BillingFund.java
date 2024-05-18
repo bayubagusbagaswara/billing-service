@@ -25,14 +25,14 @@ public class BillingFund extends BaseBilling {
     @Column(name = "accrual_custodial_fee")
     private BigDecimal accrualCustodialFee;
 
-    @Column(name = "bis4_value_frequency")
-    private Integer bis4ValueFrequency;
+    @Column(name = "bis4_transaction_value_frequency")
+    private Integer bis4TransactionValueFrequency;
 
     @Column(name = "bis4_transaction_fee")
     private BigDecimal bis4TransactionFee;
 
-    @Column(name = "bis4_amount_due")
-    private BigDecimal bis4AmountDue;
+    @Column(name = "bis4_transaction_amount_due")
+    private BigDecimal bis4TransactionAmountDue;
 
     @Column(name = "sub_total")
     private BigDecimal subTotal;
@@ -43,14 +43,14 @@ public class BillingFund extends BaseBilling {
     @Column(name = "vat_amount_due")
     private BigDecimal vatAmountDue;
 
-    @Column(name = "ksei_value_frequency")
-    private Integer kseiValueFrequency;
+    @Column(name = "ksei_transaction_value_frequency")
+    private Integer kseiTransactionValueFrequency;
 
     @Column(name = "ksei_transaction_fee")
     private BigDecimal kseiTransactionFee;
 
-    @Column(name = "ksei_amount_due")
-    private BigDecimal kseiAmountDue;
+    @Column(name = "ksei_transaction_amount_due")
+    private BigDecimal kseiTransactionAmountDue;
 
     @Column(name = "total_amount_due")
     private BigDecimal totalAmountDue;
