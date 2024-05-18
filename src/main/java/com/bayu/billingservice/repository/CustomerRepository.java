@@ -14,6 +14,9 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
 
     Boolean existsByCustomerCode(String code);
 
+    @Query(value = "select case when count(c)> 0 then true else false end from BillingCustomer c where lower(c.customerCode) = lower(:customerCode) AND lower(COALESCE(c.subCode,'')) = lower(COALESCE(:subCode, ''))")
+    boolean existsCustomerByCustomerCodeAndSubCode(@Param("customerCode") String customerCode, @Param("subCode") String subCode);
+
     Optional<Customer> findByCustomerCode(String code);
 
     Optional<Customer> findByKseiSafeCode(String kseiSafeCode);
@@ -28,4 +31,6 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
     // Menggunakan native query untuk mengambil data dengan kondisi subCode bisa kosong (null)
     @Query(value = "SELECT * FROM billing_customer WHERE customer_code = :customerCode AND (:subCode IS NULL OR sub_code = :subCode)", nativeQuery = true)
     Optional<Customer> findByCustomerCodeAndOptionalSubCode(@Param("customerCode") String customerCode, @Param("subCode") String subCode);
+
+
 }
