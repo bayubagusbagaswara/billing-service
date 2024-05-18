@@ -7,7 +7,7 @@ import lombok.experimental.SuperBuilder;
 
 @EqualsAndHashCode(callSuper = true)
 @Entity
-@Table(name = "investment_managements")
+@Table(name = "investment_management")
 @Data
 @SuperBuilder
 @NoArgsConstructor
@@ -26,6 +26,9 @@ public class InvestmentManagement extends Approval {
 
     @Column(name = "email")
     private String email;
+
+    @Column(name = "unique_key")
+    private String uniqueKey;
 
     @Column(name = "address_1")
     private String address1;

@@ -7,7 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "billing_retails")
+@Table(name = "billing_retail")
 @Data
 @Builder
 @NoArgsConstructor
@@ -17,4 +17,7 @@ public class BillingRetail {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(name = "customer_code")
+    private String customerCode;
 }

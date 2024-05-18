@@ -13,7 +13,7 @@ import java.net.UnknownHostException;
 import java.util.Date;
 
 @Entity
-@Table(name = "billing_data_changes")
+@Table(name = "data_change")
 @Data
 @Builder
 @NoArgsConstructor

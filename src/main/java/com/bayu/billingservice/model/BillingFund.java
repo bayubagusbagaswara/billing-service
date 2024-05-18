@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 
 @EqualsAndHashCode(callSuper = true)
 @Entity
-@Table(name = "billing_funds")
+@Table(name = "billing_fund")
 @Data
 @SuperBuilder
 @NoArgsConstructor

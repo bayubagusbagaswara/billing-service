@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 
 @EqualsAndHashCode(callSuper = true)
 @Entity
-@Table(name = "billing_customer")
+@Table(name = "customer")
 @Data
 @SuperBuilder
 @NoArgsConstructor
@@ -38,23 +38,23 @@ public class Customer extends Approval {
     @Column(name = "billing_template")
     private String billingTemplate;
 
-    @Column(name = "currency")
-    private String currency;
-
     @Column(name = "mi_code")
-    private String investmentManagementCode;
+    private String miCode;
 
     @Column(name = "mi_name")
-    private String investmentManagementName;
+    private String miName;
 
     @Column(name = "account")
     private String account;
 
-    @Column(name = "cost_center_debit")
-    private String costCenterDebit;
-
     @Column(name = "account_name")
     private String accountName;
+
+    @Column(name = "debit_transfer")
+    private String debitTransfer;
+
+    @Column(name = "cost_center")
+    private String costCenter;
 
     @Column(name = "gl_account_hasil")
     private String glAccountHasil;
@@ -77,13 +77,15 @@ public class Customer extends Approval {
     @Column(name = "npwp_address")
     private String npwpAddress;
 
-    @Column(name = "cost_center")
-    private String costCenter;
-
     @Column(name = "ksei_safe_code")
     private String kseiSafeCode;
 
-    @Column(name = "selling_agent_code")
-    private String sellingAgentCode;
+    @Column(name = "selling_agent")
+    private String sellingAgent;
 
+    @Column(name = "currency")
+    private String currency;
+
+    @Column(name = "gl")
+    private boolean gl;
 }

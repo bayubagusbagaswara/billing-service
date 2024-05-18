@@ -1,21 +1,21 @@
 package com.bayu.billingservice.model;
 
+import com.bayu.billingservice.model.base.BaseAudit;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+@EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "sf_val_rg_daily")
 @Data
-@Builder
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class SfValRgDaily {
+public class SfValRgDaily extends BaseAudit {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
