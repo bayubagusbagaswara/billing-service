@@ -16,6 +16,6 @@ public class CustomerListRequest {
     private String inputId;
     private String inputIPAddress;
 
-    private List<CustomerDTO> customerDTOList;
+    private List<CustomerDataListRequest> customerDataListRequests;
 
 }
