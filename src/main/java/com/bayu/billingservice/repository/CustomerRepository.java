@@ -22,6 +22,10 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
     List<Customer> findAllByBillingCategoryAndBillingType(String billingCategory, String billingType);
 
     // Mengambil data dengan kondisi subCode bisa kosong (null)
-    @Query(value = "SELECT c FROM Customer c WHERE c.customerCode = :customerCode AND (:subCode IS NULL OR c.subCode = :subCode)", nativeQuery = true)
+//    @Query(value = "SELECT c FROM Customer c WHERE c.customerCode = :customerCode AND (:subCode IS NULL OR c.subCode = :subCode)")
+//    Optional<Customer> findByCustomerCodeAndOptionalSubCode(@Param("customerCode") String customerCode, @Param("subCode") String subCode);
+
+    // Menggunakan native query untuk mengambil data dengan kondisi subCode bisa kosong (null)
+    @Query(value = "SELECT * FROM billing_customer WHERE customer_code = :customerCode AND (:subCode IS NULL OR sub_code = :subCode)", nativeQuery = true)
     Optional<Customer> findByCustomerCodeAndOptionalSubCode(@Param("customerCode") String customerCode, @Param("subCode") String subCode);
 }
