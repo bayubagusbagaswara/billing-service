@@ -59,7 +59,8 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
         int totalDataFailed = 0;
         List<ErrorMessageDTO> errorMessageList = new ArrayList<>();
 
-        for (InvestmentManagementDTO investmentManagementDTO : createListRequest.getInvestmentManagementDTOList()) {
+        for (InvestmentManagementDataListRequest investmentManagementDataListRequest : createListRequest.getInvestmentManagementDataListRequests()) {
+            InvestmentManagementDTO investmentManagementDTO = investmentManagementMapper.mapFromDataListToDTO(investmentManagementDataListRequest);
             InvestmentManagementResponse response = processInvestmentManagementCreation(investmentManagementDTO, dataChangeDTO);
             totalDataSuccess += response.getTotalDataSuccess();
             totalDataFailed += response.getTotalDataFailed();
@@ -183,7 +184,8 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
         int totalDataFailed = 0;
         List<ErrorMessageDTO> errorMessageList = new ArrayList<>();
 
-        for (InvestmentManagementDTO investmentManagementDTO : updateListRequest.getInvestmentManagementDTOList()) {
+        for (InvestmentManagementDataListRequest investmentManagementDataListRequest : updateListRequest.getInvestmentManagementDataListRequests()) {
+            InvestmentManagementDTO investmentManagementDTO = investmentManagementMapper.mapFromDataListToDTO(investmentManagementDataListRequest);
             try {
                 InvestmentManagement investmentManagement = investmentManagementRepository.findByCode(investmentManagementDTO.getCode())
                         .orElseThrow(() -> new DataNotFoundException(CODE_NOT_FOUND + investmentManagementDTO.getCode()));
