@@ -5,12 +5,10 @@ import com.bayu.billingservice.dto.customer.*;
 import com.bayu.billingservice.dto.datachange.BillingDataChangeDTO;
 import com.bayu.billingservice.dto.investmentmanagement.InvestmentManagementDTO;
 import com.bayu.billingservice.exception.DataNotFoundException;
+import com.bayu.billingservice.model.BillingTemplate;
 import com.bayu.billingservice.model.Customer;
 import com.bayu.billingservice.repository.CustomerRepository;
-import com.bayu.billingservice.service.DataChangeService;
-import com.bayu.billingservice.service.CustomerService;
-import com.bayu.billingservice.service.InvestmentManagementService;
-import com.bayu.billingservice.service.SellingAgentService;
+import com.bayu.billingservice.service.*;
 import com.bayu.billingservice.mapper.CustomerMapper;
 import com.bayu.billingservice.util.EnumValidator;
 import com.bayu.billingservice.util.JsonUtil;
@@ -42,6 +40,7 @@ public class CustomerServiceImpl implements CustomerService {
     private final DataChangeService dataChangeService;
     private final InvestmentManagementService investmentManagementService;
     private final SellingAgentService sellingAgentService;
+    private final BillingTemplateService billingTemplateService;
     private final Validator validator;
     private final ObjectMapper objectMapper;
     private final CustomerMapper customerMapper;
@@ -134,6 +133,11 @@ public class CustomerServiceImpl implements CustomerService {
             // validation GL Cost Center Debit
             validateGLForCostCenterDebit(customerDTO, validationErrors);
 
+            // validation billing template dengan cara get billing template service by category dan type
+            BillingTemplate billingTemplate = billingTemplateService.getByCategoryAndTypeAndSubCode(customerDTO.getBillingCategory(), customerDTO.getBillingType(), customerDTO.getSubCode());
+            customerDTO.setBillingTemplate(billingTemplate.getTemplateName());
+
+            // validation MI dengan cara get by code. Jika not found, maka error
             InvestmentManagementDTO investmentManagementDTO = investmentManagementService.getByCode(customerDTO.getMiCode());
             customerDTO.setMiCode(investmentManagementDTO.getCode());
             customerDTO.setMiName(investmentManagementDTO.getName());
@@ -190,6 +194,10 @@ public class CustomerServiceImpl implements CustomerService {
 
             // validation GL Cost Center Debit
             validateGLForCostCenterDebit(customerDTO, validationErrors);
+
+            // validation billing template dengan cara get billing template service by category dan type
+            BillingTemplate billingTemplate = billingTemplateService.getByCategoryAndTypeAndSubCode(customerDTO.getBillingCategory(), customerDTO.getBillingType(), customerDTO.getSubCode());
+            customerDTO.setBillingTemplate(billingTemplate.getTemplateName());
 
             // validasi mi code dan dapatkan nilai name
             InvestmentManagementDTO investmentManagementDTO = investmentManagementService.getByCode(customerDTO.getMiCode());
@@ -271,6 +279,10 @@ public class CustomerServiceImpl implements CustomerService {
                 // validation GL Cost Center Debit
                 validateGLForCostCenterDebit(customerDTO, validationErrors);
 
+                // validation billing template dengan cara get billing template service by category dan type
+                BillingTemplate billingTemplate = billingTemplateService.getByCategoryAndTypeAndSubCode(customerDTO.getBillingCategory(), customerDTO.getBillingType(), customerDTO.getSubCode());
+                customerDTO.setBillingTemplate(billingTemplate.getTemplateName());
+
                 // validation
                 InvestmentManagementDTO investmentManagementDTO = investmentManagementService.getByCode(customerDTO.getMiCode());
                 customerDTO.setMiCode(investmentManagementDTO.getCode());
@@ -320,17 +332,6 @@ public class CustomerServiceImpl implements CustomerService {
                 errors.getAllErrors().forEach(error -> validationErrors.add(error.getDefaultMessage()));
             }
 
-            Customer customer = customerRepository.findByCustomerCode(customerDTO.getCustomerCode())
-                    .orElseThrow(() -> new DataNotFoundException(CODE_NOT_FOUND + customerDTO.getCustomerCode()));
-
-            customerMapper.mapObjects(customerDTO, customer);
-            log.info("Customer after copy properties: {}", customer);
-
-            // Validation MI code dan get name value
-            InvestmentManagementDTO investmentManagementDTO = investmentManagementService.getByCode(customer.getMiCode());
-            customer.setMiCode(investmentManagementDTO.getCode());
-            customer.setMiName(investmentManagementDTO.getCode());
-
             // Validation selling agent
             if (!StringUtils.isEmpty(customerDTO.getSellingAgent())) {
                 validationSellingAgentCodeAlreadyExists(customerDTO.getSellingAgent(), validationErrors);
@@ -339,7 +340,23 @@ public class CustomerServiceImpl implements CustomerService {
             // Validation ENUM
             validateBillingEnums(customerDTO, validationErrors);
 
+            // validation Cost Center Debit
             validateGLForCostCenterDebit(customerDTO, validationErrors);
+
+            // validation billing template dengan cara get billing template service by category dan type
+            BillingTemplate billingTemplate = billingTemplateService.getByCategoryAndTypeAndSubCode(customerDTO.getBillingCategory(), customerDTO.getBillingType(), customerDTO.getSubCode());
+            customerDTO.setBillingTemplate(billingTemplate.getTemplateName());
+
+
+            // Validation MI code dan get name value
+            InvestmentManagementDTO investmentManagementDTO = investmentManagementService.getByCode(customerDTO.getMiCode());
+            customerDTO.setMiCode(investmentManagementDTO.getCode());
+            customerDTO.setMiName(investmentManagementDTO.getCode());
+            Customer customer = customerRepository.findByCustomerCode(customerDTO.getCustomerCode())
+                    .orElseThrow(() -> new DataNotFoundException(CODE_NOT_FOUND + customerDTO.getCustomerCode()));
+
+            customerMapper.mapObjects(customerDTO, customer);
+            log.info("Customer after copy properties: {}", customer);
 
             // Retrieve and set billing data change
             BillingDataChangeDTO dataChangeDTO = dataChangeService.getById(Long.valueOf(approveRequest.getDataChangeId()));
