@@ -29,7 +29,7 @@ public class ConvertDateUtil {
             log.info("Result Parse Date : {}", parse);
             return parse;
         } catch (Exception e) {
-            log.error("Parse Date is Failed : {}", e.getMessage(), e);
+            log.error("Parse Date is Failed : " + e.getMessage(), e);
             return null;
         }
     }
@@ -38,7 +38,7 @@ public class ConvertDateUtil {
         DateTimeFormatter formatter = new DateTimeFormatterBuilder()
                 .parseCaseInsensitive()
                 .appendPattern(APPEND_PATTERN)
-                .toFormatter(getLocaleID());
+                .toFormatter(getLocaleEN());
 
         TemporalAccessor temporalAccessor = formatter.parse(monthYear);
         LocalDate parsedDate = LocalDate.from(new MonthYearQuery().queryFrom(temporalAccessor));
@@ -53,7 +53,7 @@ public class ConvertDateUtil {
         DateTimeFormatter formatter = new DateTimeFormatterBuilder()
                 .parseCaseInsensitive()
                 .appendPattern(APPEND_PATTERN)
-                .toFormatter(getLocaleID());
+                .toFormatter(getLocaleEN());
 
         TemporalAccessor temporalAccessor = formatter.parse(monthYear);
         LocalDate parsedDate = LocalDate.from(new MonthYearQuery().queryFrom(temporalAccessor));
@@ -69,7 +69,8 @@ public class ConvertDateUtil {
 
         // Month
         int monthValue = firstDateOfMonthYear.getMonthValue();
-        String monthFullName = firstDateOfMonthYear.getMonth().getDisplayName(TextStyle.FULL, getLocaleID());
+        String monthFullName = firstDateOfMonthYear.getMonth().getDisplayName(TextStyle.FULL, getLocaleEN());
+
         String formattedMonth = (monthValue < 10) ? "0" + monthValue : String.valueOf(monthValue);
 
         // Year
@@ -84,7 +85,25 @@ public class ConvertDateUtil {
         return monthYearMap;
     }
 
-    public static class MonthYearQuery implements TemporalQuery<LocalDate> {
+    public static String convertToRange3Months(String[][] previousMonthsAndYears) {
+        String currentlyMonth = previousMonthsAndYears[0][0]; // October
+        String currentlyYear = previousMonthsAndYears[0][1]; // 2023
+
+        String latestMonth = previousMonthsAndYears[2][0]; // August
+        String latestYear = previousMonthsAndYears[2][1]; // 2023
+
+        log.info("Currently Month '{}', Currently Year '{}', Latest Month '{}', Latest Year '{}'",
+                currentlyMonth, currentlyYear, latestMonth, latestYear);
+
+        String formatCurrentlyMonth = currentlyMonth.substring(0, 3);
+        String formatLatestMonth = latestMonth.substring(0, 3);
+
+        // Currently Month 'October', Currently Year '2023', Latest Month 'August', Latest Year '2023'
+        // How to convert Aug 2023 - Oct 2023
+        return formatLatestMonth + " " + latestYear + " - " + formatCurrentlyMonth + " " + currentlyYear;
+    }
+
+    public class MonthYearQuery implements TemporalQuery<LocalDate> {
         @Override
         public LocalDate queryFrom(TemporalAccessor temporal) {
             int year = temporal.get(ChronoField.YEAR);
@@ -93,14 +112,14 @@ public class ConvertDateUtil {
         }
     }
 
-    public static String[] convertToYearMonthFormat(String monthYear) {
+    public String[] convertToYearMonthFormat(String monthYear) {
         DateTimeFormatter formatter = new DateTimeFormatterBuilder()
                 .parseCaseInsensitive()
                 .appendPattern(APPEND_PATTERN)
-                .toFormatter(new Locale("id", "ID"));
+                .toFormatter(getLocaleEN());
 
         TemporalAccessor temporalAccessor = formatter.parse(monthYear);
-        LocalDate parsedDate = LocalDate.from(new MonthYearQuery().queryFrom(temporalAccessor));
+        LocalDate parsedDate = LocalDate.from(new ConvertDateUtil.MonthYearQuery().queryFrom(temporalAccessor));
 
         // Format the parsed date into the desired output format
         DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("MMMM-yyyy", Locale.ENGLISH);
@@ -111,21 +130,25 @@ public class ConvertDateUtil {
         return formattedDate.split("-");
     }
 
-    public String convertInstantToString(Instant instant) {
+    public static String convertInstantToString(Instant instant) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d-MMM-yy")
-                .withLocale(Locale.forLanguageTag("id-ID"));
+                .withLocale(Locale.ENGLISH);
 
-        ZoneId jakartaZone = ZoneId.of(timeZone);
+        ZoneId jakartaZone = ZoneId.of("Asia/Jakarta");
 
-        return formatter.format(instant.atZone(jakartaZone));
+        String formattedString = formatter.format(instant.atZone(jakartaZone));
+        log.info("Formatted Instant to String : {}", formattedString);
+
+        return formattedString;
     }
 
-    public String convertInstantToStringPlus14Days(Instant instant) {
+    public static String convertInstantToStringPlus14Days(Instant instant) {
         Instant newInstant = instant.plus(Duration.ofDays(14));
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d-MMM-yy")
-                .withLocale(Locale.forLanguageTag("id-ID"));
+                .withLocale(Locale.ENGLISH);
+//                .withLocale(Locale.forLanguageTag("id-ID"));
 
-        ZoneId jakartaZone = ZoneId.of(timeZone);
+        ZoneId jakartaZone = ZoneId.of("Asia/Jakarta");
 
         String formattedString = formatter.format(newInstant.atZone(jakartaZone));
         log.info("Formatted Instant to String : {}", formattedString);
@@ -133,9 +156,54 @@ public class ConvertDateUtil {
         return formattedString;
     }
 
-    private static Locale getLocaleID() {
-//        return new Locale("id", "ID");
-        return Locale.getDefault();
+    public static Locale getLocaleID() {
+        return new Locale("id", "ID");
+    }
+
+    public static Locale getLocaleEN() {
+        return Locale.ENGLISH;
+    }
+
+    public static String[][] getPreviousMonthsAndYears(String month, int year) {
+        // Month sudah dalam bentuk November or October etc
+        String[][] result = new String[3][2];
+
+        String monthInput = month.toUpperCase();
+        // IndonesianMonth userMonth = getIndonesianMonth(monthInput);
+
+        if (!monthInput.isEmpty() && isValidYear(year)) {
+            // Year Month harus parameter Month
+            Month userMonth = Month.valueOf(monthInput.toUpperCase()); // Convert to uppercase for case-insensitivity
+            YearMonth userYearMonth = YearMonth.of(year, userMonth);
+
+            String currentlyMonth = userYearMonth.getMonth().getDisplayName(TextStyle.FULL, ConvertDateUtil.getLocaleEN());
+            int currentlyYear = userYearMonth.getYear();
+
+            YearMonth previousMonth1 = userYearMonth.minusMonths(1);
+            YearMonth previousMonth2 = userYearMonth.minusMonths(2);
+
+            String previousMonthName1 = previousMonth1.getMonth().getDisplayName(TextStyle.FULL, ConvertDateUtil.getLocaleEN());
+            String previousMonthName2 = previousMonth2.getMonth().getDisplayName(TextStyle.FULL, ConvertDateUtil.getLocaleEN());
+
+            int previousYear1 = previousMonth1.getYear();
+            int previousYear2 = previousMonth2.getYear();
+
+            result[0][0] = currentlyMonth;
+            result[0][1] = String.valueOf(currentlyYear);
+            result[1][0] = previousMonthName1;
+            result[1][1] = String.valueOf(previousYear1);
+            result[2][0] = previousMonthName2;
+            result[2][1] = String.valueOf(previousYear2);
+
+        } else {
+            throw new IllegalArgumentException("Invalid month or year.");
+        }
+
+        return result;
+    }
+
+    private static boolean isValidYear(int year) {
+        return year > 0; // Assuming years must be positive
     }
 
     public Date convertLocalDateTimeToDate(LocalDateTime localDateTime) {
@@ -150,4 +218,5 @@ public class ConvertDateUtil {
     public Date getDate() {
         return convertLocalDateTimeToDate(LocalDateTime.now());
     }
+
 }

@@ -6,6 +6,6 @@ import java.util.List;
 
 public interface FundCalculateService {
 
-    String calculate(List<FeeReportRequest> request, String month, Integer year);
+    String calculate(List<FeeReportRequest> request, String monthYear);
 
 }

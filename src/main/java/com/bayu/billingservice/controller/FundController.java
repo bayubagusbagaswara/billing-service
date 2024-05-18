@@ -25,12 +25,7 @@ public class FundController {
     public ResponseEntity<ResponseDTO<String>> calculate(@RequestBody List<FeeReportRequest> reportRequests,
                                                                       @RequestParam("monthYear") String monthYear) {
 
-        // format month year MMMM-yyyy
-        String[] monthFormat = ConvertDateUtil.convertToYearMonthFormat(monthYear);
-        String month = monthFormat[0];
-        int year = Integer.parseInt(monthFormat[1]);
-
-        String status = fundCalculateService.calculate(reportRequests, month, year);
+        String status = fundCalculateService.calculate(reportRequests, monthYear);
 
         ResponseDTO<String> responseDTO = ResponseDTO.<String>builder()
                 .code(HttpStatus.OK.value())
@@ -45,11 +40,8 @@ public class FundController {
     public ResponseEntity<ResponseDTO<String>> generatePDF(@RequestParam("category") String category,
                                                            @RequestParam("monthYear") String monthYear) {
 
-        String[] monthFormat = ConvertDateUtil.convertToYearMonthFormat(monthYear);
-        String month = monthFormat[0];
-        int year = Integer.parseInt(monthFormat[1]);
 
-        String statusGenerate = fundGeneratePDFService.generatePDF(category, month, year);
+        String statusGenerate = fundGeneratePDFService.generatePDF(category, monthYear);
 
         ResponseDTO<String> response = ResponseDTO.<String>builder()
                 .code(HttpStatus.OK.value())

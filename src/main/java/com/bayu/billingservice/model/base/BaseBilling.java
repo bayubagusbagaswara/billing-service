@@ -32,6 +32,18 @@ public abstract class BaseBilling extends BaseAudit {
     @Column(name = "year")
     private Integer year;
 
+    @Column(name = "bill_number")
+    private String billingNumber;
+
+    @Column(name = "bill_period")
+    private String billingPeriod; // November 2023
+
+    @Column(name = "bill_statement_date")
+    private String billingStatementDate;
+
+    @Column(name = "bill_payment_due_date")
+    private String billingPaymentDueDate;
+
     @Column(name = "bill_category")
     private String billingCategory;
 
@@ -40,21 +52,6 @@ public abstract class BaseBilling extends BaseAudit {
 
     @Column(name = "bill_template")
     private String billingTemplate;
-
-
-    // Data in PDF Template
-    @Column(name = "bill_number")
-    private String billingNumber;
-
-    @Column(name = "bill_period")
-    private String billingPeriod; // November 2023
-
-    @Column(name = "bill_statement_date")
-    private String billingStatementDate; // tanggal billing di generate (5-Des-2023)
-
-    @Column(name = "bill_payment_due_date")
-    private String billingPaymentDueDate; // tanggal billing di generate ditambah 14 hari
-
 
     // Data Investment Management in PDF Template
     @Column(name = "mi_code")
@@ -75,21 +72,22 @@ public abstract class BaseBilling extends BaseAudit {
     @Column(name = "mi_address_4")
     private String investmentManagementAddress4;
 
-    // Data Account Customer in PDF Template
-    @Column(name = "account_name")
-    private String accountName; // this is same with GL Name
+    @Column(name = "mi_email")
+    private String investmentManagementEmail;
 
-    @Column(name = "account_number")
-    private String accountNumber; // this is same with GL Number (account)
-
-    @Column(name = "account_bank")
-    private String accountBank; // this is bank name
+    @Column(name = "mi_unique_key")
+    private String investmentManagementUniqueKey;
 
     @Column(name = "currency")
     private String currency;
 
-    private String accountCredit; // yg atas
+    @Column(name = "account")
+    private String account;
 
-    private String accountDebit; // yg dibawah (kotak billing)
+    @Column(name = "account_name")
+    private String accountName;
+
+    @Column(name = "account_cost_center_debit")
+    private String accountCostCenterDebit;
 
 }

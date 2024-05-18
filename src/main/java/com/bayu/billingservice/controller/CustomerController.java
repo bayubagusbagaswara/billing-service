@@ -37,7 +37,7 @@ public class CustomerController {
     @GetMapping(path = "/all-test")
     public ResponseEntity<ResponseDTO<List<CustomerDTO>>> getAllTest() {
 
-        List<CustomerDTO> customerDTOList = customerService.getAllTest();
+        List<CustomerDTO> customerDTOList = customerService.getAll();
 
         ResponseDTO<List<CustomerDTO>> response = ResponseDTO.<List<CustomerDTO>>builder()
                 .code(HttpStatus.OK.value())

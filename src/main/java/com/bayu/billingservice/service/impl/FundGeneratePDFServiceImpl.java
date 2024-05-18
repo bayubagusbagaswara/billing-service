@@ -51,11 +51,13 @@ public class FundGeneratePDFServiceImpl implements FundGeneratePDFService {
     }
 
     @Override
-    public String generatePDF(String category, String month, int year) {
+    public String generatePDF(String category, String monthYear) {
         try {
             log.info("Start generate PDF Billing Fund");
 
             String approvalStatus = ApprovalStatus.PENDING.getStatus();
+            String month = "";
+            Integer year = 1;
 
             List<BillingFund> billingFundList = billingFundRepository.findAllByBillingCategoryAndMonthAndYearAndApprovalStatus(
                     category, month, year, approvalStatus
@@ -179,7 +181,7 @@ public class FundGeneratePDFServiceImpl implements FundGeneratePDFService {
                 .billingTemplate(billingFund.getBillingTemplate())
                 .investmentManagementName(billingFund.getInvestmentManagementName())
                 .accountName(billingFund.getAccountName())
-                .accountNumber(billingFund.getAccountNumber())
+                .accountNumber(billingFund.getAccount())
                 .customerFee(ConvertBigDecimalUtil.formattedBigDecimalToString(billingFund.getCustomerFee()))
                 .accrualCustodialFee(ConvertBigDecimalUtil.formattedBigDecimalToString(billingFund.getAccrualCustodialFee()))
                 .bis4ValueFrequency(String.valueOf(billingFund.getBis4ValueFrequency()))

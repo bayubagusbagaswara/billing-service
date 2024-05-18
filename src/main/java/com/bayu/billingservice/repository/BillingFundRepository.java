@@ -39,4 +39,18 @@ public interface BillingFundRepository extends JpaRepository<BillingFund, Long> 
             @Param("year") int year
     );
 
+    @Query(value = "SELECT * FROM billing_fund " +
+            "WHERE customer_code = :customerCode " +
+            "AND bill_category = :billingCategory " +
+            "AND bill_type = :billingType " +
+            "AND month = :month " +
+            "AND year = :year", nativeQuery = true)
+    Optional<BillingFund> findByCustomerCodeAndBillingCategoryAndBillingTypeAndMonthAndYear(
+            @Param("customerCode") String customerCode,
+            @Param("billingCategory") String billingCategory,
+            @Param("billingType") String billingType,
+            @Param("month") String monthName,
+            @Param("year") int year
+    );
+
 }

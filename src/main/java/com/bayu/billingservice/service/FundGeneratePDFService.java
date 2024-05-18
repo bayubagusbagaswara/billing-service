@@ -8,7 +8,7 @@ public interface FundGeneratePDFService {
 
     List<BillingFundDTO> getAll();
 
-    String generatePDF(String category, String month, int year);
+    String generatePDF(String category, String monthYear);
 
     String deleteAll();
 }

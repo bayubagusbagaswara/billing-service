@@ -10,9 +10,7 @@ public interface CustomerService {
 
     CustomerDTO testCreate(CustomerDTO dto);
 
-    List<CustomerDTO> getAllTest();
-
-    boolean isCodeAlreadyExists(String code);
+    boolean isCodeAlreadyExists(String code, String subCode);
 
     List<CustomerDTO> getAll();
 

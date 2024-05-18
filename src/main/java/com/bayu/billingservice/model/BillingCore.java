@@ -19,23 +19,26 @@ public class BillingCore extends BaseBilling {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "swift_code")
-    private String swiftCode; // especially for core template 2 and 6
+//    @Column(name = "swift_code")
+//    private String swiftCode; // especially for core template 2 and 6
+//
+//    @Column(name = "corr_bank")
+//    private String corrBank;
+//
+//    @Column(name = "debit_from")
+//    private String debitFrom; // core type 3
+//
+//    @Column(name = "credit_to")
+//    private String creditTo; // core type 3
 
-    @Column(name = "corr_bank")
-    private String corrBank;
+//    @Column(name = "account_number_cbest")
+//    private String accountNumberCBEST; // especially for core template 6
 
-    @Column(name = "debit_from")
-    private String debitFrom; // core type 3
+    @Column(name = "customer_minimum_fee")
+    private BigDecimal customerMinimumFee; // minimum fee that customers have, 5.000.000, 500.000 etc
 
-    @Column(name = "credit_to")
-    private String creditTo; // core type 3
-
-    @Column(name = "account_number_cbest")
-    private String accountNumberCBEST; // especially for core template 6
-
-    @Column(name = "minimum_fee")
-    private BigDecimal minimumFee; // minimum fee that customers have, 5.000.000, 500.000 etc
+    @Column(name = "customer_safekeeping_fee")
+    private BigDecimal customerSafekeepingFee;
 
     @Column(name = "safekeeping_journal")
     private String safekeepingJournal; // especially for core template 7
@@ -74,7 +77,7 @@ public class BillingCore extends BaseBilling {
     private BigDecimal totalAmountDue;
 
     // KSEI Safe Fee Amount
-    @Column(name = "ksei_safekeeping_amount_due")
+    @Column(name = "ksei_safekepeing_amount_due")
     private BigDecimal kseiSafekeepingAmountDue;
 
     // For Transaction KSEI
@@ -87,51 +90,57 @@ public class BillingCore extends BaseBilling {
     @Column(name = "ksei_transaction_amount_due")
     private BigDecimal kseiTransactionAmountDue;
 
-    // For Transaction BI-SSS
+    // For Transaction BI-SSSS
     @Column(name = "bis4_transaction_value_frequency")
-    private String bis4TransactionValueFrequency;
+    private Integer bis4TransactionValueFrequency;
 
     @Column(name = "bis4_transaction_fee")
-    private String bis4TransactionFee;
+    private BigDecimal bis4TransactionFee;
 
     @Column(name = "bis4_transaction_amount_due")
-    private String bis4TransactionAmountDue;
+    private BigDecimal bis4TransactionAmountDue;
 
     // Especially Core Type 8 IIG, because USD
+    @Column(name = "transaction_handling_item")
+    private Integer transactionHandlingItem;
+
+    @Column(name = "safekeeping_item")
+    private Integer safekeepingItem;
+
     @Column(name = "administration_setup_item")
-    private BigDecimal administrationSetUpItem;
+    private Integer administrationSetUpItem;
 
     @Column(name = "administration_setup_fee")
-    private String administrationSetUpFee;
+    private BigDecimal administrationSetUpFee;
 
     @Column(name = "administration_setup_amount_due")
-    private String administrationAmountDue;
+    private BigDecimal administrationSetUpAmountDue;
 
     @Column(name = "signing_representation_item")
-    private String signingRepresentationItem;
+    private Integer signingRepresentationItem;
 
     @Column(name = "signing_representation_fee")
-    private String signingRepresentationFee;
+    private BigDecimal signingRepresentationFee;
 
     @Column(name = "signing_representation_amount_due")
-    private String signingRepresentationAmountDue;
+    private BigDecimal signingRepresentationAmountDue;
 
     @Column(name = "security_agent_item")
-    private String securityAgentItem;
+    private Integer securityAgentItem;
 
     @Column(name = "security_agent_fee")
-    private String securityAgentFee;
+    private BigDecimal securityAgentFee;
 
     @Column(name = "security_agent_amount_due")
-    private String securityAgentAmountDue;
+    private BigDecimal securityAgentAmountDue;
 
     @Column(name = "other_item")
-    private String otherItem;
+    private Integer otherItem;
 
     @Column(name = "other_fee")
-    private String otherFee;
+    private BigDecimal otherFee;
 
     @Column(name = "other_amount_due")
-    private String otherAmountDue;
+    private BigDecimal otherAmountDue;
 
 }

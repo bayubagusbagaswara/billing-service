@@ -2,6 +2,7 @@ package com.bayu.billingservice.service.impl;
 
 import com.bayu.billingservice.dto.BillingNumberDTO;
 import com.bayu.billingservice.exception.DataNotFoundException;
+import com.bayu.billingservice.exception.GeneralException;
 import com.bayu.billingservice.model.BillingNumber;
 import com.bayu.billingservice.repository.BillingNumberRepository;
 import com.bayu.billingservice.service.BillingNumberService;
@@ -43,8 +44,24 @@ public class BillingNumberServiceImpl implements BillingNumberService {
         }
 
         billingNumberRepository.saveAll(billingNumberList);
-
         return "Successfully saved all Billing Numbers";
+    }
+
+    @Override
+    public String saveSingleNumber(String number) {
+        log.info("Save single billing number: {}", number);
+        BillingNumber billingNumber = parseBillingNumber(number);
+        if (billingNumber == null) {
+            throw new GeneralException("Failed parse billing number: " + number);
+        }
+        log.info("Parse single billing number: {}", billingNumber);
+        BillingNumber save = billingNumberRepository.save(billingNumber);
+        return "Successfully save single billing number with id: " + save.getId();
+    }
+
+    @Override
+    public String generateSingleNumber(String month, int year) {
+        return "";
     }
 
     @Override
@@ -83,11 +100,11 @@ public class BillingNumberServiceImpl implements BillingNumberService {
     }
 
     @Override
-    public String deleteByBillingNumber(String number) {
+    public void deleteByBillingNumber(String number) {
         BillingNumber billingNumber = billingNumberRepository.findByNumber(number)
                 .orElseThrow(() -> new DataNotFoundException("Billing Number with number '" + number + "' is not found"));
         billingNumberRepository.delete(billingNumber);
-        return "Successfully delete billing number with number : " + number;
+        // return "Successfully delete billing number with number : " + number;
     }
 
     public static BillingNumber parseBillingNumber(String billingNumber) {
