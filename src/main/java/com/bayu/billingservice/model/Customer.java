@@ -23,6 +23,9 @@ public class Customer extends Approval {
     @Column(name = "customer_code")
     private String customerCode;
 
+    @Column(name = "sub_code")
+    private String subCode;
+
     @Column(name = "customer_name")
     private String customerName;
 
