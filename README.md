@@ -697,3 +697,22 @@ String jsonDataAfter = "{\"code\":\"A002\",\"name\":\"PT Pacific Capital Investm
     // need a pattern (numeric & alphabet, not special character)
     private String sellingAgentCode;
 
+```json
+[
+  {
+    "templateName": "FUND_TEMPLATE",
+    "category": "FUND",
+    "type": "TYPE_1"
+  },
+  {
+    "templateName": "CORE_TEMPLATE_1",
+    "category": "CORE",
+    "type": "TYPE_1"
+  },
+  {
+    "templateName": "CORE_TEMPLATE_1",
+    "category": "CORE",
+    "type": "TYPE_2"
+  }
+]
+```
