@@ -26,7 +26,7 @@ public class ApplicationConfig {
         modelMapper.addConverter(stringToBigDecimalConverter());
 
         // Konfigurasi konversi kustom untuk BigDecimal to formatted String
-        modelMapper.addConverter(bigDecimalToStringConverter());
+        // modelMapper.addConverter(bigDecimalToStringConverter());
 
         return modelMapper;
     }
