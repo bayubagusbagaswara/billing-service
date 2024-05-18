@@ -627,3 +627,73 @@ String jsonDataAfter = "{\"code\":\"A002\",\"name\":\"PT Pacific Capital Investm
 4. Insert data customer
 5. Repair calculate billing Fund
 6. Repair calculate billing Core
+
+
+# Customer DTO for Pattern
+
+
+    // need a pattern (numeric & alphabet, not special character)
+    @NotBlank(message = "Customer Code cannot be blank")
+    private String customerCode;
+
+    // need a pattern (numeric & alphabet, not special character)
+    @NotBlank(message = "Customer Name cannot be blank")
+    private String customerName;
+
+    @NotBlank(message = "Billing Category cannot be blank")
+    private String billingCategory;
+
+    @NotBlank(message = "Billing Type cannot be blank")
+    private String billingType;
+
+    @NotBlank(message = "Billing Template cannot be blank")
+    private String billingTemplate;
+
+    @NotEmpty(message = "Currency cannot be blank")
+    private String currency;
+
+    @NotEmpty(message = "MI Code cannot be blank")
+    private String investmentManagementCode;
+
+    private String investmentManagementName;
+
+    // need a patter, must be numeric for string
+    private String account;
+
+    // need a patter, must be numeric for string
+    private String debitTransfer;
+
+    // need a pattern (numeric & alphabet, not special character)
+    private String accountName;
+
+    // need a pattern, must be numeric for string
+    private String glAccountHasil;
+
+    // need a pattern must be numeric because big decimal
+    private String customerMinimumFee;
+
+    // need a pattern (must be numeric because big decimal)
+    @NotEmpty(message = "Customer Safekeeping Fee cannot be empty")
+    private String customerSafekeepingFee;
+
+    // need a pattern must be numeric because big decimal
+    private String customerTransactionHandling;
+
+    // need a pattern, must be numeric for string
+    private String npwpNumber;
+
+    // need a pattern (numeric & alphabet, not special character)
+    private String npwpName;
+
+    private String npwpAddress;
+
+    // need a pattern, must be numeric for string
+    @NotEmpty(message = "Cost Center cannot be empty")
+    private String costCenter;
+
+    // need a pattern (numeric & alphabet, not special character)
+    private String kseiSafeCode;
+
+    // need a pattern (numeric & alphabet, not special character)
+    private String sellingAgentCode;
+
