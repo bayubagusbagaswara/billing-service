@@ -67,4 +67,8 @@ public abstract class BaseMapper<E, D> {
 
     protected abstract void setCommonProperties(E entity, BillingDataChangeDTO dataChangeDTO);
 
+    public D mapFromDataListToDTO(Object listRequest) {
+        return modelMapper.map(listRequest, getDtoClass());
+    }
+
 }
