@@ -2,10 +2,10 @@ package com.bayu.billingservice.service.impl;
 
 import com.bayu.billingservice.dto.datachange.BillingDataChangeDTO;
 import com.bayu.billingservice.exception.DataNotFoundException;
-import com.bayu.billingservice.model.BillingDataChange;
+import com.bayu.billingservice.model.DataChange;
 import com.bayu.billingservice.model.enumerator.ApprovalStatus;
 import com.bayu.billingservice.model.enumerator.ChangeAction;
-import com.bayu.billingservice.repository.BillingDataChangeRepository;
+import com.bayu.billingservice.repository.DataChangeRepository;
 import com.bayu.billingservice.service.DataChangeService;
 import com.bayu.billingservice.util.ConvertDateUtil;
 import com.bayu.billingservice.util.StringUtil;
@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class DataChangeServiceImpl implements DataChangeService {
 
-    private final BillingDataChangeRepository dataChangeRepository;
+    private final DataChangeRepository dataChangeRepository;
     private final ConvertDateUtil convertDateUtil;
 
     private static final String ID_NOT_FOUND = "Data Change not found with id: ";
@@ -37,7 +37,7 @@ public class DataChangeServiceImpl implements DataChangeService {
 
     @Override
     public BillingDataChangeDTO getById(Long dataChangeId) {
-        BillingDataChange dataChange = dataChangeRepository.findById(dataChangeId)
+        DataChange dataChange = dataChangeRepository.findById(dataChangeId)
                 .orElseThrow(() -> new DataNotFoundException(ID_NOT_FOUND + dataChangeId));
         return mapToDTO(dataChange);
     }
@@ -45,7 +45,7 @@ public class DataChangeServiceImpl implements DataChangeService {
     @Override
     public void update(BillingDataChangeDTO dataChangeDTO) {
         log.info("Data Change dto: {}", dataChangeDTO);
-        BillingDataChange dataChange = dataChangeRepository.findById(dataChangeDTO.getId())
+        DataChange dataChange = dataChangeRepository.findById(dataChangeDTO.getId())
                 .orElseThrow(() -> new DataNotFoundException(ID_NOT_FOUND + dataChangeDTO.getId()));
         log.info("Data Change: {}", dataChangeDTO);
 
@@ -75,7 +75,7 @@ public class DataChangeServiceImpl implements DataChangeService {
 
     @Override
     public <T> void createChangeActionADD(BillingDataChangeDTO dataChangeDTO, Class<T> clazz) {
-        BillingDataChange dataChange = BillingDataChange.builder()
+        DataChange dataChange = DataChange.builder()
                 .approvalStatus(ApprovalStatus.PENDING)
                 .inputId(dataChangeDTO.getInputId())
                 .inputDate(new Date())
@@ -102,42 +102,42 @@ public class DataChangeServiceImpl implements DataChangeService {
 
     @Override
     public void approvalStatusIsRejected(BillingDataChangeDTO dataChangeDTO, List<String> errorMessageList) {
-        BillingDataChange billingDataChange = dataChangeRepository.findById(dataChangeDTO.getId())
+        DataChange dataChange = dataChangeRepository.findById(dataChangeDTO.getId())
                 .orElseThrow(() -> new DataNotFoundException(ID_NOT_FOUND + dataChangeDTO.getId()));
 
-        billingDataChange.setApprovalStatus(ApprovalStatus.REJECTED);
-        billingDataChange.setApproveId(dataChangeDTO.getApproveId());
-        billingDataChange.setApproveIPAddress(dataChangeDTO.getApproveIPAddress());
-        billingDataChange.setApproveDate(convertDateUtil.getDate());
-        billingDataChange.setJsonDataAfter(dataChangeDTO.getJsonDataAfter() == null ? "" : dataChangeDTO.getJsonDataAfter());
-        billingDataChange.setJsonDataBefore(dataChangeDTO.getJsonDataBefore() == null ? "" : dataChangeDTO.getJsonDataBefore());
-        billingDataChange.setEntityId(dataChangeDTO.getEntityId() == null ? "" : dataChangeDTO.getEntityId());
-        billingDataChange.setDescription(StringUtil.joinStrings(errorMessageList));
+        dataChange.setApprovalStatus(ApprovalStatus.REJECTED);
+        dataChange.setApproveId(dataChangeDTO.getApproveId());
+        dataChange.setApproveIPAddress(dataChangeDTO.getApproveIPAddress());
+        dataChange.setApproveDate(convertDateUtil.getDate());
+        dataChange.setJsonDataAfter(dataChangeDTO.getJsonDataAfter() == null ? "" : dataChangeDTO.getJsonDataAfter());
+        dataChange.setJsonDataBefore(dataChangeDTO.getJsonDataBefore() == null ? "" : dataChangeDTO.getJsonDataBefore());
+        dataChange.setEntityId(dataChangeDTO.getEntityId() == null ? "" : dataChangeDTO.getEntityId());
+        dataChange.setDescription(StringUtil.joinStrings(errorMessageList));
 
-        dataChangeRepository.save(billingDataChange);
+        dataChangeRepository.save(dataChange);
     }
 
     @Override
     public void approvalStatusIsApproved(BillingDataChangeDTO dataChangeDTO) {
         log.info("Approval Status Is Approved request: {}", dataChangeDTO);
-        BillingDataChange billingDataChange = dataChangeRepository.findById(dataChangeDTO.getId())
+        DataChange dataChange = dataChangeRepository.findById(dataChangeDTO.getId())
                 .orElseThrow(() -> new DataNotFoundException(ID_NOT_FOUND + dataChangeDTO.getId()));
 
-        billingDataChange.setApprovalStatus(ApprovalStatus.APPROVED);
-        billingDataChange.setApproveId(dataChangeDTO.getApproveId());
-        billingDataChange.setApproveIPAddress(dataChangeDTO.getApproveIPAddress());
-        billingDataChange.setApproveDate(convertDateUtil.getDate());
-        billingDataChange.setJsonDataAfter(dataChangeDTO.getJsonDataAfter() == null ? "" : dataChangeDTO.getJsonDataAfter());
-        billingDataChange.setJsonDataBefore(dataChangeDTO.getJsonDataBefore() == null ? "" : dataChangeDTO.getJsonDataBefore());
-        billingDataChange.setEntityId(dataChangeDTO.getEntityId());
-        billingDataChange.setDescription(dataChangeDTO.getDescription());
+        dataChange.setApprovalStatus(ApprovalStatus.APPROVED);
+        dataChange.setApproveId(dataChangeDTO.getApproveId());
+        dataChange.setApproveIPAddress(dataChangeDTO.getApproveIPAddress());
+        dataChange.setApproveDate(convertDateUtil.getDate());
+        dataChange.setJsonDataAfter(dataChangeDTO.getJsonDataAfter() == null ? "" : dataChangeDTO.getJsonDataAfter());
+        dataChange.setJsonDataBefore(dataChangeDTO.getJsonDataBefore() == null ? "" : dataChangeDTO.getJsonDataBefore());
+        dataChange.setEntityId(dataChangeDTO.getEntityId());
+        dataChange.setDescription(dataChangeDTO.getDescription());
 
-        dataChangeRepository.save(billingDataChange);
+        dataChangeRepository.save(dataChange);
     }
 
     @Override
     public <T> void createChangeActionEDIT(BillingDataChangeDTO dataChangeDTO, Class<T> clazz) {
-        BillingDataChange dataChange = BillingDataChange.builder()
+        DataChange dataChange = DataChange.builder()
                 .approvalStatus(ApprovalStatus.PENDING)
                 .inputId(dataChangeDTO.getInputId())
                 .inputDate(new Date())
@@ -164,7 +164,7 @@ public class DataChangeServiceImpl implements DataChangeService {
 
     @Override
     public <T> void createChangeActionDELETE(BillingDataChangeDTO dataChangeDTO, Class<T> clazz) {
-        BillingDataChange dataChange = BillingDataChange.builder()
+        DataChange dataChange = DataChange.builder()
                 .approvalStatus(ApprovalStatus.PENDING)
                 .inputId(dataChangeDTO.getInputId())
                 .inputDate(convertDateUtil.getDate())
@@ -205,15 +205,15 @@ public class DataChangeServiceImpl implements DataChangeService {
     @Override
     public boolean areAllIdsExistInDatabase(List<Long> idList) {
         long countOfExistingIds = dataChangeRepository.countByIdIn(idList);
-        List<BillingDataChange> existingDataChanges = dataChangeRepository.findByIdIn(idList);
+        List<DataChange> existingDataChanges = dataChangeRepository.findByIdIn(idList);
         Set<Long> existingIds = existingDataChanges.stream()
-                .map(BillingDataChange::getId)
+                .map(DataChange::getId)
                 .collect(Collectors.toSet());
         Set<Long> idSet = new HashSet<>(idList);
         return existingIds.equals(idSet) && countOfExistingIds == idList.size();
     }
 
-    private static BillingDataChangeDTO mapToDTO(BillingDataChange dataChange) {
+    private static BillingDataChangeDTO mapToDTO(DataChange dataChange) {
         return BillingDataChangeDTO.builder()
                 .id(dataChange.getId())
                 .approvalStatus(dataChange.getApprovalStatus())
@@ -239,7 +239,7 @@ public class DataChangeServiceImpl implements DataChangeService {
                 .build();
     }
 
-    private static List<BillingDataChangeDTO> mapToDTOList(List<BillingDataChange> dataChangeList) {
+    private static List<BillingDataChangeDTO> mapToDTOList(List<DataChange> dataChangeList) {
         return dataChangeList.stream()
                 .map(DataChangeServiceImpl::mapToDTO)
                 .toList();

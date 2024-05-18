@@ -18,7 +18,7 @@ import java.util.Date;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class BillingDataChange {
+public class DataChange {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
