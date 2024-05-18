@@ -4,6 +4,7 @@ import com.bayu.billingservice.dto.approval.ApprovalDTO;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Pattern;
 import lombok.*;
 
 @EqualsAndHashCode(callSuper = true)
@@ -16,70 +17,75 @@ public class CustomerDTO extends ApprovalDTO {
 
     private Long id;
 
-    // need a pattern (numeric & alphabet, not special character)
-    @NotBlank(message = "Customer Code cannot be blank")
+    @Pattern(regexp = "^[a-zA-Z0-9]{6}$", message = "Code must contain exactly 6 alphanumeric characters")
+    @NotBlank(message = "Customer Code cannot be empty")
     private String customerCode;
 
-    // need a pattern (numeric & alphabet, not special character)
-    @NotBlank(message = "Customer Name cannot be blank")
+    private String subCode;
+
+    @NotBlank(message = "Customer Name cannot be empty")
     private String customerName;
 
-    @NotBlank(message = "Billing Category cannot be blank")
+    @NotBlank(message = "Billing Category cannot be empty")
     private String billingCategory;
 
-    @NotBlank(message = "Billing Type cannot be blank")
+    @NotBlank(message = "Billing Type cannot be empty")
     private String billingType;
 
-    @NotBlank(message = "Billing Template cannot be blank")
+    @NotBlank(message = "Billing Template cannot be empty")
     private String billingTemplate;
 
-    @NotEmpty(message = "Currency cannot be blank")
+    @NotBlank(message = "Currency cannot be empty")
     private String currency;
 
-    @NotEmpty(message = "MI Code cannot be blank")
-    private String investmentManagementCode;
+    @NotBlank(message = "MI Code cannot be empty")
+    private String miCode;
 
-    private String investmentManagementName;
+    private String miName;
 
-    // need a patter, must be numeric for string
+    @Pattern(regexp = "^\\d*$", message = "Account must contain only numeric digits")
+    @NotBlank(message = "Account cannot be empty")
     private String account;
 
-    // need a patter, must be numeric for string
-    private String costCenterDebit;
-
-    // need a pattern (numeric & alphabet, not special character)
+    @NotBlank(message = "Account Name cannot be empty")
     private String accountName;
 
-    // need a pattern, must be numeric for string
+    @Pattern(regexp = "^\\d*$", message = "Cost Center Debit must contain only numeric digits")
+    private String debitTransfer;
+
+    @Pattern(regexp = "^\\d*$", message = "Cost Center must contain only numeric digits")
+    @NotBlank(message = "Cost Center cannot be empty")
+    private String costCenter;
+
+    @Pattern(regexp = "^\\d*$", message = "GL Account Hasil must contain only numeric digits")
+    @NotBlank(message = "GL Account Hasil cannot be empty")
     private String glAccountHasil;
 
-    // need a pattern must be numeric because big decimal
+    @Pattern(regexp = "^\\d*$", message = "Customer MinimumFee must contain only numeric digits")
+    @NotBlank(message = "Customer Minimum Fee cannot be empty")
     private String customerMinimumFee;
 
-    // need a pattern (must be numeric because big decimal)
     @NotEmpty(message = "Customer Safekeeping Fee cannot be empty")
     private String customerSafekeepingFee;
 
-    // need a pattern must be numeric because big decimal
+    @Pattern(regexp = "^\\d*$", message = "Transaction Handling must contain only numeric digits")
     private String customerTransactionHandling;
 
-    // need a pattern, must be numeric for string
+    @NotBlank(message = "NPWP Number cannot be empty")
     private String npwpNumber;
 
-    // need a pattern (numeric & alphabet, not special character)
+    @NotBlank(message = "NPWP Name cannot be empty")
     private String npwpName;
 
+    @NotBlank(message = "NPWP Address cannot be empty")
     private String npwpAddress;
 
-    // need a pattern, must be numeric for string
-    @NotEmpty(message = "Cost Center cannot be empty")
-    private String costCenter;
-
-    // need a pattern (numeric & alphabet, not special character)
+    @Pattern(regexp = "^[a-zA-Z0-9]*$", message = "KSEI Safe Code must contain only alphanumeric characters")
     private String kseiSafeCode;
 
-    // need a pattern (numeric & alphabet, not special character)
-    private String sellingAgentCode;
+    private String sellingAgent;
 
+    @NotBlank(message = "Is GL cannot be empty")
+    private boolean gl;
 
 }
