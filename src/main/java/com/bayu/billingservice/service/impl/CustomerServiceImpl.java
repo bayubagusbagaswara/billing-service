@@ -243,11 +243,13 @@ public class CustomerServiceImpl implements CustomerService {
         dataChangeDTO.setInputIPAddress(updateCreateCustomerListRequest.getInputIPAddress());
         List<CustomerDTO> customerDTOList = new ArrayList<>();
         for (UpdateCustomerDataListRequest updateCustomerDataListRequest : updateCreateCustomerListRequest.getUpdateCustomerDataListRequests()) {
-            if (updateCustomerDataListRequest.getGl() == null) {
-                customerDTOList.add(customerMapper.mapWithNullGl(updateCustomerDataListRequest));
-            } else {
-                customerDTOList.add(customerMapper.mapFromUpdateRequestToDto(updateCustomerDataListRequest));
-            }
+            log.info("Update Customer Data List Request: {}", updateCustomerDataListRequest);
+//            if (updateCustomerDataListRequest.getGl() == null) {
+//                customerDTOList.add(customerMapper.mapWithNullGl(updateCustomerDataListRequest));
+//            } else {
+//                customerDTOList.add(customerMapper.mapFromUpdateRequestToDto(updateCustomerDataListRequest));
+//            }
+            customerDTOList.add(customerMapper.mapFromUpdateRequestToDto(updateCustomerDataListRequest));
         }
         log.info("Customer DTO List: {}", customerDTOList);
         return processUpdateForCustomerList(customerDTOList, dataChangeDTO);
@@ -276,11 +278,9 @@ public class CustomerServiceImpl implements CustomerService {
                 // DISINI DATA CUSTOMER SUDAH KECAMPUR DENGAN DTO
                 customerMapper.mapObjects(customerDTO, clonedCustomer);
 
-                log.info("Customer DTO want to update: {}", customerDTO);
-
                 log.info("Replace between Customer DTO to Customer Entity: {}", clonedCustomer);
 
-                InvestmentManagementDTO investmentManagementDTO = investmentManagementService.getByCode(customerDTO.getMiCode());
+                InvestmentManagementDTO investmentManagementDTO = investmentManagementService.getByCode(clonedCustomer.getMiCode());
                 customerDTO.setMiCode(investmentManagementDTO.getCode());
                 customerDTO.setMiName(investmentManagementDTO.getName());
 
@@ -291,6 +291,10 @@ public class CustomerServiceImpl implements CustomerService {
 
                 // validation GL
                 validateGLForCostCenterDebit(clonedCustomer.isGl(), clonedCustomer.getDebitTransfer(), validationErrors);
+
+                if (Boolean.FALSE.equals(clonedCustomer.isGl())) {
+                    customerDTO.setDebitTransfer("");
+                }
 
                 // validation billing template
                 validationBillingTemplate(clonedCustomer.getBillingCategory(), clonedCustomer.getBillingType(), clonedCustomer.getSubCode(), validationErrors);
@@ -343,7 +347,7 @@ public class CustomerServiceImpl implements CustomerService {
 
             // Hasil JSON After
             CustomerDTO customerDTO = objectMapper.readValue(dataChangeDTO.getJsonDataAfter(), CustomerDTO.class);
-            log.info("Hasil baca JSON Data After: {}", customerDTO); // tidak semua masuk disini
+            log.info("Hasil baca JSON Data After: {}", customerDTO);
 
             // Validation MI code dan get name value
             InvestmentManagementDTO investmentManagementDTO = investmentManagementService.getByCode(customerDTO.getMiCode());
@@ -356,7 +360,13 @@ public class CustomerServiceImpl implements CustomerService {
             customerMapper.mapObjects(customerDTO, customer);
             log.info("Customer after copy properties: {}", customer);
 
+            // Jika nilai Is GL adalah FALSE, hapus data di kolom Cost Center Debit
+            if (Boolean.FALSE.equals(customer.isGl())) {
+                customer.setDebitTransfer("");
+            }
+
             // validasi hanya bisa dilakukan terhadap object customer hasil mapping data
+            validateBillingEnums(customer.getBillingCategory(), customer.getBillingType(), customer.getBillingTemplate(), customer.getCurrency(), validationErrors);
 
             // Retrieve and set billing data change
             dataChangeDTO.setApproveId(approveRequest.getApproveId());
