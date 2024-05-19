@@ -14,7 +14,7 @@ public interface InvestmentManagementService {
     InvestmentManagementResponse createSingleApprove(InvestmentManagementApproveRequest approveRequest);
 
     InvestmentManagementResponse updateSingleData(UpdateInvestmentManagementRequest request, BillingDataChangeDTO dataChangeDTO);
-    InvestmentManagementResponse updateMultipleData(CreateInvestmentManagementListRequest requestList, BillingDataChangeDTO dataChangeDTO);
+    InvestmentManagementResponse updateMultipleData(UpdateInvestmentManagementListRequest requestList, BillingDataChangeDTO dataChangeDTO);
     InvestmentManagementResponse updateSingleApprove(InvestmentManagementApproveRequest approveRequest);
 
     InvestmentManagementResponse deleteSingleData(DeleteInvestmentManagementRequest request, BillingDataChangeDTO dataChangeDTO);

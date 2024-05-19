@@ -9,6 +9,7 @@ import com.bayu.billingservice.model.InvestmentManagement;
 import com.bayu.billingservice.repository.InvestmentManagementRepository;
 import com.bayu.billingservice.service.DataChangeService;
 import com.bayu.billingservice.service.InvestmentManagementService;
+import com.bayu.billingservice.util.EmailValidator;
 import com.bayu.billingservice.util.JsonUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +36,7 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
     private final Validator validator;
     private final ObjectMapper objectMapper;
     private final InvestmentManagementMapper investmentManagementMapper;
+    private final EmailValidator emailValidator;
 
     @Override
     public boolean isCodeAlreadyExists(String code) {
@@ -77,6 +79,14 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
 
         try {
             List<String> validationErrors = new ArrayList<>();
+
+            // validation column dto
+            Errors errors = validateInvestmentManagementUsingValidator(investmentManagementDTO);
+            if (errors.hasErrors()) {
+                errors.getAllErrors().forEach(error-> validationErrors.add(error.getDefaultMessage()));
+            }
+
+            // validation code already exists
             validationCodeAlreadyExists(investmentManagementDTO.getCode(), validationErrors);
 
             dataChangeDTO.setInputId(dataChangeDTO.getInputId());
@@ -95,7 +105,6 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
             handleGeneralError(investmentManagementDTO, e, errorMessageList);
             totalDataFailed++;
         }
-
         return new InvestmentManagementResponse(totalDataSuccess, totalDataFailed, errorMessageList);
     }
 
@@ -107,21 +116,16 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
         List<ErrorMessageDTO> errorMessageList = new ArrayList<>();
 
         validateDataChangeId(approveRequest.getDataChangeId());
-        InvestmentManagementDTO investmentManagementDTO = approveRequest.getData();
         try {
             Long dataChangeId = Long.valueOf(approveRequest.getDataChangeId());
             List<String> errorMessages = new ArrayList<>();
 
+            // Mapping from data JSON DATA After to class dto InvestmentManagement
             BillingDataChangeDTO dataChangeDTO = dataChangeService.getById(dataChangeId);
+            InvestmentManagementDTO investmentManagementDTO = objectMapper.readValue(dataChangeDTO.getJsonDataAfter(), InvestmentManagementDTO.class);
 
-            InvestmentManagementDTO dto = objectMapper.readValue(dataChangeDTO.getJsonDataAfter(), InvestmentManagementDTO.class);
+            // check validation
             validationCodeAlreadyExists(investmentManagementDTO.getCode(), errorMessages);
-
-            Errors errors = validateInvestmentManagementUsingValidator(investmentManagementDTO);
-            if (errors.hasErrors()) {
-                errors.getAllErrors().forEach(objectError -> errorMessages.add(objectError.getDefaultMessage()));
-            }
-
 
             dataChangeDTO.setApproveId(approveRequest.getApproveId());
             dataChangeDTO.setApproveIPAddress(approveRequest.getApproveIPAddress());
@@ -131,7 +135,7 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
                 dataChangeService.approvalStatusIsRejected(dataChangeDTO, errorMessages);
                 totalDataFailed++;
             } else {
-                InvestmentManagement investmentManagement = investmentManagementMapper.createEntity(dto, dataChangeDTO);
+                InvestmentManagement investmentManagement = investmentManagementMapper.createEntity(investmentManagementDTO, dataChangeDTO);
                 investmentManagementRepository.save(investmentManagement);
 
                 dataChangeDTO.setDescription("Successfully approve data change and save data investment management");
@@ -141,8 +145,8 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
                 totalDataSuccess++;
             }
         } catch (Exception e) {
-                handleGeneralError(investmentManagementDTO, e, errorMessageList);
-                totalDataFailed++;
+            handleGeneralError(null, e, errorMessageList);
+            totalDataFailed++;
         }
         return new InvestmentManagementResponse(totalDataSuccess, totalDataFailed, errorMessageList);
     }
@@ -176,7 +180,7 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
     }
 
     @Override
-    public InvestmentManagementResponse updateMultipleData(CreateInvestmentManagementListRequest updateListRequest, BillingDataChangeDTO dataChangeDTO) {
+    public InvestmentManagementResponse updateMultipleData(UpdateInvestmentManagementListRequest updateListRequest, BillingDataChangeDTO dataChangeDTO) {
         log.info("Update multiple data investment management with request: {}", updateListRequest);
         dataChangeDTO.setInputId(updateListRequest.getInputId());
         dataChangeDTO.setInputIPAddress(updateListRequest.getInputIPAddress());
@@ -184,8 +188,8 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
         int totalDataFailed = 0;
         List<ErrorMessageDTO> errorMessageList = new ArrayList<>();
 
-        for (CreateInvestmentManagementDataListRequest createInvestmentManagementDataListRequest : updateListRequest.getCreateInvestmentManagementDataListRequests()) {
-            InvestmentManagementDTO investmentManagementDTO = investmentManagementMapper.mapFromDataListToDTO(createInvestmentManagementDataListRequest);
+        for (UpdateInvestmentManagementDataListRequest updateInvestmentManagementDataListRequest : updateListRequest.getUpdateInvestmentManagementDataListRequests()) {
+            InvestmentManagementDTO investmentManagementDTO = investmentManagementMapper.mapFromDataListToDTO(updateInvestmentManagementDataListRequest);
             try {
                 InvestmentManagement investmentManagement = investmentManagementRepository.findByCode(investmentManagementDTO.getCode())
                         .orElseThrow(() -> new DataNotFoundException(CODE_NOT_FOUND + investmentManagementDTO.getCode()));
@@ -212,14 +216,23 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
                                                    AtomicInteger successCounter,
                                                    AtomicInteger failedCounter) {
         try {
-            dataChangeDTO.setInputId(dataChangeDTO.getInputId());
-            dataChangeDTO.setInputIPAddress(dataChangeDTO.getInputIPAddress());
-            dataChangeDTO.setJsonDataBefore(JsonUtil.cleanedJsonData(objectMapper.writeValueAsString(investmentManagement)));
-            dataChangeDTO.setJsonDataAfter(JsonUtil.cleanedJsonData(objectMapper.writeValueAsString(investmentManagementDTO)));
-            dataChangeDTO.setEntityId(investmentManagement.getId().toString());
+            List<String> validationErrors = new ArrayList<>();
+            validationEmail(investmentManagementDTO.getEmail(), validationErrors);
 
-            dataChangeService.createChangeActionEDIT(dataChangeDTO, InvestmentManagement.class);
-            successCounter.incrementAndGet(); // Increment totalDataSuccess
+            if (!validationErrors.isEmpty()) {
+                ErrorMessageDTO errorMessageDTO = new ErrorMessageDTO(investmentManagementDTO.getCode(), validationErrors);
+                errorMessageList.add(errorMessageDTO);
+                failedCounter.incrementAndGet();
+            } else {
+                dataChangeDTO.setInputId(dataChangeDTO.getInputId());
+                dataChangeDTO.setInputIPAddress(dataChangeDTO.getInputIPAddress());
+                dataChangeDTO.setJsonDataBefore(JsonUtil.cleanedJsonData(objectMapper.writeValueAsString(investmentManagement)));
+                dataChangeDTO.setJsonDataAfter(JsonUtil.cleanedJsonData(objectMapper.writeValueAsString(investmentManagementDTO)));
+                dataChangeDTO.setEntityId(investmentManagement.getId().toString());
+
+                dataChangeService.createChangeActionEDIT(dataChangeDTO, InvestmentManagement.class);
+                successCounter.incrementAndGet(); // Increment totalDataSuccess
+            }
         } catch (Exception e) {
             handleGeneralError(investmentManagementDTO, e, errorMessageList);
             failedCounter.incrementAndGet(); // Increment totalDataFailed
@@ -234,16 +247,21 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
         List<ErrorMessageDTO> errorMessageList = new ArrayList<>();
 
         validateDataChangeId(approveRequest.getDataChangeId());
-        InvestmentManagementDTO investmentManagementDTO = approveRequest.getData();
+        // InvestmentManagementDTO investmentManagementDTO = approveRequest.getData(); // data ini gak digunakan, karena kita ambil saja data dari JSON After data change
         try {
-            Long dataChangeId = Long.valueOf(approveRequest.getDataChangeId());
             List<String> validationErrors = new ArrayList<>();
+            Long dataChangeId = Long.valueOf(approveRequest.getDataChangeId());
 
-            Errors errors = validateInvestmentManagementUsingValidator(investmentManagementDTO);
-            if (errors.hasErrors()) {
-                errors.getAllErrors().forEach(error -> validationErrors.add(error.getDefaultMessage()));
-            }
+            // JANGAN LAKUKAN VALIDATION COLUMN DTO PADA SAAT APPROVE
+            // Karena validation column harusnya dilakukan saat insert data change
+            // Mapping from data JSON DATA After to class dto InvestmentManagement
+            BillingDataChangeDTO dataChangeDTO = dataChangeService.getById(dataChangeId);
 
+            // kita dapat object dto dari JSON Data after
+            InvestmentManagementDTO investmentManagementDTO = objectMapper.readValue(dataChangeDTO.getJsonDataAfter(), InvestmentManagementDTO.class);
+            log.info("Data dari json after: {}", investmentManagementDTO);
+
+            // kita get entity
             InvestmentManagement investmentManagement = investmentManagementRepository.findByCode(investmentManagementDTO.getCode())
                     .orElseThrow(() -> new DataNotFoundException(CODE_NOT_FOUND + investmentManagementDTO.getCode()));
 
@@ -251,8 +269,9 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
             investmentManagementMapper.mapObjects(investmentManagementDTO, investmentManagement);
             log.info("Investment Management after copy properties: {}", investmentManagement);
 
+            validationEmail(investmentManagement.getEmail(), validationErrors);
+
             // Retrieve and set billing data change
-            BillingDataChangeDTO dataChangeDTO = dataChangeService.getById(dataChangeId);
             dataChangeDTO.setApproveId(approveRequest.getApproveId());
             dataChangeDTO.setApproveIPAddress(approveRequest.getApproveIPAddress());
             dataChangeDTO.setEntityId(investmentManagement.getId().toString());
@@ -271,7 +290,7 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
                 totalDataSuccess++;
             }
         } catch (Exception e) {
-            handleGeneralError(investmentManagementDTO, e, errorMessageList);
+            handleGeneralError(null, e, errorMessageList);
             totalDataFailed++;
         }
         return new InvestmentManagementResponse(totalDataSuccess, totalDataFailed, errorMessageList);
@@ -370,6 +389,13 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
         Errors errors = new BeanPropertyBindingResult(dto, "investmentManagementDTO");
         validator.validate(dto, errors);
         return errors;
+    }
+
+
+    private void validationEmail(String email, List<String> validationErrors) {
+        if (!emailValidator.isValidEmail(email)) {
+            validationErrors.add("Email is not valid: " + email);
+        }
     }
 
     private void validationCodeAlreadyExists(String code, List<String> errorMessages) {
