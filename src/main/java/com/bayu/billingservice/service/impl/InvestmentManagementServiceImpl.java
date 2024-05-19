@@ -89,11 +89,11 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
             // validation code already exists
             validationCodeAlreadyExists(investmentManagementDTO.getCode(), validationErrors);
 
-            dataChangeDTO.setInputId(dataChangeDTO.getInputId());
-            dataChangeDTO.setInputIPAddress(dataChangeDTO.getInputIPAddress());
-            dataChangeDTO.setJsonDataAfter(JsonUtil.cleanedJsonData(objectMapper.writeValueAsString(investmentManagementDTO)));
-
             if (validationErrors.isEmpty()) {
+                dataChangeDTO.setInputId(dataChangeDTO.getInputId());
+                dataChangeDTO.setInputIPAddress(dataChangeDTO.getInputIPAddress());
+                dataChangeDTO.setJsonDataAfter(JsonUtil.cleanedJsonData(objectMapper.writeValueAsString(investmentManagementDTO)));
+
                 dataChangeService.createChangeActionADD(dataChangeDTO, InvestmentManagement.class);
                 totalDataSuccess++;
             } else {
@@ -118,21 +118,21 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
         validateDataChangeId(approveRequest.getDataChangeId());
         try {
             Long dataChangeId = Long.valueOf(approveRequest.getDataChangeId());
-            List<String> errorMessages = new ArrayList<>();
+            List<String> validationErrors = new ArrayList<>();
 
             // Mapping from data JSON DATA After to class dto InvestmentManagement
             BillingDataChangeDTO dataChangeDTO = dataChangeService.getById(dataChangeId);
             InvestmentManagementDTO investmentManagementDTO = objectMapper.readValue(dataChangeDTO.getJsonDataAfter(), InvestmentManagementDTO.class);
 
             // check validation
-            validationCodeAlreadyExists(investmentManagementDTO.getCode(), errorMessages);
+            validationCodeAlreadyExists(investmentManagementDTO.getCode(), validationErrors);
 
             dataChangeDTO.setApproveId(approveRequest.getApproveId());
             dataChangeDTO.setApproveIPAddress(approveRequest.getApproveIPAddress());
 
-            if (!errorMessages.isEmpty()) {
+            if (!validationErrors.isEmpty()) {
                 dataChangeDTO.setJsonDataAfter(JsonUtil.cleanedJsonData(objectMapper.writeValueAsString(investmentManagementDTO)));
-                dataChangeService.approvalStatusIsRejected(dataChangeDTO, errorMessages);
+                dataChangeService.approvalStatusIsRejected(dataChangeDTO, validationErrors);
                 totalDataFailed++;
             } else {
                 InvestmentManagement investmentManagement = investmentManagementMapper.createEntity(investmentManagementDTO, dataChangeDTO);
