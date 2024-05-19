@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface FundGeneratePDFService {
 
-    List<BillingFundDTO> getAll();
+//    List<BillingFundDTO> getAll();
 
     String generatePDF(String category, String monthYear);
 

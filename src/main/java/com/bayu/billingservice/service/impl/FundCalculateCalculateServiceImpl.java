@@ -76,15 +76,12 @@ public class FundCalculateCalculateServiceImpl implements FundCalculateService {
             List<Customer> billingCustomerList = customerService.getAllByBillingCategoryAndBillingType(billingCategory, billingType);
 
             for (FeeReportRequest feeReportRequest : request) {
-                // Get AID (portfolio code)
                 String aid = feeReportRequest.getPortfolioCode();
                 BigDecimal customerFee = feeReportRequest.getCustomerFee();
 
                 for (Customer billingCustomer : billingCustomerList) {
                     if (billingCustomer.getCustomerCode().equalsIgnoreCase(aid)) {
                         String investmentManagementCode = billingCustomer.getMiCode();
-
-                        // ambil data investment management
                         InvestmentManagementDTO billingMIDTO = investmentManagementService.getByCode(investmentManagementCode);
 
                         List<SkTransaction> skTransactionList = skTransactionService.getAllByAidAndMonthAndYear(aid, month, year);
@@ -166,7 +163,7 @@ public class FundCalculateCalculateServiceImpl implements FundCalculateService {
                 }
             }
 
-            List<String> numberList = billingNumberService.generateNumberList(billingFundList.size(), month, year);
+            List<String> numberList = numberService.generateNumberList(billingFundList.size(), month, year);
 
             int billingFundListSize = billingFundList.size();
             for (int i = 0; i < billingFundListSize; i++) {
@@ -176,13 +173,13 @@ public class FundCalculateCalculateServiceImpl implements FundCalculateService {
             }
 
             List<BillingFund> billingFundListSaved = billingFundRepository.saveAll(billingFundList);
-            billingNumberService.saveAll(numberList);
+            numberService.saveAll(numberList);
 
             log.info("Finished calculate Billing Fund with month '{}' and year '{}'", month, year);
             return "Successfully calculated Billing Funds with a total : " + billingFundListSaved.size();
         } catch (Exception e) {
-            log.error("Error when calculate Billing Funds: {}", e.getMessage(), e);
-            throw new CalculateBillingException("Error when calculate Billing Funds: " + e);
+            log.error("Error when calculate Billing Funds : " + e.getMessage(), e);
+            throw new CalculateBillingException("Error when calculate Billing Funds : " + e.getMessage());
         }
     }
 

@@ -52,18 +52,18 @@ public class FundController {
         return ResponseEntity.ok().body(response);
     }
 
-    @GetMapping(path = "/all")
-    public ResponseEntity<ResponseDTO<List<BillingFundDTO>>> getAll() {
-        List<BillingFundDTO> billingFundDTOList = fundGeneratePDFService.getAll();
-
-        ResponseDTO<List<BillingFundDTO>> response = ResponseDTO.<List<BillingFundDTO>>builder()
-                .code(HttpStatus.OK.value())
-                .message(HttpStatus.OK.getReasonPhrase())
-                .payload(billingFundDTOList)
-                .build();
-
-        return ResponseEntity.ok().body(response);
-    }
+//    @GetMapping(path = "/all")
+//    public ResponseEntity<ResponseDTO<List<BillingFundDTO>>> getAll() {
+//        List<BillingFundDTO> billingFundDTOList = fundGeneratePDFService.getAll();
+//
+//        ResponseDTO<List<BillingFundDTO>> response = ResponseDTO.<List<BillingFundDTO>>builder()
+//                .code(HttpStatus.OK.value())
+//                .message(HttpStatus.OK.getReasonPhrase())
+//                .payload(billingFundDTOList)
+//                .build();
+//
+//        return ResponseEntity.ok().body(response);
+//    }
 
     @DeleteMapping
     public ResponseEntity<ResponseDTO<String>> deleteAll() {

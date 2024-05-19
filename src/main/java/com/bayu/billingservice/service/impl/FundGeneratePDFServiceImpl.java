@@ -44,11 +44,11 @@ public class FundGeneratePDFServiceImpl implements FundGeneratePDFService {
     private final PdfGenerator pdfGenerator;
     private final ConvertDateUtil convertDateUtil;
 
-    @Override
-    public List<BillingFundDTO> getAll() {
-        List<BillingFund> billingFundList = billingFundRepository.findAll();
-        return mapToDTOList(billingFundList);
-    }
+//    @Override
+//    public List<BillingFundDTO> getAll() {
+//        List<BillingFund> billingFundList = billingFundRepository.findAll();
+//        return mapToDTOList(billingFundList);
+//    }
 
     @Override
     public String generatePDF(String category, String monthYear) {
@@ -63,9 +63,9 @@ public class FundGeneratePDFServiceImpl implements FundGeneratePDFService {
                     category, month, year, approvalStatus
             );
 
-            List<BillingFundDTO> fundDTOList = mapToDTOList(billingFundList);
+//            List<BillingFundDTO> fundDTOList = mapToDTOList(billingFundList);
 
-            generateAndSavePDFStatements(fundDTOList);
+//            generateAndSavePDFStatements(fundDTOList);
 
             log.info("Finished generate PDF Billing Fund");
             return "Successfully created a PDF file for Billing Fund";
@@ -164,43 +164,6 @@ public class FundGeneratePDFServiceImpl implements FundGeneratePDFService {
 
     private String generateFileName(String investmentManagementName, String aid, String yearMonth) {
         return investmentManagementName + "_" + aid + "_" + yearMonth + ".pdf";
-    }
-
-    private static BillingFundDTO mapToDTO(BillingFund billingFund) {
-        return BillingFundDTO.builder()
-                .approvalStatus(billingFund.getApprovalStatus().getStatus())
-                .aid(billingFund.getCustomerCode())
-                .month(billingFund.getMonth())
-                .year(String.valueOf(billingFund.getYear()))
-                .billingNumber(billingFund.getBillingNumber())
-                .billingPeriod(billingFund.getBillingPeriod())
-                .billingStatementDate(billingFund.getBillingStatementDate())
-                .billingPaymentDueDate(billingFund.getBillingPaymentDueDate())
-                .billingCategory(billingFund.getBillingCategory())
-                .billingType(billingFund.getBillingType())
-                .billingTemplate(billingFund.getBillingTemplate())
-                .investmentManagementName(billingFund.getInvestmentManagementName())
-                .accountName(billingFund.getAccountName())
-                .accountNumber(billingFund.getAccount())
-                .customerFee(ConvertBigDecimalUtil.formattedBigDecimalToString(billingFund.getCustomerFee()))
-                .accrualCustodialFee(ConvertBigDecimalUtil.formattedBigDecimalToString(billingFund.getAccrualCustodialFee()))
-                .bis4ValueFrequency(String.valueOf(billingFund.getBis4ValueFrequency()))
-                .bis4TransactionFee(ConvertBigDecimalUtil.formattedBigDecimalToString(billingFund.getBis4TransactionFee()))
-                .bis4AmountDue(ConvertBigDecimalUtil.formattedBigDecimalToString(billingFund.getBis4AmountDue()))
-                .subTotal(ConvertBigDecimalUtil.formattedBigDecimalToString(billingFund.getSubTotal()))
-                .vatFee(ConvertBigDecimalUtil.formattedVatFee(billingFund.getVatFee()))
-                .vatAmountDue(ConvertBigDecimalUtil.formattedBigDecimalToString(billingFund.getVatAmountDue()))
-                .kseiValueFrequency(String.valueOf(billingFund.getKseiValueFrequency()))
-                .kseiTransactionFee(ConvertBigDecimalUtil.formattedBigDecimalToString(billingFund.getKseiTransactionFee()))
-                .kseiAmountDue(ConvertBigDecimalUtil.formattedBigDecimalToString(billingFund.getKseiAmountDue()))
-                .totalAmountDue(ConvertBigDecimalUtil.formattedBigDecimalToString(billingFund.getTotalAmountDue()))
-                .build();
-    }
-
-    private static List<BillingFundDTO> mapToDTOList(List<BillingFund> billingFundList) {
-        return billingFundList.stream()
-                .map(FundGeneratePDFServiceImpl::mapToDTO)
-                .toList();
     }
 
 }
