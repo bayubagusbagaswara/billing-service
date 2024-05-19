@@ -5,7 +5,7 @@ import lombok.Getter;
 @Getter
 public enum BillingTemplate {
 
-    FUND_TEMPLATE_1("FUND_TEMPLATE_1"),
+    FUND_TEMPLATE("FUND_TEMPLATE"),
     CORE_TEMPLATE_1("CORE_TEMPLATE_1"),
     CORE_TEMPLATE_2("CORE_TEMPLATE_2"),
     CORE_TEMPLATE_3("CORE_TEMPLATE_3"),

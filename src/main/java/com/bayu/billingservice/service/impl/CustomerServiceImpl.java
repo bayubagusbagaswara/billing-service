@@ -16,6 +16,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.Errors;
@@ -54,9 +55,9 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public boolean isCodeAlreadyExists(String code, String subCode) {
-        boolean existStatus = customerRepository.existsCustomerByCustomerCodeAndSubCode(code, subCode);
-        log.info("Exist data customer status with code: {}, and sub code: {} is {}", code, subCode, existStatus);
-        return existStatus;
+        int count = customerRepository.countByCustomerCodeAndOptionalSubCode(code, subCode);
+        log.info("Exist data customer status with code: {}, and sub code: {} is {}", code, subCode, count);
+        return count > 0;
     }
 
     @Override
@@ -95,7 +96,9 @@ public class CustomerServiceImpl implements CustomerService {
         List<ErrorMessageDTO> errorMessageDTOList = new ArrayList<>();
 
         for (CreateCustomerDataListRequest createCustomerDataListRequest : request.getCreateCustomerDataListRequests()) {
+            log.info("Before mapper: {}", createCustomerDataListRequest);
             CustomerDTO customerDTO = customerMapper.mapFromDataListToDTO(createCustomerDataListRequest);
+            log.info("Mapper customer dto: {}", customerDTO);
             CustomerResponse response = processCustomerCreation(customerDTO, dataChangeDTO);
             totalDataSuccess += response.getTotalDataSuccess();
             totalDataFailed += response.getTotalDataFailed();
@@ -126,11 +129,12 @@ public class CustomerServiceImpl implements CustomerService {
                 validationSellingAgentCodeAlreadyExists(customerDTO.getSellingAgent(), validationErrors);
             }
 
+            log.info("Customer DTO: {}", customerDTO);
             // validation enum
             validateBillingEnums(customerDTO.getBillingCategory(), customerDTO.getBillingType(), customerDTO.getBillingTemplate(), customerDTO.getCurrency(), validationErrors);
 
             // validation GL Cost Center Debit
-            validateGLForCostCenterDebit(customerDTO.isGl(), customerDTO.getDebitTransfer(), validationErrors);
+            validateGLForCostCenterDebit(customerDTO.getGl(), customerDTO.getDebitTransfer(), validationErrors);
 
             // validation billing template
             validationBillingTemplate(customerDTO.getBillingCategory(), customerDTO.getBillingType(), customerDTO.getSubCode(), validationErrors);
@@ -169,7 +173,6 @@ public class CustomerServiceImpl implements CustomerService {
 
         validateDataChangeId(approveRequest.getDataChangeId());
 
-        // CustomerDTO customerDTO = approveRequest.getData();
         try {
             Long dataChangeId = Long.valueOf(approveRequest.getDataChangeId());
             List<String> validationErrors = new ArrayList<>();
@@ -189,7 +192,7 @@ public class CustomerServiceImpl implements CustomerService {
             validateBillingEnums(customerDTO.getBillingCategory(), customerDTO.getBillingType(), customerDTO.getBillingTemplate(), customerDTO.getCurrency(), validationErrors);
 
             // validation GL Cost Center Debit
-            validateGLForCostCenterDebit(customerDTO.isGl(), customerDTO.getDebitTransfer(), validationErrors);
+            validateGLForCostCenterDebit(customerDTO.getGl(), customerDTO.getDebitTransfer(), validationErrors);
 
             // validation billing template dengan cara get billing template service by category dan type
             validationBillingTemplate(customerDTO.getBillingCategory(), customerDTO.getBillingType(), customerDTO.getSubCode(), validationErrors);
@@ -240,8 +243,13 @@ public class CustomerServiceImpl implements CustomerService {
         dataChangeDTO.setInputIPAddress(updateCreateCustomerListRequest.getInputIPAddress());
         List<CustomerDTO> customerDTOList = new ArrayList<>();
         for (UpdateCustomerDataListRequest updateCustomerDataListRequest : updateCreateCustomerListRequest.getUpdateCustomerDataListRequests()) {
-          customerDTOList.add(customerMapper.mapFromCreateRequestToDto(updateCustomerDataListRequest));
+            if (updateCustomerDataListRequest.getGl() == null) {
+                customerDTOList.add(customerMapper.mapWithNullGl(updateCustomerDataListRequest));
+            } else {
+                customerDTOList.add(customerMapper.mapFromUpdateRequestToDto(updateCustomerDataListRequest));
+            }
         }
+        log.info("Customer DTO List: {}", customerDTOList);
         return processUpdateForCustomerList(customerDTOList, dataChangeDTO);
     }
 
@@ -253,32 +261,42 @@ public class CustomerServiceImpl implements CustomerService {
         for (CustomerDTO customerDTO : customerDTOList) {
             try {
                 List<String> validationErrors = new ArrayList<>();
-                Customer customer = customerRepository.findByCustomerCodeAndOptionalSubCode(customerDTO.getCustomerCode(), customerDTO.getSubCode())
+
+                log.info("Customer DTO want to update: {}", customerDTO);
+
+                Customer originalCustomer = customerRepository.findByCustomerCodeAndOptionalSubCode(customerDTO.getCustomerCode(), customerDTO.getSubCode())
                         .orElseThrow(() -> new DataNotFoundException("Customer not found with customer code: " + customerDTO.getCustomerCode() + ", and sub code: " + customerDTO.getSubCode()));
 
-                customerMapper.mapObjects(customerDTO, customer);
-                log.info("Update mapper customer DTO: {}", customerDTO); // harapannya ini adalah data yg ingin diupdate
-                log.info("Update mapper from customerDTO to customer entity: {}", customer); // ini adalaha data gabungan
+                log.info("Original Customer from database: {}", originalCustomer);
 
-                // validation MI code (sudah pasti, karena kalau data mi code yg baru ternyata tidak ditemukan di database, maka akan gagal insert data change)
-                if (!customer.getMiCode().isEmpty()) {
-                    InvestmentManagementDTO investmentManagementDTO = investmentManagementService.getByCode(customer.getMiCode());
-                    customer.setMiCode(investmentManagementDTO.getCode());
-                }
+                // Membuat salinan dari originalCustomer untuk menghindari modifikasi data yang ada di database
+                Customer clonedCustomer = new Customer();
+                BeanUtils.copyProperties(originalCustomer, clonedCustomer);
+
+                // DISINI DATA CUSTOMER SUDAH KECAMPUR DENGAN DTO
+                customerMapper.mapObjects(customerDTO, clonedCustomer);
+
+                log.info("Customer DTO want to update: {}", customerDTO);
+
+                log.info("Replace between Customer DTO to Customer Entity: {}", clonedCustomer);
+
+                InvestmentManagementDTO investmentManagementDTO = investmentManagementService.getByCode(customerDTO.getMiCode());
+                customerDTO.setMiCode(investmentManagementDTO.getCode());
+                customerDTO.setMiName(investmentManagementDTO.getName());
 
                 // validation selling agent
-                if (!StringUtils.isEmpty(customer.getSellingAgent())) {
-                    validationSellingAgentCodeAlreadyExists(customer.getSellingAgent(), validationErrors);
+                if (!StringUtils.isEmpty(clonedCustomer.getSellingAgent())) {
+                    validationSellingAgentCodeAlreadyExists(clonedCustomer.getSellingAgent(), validationErrors);
                 }
 
+                // validation GL
+                validateGLForCostCenterDebit(clonedCustomer.isGl(), clonedCustomer.getDebitTransfer(), validationErrors);
+
+                // validation billing template
+                validationBillingTemplate(clonedCustomer.getBillingCategory(), clonedCustomer.getBillingType(), clonedCustomer.getSubCode(), validationErrors);
+
                 // validation enum
-                validateBillingEnums(customer.getBillingCategory(), customer.getBillingType(), customer.getBillingTemplate(), customer.getCurrency(), validationErrors);
-
-                // validation GL Cost Center Debit
-                validateGLForCostCenterDebit(customer.isGl(), customer.getDebitTransfer(), validationErrors);
-
-                // validation billing template dengan cara get billing template service by category dan type
-                validationBillingTemplate(customer.getBillingCategory(), customer.getBillingType(), customer.getSubCode(), validationErrors);
+                validateBillingEnums(clonedCustomer.getBillingCategory(), clonedCustomer.getBillingType(), clonedCustomer.getBillingTemplate(), clonedCustomer.getCurrency(), validationErrors);
 
                 if (!validationErrors.isEmpty()) {
                     ErrorMessageDTO errorMessageDTO = ErrorMessageDTO.builder()
@@ -288,7 +306,7 @@ public class CustomerServiceImpl implements CustomerService {
                     errorMessageList.add(errorMessageDTO);
                     totalDataFailed++;
                 } else {
-                    updateCustomerAndDataChange(customer, customerDTO, dataChangeDTO);
+                    updateCustomerAndDataChange(originalCustomer, customerDTO, dataChangeDTO);
                     totalDataSuccess++;
                 }
             } catch (Exception e) {
@@ -317,41 +335,30 @@ public class CustomerServiceImpl implements CustomerService {
 
         validateDataChangeId(approveRequest.getDataChangeId());
 
-        // CustomerDTO customerDTO = approveRequest.getData();
         try {
             List<String> validationErrors = new ArrayList<>();
             Long dataChangeId = Long.valueOf(approveRequest.getDataChangeId());
 
             BillingDataChangeDTO dataChangeDTO = dataChangeService.getById(dataChangeId);
 
+            // Hasil JSON After
             CustomerDTO customerDTO = objectMapper.readValue(dataChangeDTO.getJsonDataAfter(), CustomerDTO.class);
-
-            // Validation selling agent
-            if (!StringUtils.isEmpty(customerDTO.getSellingAgent())) {
-                validationSellingAgentCodeAlreadyExists(customerDTO.getSellingAgent(), validationErrors);
-            }
-
-            // Validation ENUM
-            validateBillingEnums(customerDTO.getBillingCategory(), customerDTO.getBillingType(), customerDTO.getBillingType(), customerDTO.getCurrency(), validationErrors);
-
-            // validation Cost Center Debit
-            validateGLForCostCenterDebit(customerDTO.isGl(), customerDTO.getDebitTransfer(), validationErrors);
-
-            // validation billing template dengan cara get billing template service by category dan type
-            validationBillingTemplate(customerDTO.getBillingCategory(), customerDTO.getBillingType(), customerDTO.getSubCode(), validationErrors);
+            log.info("Hasil baca JSON Data After: {}", customerDTO); // tidak semua masuk disini
 
             // Validation MI code dan get name value
             InvestmentManagementDTO investmentManagementDTO = investmentManagementService.getByCode(customerDTO.getMiCode());
             customerDTO.setMiCode(investmentManagementDTO.getCode());
-            customerDTO.setMiName(investmentManagementDTO.getCode());
+            customerDTO.setMiName(investmentManagementDTO.getName());
+
             Customer customer = customerRepository.findByCustomerCode(customerDTO.getCustomerCode())
                     .orElseThrow(() -> new DataNotFoundException(CODE_NOT_FOUND + customerDTO.getCustomerCode()));
 
             customerMapper.mapObjects(customerDTO, customer);
             log.info("Customer after copy properties: {}", customer);
 
-            // Retrieve and set billing data change
+            // validasi hanya bisa dilakukan terhadap object customer hasil mapping data
 
+            // Retrieve and set billing data change
             dataChangeDTO.setApproveId(approveRequest.getApproveId());
             dataChangeDTO.setApproveIPAddress(approveRequest.getApproveIPAddress());
             dataChangeDTO.setEntityId(customer.getId().toString());
@@ -489,17 +496,17 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     private void validateBillingEnums(String billingCategory, String billingType, String billingTemplate, String currency, List<String> validationErrors) {
-        if (!EnumValidator.validateEnumBillingCategory(billingCategory)) {
+        if (EnumValidator.validateEnumBillingCategory(billingCategory)) {
             validationErrors.add("Billing Category enum not found with value: " + billingCategory);
         }
-        if (!EnumValidator.validateEnumBillingType(billingType)) {
+        if (EnumValidator.validateEnumBillingType(billingType)) {
             validationErrors.add("Billing Type enum not found with value: " + billingType);
         }
-        if (!EnumValidator.validateEnumBillingTemplate(billingTemplate)) {
-            validationErrors.add("Billing Template enum not found with value '" + billingTemplate);
+        if (EnumValidator.validateEnumBillingTemplate(billingTemplate)) {
+            validationErrors.add("Billing Template enum not found with value: " + billingTemplate);
         }
-        if (!EnumValidator.validateEnumCurrency(currency)) {
-            validationErrors.add("Currency enum not found with value '" + currency);
+        if (EnumValidator.validateEnumCurrency(currency)) {
+            validationErrors.add("Currency enum not found with value: " + currency);
         }
     }
 

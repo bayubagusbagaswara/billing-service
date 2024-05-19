@@ -73,5 +73,5 @@ public class UpdateCustomerRequest {
 
     private String sellingAgent;
 
-    private boolean gl;
+    private Boolean gl;
 }

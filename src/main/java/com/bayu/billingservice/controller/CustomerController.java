@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.awt.*;
 import java.util.List;
 
 @Slf4j
@@ -116,6 +117,18 @@ public class CustomerController {
                 .message(HttpStatus.OK.getReasonPhrase())
                 .payload(updateCustomerListResponse)
                 .build();
+        return ResponseEntity.ok(response);
+    }
+
+    @PutMapping(path = "/update/approve")
+    public ResponseEntity<ResponseDTO<CustomerResponse>> updateApprove(@RequestBody CustomerApproveRequest request) {
+        CustomerResponse customerResponse = customerService.updateSingleApprove(request);
+        ResponseDTO<CustomerResponse> response = ResponseDTO.<CustomerResponse>builder()
+                .code(HttpStatus.OK.value())
+                .message(HttpStatus.OK.getReasonPhrase())
+                .payload(customerResponse)
+                .build();
+
         return ResponseEntity.ok(response);
     }
 

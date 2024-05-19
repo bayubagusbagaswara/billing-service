@@ -5,14 +5,13 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
-@EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "billing_template")
 @Data
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class BillingTemplate extends Approval {
+public class BillingTemplate {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -108,7 +109,7 @@ public class CreateCustomerDataListRequest {
     private String sellingAgent;
 
     @JsonProperty(value = "Is GL")
-    @NotBlank(message = "Is GL cannot be empty")
-    private boolean gl;
+    @NotNull(message = "Is GL cannot be empty")
+    private Boolean gl;
 
 }

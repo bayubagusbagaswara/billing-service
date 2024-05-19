@@ -159,7 +159,7 @@ public class FundGeneratePDFServiceImpl implements FundGeneratePDFService {
         context.setVariable("imageUrlHeader", imageUrlHeader);
         context.setVariable("imageUrlFooter", imageUrlFooter);
 
-        return templateEngine.process(BillingTemplate.FUND_TEMPLATE_1.getValue(), context);
+        return templateEngine.process(BillingTemplate.FUND_TEMPLATE.getValue(), context);
     }
 
     private String generateFileName(String investmentManagementName, String aid, String yearMonth) {

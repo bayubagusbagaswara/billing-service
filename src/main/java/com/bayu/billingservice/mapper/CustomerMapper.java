@@ -1,8 +1,6 @@
 package com.bayu.billingservice.mapper;
 
-import com.bayu.billingservice.dto.customer.CreateCustomerRequest;
 import com.bayu.billingservice.dto.customer.CustomerDTO;
-import com.bayu.billingservice.dto.customer.UpdateCustomerRequest;
 import com.bayu.billingservice.dto.datachange.BillingDataChangeDTO;
 import com.bayu.billingservice.model.Customer;
 import com.bayu.billingservice.model.enumerator.ApprovalStatus;
@@ -10,8 +8,6 @@ import com.bayu.billingservice.util.ConvertDateUtil;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
 
 @Component
 public class CustomerMapper extends BaseMapper<Customer, CustomerDTO> {
@@ -60,4 +56,10 @@ public class CustomerMapper extends BaseMapper<Customer, CustomerDTO> {
         entity.setApproveDate(convertDateUtil.getDate());
     }
 
+    public CustomerDTO mapWithNullGl(Object updateRequest) {
+        CustomerDTO dto = modelMapper.map(updateRequest, getDtoClass());
+        // Set nilai GL dalam DTO menjadi null
+        dto.setGl(null);
+        return dto;
+    }
 }

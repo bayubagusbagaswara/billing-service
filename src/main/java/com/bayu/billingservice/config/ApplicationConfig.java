@@ -1,9 +1,12 @@
 package com.bayu.billingservice.config;
 
+import com.bayu.billingservice.dto.customer.CustomerDTO;
+import com.bayu.billingservice.model.Customer;
 import org.modelmapper.AbstractConverter;
 import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
+import org.modelmapper.spi.MappingContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -27,6 +30,13 @@ public class ApplicationConfig {
 
         // Konfigurasi konversi kustom untuk BigDecimal to formatted String
         // modelMapper.addConverter(bigDecimalToStringConverter());
+
+        modelMapper.typeMap(Customer.class, CustomerDTO.class)
+                .addMappings(mapper -> {
+                    mapper.when(conditions -> conditions.getSource() != null && conditions.getDestination() == null)
+                            .using(booleanConverter())
+                            .map(Customer::isGl, CustomerDTO::setGl);
+                });
 
         return modelMapper;
     }
@@ -57,6 +67,19 @@ public class ApplicationConfig {
                     return decimalFormat.format(value);
                 }
             }
+        };
+    }
+
+    @Bean
+    public Converter<Boolean, Boolean> booleanConverter() {
+        return context -> {
+            // Memeriksa jika nilai dari DTO adalah null
+            if (context.getSource() == null) {
+                // Mengembalikan nilai dari database jika nilai DTO adalah null
+                return context.getDestination();
+            }
+            // Mengembalikan nilai dari DTO jika tidak null
+            return context.getSource();
         };
     }
 }

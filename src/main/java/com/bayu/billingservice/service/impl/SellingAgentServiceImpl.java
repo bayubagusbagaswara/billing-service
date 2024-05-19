@@ -19,6 +19,8 @@ public class SellingAgentServiceImpl implements SellingAgentService {
 
     @Override
     public boolean isCodeAlreadyExists(String sellingAgentCode) {
+//        Integer count = sellingAgentRepository.countByCode(sellingAgentCode);
+//        return count != null && count > 0;
         return sellingAgentRepository.existsByCode(sellingAgentCode);
     }
 

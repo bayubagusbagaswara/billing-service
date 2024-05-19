@@ -4,6 +4,7 @@ import com.bayu.billingservice.dto.approval.ApprovalDTO;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
 
@@ -85,7 +86,6 @@ public class CustomerDTO extends ApprovalDTO {
 
     private String sellingAgent;
 
-    @NotBlank(message = "Is GL cannot be empty")
-    private boolean gl;
+    private Boolean gl;
 
 }
