@@ -25,6 +25,7 @@ import java.util.List;
 public class SfValRgMonthlyServiceImpl implements SfValRgMonthlyService {
 
     private final SfValRgMonthlyRepository sfValRgMonthlyRepository;
+    private final ConvertDateUtil convertDateUtil;
 
     @Transactional
     @Override
@@ -37,7 +38,7 @@ public class SfValRgMonthlyServiceImpl implements SfValRgMonthlyService {
                 throw new DataNotFoundException("[SfVal RG Monthly] File not found: " + filePath);
             }
 
-            String[] monthFormat = ConvertDateUtil.convertToYearMonthFormat(monthYear);
+            String[] monthFormat = convertDateUtil.convertToYearMonthFormat(monthYear);
             String monthName = monthFormat[0];
             int year = Integer.parseInt(monthFormat[1]);
             sfValRgMonthlyRepository.deleteByMonthAndYearNative(monthName, year);
