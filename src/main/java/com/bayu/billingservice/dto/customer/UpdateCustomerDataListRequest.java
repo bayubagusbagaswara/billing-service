@@ -6,12 +6,15 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * tidak WAJIB ada annotation validation, hanya code yg wajib diisi
+ */
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class CustomerDataListRequest {
+public class UpdateCustomerDataListRequest {
 
     private String customerCode;
     private String subCode;
@@ -36,5 +39,4 @@ public class CustomerDataListRequest {
     private String kseiSafeCode;
     private String sellingAgent;
     private boolean gl;
-
 }
