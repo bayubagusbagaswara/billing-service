@@ -112,7 +112,7 @@ public class CustomerServiceImpl implements CustomerService {
         try {
             List<String> validationErrors = new ArrayList<>();
 
-            // validation column
+            // validation column dto
             Errors errors = validateCustomerUsingValidator(customerDTO);
             if (errors.hasErrors()) {
                 errors.getAllErrors().forEach(error -> validationErrors.add(error.getDefaultMessage()));
@@ -169,15 +169,13 @@ public class CustomerServiceImpl implements CustomerService {
 
         validateDataChangeId(approveRequest.getDataChangeId());
 
-        CustomerDTO customerDTO = approveRequest.getData();
+        // CustomerDTO customerDTO = approveRequest.getData();
         try {
+            Long dataChangeId = Long.valueOf(approveRequest.getDataChangeId());
             List<String> validationErrors = new ArrayList<>();
 
-            // validation column not empty
-            Errors errors = validateCustomerUsingValidator(customerDTO);
-            if (errors.hasErrors()) {
-                errors.getAllErrors().forEach(error -> validationErrors.add(error.getDefaultMessage()));
-            }
+            BillingDataChangeDTO dataChangeDTO = dataChangeService.getById(dataChangeId);
+            CustomerDTO customerDTO = objectMapper.readValue(dataChangeDTO.getJsonDataAfter(), CustomerDTO.class);
 
             // validation customer code and cub code
             validationCustomerCodeAlreadyExists(customerDTO.getCustomerCode(), customerDTO.getSubCode(), validationErrors);
@@ -201,8 +199,7 @@ public class CustomerServiceImpl implements CustomerService {
             customerDTO.setMiCode(investmentManagementDTO.getCode());
             customerDTO.setMiName(investmentManagementDTO.getName());
 
-            // get data change by id
-            BillingDataChangeDTO dataChangeDTO = dataChangeService.getById(Long.valueOf(approveRequest.getDataChangeId()));
+            // set data approval data change
             dataChangeDTO.setApproveId(approveRequest.getApproveId());
             dataChangeDTO.setApproveIPAddress(approveRequest.getApproveIPAddress());
 
@@ -221,7 +218,7 @@ public class CustomerServiceImpl implements CustomerService {
                 totalDataSuccess++;
             }
         } catch (Exception e) {
-            handleGeneralError(customerDTO, e, errorMessageDTOList);
+            handleGeneralError(null, e, errorMessageDTOList);
             totalDataFailed++;
         }
         return new CustomerResponse(totalDataSuccess, totalDataFailed, errorMessageDTOList);
@@ -260,8 +257,8 @@ public class CustomerServiceImpl implements CustomerService {
                         .orElseThrow(() -> new DataNotFoundException("Customer not found with customer code: " + customerDTO.getCustomerCode() + ", and sub code: " + customerDTO.getSubCode()));
 
                 customerMapper.mapObjects(customerDTO, customer);
-                log.info("Update mapper customer DTO: {}", customerDTO);
-                log.info("Update mapper from customerDTO to customer entity: {}", customer);
+                log.info("Update mapper customer DTO: {}", customerDTO); // harapannya ini adalah data yg ingin diupdate
+                log.info("Update mapper from customerDTO to customer entity: {}", customer); // ini adalaha data gabungan
 
                 // validation MI code (sudah pasti, karena kalau data mi code yg baru ternyata tidak ditemukan di database, maka akan gagal insert data change)
                 if (!customer.getMiCode().isEmpty()) {
@@ -279,7 +276,6 @@ public class CustomerServiceImpl implements CustomerService {
 
                 // validation GL Cost Center Debit
                 validateGLForCostCenterDebit(customer.isGl(), customer.getDebitTransfer(), validationErrors);
-
 
                 // validation billing template dengan cara get billing template service by category dan type
                 validationBillingTemplate(customer.getBillingCategory(), customer.getBillingType(), customer.getSubCode(), validationErrors);
@@ -321,13 +317,14 @@ public class CustomerServiceImpl implements CustomerService {
 
         validateDataChangeId(approveRequest.getDataChangeId());
 
-        CustomerDTO customerDTO = approveRequest.getData();
+        // CustomerDTO customerDTO = approveRequest.getData();
         try {
             List<String> validationErrors = new ArrayList<>();
-            Errors errors = validateCustomerUsingValidator(customerDTO);
-            if (errors.hasErrors()) {
-                errors.getAllErrors().forEach(error -> validationErrors.add(error.getDefaultMessage()));
-            }
+            Long dataChangeId = Long.valueOf(approveRequest.getDataChangeId());
+
+            BillingDataChangeDTO dataChangeDTO = dataChangeService.getById(dataChangeId);
+
+            CustomerDTO customerDTO = objectMapper.readValue(dataChangeDTO.getJsonDataAfter(), CustomerDTO.class);
 
             // Validation selling agent
             if (!StringUtils.isEmpty(customerDTO.getSellingAgent())) {
@@ -354,7 +351,7 @@ public class CustomerServiceImpl implements CustomerService {
             log.info("Customer after copy properties: {}", customer);
 
             // Retrieve and set billing data change
-            BillingDataChangeDTO dataChangeDTO = dataChangeService.getById(Long.valueOf(approveRequest.getDataChangeId()));
+
             dataChangeDTO.setApproveId(approveRequest.getApproveId());
             dataChangeDTO.setApproveIPAddress(approveRequest.getApproveIPAddress());
             dataChangeDTO.setEntityId(customer.getId().toString());
@@ -372,7 +369,7 @@ public class CustomerServiceImpl implements CustomerService {
                 totalDataSuccess++;
             }
         } catch (Exception e) {
-            handleGeneralError(customerDTO, e, errorMessageList);
+            handleGeneralError(null, e, errorMessageList);
             totalDataFailed++;
         }
         return new CustomerResponse(totalDataSuccess, totalDataFailed, errorMessageList);

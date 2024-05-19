@@ -61,7 +61,7 @@ public class CustomerDTO extends ApprovalDTO {
     @NotBlank(message = "GL Account Hasil cannot be empty")
     private String glAccountHasil;
 
-    @Pattern(regexp = "^\\d*$", message = "Customer MinimumFee must contain only numeric digits")
+    @Pattern(regexp = "^\\d*$", message = "Customer Minimum Fee must contain only numeric digits")
     @NotBlank(message = "Customer Minimum Fee cannot be empty")
     private String customerMinimumFee;
 
