@@ -5,7 +5,6 @@ import com.bayu.billingservice.dto.customer.*;
 import com.bayu.billingservice.dto.datachange.BillingDataChangeDTO;
 import com.bayu.billingservice.dto.investmentmanagement.InvestmentManagementDTO;
 import com.bayu.billingservice.exception.DataNotFoundException;
-import com.bayu.billingservice.model.BillingTemplate;
 import com.bayu.billingservice.model.Customer;
 import com.bayu.billingservice.repository.CustomerRepository;
 import com.bayu.billingservice.service.*;
@@ -87,7 +86,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public CustomerResponse createMultipleData(CustomerListRequest request, BillingDataChangeDTO dataChangeDTO) {
+    public CustomerResponse createMultipleData(CreateCustomerListRequest request, BillingDataChangeDTO dataChangeDTO) {
         log.info("Create billing customer multiple data with request: {}", request);
         dataChangeDTO.setInputId(request.getInputId());
         dataChangeDTO.setInputIPAddress(request.getInputIPAddress());
@@ -95,8 +94,8 @@ public class CustomerServiceImpl implements CustomerService {
         int totalDataFailed = 0;
         List<ErrorMessageDTO> errorMessageDTOList = new ArrayList<>();
 
-        for (CustomerDataListRequest customerDataListRequest : request.getCustomerDataListRequests()) {
-            CustomerDTO customerDTO = customerMapper.mapFromDataListToDTO(customerDataListRequest);
+        for (CreateCustomerDataListRequest createCustomerDataListRequest : request.getCreateCustomerDataListRequests()) {
+            CustomerDTO customerDTO = customerMapper.mapFromDataListToDTO(createCustomerDataListRequest);
             CustomerResponse response = processCustomerCreation(customerDTO, dataChangeDTO);
             totalDataSuccess += response.getTotalDataSuccess();
             totalDataFailed += response.getTotalDataFailed();
@@ -133,11 +132,10 @@ public class CustomerServiceImpl implements CustomerService {
             // validation GL Cost Center Debit
             validateGLForCostCenterDebit(customerDTO, validationErrors);
 
-            // validation billing template dengan cara get billing template service by category dan type
-            BillingTemplate billingTemplate = billingTemplateService.getByCategoryAndTypeAndSubCode(customerDTO.getBillingCategory(), customerDTO.getBillingType(), customerDTO.getSubCode());
-            customerDTO.setBillingTemplate(billingTemplate.getTemplateName());
+            // validation billing template
+            validationBillingTemplate(customerDTO.getBillingCategory(), customerDTO.getBillingType(), customerDTO.getSubCode(), validationErrors);
 
-            // validation MI dengan cara get by code. Jika not found, maka error
+            // validation Investment Management
             InvestmentManagementDTO investmentManagementDTO = investmentManagementService.getByCode(customerDTO.getMiCode());
             customerDTO.setMiCode(investmentManagementDTO.getCode());
             customerDTO.setMiName(investmentManagementDTO.getName());
@@ -181,7 +179,7 @@ public class CustomerServiceImpl implements CustomerService {
                 errors.getAllErrors().forEach(error -> validationErrors.add(error.getDefaultMessage()));
             }
 
-            // validasi customer code gak boleh ada yg duplikat di database
+            // validation Customer Code
             validationCustomerCodeAlreadyExists(customerDTO.getCustomerCode(), customerDTO.getSubCode(), validationErrors);
 
             // validasi selling agent
@@ -196,8 +194,7 @@ public class CustomerServiceImpl implements CustomerService {
             validateGLForCostCenterDebit(customerDTO, validationErrors);
 
             // validation billing template dengan cara get billing template service by category dan type
-            BillingTemplate billingTemplate = billingTemplateService.getByCategoryAndTypeAndSubCode(customerDTO.getBillingCategory(), customerDTO.getBillingType(), customerDTO.getSubCode());
-            customerDTO.setBillingTemplate(billingTemplate.getTemplateName());
+            validationBillingTemplate(customerDTO.getBillingCategory(), customerDTO.getBillingType(), customerDTO.getSubCode(), validationErrors);
 
             // validasi mi code dan dapatkan nilai name
             InvestmentManagementDTO investmentManagementDTO = investmentManagementService.getByCode(customerDTO.getMiCode());
@@ -240,13 +237,13 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public CustomerResponse updateMultipleData(CustomerListRequest updateCustomerListRequest, BillingDataChangeDTO dataChangeDTO) {
-        log.info("Update multiple billing customer with request: {}", updateCustomerListRequest);
-        dataChangeDTO.setInputId(updateCustomerListRequest.getInputId());
-        dataChangeDTO.setInputIPAddress(updateCustomerListRequest.getInputIPAddress());
+    public CustomerResponse updateMultipleData(UpdateCustomerListRequest  updateCreateCustomerListRequest, BillingDataChangeDTO dataChangeDTO) {
+        log.info("Update multiple billing customer with request: {}", updateCreateCustomerListRequest);
+        dataChangeDTO.setInputId(updateCreateCustomerListRequest.getInputId());
+        dataChangeDTO.setInputIPAddress(updateCreateCustomerListRequest.getInputIPAddress());
         List<CustomerDTO> customerDTOList = new ArrayList<>();
-        for (CustomerDataListRequest customerDataListRequest : updateCustomerListRequest.getCustomerDataListRequests()) {
-            customerDTOList.add(customerMapper.mapFromCreateRequestToDto(customerDataListRequest));
+        for (UpdateCustomerDataListRequest updateCustomerDataListRequest : updateCreateCustomerListRequest.getUpdateCustomerDataListRequests()) {
+          customerDTOList.add(customerMapper.mapFromCreateRequestToDto(updateCustomerDataListRequest));
         }
         return processUpdateForCustomerList(customerDTOList, dataChangeDTO);
     }
@@ -280,10 +277,9 @@ public class CustomerServiceImpl implements CustomerService {
                 validateGLForCostCenterDebit(customerDTO, validationErrors);
 
                 // validation billing template dengan cara get billing template service by category dan type
-                BillingTemplate billingTemplate = billingTemplateService.getByCategoryAndTypeAndSubCode(customerDTO.getBillingCategory(), customerDTO.getBillingType(), customerDTO.getSubCode());
-                customerDTO.setBillingTemplate(billingTemplate.getTemplateName());
+                validationBillingTemplate(customerDTO.getBillingCategory(), customerDTO.getBillingType(), customerDTO.getSubCode(), validationErrors);
 
-                // validation
+                // validation mi code
                 InvestmentManagementDTO investmentManagementDTO = investmentManagementService.getByCode(customerDTO.getMiCode());
                 customerDTO.setMiCode(investmentManagementDTO.getCode());
 
@@ -344,9 +340,7 @@ public class CustomerServiceImpl implements CustomerService {
             validateGLForCostCenterDebit(customerDTO, validationErrors);
 
             // validation billing template dengan cara get billing template service by category dan type
-            BillingTemplate billingTemplate = billingTemplateService.getByCategoryAndTypeAndSubCode(customerDTO.getBillingCategory(), customerDTO.getBillingType(), customerDTO.getSubCode());
-            customerDTO.setBillingTemplate(billingTemplate.getTemplateName());
-
+            validationBillingTemplate(customerDTO.getBillingCategory(), customerDTO.getBillingType(), customerDTO.getSubCode(), validationErrors);
 
             // Validation MI code dan get name value
             InvestmentManagementDTO investmentManagementDTO = investmentManagementService.getByCode(customerDTO.getMiCode());
@@ -460,6 +454,12 @@ public class CustomerServiceImpl implements CustomerService {
     private void validationCustomerCodeAlreadyExists(String customerCode, String subCode, List<String> validationErrors) {
         if (isCodeAlreadyExists(customerCode, subCode)) {
             validationErrors.add("Billing Customer already taken with code: " + customerCode + ", and sub code: " + subCode);
+        }
+    }
+
+    private void validationBillingTemplate(String category, String type, String subCode, List<String> validationErrors) {
+        if (!billingTemplateService.isExistsByCategoryAndTypeAndSubCode(category, type, subCode)) {
+            validationErrors.add("Billing Template not found with category: " + category + ", type: " + type + ", and sub code: " + subCode);
         }
     }
 

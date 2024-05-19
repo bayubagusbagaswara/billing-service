@@ -20,13 +20,13 @@ public interface CustomerService {
 
     CustomerResponse createSingleData(CreateCustomerRequest request, BillingDataChangeDTO dataChangeDTO);
 
-    CustomerResponse createMultipleData(CustomerListRequest request, BillingDataChangeDTO dataChangeDTO);
+    CustomerResponse createMultipleData(CreateCustomerListRequest request, BillingDataChangeDTO dataChangeDTO);
 
     CustomerResponse createSingleApprove(CustomerApproveRequest request);
 
     CustomerResponse updateSingleData(UpdateCustomerRequest request, BillingDataChangeDTO dataChangeDTO);
 
-    CustomerResponse updateMultipleData(CustomerListRequest request, BillingDataChangeDTO dataChangeDTO);
+    CustomerResponse updateMultipleData(UpdateCustomerListRequest request, BillingDataChangeDTO dataChangeDTO);
 
     CustomerResponse updateSingleApprove(CustomerApproveRequest request);
 

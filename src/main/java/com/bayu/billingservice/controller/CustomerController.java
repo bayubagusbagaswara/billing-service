@@ -71,7 +71,7 @@ public class CustomerController {
     }
 
     @PostMapping(path = "/create-list")
-    public ResponseEntity<ResponseDTO<CustomerResponse>> createList(@RequestBody CustomerListRequest request) {
+    public ResponseEntity<ResponseDTO<CustomerResponse>> createList(@RequestBody CreateCustomerListRequest request) {
         BillingDataChangeDTO dataChangeDTO = BillingDataChangeDTO.builder()
                 .methodHttp(HttpMethod.POST.name())
                 .endpoint("/api/customer/create/approve")
@@ -101,7 +101,7 @@ public class CustomerController {
     }
 
     @PutMapping(path = "/update-list")
-    public ResponseEntity<ResponseDTO<CustomerResponse>> updateList(@RequestBody CustomerListRequest request) {
+    public ResponseEntity<ResponseDTO<CustomerResponse>> updateList(@RequestBody UpdateCustomerListRequest  request) {
         BillingDataChangeDTO dataChangeDTO = BillingDataChangeDTO.builder()
                 .methodHttp(HttpMethod.PUT.name())
                 .endpoint("/api/customer/update/approve")

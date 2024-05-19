@@ -14,7 +14,12 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
 
     Boolean existsByCustomerCode(String code);
 
-    @Query(value = "select case when count(c)> 0 then true else false end from BillingCustomer c where lower(c.customerCode) = lower(:customerCode) AND lower(COALESCE(c.subCode,'')) = lower(COALESCE(:subCode, ''))")
+//    @Query(value = "select case when count(c)> 0 then true else false end from Customer c where lower(c.customerCode) = lower(:customerCode) AND lower(COALESCE(c.subCode,'')) = lower(COALESCE(:subCode, ''))")
+    @Query(value = "SELECT CASE WHEN COUNT(*) > 0 THEN TRUE ELSE FALSE END " +
+        "FROM billing_customer " +
+        "WHERE LOWER(customer_code) = LOWER(:customerCode) " +
+        "AND LOWER(COALESCE(sub_code, '')) = LOWER(COALESCE(:subCode, ''))",
+        nativeQuery = true)
     boolean existsCustomerByCustomerCodeAndSubCode(@Param("customerCode") String customerCode, @Param("subCode") String subCode);
 
     Optional<Customer> findByCustomerCode(String code);
@@ -22,7 +27,7 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
     Optional<Customer> findByKseiSafeCode(String kseiSafeCode);
 
     @Query(value = "SELECT * FROM billing_customer WHERE billing_category = :category AND billing_type = :type", nativeQuery = true)
-    List<Customer> findAllByBillingCategoryAndBillingType(String billingCategory, String billingType);
+    List<Customer> findAllByBillingCategoryAndBillingType(@Param("category") String billingCategory, @Param("type") String billingType);
 
     // Mengambil data dengan kondisi subCode bisa kosong (null)
 //    @Query(value = "SELECT c FROM Customer c WHERE c.customerCode = :customerCode AND (:subCode IS NULL OR c.subCode = :subCode)")
