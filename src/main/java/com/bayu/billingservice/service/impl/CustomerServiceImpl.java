@@ -127,10 +127,10 @@ public class CustomerServiceImpl implements CustomerService {
             }
 
             // validation enum
-            validateBillingEnums(customerDTO, validationErrors);
+            validateBillingEnums(customerDTO.getBillingCategory(), customerDTO.getBillingType(), customerDTO.getBillingTemplate(), customerDTO.getCurrency(), validationErrors);
 
             // validation GL Cost Center Debit
-            validateGLForCostCenterDebit(customerDTO, validationErrors);
+            validateGLForCostCenterDebit(customerDTO.isGl(), customerDTO.getDebitTransfer(), validationErrors);
 
             // validation billing template
             validationBillingTemplate(customerDTO.getBillingCategory(), customerDTO.getBillingType(), customerDTO.getSubCode(), validationErrors);
@@ -173,30 +173,30 @@ public class CustomerServiceImpl implements CustomerService {
         try {
             List<String> validationErrors = new ArrayList<>();
 
-            // validation not empty
+            // validation column not empty
             Errors errors = validateCustomerUsingValidator(customerDTO);
             if (errors.hasErrors()) {
                 errors.getAllErrors().forEach(error -> validationErrors.add(error.getDefaultMessage()));
             }
 
-            // validation Customer Code
+            // validation customer code and cub code
             validationCustomerCodeAlreadyExists(customerDTO.getCustomerCode(), customerDTO.getSubCode(), validationErrors);
 
-            // validasi selling agent
+            // validation selling agent
             if (!StringUtils.isEmpty(customerDTO.getSellingAgent())) {
                 validationSellingAgentCodeAlreadyExists(customerDTO.getSellingAgent(), validationErrors);
             }
 
-            // validasi enum
-            validateBillingEnums(customerDTO, validationErrors);
+            // validation enum
+            validateBillingEnums(customerDTO.getBillingCategory(), customerDTO.getBillingType(), customerDTO.getBillingTemplate(), customerDTO.getCurrency(), validationErrors);
 
             // validation GL Cost Center Debit
-            validateGLForCostCenterDebit(customerDTO, validationErrors);
+            validateGLForCostCenterDebit(customerDTO.isGl(), customerDTO.getDebitTransfer(), validationErrors);
 
             // validation billing template dengan cara get billing template service by category dan type
             validationBillingTemplate(customerDTO.getBillingCategory(), customerDTO.getBillingType(), customerDTO.getSubCode(), validationErrors);
 
-            // validasi mi code dan dapatkan nilai name
+            // validation MI code
             InvestmentManagementDTO investmentManagementDTO = investmentManagementService.getByCode(customerDTO.getMiCode());
             customerDTO.setMiCode(investmentManagementDTO.getCode());
             customerDTO.setMiName(investmentManagementDTO.getName());
@@ -259,29 +259,30 @@ public class CustomerServiceImpl implements CustomerService {
                 Customer customer = customerRepository.findByCustomerCodeAndOptionalSubCode(customerDTO.getCustomerCode(), customerDTO.getSubCode())
                         .orElseThrow(() -> new DataNotFoundException("Customer not found with customer code: " + customerDTO.getCustomerCode() + ", and sub code: " + customerDTO.getSubCode()));
 
-                // validation column
-                Errors errors = validateCustomerUsingValidator(customerDTO);
-                if (errors.hasErrors()) {
-                    errors.getAllErrors().forEach(error -> validationErrors.add(error.getDefaultMessage()));
+                customerMapper.mapObjects(customerDTO, customer);
+                log.info("Update mapper customer DTO: {}", customerDTO);
+                log.info("Update mapper from customerDTO to customer entity: {}", customer);
+
+                // validation MI code (sudah pasti, karena kalau data mi code yg baru ternyata tidak ditemukan di database, maka akan gagal insert data change)
+                if (!customer.getMiCode().isEmpty()) {
+                    InvestmentManagementDTO investmentManagementDTO = investmentManagementService.getByCode(customer.getMiCode());
+                    customer.setMiCode(investmentManagementDTO.getCode());
                 }
 
-                // validastion selling agent
-                if (!StringUtils.isEmpty(customerDTO.getSellingAgent())) {
-                    validationSellingAgentCodeAlreadyExists(customerDTO.getSellingAgent(), validationErrors);
+                // validation selling agent
+                if (!StringUtils.isEmpty(customer.getSellingAgent())) {
+                    validationSellingAgentCodeAlreadyExists(customer.getSellingAgent(), validationErrors);
                 }
 
-                // validasi enum
-                validateBillingEnums(customerDTO, validationErrors);
+                // validation enum
+                validateBillingEnums(customer.getBillingCategory(), customer.getBillingType(), customer.getBillingTemplate(), customer.getCurrency(), validationErrors);
 
                 // validation GL Cost Center Debit
-                validateGLForCostCenterDebit(customerDTO, validationErrors);
+                validateGLForCostCenterDebit(customer.isGl(), customer.getDebitTransfer(), validationErrors);
+
 
                 // validation billing template dengan cara get billing template service by category dan type
-                validationBillingTemplate(customerDTO.getBillingCategory(), customerDTO.getBillingType(), customerDTO.getSubCode(), validationErrors);
-
-                // validation mi code
-                InvestmentManagementDTO investmentManagementDTO = investmentManagementService.getByCode(customerDTO.getMiCode());
-                customerDTO.setMiCode(investmentManagementDTO.getCode());
+                validationBillingTemplate(customer.getBillingCategory(), customer.getBillingType(), customer.getSubCode(), validationErrors);
 
                 if (!validationErrors.isEmpty()) {
                     ErrorMessageDTO errorMessageDTO = ErrorMessageDTO.builder()
@@ -334,10 +335,10 @@ public class CustomerServiceImpl implements CustomerService {
             }
 
             // Validation ENUM
-            validateBillingEnums(customerDTO, validationErrors);
+            validateBillingEnums(customerDTO.getBillingCategory(), customerDTO.getBillingType(), customerDTO.getBillingType(), customerDTO.getCurrency(), validationErrors);
 
             // validation Cost Center Debit
-            validateGLForCostCenterDebit(customerDTO, validationErrors);
+            validateGLForCostCenterDebit(customerDTO.isGl(), customerDTO.getDebitTransfer(), validationErrors);
 
             // validation billing template dengan cara get billing template service by category dan type
             validationBillingTemplate(customerDTO.getBillingCategory(), customerDTO.getBillingType(), customerDTO.getSubCode(), validationErrors);
@@ -490,31 +491,31 @@ public class CustomerServiceImpl implements CustomerService {
         errorMessageList.add(new ErrorMessageDTO(customerDTO != null ? customerDTO.getCustomerCode() : UNKNOWN, validationErrors));
     }
 
-    private void validateBillingEnums(CustomerDTO customerDTO, List<String> validationErrors) {
-        if (!EnumValidator.validateEnumBillingCategory(customerDTO.getBillingCategory())) {
-            validationErrors.add("Billing Category enum not found with value: " + customerDTO.getBillingCategory());
+    private void validateBillingEnums(String billingCategory, String billingType, String billingTemplate, String currency, List<String> validationErrors) {
+        if (!EnumValidator.validateEnumBillingCategory(billingCategory)) {
+            validationErrors.add("Billing Category enum not found with value: " + billingCategory);
         }
-        if (!EnumValidator.validateEnumBillingType(customerDTO.getBillingType())) {
-            validationErrors.add("Billing Type enum not found with value: " + customerDTO.getBillingType());
+        if (!EnumValidator.validateEnumBillingType(billingType)) {
+            validationErrors.add("Billing Type enum not found with value: " + billingType);
         }
-        if (!EnumValidator.validateEnumBillingTemplate(customerDTO.getBillingTemplate())) {
-            validationErrors.add("Billing Template enum not found with value '" + customerDTO.getBillingTemplate());
+        if (!EnumValidator.validateEnumBillingTemplate(billingTemplate)) {
+            validationErrors.add("Billing Template enum not found with value '" + billingTemplate);
         }
-        if (!EnumValidator.validateEnumCurrency(customerDTO.getCurrency())) {
-            validationErrors.add("Currency enum not found with value '" + customerDTO.getCurrency());
+        if (!EnumValidator.validateEnumCurrency(currency)) {
+            validationErrors.add("Currency enum not found with value '" + currency);
         }
     }
 
-    private void validateGLForCostCenterDebit(CustomerDTO customerDTO, List<String> validationErrors) {
+    private void validateGLForCostCenterDebit(boolean isGL, String debitTransfer, List<String> validationErrors) {
         // Improved readability with comments
-        if (customerDTO.isGl()) {
+        if (isGL) {
             // Check if costCenterDebit is null or blank (empty string)
-            if (customerDTO.getDebitTransfer() == null || customerDTO.getDebitTransfer().isEmpty()) {
+            if (debitTransfer == null || debitTransfer.isEmpty()) {
                 validationErrors.add("Cost Center Debit is required when GL is true");
             }
         } else {
             // Check if costCenterDebit is not null or blank (for readability)
-            if (!StringUtils.isEmpty(customerDTO.getDebitTransfer())) {
+            if (!StringUtils.isEmpty(debitTransfer)) {
                 validationErrors.add("Cost Center Debit must be blank when GL is false");
             }
         }
