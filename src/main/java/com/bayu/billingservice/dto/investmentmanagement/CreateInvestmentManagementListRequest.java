@@ -11,11 +11,11 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class InvestmentManagementListRequest {
+public class CreateInvestmentManagementListRequest {
 
     private String inputId;
 
     private String inputIPAddress;
 
-    private List<InvestmentManagementDataListRequest> investmentManagementDataListRequests;
+    private List<CreateInvestmentManagementDataListRequest> createInvestmentManagementDataListRequests;
 }

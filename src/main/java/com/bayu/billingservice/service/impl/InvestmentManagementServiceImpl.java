@@ -51,7 +51,7 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
     }
 
     @Override
-    public InvestmentManagementResponse createMultipleData(InvestmentManagementListRequest createListRequest, BillingDataChangeDTO dataChangeDTO) {
+    public InvestmentManagementResponse createMultipleData(CreateInvestmentManagementListRequest createListRequest, BillingDataChangeDTO dataChangeDTO) {
         log.info("Create multiple investment management with request: {}", createListRequest);
         dataChangeDTO.setInputId(createListRequest.getInputId());
         dataChangeDTO.setInputIPAddress(createListRequest.getInputIPAddress());
@@ -59,8 +59,8 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
         int totalDataFailed = 0;
         List<ErrorMessageDTO> errorMessageList = new ArrayList<>();
 
-        for (InvestmentManagementDataListRequest investmentManagementDataListRequest : createListRequest.getInvestmentManagementDataListRequests()) {
-            InvestmentManagementDTO investmentManagementDTO = investmentManagementMapper.mapFromDataListToDTO(investmentManagementDataListRequest);
+        for (CreateInvestmentManagementDataListRequest createInvestmentManagementDataListRequest : createListRequest.getCreateInvestmentManagementDataListRequests()) {
+            InvestmentManagementDTO investmentManagementDTO = investmentManagementMapper.mapFromDataListToDTO(createInvestmentManagementDataListRequest);
             InvestmentManagementResponse response = processInvestmentManagementCreation(investmentManagementDTO, dataChangeDTO);
             totalDataSuccess += response.getTotalDataSuccess();
             totalDataFailed += response.getTotalDataFailed();
@@ -176,7 +176,7 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
     }
 
     @Override
-    public InvestmentManagementResponse updateMultipleData(InvestmentManagementListRequest updateListRequest, BillingDataChangeDTO dataChangeDTO) {
+    public InvestmentManagementResponse updateMultipleData(CreateInvestmentManagementListRequest updateListRequest, BillingDataChangeDTO dataChangeDTO) {
         log.info("Update multiple data investment management with request: {}", updateListRequest);
         dataChangeDTO.setInputId(updateListRequest.getInputId());
         dataChangeDTO.setInputIPAddress(updateListRequest.getInputIPAddress());
@@ -184,8 +184,8 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
         int totalDataFailed = 0;
         List<ErrorMessageDTO> errorMessageList = new ArrayList<>();
 
-        for (InvestmentManagementDataListRequest investmentManagementDataListRequest : updateListRequest.getInvestmentManagementDataListRequests()) {
-            InvestmentManagementDTO investmentManagementDTO = investmentManagementMapper.mapFromDataListToDTO(investmentManagementDataListRequest);
+        for (CreateInvestmentManagementDataListRequest createInvestmentManagementDataListRequest : updateListRequest.getCreateInvestmentManagementDataListRequests()) {
+            InvestmentManagementDTO investmentManagementDTO = investmentManagementMapper.mapFromDataListToDTO(createInvestmentManagementDataListRequest);
             try {
                 InvestmentManagement investmentManagement = investmentManagementRepository.findByCode(investmentManagementDTO.getCode())
                         .orElseThrow(() -> new DataNotFoundException(CODE_NOT_FOUND + investmentManagementDTO.getCode()));

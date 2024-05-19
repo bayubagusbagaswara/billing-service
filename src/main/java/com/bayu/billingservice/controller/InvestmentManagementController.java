@@ -43,7 +43,7 @@ public class InvestmentManagementController {
     }
 
     @PostMapping(path = "/create-list")
-    public ResponseEntity<ResponseDTO<InvestmentManagementResponse>> createList(@RequestBody InvestmentManagementListRequest request) {
+    public ResponseEntity<ResponseDTO<InvestmentManagementResponse>> createList(@RequestBody CreateInvestmentManagementListRequest request) {
         BillingDataChangeDTO dataChangeDTO = BillingDataChangeDTO.builder()
                 .methodHttp(HttpMethod.POST.name())
                 .endpoint("/api/investment-management/create/approve")
@@ -94,7 +94,7 @@ public class InvestmentManagementController {
     }
 
     @PutMapping(path = "/update-list")
-    public ResponseEntity<ResponseDTO<InvestmentManagementResponse>> updateList(@RequestBody InvestmentManagementListRequest request) {
+    public ResponseEntity<ResponseDTO<InvestmentManagementResponse>> updateList(@RequestBody CreateInvestmentManagementListRequest request) {
         BillingDataChangeDTO dataChangeDTO = BillingDataChangeDTO.builder()
                 .methodHttp(HttpMethod.PUT.name())
                 .endpoint("/api/investment-management/update/approve")

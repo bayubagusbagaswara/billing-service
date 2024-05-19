@@ -7,15 +7,12 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
-@EqualsAndHashCode(callSuper = true)
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class InvestmentManagementDataListRequest extends ApprovalDTO {
-
-    private Long id;
+public class CreateInvestmentManagementDataListRequest {
 
     @JsonProperty(value = "MI Code")
     @NotBlank(message = "Code cannot be empty")
