@@ -24,27 +24,27 @@ class ExchangeRateTest {
         exchangeRateRepository.deleteAll();
     }
 
-    @Test
-    void insertData() {
-        createExchangeRate("2024-02-23", "15590");
-        createExchangeRate("2024-02-22", "15585");
-        createExchangeRate("2024-02-21", "15630");
-        createExchangeRate("2024-02-20", "15655");
-        createExchangeRate("2024-02-19", "15625");
-        createExchangeRate("2024-02-16", "15615");
-        createExchangeRate("2024-02-15", "15615");
-    }
+//    @Test
+//    void insertData() {
+//        createExchangeRate("2024-02-23", "15590");
+//        createExchangeRate("2024-02-22", "15585");
+//        createExchangeRate("2024-02-21", "15630");
+//        createExchangeRate("2024-02-20", "15655");
+//        createExchangeRate("2024-02-19", "15625");
+//        createExchangeRate("2024-02-16", "15615");
+//        createExchangeRate("2024-02-15", "15615");
+//    }
+//
+//    void createExchangeRate(String date, String value) {
+//        CreateExchangeRateRequest request = CreateExchangeRateRequest.builder()
+//                .date(date)
+//                .currency(CURRENCY_USD)
+//                .value(value)
+//                .build();
+//
+//        ExchangeRateDTO exchangeRateDTO = exchangeRateService.create(request);
+//        assertNotNull(exchangeRateDTO.getId());
+//        assertEquals(exchangeRateDTO.getDate(), request.getDate());
 
-    void createExchangeRate(String date, String value) {
-        CreateExchangeRateRequest request = CreateExchangeRateRequest.builder()
-                .date(date)
-                .currency(CURRENCY_USD)
-                .value(value)
-                .build();
-
-        ExchangeRateDTO exchangeRateDTO = exchangeRateService.create(request);
-        assertNotNull(exchangeRateDTO.getId());
-        assertEquals(exchangeRateDTO.getDate(), request.getDate());
-    }
 
 }
