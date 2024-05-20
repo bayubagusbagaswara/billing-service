@@ -83,5 +83,5 @@ public class UpdateCustomerDataListRequest {
     private String sellingAgent;
 
     @JsonProperty(value = "Is GL")
-    private Boolean gl;
+    private String gl;
 }

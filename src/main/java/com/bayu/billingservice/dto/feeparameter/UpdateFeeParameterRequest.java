@@ -17,15 +17,12 @@ public class UpdateFeeParameterRequest {
 
     private Long id;
 
-    @NotBlank(message = "Code cannot be blank")
     private String code;
 
-    @NotBlank(message = "Name cannot be blank")
     private String name;
 
     private String description;
 
-    @NotBlank(message = "Value cannot be blank")
     private String value;
 
 }

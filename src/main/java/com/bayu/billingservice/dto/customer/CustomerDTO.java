@@ -86,6 +86,6 @@ public class CustomerDTO extends ApprovalDTO {
 
     private String sellingAgent;
 
-    private Boolean gl;
+    private String gl;
 
 }

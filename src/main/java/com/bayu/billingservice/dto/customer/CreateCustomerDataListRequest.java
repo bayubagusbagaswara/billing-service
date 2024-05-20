@@ -109,7 +109,7 @@ public class CreateCustomerDataListRequest {
     private String sellingAgent;
 
     @JsonProperty(value = "Is GL")
-    @NotNull(message = "Is GL cannot be empty")
-    private Boolean gl;
+    @NotBlank(message = "Is GL cannot be empty")
+    private String gl;
 
 }
