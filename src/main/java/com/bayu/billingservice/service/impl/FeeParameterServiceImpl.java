@@ -33,8 +33,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class FeeParameterServiceImpl implements FeeParameterService {
 
-    private static final String ID_NOT_FOUND = "Investment Management not found with id: ";
-    private static final String CODE_NOT_FOUND = "Investment Management not found with code: ";
+    private static final String ID_NOT_FOUND = "Fee Parameter not found with id: ";
+    private static final String CODE_NOT_FOUND = "Fee Parameter not found with code: ";
     private static final String UNKNOWN = "unknown";
 
     private final FeeParameterRepository feeParameterRepository;
@@ -119,10 +119,14 @@ public class FeeParameterServiceImpl implements FeeParameterService {
         List<ErrorMessageDTO> errorMessageList = new ArrayList<>();
 
         validateDataChangeId(approveRequest.getDataChangeId());
-        FeeParameterDTO feeParameterDTO = approveRequest.getData();
-
         try {
             List<String> validationErrors = new ArrayList<>();
+            Long dataChangeId = Long.valueOf(approveRequest.getDataChangeId());
+
+            BillingDataChangeDTO dataChangeDTO = dataChangeService.getById(dataChangeId);
+
+            FeeParameterDTO feeParameterDTO = objectMapper.readValue(dataChangeDTO.getJsonDataAfter(), FeeParameterDTO.class);
+
             validationCodeAlreadyExists(feeParameterDTO.getCode(), validationErrors);
             validationNameAlreadyExists(feeParameterDTO.getName(), validationErrors);
 
@@ -131,7 +135,6 @@ public class FeeParameterServiceImpl implements FeeParameterService {
                 errors.getAllErrors().forEach(objectError -> validationErrors.add(objectError.getDefaultMessage()));
             }
 
-            BillingDataChangeDTO dataChangeDTO = dataChangeService.getById(Long.valueOf(approveRequest.getDataChangeId()));
             dataChangeDTO.setApproveId(approveRequest.getApproveId());
             dataChangeDTO.setApproveIPAddress(approveRequest.getApproveIPAddress());
 
@@ -150,7 +153,7 @@ public class FeeParameterServiceImpl implements FeeParameterService {
                 totalDataSuccess++;
             }
         } catch (Exception e) {
-            handleGeneralError(feeParameterDTO, e, errorMessageList);
+            handleGeneralError(null, e, errorMessageList);
             totalDataFailed++;
         }
         return new FeeParameterResponse(totalDataSuccess, totalDataFailed, errorMessageList);
@@ -241,25 +244,21 @@ public class FeeParameterServiceImpl implements FeeParameterService {
         List<ErrorMessageDTO> errorMessageList = new ArrayList<>();
 
         validateDataChangeId(approveRequest.getDataChangeId());
-        FeeParameterDTO feeParameterDTO = approveRequest.getData();
         try {
             Long dataChangeId = Long.valueOf(approveRequest.getDataChangeId());
             List<String> validationErrors = new ArrayList<>();
+            BillingDataChangeDTO dataChangeDTO = dataChangeService.getById(dataChangeId);
 
-            Errors errors = validateFeeParameterUsingValidator(feeParameterDTO);
-            if (errors.hasErrors()) {
-                errors.getAllErrors().forEach(error -> validationErrors.add(error.getDefaultMessage()));
-            }
+            FeeParameterDTO feeParameterDTO = objectMapper.readValue(dataChangeDTO.getJsonDataAfter(), FeeParameterDTO.class);
 
-            FeeParameter feeParameter = feeParameterRepository.findByCode(feeParameterDTO.getCode())
-                    .orElseThrow(() -> new DataNotFoundException(CODE_NOT_FOUND + feeParameterDTO.getCode()));
+            FeeParameter feeParameter = feeParameterRepository.findById(feeParameterDTO.getId())
+                    .orElseThrow(() -> new DataNotFoundException(ID_NOT_FOUND + feeParameterDTO.getId()));
 
             // copy data DTO to Entity
             feeParameterMapper.mapObjects(feeParameterDTO, feeParameter);
             log.info("Fee Parameter after copy properties: {}", feeParameter);
 
             // Retrieve and set billing data change
-            BillingDataChangeDTO dataChangeDTO = dataChangeService.getById(dataChangeId);
             dataChangeDTO.setApproveId(approveRequest.getApproveId());
             dataChangeDTO.setApproveIPAddress(approveRequest.getApproveIPAddress());
             dataChangeDTO.setEntityId(feeParameter.getId().toString());
@@ -278,7 +277,7 @@ public class FeeParameterServiceImpl implements FeeParameterService {
                 totalDataSuccess++;
             }
         } catch (Exception e) {
-            handleGeneralError(feeParameterDTO, e, errorMessageList);
+            handleGeneralError(null, e, errorMessageList);
             totalDataFailed++;
         }
         return new FeeParameterResponse(totalDataSuccess, totalDataFailed, errorMessageList);
