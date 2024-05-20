@@ -716,3 +716,8 @@ String jsonDataAfter = "{\"code\":\"A002\",\"name\":\"PT Pacific Capital Investm
   }
 ]
 ```
+
+1. Tambahkan data investment management
+2. Tambahkan data fee parameter
+3. Tambahkan data customer
+4. Hitung calculate billing fund
