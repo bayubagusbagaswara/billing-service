@@ -74,6 +74,27 @@ public class FeeParameterController {
         return ResponseEntity.ok(response);
     }
 
+
+    @PutMapping(path = "/update")
+    public ResponseEntity<ResponseDTO<FeeParameterResponse>> updateSingleData(@RequestBody UpdateFeeParameterRequest updateFeeParameterRequest) {
+        BillingDataChangeDTO dataChangeDTO = BillingDataChangeDTO.builder()
+                .methodHttp(HttpMethod.PUT.name())
+                .endpoint("/api/fee-parameter/update/approve")
+                .isRequestBody(true)
+                .isRequestParam(false)
+                .isPathVariable(false)
+                .menu(MENU_FEE_PARAMETER)
+                .build();
+        FeeParameterResponse list = feeParameterService.updateSingleData(updateFeeParameterRequest, dataChangeDTO);
+        ResponseDTO<FeeParameterResponse> response = ResponseDTO.<FeeParameterResponse>builder()
+                .code(HttpStatus.OK.value())
+                .message(HttpStatus.OK.getReasonPhrase())
+                .payload(list)
+                .build();
+        return ResponseEntity.ok(response);
+    }
+
+
     @PutMapping(path = "/update-list")
     public ResponseEntity<ResponseDTO<FeeParameterResponse>> updateMultipleData(@RequestBody FeeParameterListRequest updateFeeParameterListRequest) {
         BillingDataChangeDTO dataChangeDTO = BillingDataChangeDTO.builder()
