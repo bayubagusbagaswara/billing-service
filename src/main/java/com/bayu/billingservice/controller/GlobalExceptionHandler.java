@@ -88,6 +88,31 @@ public class GlobalExceptionHandler {
         return ResponseEntity.ok(response);
     }
 
+    @ExceptionHandler(GeneralException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<ErrorResponseDTO> handleGeneralException(GeneralException ex) {
+        ErrorResponseDTO response = ErrorResponseDTO.builder()
+                .status(HttpStatus.BAD_REQUEST)
+                .errorCode(HttpStatus.BAD_REQUEST.value())
+                .message(ex.getMessage())
+                .timeStamp(LocalDateTime.now())
+                .build();
+        return ResponseEntity.ok(response);
+    }
+
+    @ExceptionHandler(InvalidInputException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<ErrorResponseDTO> handleInvalidInputException(InvalidInputException ex) {
+        ErrorResponseDTO response = ErrorResponseDTO.builder()
+                .status(HttpStatus.BAD_REQUEST)
+                .errorCode(HttpStatus.BAD_REQUEST.value())
+                .message(ex.getMessage())
+                .timeStamp(LocalDateTime.now())
+                .build();
+        return ResponseEntity.ok(response);
+    }
+
+
     @ExceptionHandler(DataProcessingException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ResponseEntity<ErrorResponseDTO> handleDataProcessingException(DataProcessingException ex) {
