@@ -6,7 +6,6 @@ import org.modelmapper.AbstractConverter;
 import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
-import org.modelmapper.spi.MappingContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -24,6 +23,7 @@ public class ApplicationConfig {
 
         // Konfigurasi matching strategies
         modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+        modelMapper.getConfiguration().isSkipNullEnabled();
 
         // Konfigurasi konversi kustom untuk String to BigDecimal
         modelMapper.addConverter(stringToBigDecimalConverter());
@@ -31,12 +31,17 @@ public class ApplicationConfig {
         // Konfigurasi konversi kustom untuk BigDecimal to formatted String
         // modelMapper.addConverter(bigDecimalToStringConverter());
 
-        modelMapper.typeMap(Customer.class, CustomerDTO.class)
-                .addMappings(mapper -> {
-                    mapper.when(conditions -> conditions.getSource() != null && conditions.getDestination() == null)
-                            .using(booleanConverter())
-                            .map(Customer::isGl, CustomerDTO::setGl);
-                });
+//        modelMapper.typeMap(CustomerDTO.class, Customer.class)
+//                .addMappings(mapper -> mapper.map(
+//                        src -> src.getGl() != null ? src.getGl() : null,
+//                        Customer::setGl
+//                ));
+//
+//        modelMapper.typeMap(Customer.class, CustomerDTO.class)
+//                .addMappings(mapper -> mapper.map(
+//                        Customer::isGl,
+//                        (dest, value) -> dest.setGl(value != null ? value.toString() : null)
+//                ));
 
         return modelMapper;
     }
