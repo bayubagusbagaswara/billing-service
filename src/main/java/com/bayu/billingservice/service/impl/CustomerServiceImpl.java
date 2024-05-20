@@ -5,6 +5,8 @@ import com.bayu.billingservice.dto.customer.*;
 import com.bayu.billingservice.dto.datachange.BillingDataChangeDTO;
 import com.bayu.billingservice.dto.investmentmanagement.InvestmentManagementDTO;
 import com.bayu.billingservice.exception.DataNotFoundException;
+import com.bayu.billingservice.exception.GeneralException;
+import com.bayu.billingservice.exception.InvalidInputException;
 import com.bayu.billingservice.model.Customer;
 import com.bayu.billingservice.repository.CustomerRepository;
 import com.bayu.billingservice.service.*;
@@ -133,8 +135,13 @@ public class CustomerServiceImpl implements CustomerService {
             // validation enum
             validateBillingEnums(customerDTO.getBillingCategory(), customerDTO.getBillingType(), customerDTO.getBillingTemplate(), customerDTO.getCurrency(), validationErrors);
 
+            // Validasi nilai isGL
+            if (!isValidIsGLValue(customerDTO.getGl())) {
+                throw new InvalidInputException("Invalid value for isGL. Value must be 'TRUE' or 'FALSE'.");
+            }
+
             // validation GL Cost Center Debit
-            validateGLForCostCenterDebit(customerDTO.getGl(), customerDTO.getDebitTransfer(), validationErrors);
+            validateGLForCostCenterDebit(isValidIsGLValue(customerDTO.getGl()), customerDTO.getDebitTransfer(), validationErrors);
 
             // validation billing template
             validationBillingTemplate(customerDTO.getBillingCategory(), customerDTO.getBillingType(), customerDTO.getSubCode(), validationErrors);
@@ -192,7 +199,7 @@ public class CustomerServiceImpl implements CustomerService {
             validateBillingEnums(customerDTO.getBillingCategory(), customerDTO.getBillingType(), customerDTO.getBillingTemplate(), customerDTO.getCurrency(), validationErrors);
 
             // validation GL Cost Center Debit
-            validateGLForCostCenterDebit(customerDTO.getGl(), customerDTO.getDebitTransfer(), validationErrors);
+            validateGLForCostCenterDebit(isValidIsGLValue(customerDTO.getGl()), customerDTO.getDebitTransfer(), validationErrors);
 
             // validation billing template dengan cara get billing template service by category dan type
             validationBillingTemplate(customerDTO.getBillingCategory(), customerDTO.getBillingType(), customerDTO.getSubCode(), validationErrors);
@@ -244,11 +251,6 @@ public class CustomerServiceImpl implements CustomerService {
         List<CustomerDTO> customerDTOList = new ArrayList<>();
         for (UpdateCustomerDataListRequest updateCustomerDataListRequest : updateCreateCustomerListRequest.getUpdateCustomerDataListRequests()) {
             log.info("Update Customer Data List Request: {}", updateCustomerDataListRequest);
-//            if (updateCustomerDataListRequest.getGl() == null) {
-//                customerDTOList.add(customerMapper.mapWithNullGl(updateCustomerDataListRequest));
-//            } else {
-//                customerDTOList.add(customerMapper.mapFromUpdateRequestToDto(updateCustomerDataListRequest));
-//            }
             customerDTOList.add(customerMapper.mapFromUpdateRequestToDto(updateCustomerDataListRequest));
         }
         log.info("Customer DTO List: {}", customerDTOList);
@@ -271,30 +273,35 @@ public class CustomerServiceImpl implements CustomerService {
 
                 log.info("Original Customer from database: {}", originalCustomer);
 
-                // Membuat salinan dari originalCustomer untuk menghindari modifikasi data yang ada di database
                 Customer clonedCustomer = new Customer();
                 BeanUtils.copyProperties(originalCustomer, clonedCustomer);
 
-                // DISINI DATA CUSTOMER SUDAH KECAMPUR DENGAN DTO
+                if (customerDTO.getGl() != null && !customerDTO.getGl().isEmpty()) {
+                    if (!isValidIsGLValue(customerDTO.getGl())) {
+                        throw new InvalidInputException("Invalid value for isGL. Value must be 'TRUE' or 'FALSE'.");
+                    }
+                } else {
+                    log.info("GL is empty or null");
+                }
+
                 customerMapper.mapObjects(customerDTO, clonedCustomer);
 
                 log.info("Replace between Customer DTO to Customer Entity: {}", clonedCustomer);
 
                 InvestmentManagementDTO investmentManagementDTO = investmentManagementService.getByCode(clonedCustomer.getMiCode());
-                customerDTO.setMiCode(investmentManagementDTO.getCode());
-                customerDTO.setMiName(investmentManagementDTO.getName());
+                log.info("Investment Management for update customer: {}", investmentManagementDTO.getCode());
 
-                // validation selling agent
                 if (!StringUtils.isEmpty(clonedCustomer.getSellingAgent())) {
                     validationSellingAgentCodeAlreadyExists(clonedCustomer.getSellingAgent(), validationErrors);
                 }
 
-                // validation GL
-                validateGLForCostCenterDebit(clonedCustomer.isGl(), clonedCustomer.getDebitTransfer(), validationErrors);
-
                 if (Boolean.FALSE.equals(clonedCustomer.isGl())) {
+                    clonedCustomer.setDebitTransfer("");
                     customerDTO.setDebitTransfer("");
                 }
+
+                // validation GL
+                validateGLForCostCenterDebit(clonedCustomer.isGl(), clonedCustomer.getDebitTransfer(), validationErrors);
 
                 // validation billing template
                 validationBillingTemplate(clonedCustomer.getBillingCategory(), clonedCustomer.getBillingType(), clonedCustomer.getSubCode(), validationErrors);
@@ -349,16 +356,16 @@ public class CustomerServiceImpl implements CustomerService {
             CustomerDTO customerDTO = objectMapper.readValue(dataChangeDTO.getJsonDataAfter(), CustomerDTO.class);
             log.info("Hasil baca JSON Data After: {}", customerDTO);
 
-            // Validation MI code dan get name value
-            InvestmentManagementDTO investmentManagementDTO = investmentManagementService.getByCode(customerDTO.getMiCode());
-            customerDTO.setMiCode(investmentManagementDTO.getCode());
-            customerDTO.setMiName(investmentManagementDTO.getName());
-
             Customer customer = customerRepository.findByCustomerCode(customerDTO.getCustomerCode())
                     .orElseThrow(() -> new DataNotFoundException(CODE_NOT_FOUND + customerDTO.getCustomerCode()));
 
             customerMapper.mapObjects(customerDTO, customer);
             log.info("Customer after copy properties: {}", customer);
+
+            // Validation MI code dan get name value
+            InvestmentManagementDTO investmentManagementDTO = investmentManagementService.getByCode(customer.getMiCode());
+            customer.setMiCode(investmentManagementDTO.getCode());
+            customer.setMiName(investmentManagementDTO.getName());
 
             // Jika nilai Is GL adalah FALSE, hapus data di kolom Cost Center Debit
             if (Boolean.FALSE.equals(customer.isGl())) {
@@ -533,5 +540,9 @@ public class CustomerServiceImpl implements CustomerService {
                 validationErrors.add("Cost Center Debit must be blank when GL is false");
             }
         }
+    }
+
+    private boolean isValidIsGLValue(String isGL) {
+        return "TRUE".equalsIgnoreCase(isGL) || "FALSE".equalsIgnoreCase(isGL);
     }
 }
