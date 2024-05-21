@@ -239,6 +239,8 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
         }
     }
 
+    // Harus di approve kita tidak perlu validasi data. Tapi hanya pengecekan data apakah data itu sudah di-create sebelumnya atau belum
+    // Itupun valiadasi hanya untuk create
     @Override
     public InvestmentManagementResponse updateSingleApprove(InvestmentManagementApproveRequest approveRequest) {
         log.info("Approve when update investment management with request: {}", approveRequest);
@@ -247,31 +249,23 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
         List<ErrorMessageDTO> errorMessageList = new ArrayList<>();
 
         validateDataChangeId(approveRequest.getDataChangeId());
-        // InvestmentManagementDTO investmentManagementDTO = approveRequest.getData(); // data ini gak digunakan, karena kita ambil saja data dari JSON After data change
         try {
             List<String> validationErrors = new ArrayList<>();
             Long dataChangeId = Long.valueOf(approveRequest.getDataChangeId());
 
-            // JANGAN LAKUKAN VALIDATION COLUMN DTO PADA SAAT APPROVE
-            // Karena validation column harusnya dilakukan saat insert data change
-            // Mapping from data JSON DATA After to class dto InvestmentManagement
             BillingDataChangeDTO dataChangeDTO = dataChangeService.getById(dataChangeId);
 
-            // kita dapat object dto dari JSON Data after
             InvestmentManagementDTO investmentManagementDTO = objectMapper.readValue(dataChangeDTO.getJsonDataAfter(), InvestmentManagementDTO.class);
             log.info("Data dari json after: {}", investmentManagementDTO);
 
-            // kita get entity
             InvestmentManagement investmentManagement = investmentManagementRepository.findByCode(investmentManagementDTO.getCode())
                     .orElseThrow(() -> new DataNotFoundException(CODE_NOT_FOUND + investmentManagementDTO.getCode()));
 
-            // Copy data from DTO to Entity
             investmentManagementMapper.mapObjects(investmentManagementDTO, investmentManagement);
             log.info("Investment Management after copy properties: {}", investmentManagement);
 
             validationEmail(investmentManagement.getEmail(), validationErrors);
 
-            // Retrieve and set billing data change
             dataChangeDTO.setApproveId(approveRequest.getApproveId());
             dataChangeDTO.setApproveIPAddress(approveRequest.getApproveIPAddress());
             dataChangeDTO.setEntityId(investmentManagement.getId().toString());
