@@ -1,7 +1,6 @@
 package com.bayu.billingservice.dto.investmentmanagement;
 
 import com.bayu.billingservice.dto.approval.ApprovalDTO;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
@@ -11,7 +10,6 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class InvestmentManagementDTO extends ApprovalDTO {
 
     private Long id;
