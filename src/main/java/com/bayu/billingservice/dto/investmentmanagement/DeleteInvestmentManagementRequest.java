@@ -1,18 +1,15 @@
 package com.bayu.billingservice.dto.investmentmanagement;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.bayu.billingservice.dto.InputIdentifierRequest;
+import lombok.*;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class DeleteInvestmentManagementRequest {
-
-    private String inputId;
-    private String inputIPAddress;
+public class DeleteInvestmentManagementRequest extends InputIdentifierRequest {
 
     private Long id;
+
 }
