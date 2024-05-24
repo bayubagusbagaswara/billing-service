@@ -1,21 +1,17 @@
 package com.bayu.billingservice.dto.investmentmanagement;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.bayu.billingservice.dto.InputIdentifierRequest;
+import lombok.*;
 
 import java.util.List;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UpdateInvestmentManagementListRequest {
-
-    private String inputId;
-
-    private String inputIPAddress;
+public class UpdateInvestmentManagementListRequest extends InputIdentifierRequest {
 
     private List<UpdateInvestmentManagementDataListRequest> updateInvestmentManagementDataListRequests;
+
 }
