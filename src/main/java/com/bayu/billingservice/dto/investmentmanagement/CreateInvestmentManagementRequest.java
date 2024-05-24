@@ -1,21 +1,16 @@
 package com.bayu.billingservice.dto.investmentmanagement;
 
+import com.bayu.billingservice.dto.InputIdentifierRequest;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateInvestmentManagementRequest {
-
-    private String inputId;
-
-    private String inputIPAddress;
+public class CreateInvestmentManagementRequest extends InputIdentifierRequest {
 
     @NotBlank(message = "Code cannot be empty")
     private String code;
