@@ -346,30 +346,21 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
         List<ErrorMessageDTO> errorMessageList = new ArrayList<>();
 
         validateDataChangeId(approveRequest.getDataChangeId());
-
-        InvestmentManagementDTO investmentManagementDTO = approveRequest.getData();
-        BillingDataChangeDTO dataChangeDTO = dataChangeService.getById(Long.valueOf(approveRequest.getDataChangeId()));
         try {
-            InvestmentManagement investmentManagement = investmentManagementRepository.findById(investmentManagementDTO.getId())
-                    .orElseThrow(() -> new DataNotFoundException(ID_NOT_FOUND + investmentManagementDTO.getId()));
+            /* get data change by id and get Entity ID */
+            Long dataChangeId = Long.valueOf(approveRequest.getDataChangeId());
+            BillingDataChangeDTO dataChangeDTO = dataChangeService.getById(dataChangeId);
+            Long entityId = Long.valueOf(dataChangeDTO.getEntityId());
+
+            InvestmentManagement investmentManagement = investmentManagementRepository.findById(entityId)
+                    .orElseThrow(() -> new DataNotFoundException(ID_NOT_FOUND + entityId));
 
             dataChangeDTO.setApproveId(approveRequest.getApproveId());
             dataChangeDTO.setJsonDataBefore(JsonUtil.cleanedJsonData(objectMapper.writeValueAsString(investmentManagement)));
-            dataChangeDTO.setDescription("Successfully approve data change and delete data entity");
-
+            dataChangeDTO.setDescription("Successfully approve data change and delete data entity with id: " + investmentManagement.getId());
             dataChangeService.approvalStatusIsApproved(dataChangeDTO);
             investmentManagementRepository.delete(investmentManagement);
             totalDataSuccess++;
-
-        } catch (DataNotFoundException e) {
-            handleDataNotFoundException(investmentManagementDTO, e, errorMessageList);
-            dataChangeDTO.setApproveId(approveRequest.getApproveId());
-            dataChangeDTO.setApproveDate(new Date());
-            List<String> validationErrors = new ArrayList<>();
-            validationErrors.add(ID_NOT_FOUND + investmentManagementDTO.getId());
-
-            dataChangeService.approvalStatusIsRejected(dataChangeDTO, validationErrors);
-            totalDataFailed++;
         } catch (Exception e) {
             handleGeneralError(null, e, errorMessageList);
             totalDataFailed++;
@@ -413,13 +404,6 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
             log.info("Data Change ids not found");
             throw new DataNotFoundException("Data Change ids not found");
         }
-    }
-
-    private void handleDataNotFoundException(InvestmentManagementDTO investmentManagementDTO, DataNotFoundException e, List<ErrorMessageDTO> errorMessageList) {
-        log.error("Investment Management not found with id: {}", investmentManagementDTO != null ? investmentManagementDTO.getCode() : UNKNOWN, e);
-        List<String> validationErrors = new ArrayList<>();
-        validationErrors.add(e.getMessage());
-        errorMessageList.add(new ErrorMessageDTO(investmentManagementDTO != null ? investmentManagementDTO.getCode() : UNKNOWN, validationErrors));
     }
 
     private void handleGeneralError(String investmentManagementCode, Exception e, List<ErrorMessageDTO> errorMessageList) {
