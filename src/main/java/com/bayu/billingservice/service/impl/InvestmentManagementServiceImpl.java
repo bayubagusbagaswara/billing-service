@@ -319,23 +319,20 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
         int totalDataFailed = 0;
         List<ErrorMessageDTO> errorMessageList = new ArrayList<>();
 
-        InvestmentManagementDTO investmentManagementDTO = InvestmentManagementDTO.builder()
-                .id(deleteRequest.getId())
-                .build();
         try {
-            InvestmentManagement investmentManagement= investmentManagementRepository.findById(investmentManagementDTO.getId())
-                    .orElseThrow(() -> new DataNotFoundException(ID_NOT_FOUND + investmentManagementDTO.getId()));
+            /* get data by id */
+            Long id = deleteRequest.getId();
+            InvestmentManagement investmentManagement= investmentManagementRepository.findById(id)
+                    .orElseThrow(() -> new DataNotFoundException(ID_NOT_FOUND + id));
 
             dataChangeDTO.setInputId(deleteRequest.getInputId());
-            dataChangeDTO.setInputIPAddress(deleteRequest.getInputIPAddress());
             dataChangeDTO.setJsonDataBefore(JsonUtil.cleanedJsonData(objectMapper.writeValueAsString(investmentManagement)));
             dataChangeDTO.setJsonDataAfter("");
             dataChangeDTO.setEntityId(investmentManagement.getId().toString());
-
             dataChangeService.createChangeActionDELETE(dataChangeDTO, InvestmentManagement.class);
             totalDataSuccess++;
         } catch (Exception e) {
-            handleGeneralError(null, e, errorMessageList);
+            handleGeneralError(deleteRequest.getId().toString(), e, errorMessageList);
             totalDataFailed++;
         }
         return new InvestmentManagementResponse(totalDataSuccess, totalDataFailed, errorMessageList);
