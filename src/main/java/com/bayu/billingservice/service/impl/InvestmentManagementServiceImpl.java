@@ -20,7 +20,6 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 @RequiredArgsConstructor
@@ -267,22 +266,30 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
 
         validateDataChangeId(approveRequest.getDataChangeId());
         try {
-            List<String> validationErrors = new ArrayList<>();
+            /* get data change by id and get json data after data */
             Long dataChangeId = Long.valueOf(approveRequest.getDataChangeId());
-
             BillingDataChangeDTO dataChangeDTO = dataChangeService.getById(dataChangeId);
-
             InvestmentManagementDTO investmentManagementDTO = objectMapper.readValue(dataChangeDTO.getJsonDataAfter(), InvestmentManagementDTO.class);
-            log.info("Data dari json after: {}", investmentManagementDTO);
+            log.info("[Update Approve] Map data from JSON data after data change: {}", investmentManagementDTO);
 
+            /* get data by code*/
             InvestmentManagement investmentManagement = investmentManagementRepository.findByCode(investmentManagementDTO.getCode())
                     .orElseThrow(() -> new DataNotFoundException(CODE_NOT_FOUND + investmentManagementDTO.getCode()));
 
             investmentManagementMapper.mapObjectsDtoToEntity(investmentManagementDTO, investmentManagement);
-            log.info("Investment Management after copy properties: {}", investmentManagement);
+            log.info("[Update Approve] Map object dto to entity: {}", investmentManagement);
 
-            validationEmail(investmentManagement.getEmail(), validationErrors);
+            InvestmentManagementDTO dto = investmentManagementMapper.mapToDto(investmentManagement);
+            log.info("[Update Approve] Map from entity to dto: {}", dto);
 
+            /* check validation each column */
+            List<String> validationErrors = new ArrayList<>();
+            Errors errors = validateInvestmentManagementUsingValidator(dto);
+            if (errors.hasErrors()) {
+                errors.getAllErrors().forEach(error -> validationErrors.add(error.getDefaultMessage()));
+            }
+
+            /* set data change information */
             dataChangeDTO.setApproveId(approveRequest.getApproveId());
             dataChangeDTO.setEntityId(investmentManagement.getId().toString());
 
@@ -293,9 +300,8 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
             } else {
                 InvestmentManagement investmentManagementUpdated = investmentManagementMapper.updateEntity(investmentManagement, dataChangeDTO);
                 InvestmentManagement investmentManagementSaved = investmentManagementRepository.save(investmentManagementUpdated);
-
                 dataChangeDTO.setJsonDataAfter(JsonUtil.cleanedJsonData(objectMapper.writeValueAsString(investmentManagementSaved)));
-                dataChangeDTO.setDescription("Successfully approve data change and update data entity");
+                dataChangeDTO.setDescription("Successfully approve data change and update data entity with id: " + investmentManagementSaved.getId());
                 dataChangeService.approvalStatusIsApproved(dataChangeDTO);
                 totalDataSuccess++;
             }
@@ -397,13 +403,6 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
         Errors errors = new BeanPropertyBindingResult(dto, "investmentManagementDTO");
         validator.validate(dto, errors);
         return errors;
-    }
-
-
-    private void validationEmail(String email, List<String> validationErrors) {
-        if (!emailValidator.isValidEmail(email)) {
-            validationErrors.add("Email is not valid: " + email);
-        }
     }
 
     private void validationCodeAlreadyExists(String code, List<String> errorMessages) {
