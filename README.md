@@ -721,3 +721,65 @@ String jsonDataAfter = "{\"code\":\"A002\",\"name\":\"PT Pacific Capital Investm
 2. Tambahkan data fee parameter
 3. Tambahkan data customer
 4. Hitung calculate billing fund
+
+# Update Satuan
+- Semua field akan dikirim ke belakang semua, tapi untuk data yg tidak diupdate akan diisi string kosong ""
+- Misalnya:
+```json
+{
+  "inputId": "V00028732",
+  "inputIPAddress": "10.151.50.122",
+  "id": "1",
+  "customerCode": "22PWBF",
+  "subCode": "",
+  "customerName": "Reksa Dana Pinnacle Winner Balanced Fund",
+  "billingCategory": "FUND",
+  "billingType": "TYPE_1",
+  "billingTemplate": "FUND_TEMPLATE",
+  "currency": "IDR",
+  "miCode": "PIN",
+  "miName": "PT PINNACLE PERSADA INVESTAMA",
+  "account": "3674882026",
+  "debitTransfer": "",
+  "accountName": "Reksa Dana Pinnacle Winner Balanced Fund",
+  "glAccountHasil": "490125",
+  "customerMinimumFee": "2000000.00",
+  "npwpNumber": "99.498.267.6-014.000",
+  "npwpName": "Reksa Dana Pinnacle Winner Balanced Fund",
+  "npwpAddress": "Capital Place Lt 41 Jl Jenderal Gatot Subroto Kav 18 RT 006 Kuningan Barat. Mampang Prapatan. Kota Adm. Jakarta Selatan DKI Jakarta ",
+  "costCenter": "9207",
+  "kseiSafeCode": "",
+  "sellingAgent": "",
+  "customerSafekeepingFee": "10000",
+  "customerTransactionHandling": "0",
+  "gl": "false"
+}
+```
+
+# Update List
+- Hanya field yang akan diupdate yang dikirim ke belakang
+- Misalnya:
+```json
+{
+  "inputerId": "V00028732",
+  "inputerIPAddress": "10.151.50.122",
+  "customerDataListRequests": [
+    {
+      "Customer Code": "22PWBF",
+      "Billing Category": "CORE"
+    },
+    {
+      "Customer Code": "21SMUN",
+      "Billing Type": "TYPE_6"
+    },
+    {
+      "Customer Code": "22SMBK",
+      "Currency": "USD"
+    },
+    {
+      "Customer Code": "15JATJ",
+      "Billing Template": "CORE_TEMPLATE_3"
+    }
+  ]
+}
+```
