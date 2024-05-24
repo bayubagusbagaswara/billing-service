@@ -211,61 +211,50 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
     @Override
     public InvestmentManagementResponse updateMultipleData(UpdateInvestmentManagementListRequest updateListRequest, BillingDataChangeDTO dataChangeDTO) {
         log.info("Update multiple data investment management with request: {}", updateListRequest);
-        dataChangeDTO.setInputId(updateListRequest.getInputId());
-        dataChangeDTO.setInputIPAddress(updateListRequest.getInputIPAddress());
+
         int totalDataSuccess = 0;
         int totalDataFailed = 0;
         List<ErrorMessageDTO> errorMessageList = new ArrayList<>();
 
         for (UpdateInvestmentManagementDataListRequest updateInvestmentManagementDataListRequest : updateListRequest.getUpdateInvestmentManagementDataListRequests()) {
             InvestmentManagementDTO investmentManagementDTO = investmentManagementMapper.mapFromDataListToDTO(updateInvestmentManagementDataListRequest);
+            log.info("[Update Multiple] Result mapping from request to dto: {}", investmentManagementDTO);
             try {
+                /* get data by code */
                 InvestmentManagement investmentManagement = investmentManagementRepository.findByCode(investmentManagementDTO.getCode())
                         .orElseThrow(() -> new DataNotFoundException(CODE_NOT_FOUND + investmentManagementDTO.getCode()));
 
-                AtomicInteger successCounter = new AtomicInteger(totalDataSuccess);
-                AtomicInteger failedCounter = new AtomicInteger(totalDataFailed);
+                /* map data from dto to entity, to overwrite new data */
+                investmentManagementMapper.mapObjectsDtoToEntity(investmentManagementDTO, investmentManagement);
+                log.info("[Update Multiple] Result map object dto to entity: {}", investmentManagement);
+                InvestmentManagementDTO dto = investmentManagementMapper.mapToDto(investmentManagement);
+                log.info("[Update Multiple] Result map object entity to dto: {}", dto);
 
-                processUpdateInvestmentManagement(investmentManagement, investmentManagementDTO, dataChangeDTO, errorMessageList, successCounter, failedCounter);
+                /* check validation data dto */
+                List<String> validationErrors = new ArrayList<>();
+                Errors errors = validateInvestmentManagementUsingValidator(dto);
+                if (errors.hasErrors()) {
+                    errors.getAllErrors().forEach(error -> validationErrors.add(error.getDefaultMessage()));
+                }
 
-                totalDataSuccess = successCounter.get();
-                totalDataFailed = failedCounter.get();
+                if (!validationErrors.isEmpty()) {
+                    ErrorMessageDTO errorMessageDTO = new ErrorMessageDTO(investmentManagementDTO.getCode(), validationErrors);
+                    errorMessageList.add(errorMessageDTO);
+                    totalDataFailed++;
+                } else {
+                    dataChangeDTO.setInputId(updateListRequest.getInputId());
+                    dataChangeDTO.setJsonDataBefore(JsonUtil.cleanedJsonData(objectMapper.writeValueAsString(investmentManagement)));
+                    dataChangeDTO.setJsonDataAfter(JsonUtil.cleanedJsonData(objectMapper.writeValueAsString(investmentManagementDTO)));
+                    dataChangeDTO.setEntityId(investmentManagement.getId().toString());
+                    dataChangeService.createChangeActionEDIT(dataChangeDTO, InvestmentManagement.class);
+                   totalDataSuccess++;
+                }
             } catch (Exception e) {
                 handleGeneralError(null, e, errorMessageList);
                 totalDataFailed++;
             }
         }
         return new InvestmentManagementResponse(totalDataSuccess, totalDataFailed, errorMessageList);
-    }
-
-    private void processUpdateInvestmentManagement(InvestmentManagement investmentManagement,
-                                                   InvestmentManagementDTO investmentManagementDTO,
-                                                   BillingDataChangeDTO dataChangeDTO,
-                                                   List<ErrorMessageDTO> errorMessageList,
-                                                   AtomicInteger successCounter,
-                                                   AtomicInteger failedCounter) {
-        try {
-            List<String> validationErrors = new ArrayList<>();
-            validationEmail(investmentManagementDTO.getEmail(), validationErrors);
-
-            if (!validationErrors.isEmpty()) {
-                ErrorMessageDTO errorMessageDTO = new ErrorMessageDTO(investmentManagementDTO.getCode(), validationErrors);
-                errorMessageList.add(errorMessageDTO);
-                failedCounter.incrementAndGet();
-            } else {
-                dataChangeDTO.setInputId(dataChangeDTO.getInputId());
-                dataChangeDTO.setInputIPAddress(dataChangeDTO.getInputIPAddress());
-                dataChangeDTO.setJsonDataBefore(JsonUtil.cleanedJsonData(objectMapper.writeValueAsString(investmentManagement)));
-                dataChangeDTO.setJsonDataAfter(JsonUtil.cleanedJsonData(objectMapper.writeValueAsString(investmentManagementDTO)));
-                dataChangeDTO.setEntityId(investmentManagement.getId().toString());
-
-                dataChangeService.createChangeActionEDIT(dataChangeDTO, InvestmentManagement.class);
-                successCounter.incrementAndGet(); // Increment totalDataSuccess
-            }
-        } catch (Exception e) {
-            handleGeneralError(null, e, errorMessageList);
-            failedCounter.incrementAndGet(); // Increment totalDataFailed
-        }
     }
 
 
