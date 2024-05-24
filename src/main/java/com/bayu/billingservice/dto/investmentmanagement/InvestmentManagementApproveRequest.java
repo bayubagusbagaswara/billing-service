@@ -1,18 +1,14 @@
 package com.bayu.billingservice.dto.investmentmanagement;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.bayu.billingservice.dto.ApprovalIdentifierRequest;
+import lombok.*;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class InvestmentManagementApproveRequest {
-
-    private String approveId;
-    private String approveIPAddress;
+public class InvestmentManagementApproveRequest extends ApprovalIdentifierRequest {
 
     private String dataChangeId;
 
