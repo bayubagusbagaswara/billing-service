@@ -57,8 +57,12 @@ public abstract class BaseMapper<E, D> {
         return entity;
     }
 
-    public void mapObjects(D sourceDto, E targetEntity) {
+    public void mapObjectsDtoToEntity(D sourceDto, E targetEntity) {
         modelMapper.map(sourceDto, targetEntity);
+    }
+
+    public void mapObjectsEntityToDto(E sourceEntity, D targetDto) {
+        modelMapper.map(sourceEntity, targetDto);
     }
 
     protected abstract Class<E> getEntityClass();
