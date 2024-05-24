@@ -11,5 +11,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class InputIdentifierRequest {
 
-    private String inputIPAddress;
+    private String inputId;
 }
