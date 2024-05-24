@@ -165,26 +165,44 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
     @Override
     public InvestmentManagementResponse updateSingleData(UpdateInvestmentManagementRequest updateRequest, BillingDataChangeDTO dataChangeDTO) {
         log.info("Update single data investment management with request: {}", updateRequest);
-        dataChangeDTO.setInputId(updateRequest.getInputId());
-        dataChangeDTO.setInputIPAddress(updateRequest.getInputIPAddress());
         int totalDataSuccess = 0;
         int totalDataFailed = 0;
         List<ErrorMessageDTO> errorMessageList = new ArrayList<>();
 
-        InvestmentManagementDTO investmentManagementDTO = investmentManagementMapper.mapFromUpdateRequestToDto(updateRequest);
         try {
+            /* mapping data from request to dto */
+            InvestmentManagementDTO investmentManagementDTO = investmentManagementMapper.mapFromUpdateRequestToDto(updateRequest);
+            log.info("[Update Single] Result mapping request to dto: {}", investmentManagementDTO);
+
+            /* get investment management by id */
             InvestmentManagement investmentManagement = investmentManagementRepository.findById(investmentManagementDTO.getId())
                     .orElseThrow(() -> new DataNotFoundException(ID_NOT_FOUND + investmentManagementDTO.getId()));
 
-            AtomicInteger successCounter = new AtomicInteger(totalDataSuccess);
-            AtomicInteger failedCounter = new AtomicInteger(totalDataFailed);
+            /* check validator for data request */
+            List<String> validationErrors = new ArrayList<>();
+            investmentManagementMapper.mapObjectsDtoToEntity(investmentManagementDTO, investmentManagement);
+            log.info("[Update Single] Result map object dto to entity: {}", investmentManagement);
+            InvestmentManagementDTO dto = investmentManagementMapper.mapToDto(investmentManagement);
+            log.info("[Update Single] Result map object entity to dto: {}", dto);
+            Errors errors = validateInvestmentManagementUsingValidator(dto);
+            if (errors.hasErrors()) {
+                errors.getAllErrors().forEach(error -> validationErrors.add(error.getDefaultMessage()));
+            }
 
-            processUpdateInvestmentManagement(investmentManagement, investmentManagementDTO, dataChangeDTO, errorMessageList, successCounter, failedCounter);
-
-            totalDataSuccess = successCounter.get();
-            totalDataFailed = failedCounter.get();
+            if (!validationErrors.isEmpty()) {
+                ErrorMessageDTO errorMessageDTO = new ErrorMessageDTO(investmentManagementDTO.getCode(), validationErrors);
+                errorMessageList.add(errorMessageDTO);
+                totalDataFailed++;
+            } else {
+                dataChangeDTO.setInputId(updateRequest.getInputId());
+                dataChangeDTO.setJsonDataBefore(JsonUtil.cleanedJsonData(objectMapper.writeValueAsString(investmentManagement)));
+                dataChangeDTO.setJsonDataAfter(JsonUtil.cleanedJsonData(objectMapper.writeValueAsString(investmentManagementDTO)));
+                dataChangeDTO.setEntityId(investmentManagement.getId().toString());
+                dataChangeService.createChangeActionEDIT(dataChangeDTO, InvestmentManagement.class);
+                totalDataSuccess++;
+            }
         } catch (Exception e) {
-            handleGeneralError(null, e, errorMessageList);
+            handleGeneralError(updateRequest.getCode(), e, errorMessageList);
             totalDataFailed++;
         }
         return new InvestmentManagementResponse(totalDataSuccess, totalDataFailed, errorMessageList);
@@ -250,8 +268,7 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
         }
     }
 
-    // Harus di approve kita tidak perlu validasi data. Tapi hanya pengecekan data apakah data itu sudah di-create sebelumnya atau belum
-    // Itupun valiadasi hanya untuk create
+
     @Override
     public InvestmentManagementResponse updateSingleApprove(InvestmentManagementApproveRequest approveRequest) {
         log.info("Approve when update investment management with request: {}", approveRequest);
@@ -272,7 +289,7 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
             InvestmentManagement investmentManagement = investmentManagementRepository.findByCode(investmentManagementDTO.getCode())
                     .orElseThrow(() -> new DataNotFoundException(CODE_NOT_FOUND + investmentManagementDTO.getCode()));
 
-            investmentManagementMapper.mapObjects(investmentManagementDTO, investmentManagement);
+            investmentManagementMapper.mapObjectsDtoToEntity(investmentManagementDTO, investmentManagement);
             log.info("Investment Management after copy properties: {}", investmentManagement);
 
             validationEmail(investmentManagement.getEmail(), validationErrors);
