@@ -26,7 +26,7 @@ public class InvestmentManagementController {
 
     @PostMapping(path = "/create")
     public ResponseEntity<ResponseDTO<InvestmentManagementResponse>> create(@RequestBody CreateInvestmentManagementRequest request, HttpServletRequest servletRequest) {
-        log.info("Input IP Address: {}", servletRequest.getRemoteAddr());
+        log.info("[Create Single] Input IP Address: {}", servletRequest.getRemoteAddr());
         BillingDataChangeDTO dataChangeDTO = BillingDataChangeDTO.builder()
                 .inputIPAddress(servletRequest.getRemoteAddr())
                 .methodHttp(HttpMethod.POST.name())
@@ -46,8 +46,10 @@ public class InvestmentManagementController {
     }
 
     @PostMapping(path = "/create-list")
-    public ResponseEntity<ResponseDTO<InvestmentManagementResponse>> createList(@RequestBody CreateInvestmentManagementListRequest request) {
+    public ResponseEntity<ResponseDTO<InvestmentManagementResponse>> createList(@RequestBody CreateInvestmentManagementListRequest request, HttpServletRequest servletRequest) {
+        log.info("[Create List] Input IP Address: {}", servletRequest.getRemoteAddr());
         BillingDataChangeDTO dataChangeDTO = BillingDataChangeDTO.builder()
+                .inputIPAddress(servletRequest.getRemoteAddr())
                 .methodHttp(HttpMethod.POST.name())
                 .endpoint("/api/investment-management/create/approve")
                 .isRequestBody(true)
@@ -67,8 +69,10 @@ public class InvestmentManagementController {
     }
 
     @PostMapping(path = "/create/approve")
-    public ResponseEntity<ResponseDTO<InvestmentManagementResponse>> createListApprove(@RequestBody InvestmentManagementApproveRequest request) {
-        InvestmentManagementResponse listApprove = investmentManagementService.createSingleApprove(request);
+    public ResponseEntity<ResponseDTO<InvestmentManagementResponse>> createListApprove(@RequestBody InvestmentManagementApproveRequest request, HttpServletRequest servletRequest) {
+        log.info("[Create Approve] Approve IP Address: {}", servletRequest.getRemoteAddr());
+        String approveIPAddress = servletRequest.getRemoteAddr();
+        InvestmentManagementResponse listApprove = investmentManagementService.createSingleApprove(request, approveIPAddress);
         ResponseDTO<InvestmentManagementResponse> response = ResponseDTO.<InvestmentManagementResponse>builder()
                 .code(HttpStatus.OK.value())
                 .message(HttpStatus.OK.getReasonPhrase())
@@ -78,8 +82,10 @@ public class InvestmentManagementController {
     }
 
     @PutMapping(path = "/updateById")
-    public ResponseEntity<ResponseDTO<InvestmentManagementResponse>> updateById(@RequestBody UpdateInvestmentManagementRequest request) {
+    public ResponseEntity<ResponseDTO<InvestmentManagementResponse>> updateById(@RequestBody UpdateInvestmentManagementRequest request, HttpServletRequest servletRequest) {
+        log.info("[Update By Id] Input IP Address: {}", servletRequest.getRemoteAddr());
         BillingDataChangeDTO dataChangeDTO = BillingDataChangeDTO.builder()
+                .inputIPAddress(servletRequest.getRemoteAddr())
                 .methodHttp(HttpMethod.PUT.name())
                 .endpoint("/api/investment-management/update/approve")
                 .isRequestBody(true)
@@ -97,8 +103,10 @@ public class InvestmentManagementController {
     }
 
     @PutMapping(path = "/update-list")
-    public ResponseEntity<ResponseDTO<InvestmentManagementResponse>> updateList(@RequestBody UpdateInvestmentManagementListRequest request) {
+    public ResponseEntity<ResponseDTO<InvestmentManagementResponse>> updateList(@RequestBody UpdateInvestmentManagementListRequest request, HttpServletRequest servletRequest) {
+        log.info("[Update List] Input IP Address: {}", servletRequest.getRemoteAddr());
         BillingDataChangeDTO dataChangeDTO = BillingDataChangeDTO.builder()
+                .inputIPAddress(servletRequest.getRemoteAddr())
                 .methodHttp(HttpMethod.PUT.name())
                 .endpoint("/api/investment-management/update/approve")
                 .isRequestBody(true)
@@ -116,8 +124,10 @@ public class InvestmentManagementController {
     }
 
     @PutMapping(path = "/update/approve")
-    public ResponseEntity<ResponseDTO<InvestmentManagementResponse>> updateListApprove(@RequestBody InvestmentManagementApproveRequest request) {
-        InvestmentManagementResponse updateInvestmentManagementListResponse = investmentManagementService.updateSingleApprove(request);
+    public ResponseEntity<ResponseDTO<InvestmentManagementResponse>> updateListApprove(@RequestBody InvestmentManagementApproveRequest request, HttpServletRequest servletRequest) {
+        log.info("[Update Approve] Approve IP Address: {}", servletRequest.getRemoteAddr());
+        String approveIPAddress = servletRequest.getRemoteAddr();
+        InvestmentManagementResponse updateInvestmentManagementListResponse = investmentManagementService.updateSingleApprove(request, approveIPAddress);
         ResponseDTO<InvestmentManagementResponse> response = ResponseDTO.<InvestmentManagementResponse>builder()
                 .code(HttpStatus.OK.value())
                 .message(HttpStatus.OK.getReasonPhrase())
@@ -127,8 +137,10 @@ public class InvestmentManagementController {
     }
 
     @DeleteMapping(path = "/delete")
-    public ResponseEntity<ResponseDTO<InvestmentManagementResponse>> delete(@RequestBody DeleteInvestmentManagementRequest request) {
+    public ResponseEntity<ResponseDTO<InvestmentManagementResponse>> delete(@RequestBody DeleteInvestmentManagementRequest request, HttpServletRequest servletRequest) {
+        log.info("[Delete By Id] Input IP Address: {}", servletRequest.getRemoteAddr());
         BillingDataChangeDTO dataChangeDTO = BillingDataChangeDTO.builder()
+                .inputIPAddress(servletRequest.getRemoteAddr())
                 .methodHttp(HttpMethod.DELETE.name())
                 .endpoint("/api/investment-management/delete/approve")
                 .isRequestBody(true)
@@ -146,8 +158,10 @@ public class InvestmentManagementController {
     }
 
     @DeleteMapping(path = "/delete/approve")
-    public ResponseEntity<ResponseDTO<InvestmentManagementResponse>> deleteApprove(@RequestBody InvestmentManagementApproveRequest request) {
-        InvestmentManagementResponse deleteInvestmentManagementListResponse = investmentManagementService.deleteSingleApprove(request);
+    public ResponseEntity<ResponseDTO<InvestmentManagementResponse>> deleteApprove(@RequestBody InvestmentManagementApproveRequest request, HttpServletRequest servletRequest) {
+        log.info("[Delete Approve] Approve IP Address: {}", servletRequest.getRemoteAddr());
+        String approveIPAddress = servletRequest.getRemoteAddr();
+        InvestmentManagementResponse deleteInvestmentManagementListResponse = investmentManagementService.deleteSingleApprove(request, approveIPAddress);
         ResponseDTO<InvestmentManagementResponse> response = ResponseDTO.<InvestmentManagementResponse>builder()
                 .code(HttpStatus.OK.value())
                 .message(HttpStatus.OK.getReasonPhrase())

@@ -123,7 +123,7 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
     }
 
     @Override
-    public InvestmentManagementResponse createSingleApprove(InvestmentManagementApproveRequest approveRequest) {
+    public InvestmentManagementResponse createSingleApprove(InvestmentManagementApproveRequest approveRequest, String approveIPAddress) {
         log.info("Approve when create investment management with request: {}", approveRequest);
         int totalDataSuccess = 0;
         int totalDataFailed = 0;
@@ -142,6 +142,7 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
 
             if (!validationErrors.isEmpty()) {
                 dataChangeDTO.setApproveId(approveRequest.getApproveId());
+                dataChangeDTO.setApproveIPAddress(approveIPAddress);
                 dataChangeDTO.setJsonDataAfter(JsonUtil.cleanedJsonData(objectMapper.writeValueAsString(investmentManagementDTO)));
                 dataChangeService.approvalStatusIsRejected(dataChangeDTO, validationErrors);
                 totalDataFailed++;
@@ -258,7 +259,7 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
 
 
     @Override
-    public InvestmentManagementResponse updateSingleApprove(InvestmentManagementApproveRequest approveRequest) {
+    public InvestmentManagementResponse updateSingleApprove(InvestmentManagementApproveRequest approveRequest, String approveIPAddress) {
         log.info("Approve when update investment management with request: {}", approveRequest);
         int totalDataSuccess = 0;
         int totalDataFailed = 0;
@@ -291,6 +292,7 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
 
             /* set data change information */
             dataChangeDTO.setApproveId(approveRequest.getApproveId());
+            dataChangeDTO.setApproveIPAddress(approveIPAddress);
             dataChangeDTO.setEntityId(investmentManagement.getId().toString());
 
             if (!validationErrors.isEmpty()) {
@@ -339,7 +341,7 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
     }
 
     @Override
-    public InvestmentManagementResponse deleteSingleApprove(InvestmentManagementApproveRequest approveRequest) {
+    public InvestmentManagementResponse deleteSingleApprove(InvestmentManagementApproveRequest approveRequest, String approveIPAddress) {
         log.info("Approve when delete investment management with request: {}", approveRequest);
         int totalDataSuccess = 0;
         int totalDataFailed = 0;
@@ -356,6 +358,7 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
                     .orElseThrow(() -> new DataNotFoundException(ID_NOT_FOUND + entityId));
 
             dataChangeDTO.setApproveId(approveRequest.getApproveId());
+            dataChangeDTO.setApproveIPAddress(approveIPAddress);
             dataChangeDTO.setJsonDataBefore(JsonUtil.cleanedJsonData(objectMapper.writeValueAsString(investmentManagement)));
             dataChangeDTO.setDescription("Successfully approve data change and delete data entity with id: " + investmentManagement.getId());
             dataChangeService.approvalStatusIsApproved(dataChangeDTO);
