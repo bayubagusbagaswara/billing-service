@@ -132,28 +132,24 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
 
         validateDataChangeId(approveRequest.getDataChangeId());
         try {
+            /* mapping from data JSON DATA After to class dto InvestmentManagement */
             Long dataChangeId = Long.valueOf(approveRequest.getDataChangeId());
-            List<String> validationErrors = new ArrayList<>();
-
-            // Mapping from data JSON DATA After to class dto InvestmentManagement
             BillingDataChangeDTO dataChangeDTO = dataChangeService.getById(dataChangeId);
             InvestmentManagementDTO investmentManagementDTO = objectMapper.readValue(dataChangeDTO.getJsonDataAfter(), InvestmentManagementDTO.class);
 
-            // check validation
+            /* check validation code already exists */
+            List<String> validationErrors = new ArrayList<>();
             validationCodeAlreadyExists(investmentManagementDTO.getCode(), validationErrors);
 
-            dataChangeDTO.setApproveId(approveRequest.getApproveId());
-            dataChangeDTO.setApproveIPAddress(approveRequest.getApproveIPAddress());
-
             if (!validationErrors.isEmpty()) {
+                dataChangeDTO.setApproveId(approveRequest.getApproveId());
                 dataChangeDTO.setJsonDataAfter(JsonUtil.cleanedJsonData(objectMapper.writeValueAsString(investmentManagementDTO)));
                 dataChangeService.approvalStatusIsRejected(dataChangeDTO, validationErrors);
                 totalDataFailed++;
             } else {
                 InvestmentManagement investmentManagement = investmentManagementMapper.createEntity(investmentManagementDTO, dataChangeDTO);
                 investmentManagementRepository.save(investmentManagement);
-
-                dataChangeDTO.setDescription("Successfully approve data change and save data investment management");
+                dataChangeDTO.setDescription("Successfully approve data change and save data investment management with id: " + investmentManagement.getId());
                 dataChangeDTO.setJsonDataAfter(JsonUtil.cleanedJsonData(objectMapper.writeValueAsString(investmentManagement)));
                 dataChangeDTO.setEntityId(investmentManagement.getId().toString());
                 dataChangeService.approvalStatusIsApproved(dataChangeDTO);
@@ -282,7 +278,6 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
             validationEmail(investmentManagement.getEmail(), validationErrors);
 
             dataChangeDTO.setApproveId(approveRequest.getApproveId());
-            dataChangeDTO.setApproveIPAddress(approveRequest.getApproveIPAddress());
             dataChangeDTO.setEntityId(investmentManagement.getId().toString());
 
             if (!validationErrors.isEmpty()) {
@@ -350,7 +345,6 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
                     .orElseThrow(() -> new DataNotFoundException(ID_NOT_FOUND + investmentManagementDTO.getId()));
 
             dataChangeDTO.setApproveId(approveRequest.getApproveId());
-            dataChangeDTO.setApproveIPAddress(approveRequest.getApproveIPAddress());
             dataChangeDTO.setJsonDataBefore(JsonUtil.cleanedJsonData(objectMapper.writeValueAsString(investmentManagement)));
             dataChangeDTO.setDescription("Successfully approve data change and delete data entity");
 
@@ -361,7 +355,6 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
         } catch (DataNotFoundException e) {
             handleDataNotFoundException(investmentManagementDTO, e, errorMessageList);
             dataChangeDTO.setApproveId(approveRequest.getApproveId());
-            dataChangeDTO.setApproveIPAddress(approveRequest.getApproveIPAddress());
             dataChangeDTO.setApproveDate(new Date());
             List<String> validationErrors = new ArrayList<>();
             validationErrors.add(ID_NOT_FOUND + investmentManagementDTO.getId());
