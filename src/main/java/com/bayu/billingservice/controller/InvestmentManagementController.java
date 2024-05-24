@@ -4,6 +4,7 @@ import com.bayu.billingservice.dto.ResponseDTO;
 import com.bayu.billingservice.dto.datachange.BillingDataChangeDTO;
 import com.bayu.billingservice.dto.investmentmanagement.*;
 import com.bayu.billingservice.service.InvestmentManagementService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpMethod;
@@ -24,8 +25,10 @@ public class InvestmentManagementController {
     private final InvestmentManagementService investmentManagementService;
 
     @PostMapping(path = "/create")
-    public ResponseEntity<ResponseDTO<InvestmentManagementResponse>> create(@RequestBody CreateInvestmentManagementRequest request) {
+    public ResponseEntity<ResponseDTO<InvestmentManagementResponse>> create(@RequestBody CreateInvestmentManagementRequest request, HttpServletRequest servletRequest) {
+        log.info("Input IP Address: {}", servletRequest.getRemoteAddr());
         BillingDataChangeDTO dataChangeDTO = BillingDataChangeDTO.builder()
+                .inputIPAddress(servletRequest.getRemoteAddr())
                 .methodHttp(HttpMethod.POST.name())
                 .endpoint("/api/investment-management/create/approve")
                 .isRequestBody(true)
