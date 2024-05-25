@@ -4,21 +4,25 @@ import com.bayu.billingservice.dto.ErrorMessageDTO;
 import com.bayu.billingservice.dto.datachange.BillingDataChangeDTO;
 import com.bayu.billingservice.dto.investmentmanagement.*;
 import com.bayu.billingservice.exception.DataNotFoundException;
+import com.bayu.billingservice.exception.GeneralException;
 import com.bayu.billingservice.mapper.InvestmentManagementMapper;
 import com.bayu.billingservice.model.InvestmentManagement;
 import com.bayu.billingservice.repository.InvestmentManagementRepository;
 import com.bayu.billingservice.service.DataChangeService;
 import com.bayu.billingservice.service.InvestmentManagementService;
+import com.bayu.billingservice.util.BeanUtil;
 import com.bayu.billingservice.util.EmailValidator;
 import com.bayu.billingservice.util.JsonUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 @Service
@@ -176,19 +180,21 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
         try {
             /* mapping data from request to dto */
             InvestmentManagementDTO investmentManagementDTO = investmentManagementMapper.mapFromUpdateRequestToDto(updateRequest);
+            InvestmentManagementDTO clonedDTO = new InvestmentManagementDTO();
+            BeanUtil.copyAllProperties(investmentManagementDTO, clonedDTO);
             log.info("[Update Single] Result mapping request to dto: {}", investmentManagementDTO);
 
             /* get investment management by id */
             InvestmentManagement investmentManagement = investmentManagementRepository.findById(investmentManagementDTO.getId())
                     .orElseThrow(() -> new DataNotFoundException(ID_NOT_FOUND + investmentManagementDTO.getId()));
 
-            /* check validator for data request */
+            /* data yang akan di validator */
+            copyNonNullOrEmptyFields(investmentManagement, clonedDTO);
+            log.info("[Update Single] Result map object entity to dto: {}", clonedDTO);
+
+            /* check validator for data request after mapping to dto */
             List<String> validationErrors = new ArrayList<>();
-            investmentManagementMapper.mapObjectsDtoToEntity(investmentManagementDTO, investmentManagement);
-            log.info("[Update Single] Result map object dto to entity: {}", investmentManagement);
-            InvestmentManagementDTO dto = investmentManagementMapper.mapToDto(investmentManagement);
-            log.info("[Update Single] Result map object entity to dto: {}", dto);
-            Errors errors = validateInvestmentManagementUsingValidator(dto);
+            Errors errors = validateInvestmentManagementUsingValidator(clonedDTO);
             if (errors.hasErrors()) {
                 errors.getAllErrors().forEach(error -> validationErrors.add(error.getDefaultMessage()));
             }
@@ -200,13 +206,13 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
             } else {
                 dataChangeDTO.setInputId(updateRequest.getInputId());
                 dataChangeDTO.setJsonDataBefore(JsonUtil.cleanedJsonData(objectMapper.writeValueAsString(investmentManagement)));
-                dataChangeDTO.setJsonDataAfter(JsonUtil.cleanedJsonData(objectMapper.writeValueAsString(investmentManagementDTO)));
+                dataChangeDTO.setJsonDataAfter(JsonUtil.cleanedJsonDataUpdate(objectMapper.writeValueAsString(investmentManagementDTO)));
                 dataChangeDTO.setEntityId(investmentManagement.getId().toString());
                 dataChangeService.createChangeActionEDIT(dataChangeDTO, InvestmentManagement.class);
                 totalDataSuccess++;
             }
         } catch (Exception e) {
-            handleGeneralError(updateRequest.getCode(), e, errorMessageList);
+            handleGeneralError(updateRequest.getId().toString(), e, errorMessageList);
             totalDataFailed++;
         }
         return new InvestmentManagementResponse(totalDataSuccess, totalDataFailed, errorMessageList);
@@ -418,6 +424,32 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
         List<String> validationErrors = new ArrayList<>();
         validationErrors.add("An unexpected error occurred: " + e.getMessage());
         errorMessageList.add(new ErrorMessageDTO(investmentManagementCode != null ? investmentManagementCode : UNKNOWN, validationErrors));
+    }
+
+    // Method to copy non-null and non-empty fields
+    public void copyNonNullOrEmptyFields(InvestmentManagement investmentManagement, InvestmentManagementDTO investmentManagementDTO) {
+        try {
+            Map<String, String> entityProperties = BeanUtils.describe(investmentManagement);
+
+            for (Map.Entry<String, String> entry : entityProperties.entrySet()) {
+                String propertyName = entry.getKey();
+                String entityValue = entry.getValue();
+
+                // Get the current value in the DTO
+                String dtoValue = BeanUtils.getProperty(investmentManagementDTO, propertyName);
+
+                // Copy value from entity to DTO if DTO's value is null or empty
+                if (isNullOrEmpty(dtoValue) && entityValue != null) {
+                    BeanUtils.setProperty(investmentManagementDTO, propertyName, entityValue);
+                }
+            }
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            throw new GeneralException("Failed while processing copy non null or empty fields", e);
+        }
+    }
+
+    private boolean isNullOrEmpty(String str) {
+        return str == null || str.trim().isEmpty();
     }
 
 }
