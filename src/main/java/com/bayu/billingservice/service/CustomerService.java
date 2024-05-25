@@ -22,16 +22,16 @@ public interface CustomerService {
 
     CustomerResponse createMultipleData(CreateCustomerListRequest request, BillingDataChangeDTO dataChangeDTO);
 
-    CustomerResponse createSingleApprove(CustomerApproveRequest request);
+    CustomerResponse createSingleApprove(CustomerApproveRequest request, String clientIP);
 
     CustomerResponse updateSingleData(UpdateCustomerRequest request, BillingDataChangeDTO dataChangeDTO);
 
     CustomerResponse updateMultipleData(UpdateCustomerListRequest request, BillingDataChangeDTO dataChangeDTO);
 
-    CustomerResponse updateSingleApprove(CustomerApproveRequest request);
+    CustomerResponse updateSingleApprove(CustomerApproveRequest request, String clientIP);
 
     CustomerResponse deleteSingleData(DeleteCustomerRequest request, BillingDataChangeDTO dataChangeDTO);
 
-    CustomerResponse deleteSingleApprove(CustomerApproveRequest request);
+    CustomerResponse deleteSingleApprove(CustomerApproveRequest request, String clientIP);
 
 }
