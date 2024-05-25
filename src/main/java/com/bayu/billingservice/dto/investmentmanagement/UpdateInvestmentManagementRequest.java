@@ -1,8 +1,6 @@
 package com.bayu.billingservice.dto.investmentmanagement;
 
 import com.bayu.billingservice.dto.InputIdentifierRequest;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -15,7 +13,8 @@ public class UpdateInvestmentManagementRequest extends InputIdentifierRequest {
 
     private Long id;
 
-    // private String code;
+    /* code cannot be updated */
+    private String code;
 
     private String name;
 
