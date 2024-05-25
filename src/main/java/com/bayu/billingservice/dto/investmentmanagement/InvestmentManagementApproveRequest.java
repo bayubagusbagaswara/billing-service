@@ -13,5 +13,5 @@ public class InvestmentManagementApproveRequest extends ApprovalIdentifierReques
 
     private String dataChangeId;
 
-    private InvestmentManagementDTO data;
+    // private InvestmentManagementDTO data;
 }

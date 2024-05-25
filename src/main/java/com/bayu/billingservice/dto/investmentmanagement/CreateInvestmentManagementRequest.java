@@ -23,6 +23,9 @@ public class CreateInvestmentManagementRequest extends InputIdentifierRequest {
     @Email(message = "Email is not valid")
     private String email;
 
+    @NotBlank(message = "Unique key cannot be empty")
+    private String uniqueKey;
+
     @NotBlank(message = "Address 1 cannot be empty")
     private String address1;
 
