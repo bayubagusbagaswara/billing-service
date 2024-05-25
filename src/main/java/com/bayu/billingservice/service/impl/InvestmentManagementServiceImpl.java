@@ -228,10 +228,11 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
 
         /* repeat data one by one */
         for (UpdateInvestmentManagementDataListRequest updateInvestmentManagementDataListRequest : updateListRequest.getUpdateInvestmentManagementDataListRequests()) {
-            /* mapping data from request to dto */
-            InvestmentManagementDTO investmentManagementDTO = investmentManagementMapper.mapFromDataListToDTO(updateInvestmentManagementDataListRequest);
-            log.info("[Update Multiple] Result mapping from request to dto: {}", investmentManagementDTO);
             try {
+                /* mapping data from request to dto */
+                InvestmentManagementDTO investmentManagementDTO = investmentManagementMapper.mapFromDataListToDTO(updateInvestmentManagementDataListRequest);
+                log.info("[Update Multiple] Result mapping from request to dto: {}", investmentManagementDTO);
+
                 /* get data by code */
                 InvestmentManagement investmentManagement = investmentManagementRepository.findByCode(investmentManagementDTO.getCode())
                         .orElseThrow(() -> new DataNotFoundException(CODE_NOT_FOUND + investmentManagementDTO.getCode()));
