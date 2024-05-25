@@ -1,18 +1,16 @@
 package com.bayu.billingservice.dto.customer;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.bayu.billingservice.dto.InputIdentifierRequest;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
-@Builder
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class DeleteCustomerRequest {
-
-    private String inputId;
-    private String inputIPAddress;
+public class DeleteCustomerRequest extends InputIdentifierRequest {
 
     private Long id;
+
 }

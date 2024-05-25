@@ -1,25 +1,18 @@
 package com.bayu.billingservice.dto.customer;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-/**
- * tidak WAJIB ada annotation validation, hanya code yg wajib diisi
- */
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class UpdateCustomerDataListRequest {
 
     @JsonProperty(value = "Customer Code")
-    @NotBlank(message = "Customer Code cannot be empty")
     private String customerCode;
 
     @JsonProperty(value = "Sub Code")

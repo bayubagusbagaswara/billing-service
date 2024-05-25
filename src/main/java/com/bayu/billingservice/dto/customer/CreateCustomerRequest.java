@@ -1,22 +1,18 @@
 package com.bayu.billingservice.dto.customer;
 
+import com.bayu.billingservice.dto.InputIdentifierRequest;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
-@Builder
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateCustomerRequest {
-
-    private String inputId;
-
-    private String inputIPAddress;
+public class CreateCustomerRequest extends InputIdentifierRequest {
 
     @Pattern(regexp = "^[a-zA-Z0-9]{6}$", message = "Code must contain exactly 6 alphanumeric characters")
     @NotBlank(message = "Customer Code cannot be empty")
@@ -85,5 +81,5 @@ public class CreateCustomerRequest {
     private String sellingAgent;
 
     @NotBlank(message = "Is GL cannot be empty")
-    private boolean gl;
+    private String gl;
 }
