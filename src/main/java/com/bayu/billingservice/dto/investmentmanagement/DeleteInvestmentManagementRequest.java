@@ -2,10 +2,11 @@ package com.bayu.billingservice.dto.investmentmanagement;
 
 import com.bayu.billingservice.dto.InputIdentifierRequest;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
-@Builder
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
 public class DeleteInvestmentManagementRequest extends InputIdentifierRequest {

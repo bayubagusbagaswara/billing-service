@@ -4,10 +4,11 @@ import com.bayu.billingservice.dto.InputIdentifierRequest;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
-@Builder
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
 public class UpdateInvestmentManagementRequest extends InputIdentifierRequest {

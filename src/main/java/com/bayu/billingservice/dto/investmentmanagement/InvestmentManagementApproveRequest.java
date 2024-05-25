@@ -2,10 +2,11 @@ package com.bayu.billingservice.dto.investmentmanagement;
 
 import com.bayu.billingservice.dto.ApprovalIdentifierRequest;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
-@Builder
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
 public class InvestmentManagementApproveRequest extends ApprovalIdentifierRequest {

@@ -1,7 +1,5 @@
 package com.bayu.billingservice.dto.investmentmanagement;
 
-import com.bayu.billingservice.dto.approval.ApprovalDTO;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -11,7 +9,6 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class CreateInvestmentManagementDataListRequest {
 
     @JsonProperty(value = "MI Code")
