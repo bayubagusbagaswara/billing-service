@@ -5,7 +5,6 @@ import com.bayu.billingservice.dto.customer.*;
 import com.bayu.billingservice.dto.datachange.BillingDataChangeDTO;
 import com.bayu.billingservice.dto.investmentmanagement.InvestmentManagementDTO;
 import com.bayu.billingservice.exception.DataNotFoundException;
-import com.bayu.billingservice.exception.GeneralException;
 import com.bayu.billingservice.exception.InvalidInputException;
 import com.bayu.billingservice.model.Customer;
 import com.bayu.billingservice.repository.CustomerRepository;
@@ -37,6 +36,7 @@ public class CustomerServiceImpl implements CustomerService {
     private static final String ID_NOT_FOUND = "Billing Customer not found with id: ";
     private static final String CODE_NOT_FOUND = "Billing Customer not found with code: ";
     private static final String UNKNOWN = "unknown";
+    private static final String INVALID_VALUE = "Invalid value for isGL. Value must be 'TRUE' or 'FALSE'.";
 
     private final CustomerRepository customerRepository;
     private final DataChangeService dataChangeService;
@@ -48,18 +48,8 @@ public class CustomerServiceImpl implements CustomerService {
     private final CustomerMapper customerMapper;
 
     @Override
-    public CustomerDTO testCreate(CustomerDTO dto) {
-        Customer customer = customerMapper.mapToEntity(dto);
-        log.info("Customer: {}", customer);
-        customerRepository.save(customer);
-        return customerMapper.mapToDto(customer);
-    }
-
-    @Override
     public boolean isCodeAlreadyExists(String code, String subCode) {
-        int count = customerRepository.countByCustomerCodeAndOptionalSubCode(code, subCode);
-        log.info("Exist data customer status with code: {}, and sub code: {} is {}", code, subCode, count);
-        return count > 0;
+        return customerRepository.existsCustomerByCustomerCodeAndSubCode(code, subCode);
     }
 
     @Override
@@ -80,12 +70,75 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public CustomerResponse createSingleData(CreateCustomerRequest request, BillingDataChangeDTO dataChangeDTO) {
-        log.info("Create single data billing customer with request: {}", request);
-        CustomerDTO customerDTO = customerMapper.mapFromCreateRequestToDto(request);
-        dataChangeDTO.setInputId(request.getInputId());
-        dataChangeDTO.setInputIPAddress(request.getInputIPAddress());
-        return processCustomerCreation(customerDTO, dataChangeDTO);
+    public CustomerResponse createSingleData(CreateCustomerRequest createCustomerRequest, BillingDataChangeDTO dataChangeDTO) {
+        log.info("Create single data billing customer with request: {}", createCustomerRequest);
+        int totalDataSuccess = 0;
+        int totalDataFailed = 0;
+        List<ErrorMessageDTO> errorMessageDTOList = new ArrayList<>();
+
+        try {
+            List<String> validationErrors = new ArrayList<>();
+
+            /* mapping data from request to dto */
+            CustomerDTO customerDTO = customerMapper.mapFromCreateRequestToDto(createCustomerRequest);
+            log.info("[Create Single] Map from request to dto: {}", customerDTO);
+
+            /* validation for each column dto */
+            Errors errors = validateCustomerUsingValidator(customerDTO);
+            if (errors.hasErrors()) {
+                errors.getAllErrors().forEach(error -> validationErrors.add(error.getDefaultMessage()));
+            }
+
+            /* validation code and sub code already exists */
+            validationCustomerCodeAlreadyExists(customerDTO.getCustomerCode(), customerDTO.getSubCode(), validationErrors);
+
+            /* validating sales agent is available or not */
+            if (!StringUtils.isEmpty(customerDTO.getSellingAgent())) {
+                validationSellingAgentCodeAlreadyExists(customerDTO.getSellingAgent(), validationErrors);
+            }
+
+            /* validation enum data */
+            validateBillingEnums(customerDTO.getBillingCategory(), customerDTO.getBillingType(), customerDTO.getBillingTemplate(), customerDTO.getCurrency(), validationErrors);
+
+            /* validation value GL must be true or false */
+            if (!isValidIsGLValue(customerDTO.getGl())) {
+                throw new InvalidInputException(INVALID_VALUE);
+            }
+
+            /* validating Cost Center Debit */
+            validateGLForCostCenterDebit(Boolean.parseBoolean(customerDTO.getGl()), customerDTO.getDebitTransfer(), validationErrors);
+
+            /* validating data billing template */
+            validationBillingTemplate(customerDTO.getBillingCategory(),
+                    customerDTO.getBillingType(),
+                    customerDTO.getCurrency(),
+                    customerDTO.getSubCode(),
+                    customerDTO.getBillingTemplate(),
+                    validationErrors);
+
+            /* validating data Investment Management is available or not */
+            InvestmentManagementDTO investmentManagementDTO = investmentManagementService.getByCode(customerDTO.getMiCode());
+            customerDTO.setMiCode(investmentManagementDTO.getCode());
+            customerDTO.setMiName(investmentManagementDTO.getName());
+
+            /* set data input id to data change */
+            dataChangeDTO.setInputId(createCustomerRequest.getInputId());
+
+            /* check validation errors for custom response */
+            if (validationErrors.isEmpty()) {
+                dataChangeDTO.setJsonDataAfter(JsonUtil.cleanedJsonData(objectMapper.writeValueAsString(customerDTO)));
+                dataChangeService.createChangeActionADD(dataChangeDTO, Customer.class);
+                totalDataSuccess++;
+            } else {
+                ErrorMessageDTO errorMessageDTO = new ErrorMessageDTO(customerDTO.getCustomerCode(), validationErrors);
+                errorMessageDTOList.add(errorMessageDTO);
+                totalDataFailed++;
+            }
+        } catch (Exception e) {
+            handleGeneralError(null, e, errorMessageDTOList);
+            totalDataFailed++;
+        }
+        return new CustomerResponse(totalDataSuccess, totalDataFailed, errorMessageDTOList);
     }
 
     @Override
@@ -172,7 +225,7 @@ public class CustomerServiceImpl implements CustomerService {
 
 
     @Override
-    public CustomerResponse createSingleApprove(CustomerApproveRequest approveRequest) {
+    public CustomerResponse createSingleApprove(CustomerApproveRequest approveRequest, String clientIP) {
         log.info("Approve multiple for create billing customer with request: {}", approveRequest);
         int totalDataSuccess = 0;
         int totalDataFailed = 0;
@@ -339,7 +392,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public CustomerResponse updateSingleApprove(CustomerApproveRequest approveRequest) {
+    public CustomerResponse updateSingleApprove(CustomerApproveRequest approveRequest, String clientIP) {
         log.info("Approve multiple update billing customer with request: {}", approveRequest);
         int totalDataSuccess = 0;
         int totalDataFailed = 0;
@@ -430,7 +483,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public CustomerResponse deleteSingleApprove(CustomerApproveRequest approveRequest) {
+    public CustomerResponse deleteSingleApprove(CustomerApproveRequest approveRequest, String clientIP) {
         log.info("Approve delete multiple billing customer with request: {}", approveRequest);
         int totalDataSuccess = 0;
         int totalDataFailed = 0;
@@ -480,9 +533,13 @@ public class CustomerServiceImpl implements CustomerService {
         }
     }
 
-    private void validationBillingTemplate(String category, String type, String subCode, List<String> validationErrors) {
-        if (!billingTemplateService.isExistsByCategoryAndTypeAndSubCode(category, type, subCode)) {
-            validationErrors.add("Billing Template not found with category: " + category + ", type: " + type + ", and sub code: " + subCode);
+    private void validationBillingTemplate(String category, String type, String currency, String subCode, String templateName, List<String> validationErrors) {
+        if (!billingTemplateService.isExistsByCategoryAndTypeAndCurrencyAndSubCodeAndTemplateName(category, type, currency, subCode, templateName)) {
+            validationErrors.add("Billing Template not found with category: " + category
+                    + ", type: " + type
+                    + ", currency: " + currency
+                    + ", sub code: " + subCode
+                    + ", and template name: " + templateName);
         }
     }
 
@@ -502,7 +559,7 @@ public class CustomerServiceImpl implements CustomerService {
     private void handleGeneralError(CustomerDTO customerDTO, Exception e, List<ErrorMessageDTO> errorMessageList) {
         log.error("An unexpected error occurred: {}", e.getMessage(), e);
         List<String> validationErrors = new ArrayList<>();
-        validationErrors.add("An unexpected error occurred: " + e.getMessage());
+        validationErrors.add(e.getMessage());
         errorMessageList.add(new ErrorMessageDTO(customerDTO != null ? customerDTO.getCustomerCode() : UNKNOWN, validationErrors));
     }
 
