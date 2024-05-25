@@ -95,10 +95,10 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
 
         /* repeat data one by one */
         for (CreateInvestmentManagementDataListRequest createInvestmentManagementDataListRequest : createListRequest.getCreateInvestmentManagementDataListRequests()) {
-            /* mapping data from request to dto */
-            InvestmentManagementDTO investmentManagementDTO = investmentManagementMapper.mapFromDataListToDTO(createInvestmentManagementDataListRequest);
-            log.info("[Create Multiple] Result mapping request to dto: {}", investmentManagementDTO);
             try {
+                /* mapping data from request to dto */
+                InvestmentManagementDTO investmentManagementDTO = investmentManagementMapper.mapFromDataListToDTO(createInvestmentManagementDataListRequest);
+                log.info("[Create Multiple] Result mapping request to dto: {}", investmentManagementDTO);
                 List<String> validationErrors = new ArrayList<>();
                 /* validation for each column dto */
                 Errors errors = validateInvestmentManagementUsingValidator(investmentManagementDTO);
