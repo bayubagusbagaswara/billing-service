@@ -60,8 +60,8 @@ public class InvestmentManagementController {
         InvestmentManagementResponse list = investmentManagementService.createMultipleData(request, dataChangeDTO);
 
         ResponseDTO<InvestmentManagementResponse> response = ResponseDTO.<InvestmentManagementResponse>builder()
-                .code(HttpStatus.CREATED.value())
-                .message(HttpStatus.CREATED.getReasonPhrase())
+                .code(HttpStatus.OK.value())
+                .message(HttpStatus.OK.getReasonPhrase())
                 .payload(list)
                 .build();
 
