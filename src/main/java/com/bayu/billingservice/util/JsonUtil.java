@@ -6,6 +6,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.experimental.UtilityClass;
 
+import java.util.Iterator;
+import java.util.Map;
+
 @UtilityClass
 public class JsonUtil {
 
@@ -24,5 +27,39 @@ public class JsonUtil {
         ((ObjectNode) jsonNode).remove("approveDate");
 
         return objectMapper.writeValueAsString(jsonNode);
+    }
+
+    public static String cleanedJsonDataUpdate(String jsonDataFull) throws JsonProcessingException {
+        JsonNode jsonNode = objectMapper.readTree(jsonDataFull);
+
+        if (jsonNode.isObject()) {
+            Iterator<Map.Entry<String, JsonNode>> fields = getEntryIterator((ObjectNode) jsonNode);
+            while (fields.hasNext()) {
+                Map.Entry<String, JsonNode> entry = fields.next();
+                if (entry.getValue().isTextual() && entry.getValue().asText().isEmpty()) {
+                    fields.remove();
+                }
+            }
+        }
+
+        return objectMapper.writeValueAsString(jsonNode);
+    }
+
+    private static Iterator<Map.Entry<String, JsonNode>> getEntryIterator(ObjectNode jsonNode) {
+
+        // Remove the "id" property
+        jsonNode.remove("id");
+        jsonNode.remove("code");
+        jsonNode.remove("dataChangeId");
+        jsonNode.remove("approvalStatus");
+        jsonNode.remove("inputId");
+        jsonNode.remove("inputIPAddress");
+        jsonNode.remove("inputDate");
+        jsonNode.remove("approveId");
+        jsonNode.remove("approveIPAddress");
+        jsonNode.remove("approveDate");
+
+        // Remove properties with empty string values
+        return jsonNode.fields();
     }
 }
