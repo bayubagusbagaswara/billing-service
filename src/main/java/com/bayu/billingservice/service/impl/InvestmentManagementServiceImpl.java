@@ -11,7 +11,6 @@ import com.bayu.billingservice.repository.InvestmentManagementRepository;
 import com.bayu.billingservice.service.DataChangeService;
 import com.bayu.billingservice.service.InvestmentManagementService;
 import com.bayu.billingservice.util.BeanUtil;
-import com.bayu.billingservice.util.EmailValidator;
 import com.bayu.billingservice.util.JsonUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -67,8 +66,11 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
             /* validation code already exists */
             validationCodeAlreadyExists(investmentManagementDTO.getCode(), validationErrors);
 
+            /* set data input id to data change */
+            dataChangeDTO.setInputId(createRequest.getInputId());
+
+            /* check validation errors for customer response */
             if (validationErrors.isEmpty()) {
-                dataChangeDTO.setInputId(createRequest.getInputId());
                 dataChangeDTO.setJsonDataAfter(JsonUtil.cleanedJsonData(objectMapper.writeValueAsString(investmentManagementDTO)));
                 dataChangeService.createChangeActionADD(dataChangeDTO, InvestmentManagement.class);
                 totalDataSuccess++;
