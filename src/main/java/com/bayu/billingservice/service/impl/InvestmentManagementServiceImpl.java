@@ -103,9 +103,11 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
                 /* validation code already exists */
                 validationCodeAlreadyExists(investmentManagementDTO.getCode(), validationErrors);
 
+                /* set data input id to data change */
+                dataChangeDTO.setInputId(createListRequest.getInputId());
+
                 /* check validation error */
                 if (validationErrors.isEmpty()) {
-                    dataChangeDTO.setInputId(dataChangeDTO.getInputId());
                     dataChangeDTO.setJsonDataAfter(JsonUtil.cleanedJsonData(objectMapper.writeValueAsString(investmentManagementDTO)));
                     dataChangeService.createChangeActionADD(dataChangeDTO, InvestmentManagement.class);
                     totalDataSuccess++;
