@@ -16,14 +16,14 @@ public class BillingTemplateServiceImpl implements BillingTemplateService {
     private final BillingTemplateRepository billingTemplateRepository;
 
     @Override
-    public boolean isExistsByCategoryAndTypeAndSubCode(String category, String type, String subCode) {
-        return billingTemplateRepository.existsByCategoryAndTypeAndSubCode(category, type, subCode);
-    }
-
-    @Override
     public BillingTemplate getByCategoryAndTypeAndSubCode(String category, String type, String subCode) {
         return billingTemplateRepository.findByCategoryAndTypeAndSubCode(category, type, subCode)
                 .orElseThrow(() -> new DataNotFoundException("Billing Template not found with category: " + category + ", type: " + type + ", and sub code: " + subCode));
+    }
+
+    @Override
+    public boolean isExistsByCategoryAndTypeAndCurrencyAndSubCodeAndTemplateName(String category, String type, String currency, String subCode, String templateName) {
+        return billingTemplateRepository.existsByCategoryAndTypeAndCurrencyAndSubCodeAndTemplateName(category, type, currency, subCode, templateName);
     }
 
 }

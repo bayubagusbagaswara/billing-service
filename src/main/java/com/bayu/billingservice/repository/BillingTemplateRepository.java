@@ -15,6 +15,17 @@ public interface BillingTemplateRepository extends JpaRepository<BillingTemplate
 //    @Query(value = "SELECT EXISTS (SELECT 1 FROM billing_template WHERE category = :category AND type = :type AND (:subCode IS NULL OR sub_code = :subCode))", nativeQuery = true)
 //    boolean existsByCategoryAndTypeAndSubCode(@Param("category") String category, @Param("type") String type, @Param("subCode") String subCode);
 
-    boolean existsByCategoryAndTypeAndSubCode(String category, String type, String subCode);
-
+    @Query(value = "select case when count(c) > 0 then true else false end from BillingTemplate c " +
+            "WHERE lower(c.category) = lower(:category) " +
+            "AND lower(c.type) = lower(:type) " +
+            "AND lower(c.currency) = lower(:currency) " +
+            "AND lower(c.templateName) = lower(:templateName) " +
+            "AND lower(COALESCE(c.subCode,'')) = lower(COALESCE(:subCode, ''))")
+    boolean existsByCategoryAndTypeAndCurrencyAndSubCodeAndTemplateName(
+            @Param("category") String category,
+            @Param("type") String type,
+            @Param("currency") String currency,
+            @Param("subCode") String subCode,
+            @Param("templateName") String templateName
+    );
 }
