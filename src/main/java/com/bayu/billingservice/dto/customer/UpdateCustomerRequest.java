@@ -13,8 +13,10 @@ public class UpdateCustomerRequest extends InputIdentifierRequest {
 
     private Long id;
 
+    /* customer code cannot be updated */
     private String customerCode;
 
+    /* sub code cannot be updated */
     private String subCode;
 
     private String customerName;
