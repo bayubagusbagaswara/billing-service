@@ -40,6 +40,11 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
     private final InvestmentManagementMapper investmentManagementMapper;
 
     @Override
+    public boolean isExistsByCode(String code) {
+        return investmentManagementRepository.existsByCode(code);
+    }
+
+    @Override
     public boolean isCodeAlreadyExists(String code) {
         return investmentManagementRepository.existsByCode(code);
     }

@@ -7,6 +7,8 @@ import java.util.List;
 
 public interface InvestmentManagementService {
 
+    boolean isExistsByCode(String code);
+
     boolean isCodeAlreadyExists(String code);
 
     InvestmentManagementResponse createSingleData(CreateInvestmentManagementRequest request, BillingDataChangeDTO dataChangeDTO);
