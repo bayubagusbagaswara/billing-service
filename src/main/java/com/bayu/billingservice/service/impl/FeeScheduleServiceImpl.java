@@ -194,7 +194,7 @@ public class FeeScheduleServiceImpl implements FeeScheduleService {
                     .orElseThrow(() -> new DataNotFoundException(ID_NOT_FOUND + feeScheduleDTO.getId()));
 
             // Copy data from DTO to Entity
-            feeScheduleMapper.mapObjects(feeScheduleDTO, feeSchedule);
+            feeScheduleMapper.mapObjectsDtoToEntity(feeScheduleDTO, feeSchedule);
             log.info("Fee Schedule after copy properties: {}", feeSchedule);
 
             // Retrieve and set billing data change

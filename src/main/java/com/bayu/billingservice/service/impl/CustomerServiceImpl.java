@@ -284,7 +284,8 @@ public class CustomerServiceImpl implements CustomerService {
                     log.info("GL is empty or null");
                 }
 
-                customerMapper.mapObjects(customerDTO, clonedCustomer);
+                // map from dto to cloned
+                customerMapper.mapObjectsDtoToEntity(customerDTO, clonedCustomer);
 
                 log.info("Replace between Customer DTO to Customer Entity: {}", clonedCustomer);
 
@@ -359,7 +360,7 @@ public class CustomerServiceImpl implements CustomerService {
             Customer customer = customerRepository.findByCustomerCode(customerDTO.getCustomerCode())
                     .orElseThrow(() -> new DataNotFoundException(CODE_NOT_FOUND + customerDTO.getCustomerCode()));
 
-            customerMapper.mapObjects(customerDTO, customer);
+            customerMapper.mapObjectsDtoToEntity(customerDTO, customer);
             log.info("Customer after copy properties: {}", customer);
 
             // Validation MI code dan get name value

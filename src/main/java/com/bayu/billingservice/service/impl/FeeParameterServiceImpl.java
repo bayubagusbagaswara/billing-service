@@ -255,7 +255,7 @@ public class FeeParameterServiceImpl implements FeeParameterService {
                     .orElseThrow(() -> new DataNotFoundException(ID_NOT_FOUND + feeParameterDTO.getId()));
 
             // copy data DTO to Entity
-            feeParameterMapper.mapObjects(feeParameterDTO, feeParameter);
+            feeParameterMapper.mapObjectsDtoToEntity(feeParameterDTO, feeParameter);
             log.info("Fee Parameter after copy properties: {}", feeParameter);
 
             // Retrieve and set billing data change
