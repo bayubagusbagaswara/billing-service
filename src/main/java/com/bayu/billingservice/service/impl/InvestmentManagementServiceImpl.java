@@ -99,8 +99,9 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
                 /* mapping data from request to dto */
                 InvestmentManagementDTO investmentManagementDTO = investmentManagementMapper.mapFromDataListToDTO(createInvestmentManagementDataListRequest);
                 log.info("[Create Multiple] Result mapping request to dto: {}", investmentManagementDTO);
-                List<String> validationErrors = new ArrayList<>();
+
                 /* validation for each column dto */
+                List<String> validationErrors = new ArrayList<>();
                 Errors errors = validateInvestmentManagementUsingValidator(investmentManagementDTO);
                 if (errors.hasErrors()) {
                     errors.getAllErrors().forEach(error-> validationErrors.add(error.getDefaultMessage()));
@@ -200,12 +201,15 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
                 errors.getAllErrors().forEach(error -> validationErrors.add(error.getDefaultMessage()));
             }
 
+            /* set input id for data change */
+            dataChangeDTO.setInputId(updateRequest.getInputId());
+
+            /* check validation errors to custom response */
             if (!validationErrors.isEmpty()) {
                 ErrorMessageDTO errorMessageDTO = new ErrorMessageDTO(investmentManagementDTO.getCode(), validationErrors);
                 errorMessageList.add(errorMessageDTO);
                 totalDataFailed++;
             } else {
-                dataChangeDTO.setInputId(updateRequest.getInputId());
                 dataChangeDTO.setJsonDataBefore(JsonUtil.cleanedJsonData(objectMapper.writeValueAsString(investmentManagement)));
                 dataChangeDTO.setJsonDataAfter(JsonUtil.cleanedJsonDataUpdate(objectMapper.writeValueAsString(investmentManagementDTO)));
                 dataChangeDTO.setEntityId(investmentManagement.getId().toString());
