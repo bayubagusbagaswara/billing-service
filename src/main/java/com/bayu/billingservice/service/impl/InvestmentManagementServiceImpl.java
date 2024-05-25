@@ -140,9 +140,11 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
             List<String> validationErrors = new ArrayList<>();
             validationCodeAlreadyExists(investmentManagementDTO.getCode(), validationErrors);
 
+            /* set data change for approveId and approveIPAddress */
+            dataChangeDTO.setApproveId(approveRequest.getApproveId());
+            dataChangeDTO.setApproveIPAddress(approveIPAddress);
+
             if (!validationErrors.isEmpty()) {
-                dataChangeDTO.setApproveId(approveRequest.getApproveId());
-                dataChangeDTO.setApproveIPAddress(approveIPAddress);
                 dataChangeDTO.setJsonDataAfter(JsonUtil.cleanedJsonData(objectMapper.writeValueAsString(investmentManagementDTO)));
                 dataChangeService.approvalStatusIsRejected(dataChangeDTO, validationErrors);
                 totalDataFailed++;
