@@ -284,8 +284,8 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
             log.info("[Update Approve] Map data from JSON data after data change: {}", investmentManagementDTO);
 
             /* get data by code*/
-            InvestmentManagement investmentManagement = investmentManagementRepository.findByCode(investmentManagementDTO.getCode())
-                    .orElseThrow(() -> new DataNotFoundException(CODE_NOT_FOUND + investmentManagementDTO.getCode()));
+            InvestmentManagement investmentManagement = investmentManagementRepository.findById(Long.valueOf(dataChangeDTO.getEntityId()))
+                    .orElseThrow(() -> new DataNotFoundException(ID_NOT_FOUND + dataChangeDTO.getEntityId()));
 
             investmentManagementMapper.mapObjectsDtoToEntity(investmentManagementDTO, investmentManagement);
             log.info("[Update Approve] Map object dto to entity: {}", investmentManagement);
