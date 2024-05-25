@@ -8,8 +8,6 @@ import java.util.List;
 
 public interface CustomerService {
 
-    CustomerDTO testCreate(CustomerDTO dto);
-
     boolean isCodeAlreadyExists(String code, String subCode);
 
     List<CustomerDTO> getAll();
