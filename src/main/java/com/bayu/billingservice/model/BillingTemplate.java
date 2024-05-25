@@ -29,4 +29,6 @@ public class BillingTemplate {
     @Column(name = "sub_code")
     private String subCode; // EB or ITAMA
 
+    @Column(name = "currency")
+    private String currency;
 }
