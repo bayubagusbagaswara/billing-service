@@ -39,7 +39,6 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
     private final Validator validator;
     private final ObjectMapper objectMapper;
     private final InvestmentManagementMapper investmentManagementMapper;
-    private final EmailValidator emailValidator;
 
     @Override
     public boolean isCodeAlreadyExists(String code) {
@@ -221,12 +220,13 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
     @Override
     public InvestmentManagementResponse updateMultipleData(UpdateInvestmentManagementListRequest updateListRequest, BillingDataChangeDTO dataChangeDTO) {
         log.info("Update multiple data investment management with request: {}", updateListRequest);
-
         int totalDataSuccess = 0;
         int totalDataFailed = 0;
         List<ErrorMessageDTO> errorMessageList = new ArrayList<>();
 
+        /* repeat data one by one */
         for (UpdateInvestmentManagementDataListRequest updateInvestmentManagementDataListRequest : updateListRequest.getUpdateInvestmentManagementDataListRequests()) {
+            /* mapping data from request to dto */
             InvestmentManagementDTO investmentManagementDTO = investmentManagementMapper.mapFromDataListToDTO(updateInvestmentManagementDataListRequest);
             log.info("[Update Multiple] Result mapping from request to dto: {}", investmentManagementDTO);
             try {
@@ -236,7 +236,7 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
 
                 /* map data from dto to entity, to overwrite new data */
                 investmentManagementMapper.mapObjectsDtoToEntity(investmentManagementDTO, investmentManagement);
-                log.info("[Update Multiple] Result map object dto to entity: {}", investmentManagement);
+                log.info("[Update Multiple] Result map object dto to entity: {}", investmentManagement); // disini sudah gabung semua
                 InvestmentManagementDTO dto = investmentManagementMapper.mapToDto(investmentManagement);
                 log.info("[Update Multiple] Result map object entity to dto: {}", dto);
 
@@ -254,7 +254,7 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
                 } else {
                     dataChangeDTO.setInputId(updateListRequest.getInputId());
                     dataChangeDTO.setJsonDataBefore(JsonUtil.cleanedJsonData(objectMapper.writeValueAsString(investmentManagement)));
-                    dataChangeDTO.setJsonDataAfter(JsonUtil.cleanedJsonData(objectMapper.writeValueAsString(investmentManagementDTO)));
+                    dataChangeDTO.setJsonDataAfter(JsonUtil.cleanedJsonDataUpdate(objectMapper.writeValueAsString(investmentManagementDTO)));
                     dataChangeDTO.setEntityId(investmentManagement.getId().toString());
                     dataChangeService.createChangeActionEDIT(dataChangeDTO, InvestmentManagement.class);
                    totalDataSuccess++;
@@ -422,7 +422,7 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
     private void handleGeneralError(String investmentManagementCode, Exception e, List<ErrorMessageDTO> errorMessageList) {
         log.error("An unexpected error occurred: {}", e.getMessage(), e);
         List<String> validationErrors = new ArrayList<>();
-        validationErrors.add("An unexpected error occurred: " + e.getMessage());
+        validationErrors.add(e.getMessage());
         errorMessageList.add(new ErrorMessageDTO(investmentManagementCode != null ? investmentManagementCode : UNKNOWN, validationErrors));
     }
 
