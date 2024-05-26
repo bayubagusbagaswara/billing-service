@@ -18,4 +18,5 @@ public interface ExchangeRateRepository extends JpaRepository<ExchangeRate, Long
     @Query(value = "SELECT e FROM ExchangeRate e ORDER BY e.date DESC", nativeQuery = true)
     Optional<ExchangeRate> findLatestExchangeRate();
 
+    boolean existsByCurrency(String currency);
 }
