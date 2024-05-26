@@ -109,36 +109,40 @@ public class FeeParameterServiceImpl implements FeeParameterService {
         int totalDataSuccess = 0;
         int totalDataFailed = 0;
         List<ErrorMessageDTO> errorMessageDTOList = new ArrayList<>();
-        List<String> validationErrors = new ArrayList<>();
-        FeeParameterDTO feeParameterDTO = null;
 
         for (CreateFeeParameterDataListRequest createFeeParameterDataListRequest : createFeeParameterListRequest.getCreateFeeParameterDataListRequests()) {
-            try {
-                /* mapping data from request to dto */
-                feeParameterDTO = feeParameterMapper.mapCreateListRequestToDTO(createFeeParameterDataListRequest);
+            FeeParameterDTO feeParameterDTO = null;
+            List<String> validationErrors = new ArrayList<>();
 
-                /* validating for each column dto */
+            try {
+                // Mapping data from request to DTO
+                feeParameterDTO = feeParameterMapper.mapCreateListRequestToDTO(createFeeParameterDataListRequest);
+                log.info("Fee Parameter DTO: {}", feeParameterDTO);
+
+                // Validating each column in DTO
                 Errors errors = validateFeeParameterUsingValidator(feeParameterDTO);
                 if (errors.hasErrors()) {
                     errors.getAllErrors().forEach(error -> validationErrors.add(error.getDefaultMessage()));
                 }
 
-                /* validating code already exists */
+                // Validating code already exists
                 validationCodeAlreadyExists(feeParameterDTO.getFeeCode(), validationErrors);
 
-                /* validating name already exists */
+                // Validating name already exists
                 validationNameAlreadyExists(feeParameterDTO.getFeeName(), validationErrors);
 
-                /* set input id to data change */
+                // Set input ID to data change
                 dataChangeDTO.setInputId(createFeeParameterListRequest.getInputId());
 
-                /* check validation errors for custom response */
+                // Check validation errors for custom response
                 if (!validationErrors.isEmpty()) {
                     ErrorMessageDTO errorMessageDTO = new ErrorMessageDTO(feeParameterDTO.getFeeCode(), validationErrors);
                     errorMessageDTOList.add(errorMessageDTO);
                     totalDataFailed++;
                 } else {
+                    // Prepare data change
                     dataChangeDTO.setJsonDataAfter(JsonUtil.cleanedJsonData(objectMapper.writeValueAsString(feeParameterDTO)));
+                    // Create change action ADD
                     dataChangeService.createChangeActionADD(dataChangeDTO, FeeParameter.class);
                     totalDataSuccess++;
                 }
@@ -256,11 +260,12 @@ public class FeeParameterServiceImpl implements FeeParameterService {
         int totalDataSuccess = 0;
         int totalDataFailed = 0;
         List<ErrorMessageDTO> errorMessageDTOList = new ArrayList<>();
-        List<String> validationErrors = new ArrayList<>();
-        FeeParameterDTO feeParameterDTO = null;
 
         /* repeat data one by one */
         for (UpdateFeeParameterDataListRequest updateFeeParameterDataListRequest : feeParameterListRequest.getUpdateFeeParameterDataListRequests()) {
+            List<String> validationErrors = new ArrayList<>();
+            FeeParameterDTO feeParameterDTO = null;
+
             try {
                 /* mapping data from request to dto */
                 feeParameterDTO = feeParameterMapper.mapUpdateListRequestToDTO(updateFeeParameterDataListRequest);
