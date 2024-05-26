@@ -300,6 +300,10 @@ public class CustomerServiceImpl implements CustomerService {
             validateIsGL(clonedDTO, validationErrors);
 
             /* validating Cost Center Debit */
+            if (Boolean.FALSE.toString().equalsIgnoreCase(clonedDTO.getGl())) {
+                clonedDTO.setDebitTransfer("");
+            }
+
             validateGLForCostCenterDebit(Boolean.parseBoolean(clonedDTO.getGl()), clonedDTO.getDebitTransfer(), validationErrors);
 
             /* validating data billing template */
@@ -315,6 +319,7 @@ public class CustomerServiceImpl implements CustomerService {
 
             /* set input id for data change */
             dataChangeDTO.setInputId(updateCustomerRequest.getInputId());
+            dataChangeDTO.setEntityId(customer.getId().toString());
 
             /* check validation errors to custom response */
             if (!validationErrors.isEmpty()) {
@@ -428,26 +433,32 @@ public class CustomerServiceImpl implements CustomerService {
             /* get data change by id and get json data after data */
             Long dataChangeId = Long.valueOf(approveRequest.getDataChangeId());
             BillingDataChangeDTO dataChangeDTO = dataChangeService.getById(dataChangeId);
-            customerDTO = objectMapper.readValue(dataChangeDTO.getJsonDataAfter(), CustomerDTO.class);
-            log.info("[Update Approve] Map data from JSON data after data change: {}", customerDTO);
+            CustomerDTO dto = objectMapper.readValue(dataChangeDTO.getJsonDataAfter(), CustomerDTO.class);
+            log.info("[Update Approve] Map data from JSON data after data change: {}", dto);
 
-            /* get data investment management name */
-            InvestmentManagementDTO investmentManagementDTO = investmentManagementService.getByCode(customerDTO.getMiCode());
+            /* get customer by id */
+            Customer customer = customerRepository.findById(Long.valueOf(dataChangeDTO.getEntityId()))
+                    .orElseThrow(() -> new DataNotFoundException(ID_NOT_FOUND + dataChangeDTO.getEntityId()));
 
-            /* get customer by code and sub code */
-            CustomerDTO finalCustomerDTO = customerDTO;
-            Customer customer = customerRepository.findByCustomerCodeAndOptionalSubCode(customerDTO.getCustomerCode(), customerDTO.getSubCode())
-                    .orElseThrow(() -> new DataNotFoundException(CODE_NOT_FOUND + finalCustomerDTO.getCustomerCode() + SUB_CODE_NOT_FOUND + finalCustomerDTO.getSubCode()));
-            customer.setMiName(investmentManagementDTO.getName());
+            /* set data investment management name */
+            if (dto.getMiCode() != null && !dto.getMiCode().isEmpty()) {
+                InvestmentManagementDTO investmentManagementDTO = investmentManagementService.getByCode(dto.getMiCode());
+                customer.setMiName(investmentManagementDTO.getName());
+            }
 
-            customerMapper.mapObjectsDtoToEntity(customerDTO, customer);
+            /* check and set debit transfer */
+            if (dto.getGl() != null && !dto.getGl().isEmpty() && Boolean.FALSE.toString().equalsIgnoreCase(dto.getGl())) {
+                customer.setDebitTransfer("");
+            }
+
+            customerMapper.mapObjectsDtoToEntity(dto, customer);
             log.info("[Update Approve] Map object dto to entity: {}", customer);
 
-            CustomerDTO dto = customerMapper.mapToDto(customer);
-            log.info("[Update Approve] map from entity to dto: {}", dto);
+            customerDTO = customerMapper.mapToDto(customer);
+            log.info("[Update Approve] map from entity to dto: {}", customerDTO);
 
             /* check validation each column */
-            Errors errors = validateCustomerUsingValidator(dto);
+            Errors errors = validateCustomerUsingValidator(customerDTO);
             if (errors.hasErrors()) {
                 errors.getAllErrors().forEach(error -> validationErrors.add(error.getDefaultMessage()));
             }
@@ -459,7 +470,7 @@ public class CustomerServiceImpl implements CustomerService {
 
             /* check validation errors for custom response */
             if (!validationErrors.isEmpty()) {
-                dataChangeDTO.setJsonDataAfter(JsonUtil.cleanedJsonData(objectMapper.writeValueAsString(customerDTO)));
+                dataChangeDTO.setJsonDataAfter(JsonUtil.cleanedJsonData(objectMapper.writeValueAsString(dto)));
                 dataChangeService.approvalStatusIsRejected(dataChangeDTO, validationErrors);
                 totalDataFailed++;
             } else {
