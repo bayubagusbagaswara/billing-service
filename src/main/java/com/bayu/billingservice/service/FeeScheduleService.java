@@ -10,17 +10,15 @@ public interface FeeScheduleService {
 
     FeeScheduleResponse createSingleData(CreateFeeScheduleRequest createFeeScheduleRequest, BillingDataChangeDTO dataChangeDTO);
 
-    FeeScheduleResponse createSingleApprove(FeeScheduleApproveRequest approveRequest);
+    FeeScheduleResponse createSingleApprove(FeeScheduleApproveRequest approveRequest, String clientIP);
 
     FeeScheduleResponse updateSingleData(UpdateFeeScheduleRequest updateFeeScheduleRequest, BillingDataChangeDTO dataChangeDTO);
 
-    FeeScheduleResponse updateMultipleData(FeeScheduleListRequest listRequest, BillingDataChangeDTO dataChangeDTO);
-
-    FeeScheduleResponse updateSingleApprove(FeeScheduleApproveRequest approveRequest);
+    FeeScheduleResponse updateSingleApprove(FeeScheduleApproveRequest approveRequest, String clientIP);
 
     FeeScheduleResponse deleteSingleData(DeleteFeeScheduleRequest deleteFeeScheduleRequest, BillingDataChangeDTO dataChangeDTO);
 
-    FeeScheduleResponse deleteSingleApprove(FeeScheduleApproveRequest approveRequest);
+    FeeScheduleResponse deleteSingleApprove(FeeScheduleApproveRequest approveRequest, String clientIP);
 
     BigDecimal checkFeeScheduleAndGetFeeValue(BigDecimal amount);
 
