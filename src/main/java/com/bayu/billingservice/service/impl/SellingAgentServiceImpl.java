@@ -15,6 +15,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.xmlbeans.impl.xb.xsdschema.LocalSimpleType;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.Errors;
@@ -95,7 +96,48 @@ public class SellingAgentServiceImpl implements SellingAgentService {
 
     @Override
     public SellingAgentResponse createSingleApprove(SellingAgentApproveRequest sellingAgentApproveRequest, String clientIP) {
-        return null;
+        log.info("Approve when create selling agent with request: {}", sellingAgentApproveRequest);
+        int totalDataSuccess = 0;
+        int totalDataFailed = 0;
+        List<ErrorMessageDTO> errorMessageDTOList = new ArrayList<>();
+        List<String> validationErrors = new ArrayList<>();
+        SellingAgentDTO sellingAgentDTO = null;
+
+        try {
+            /* validating data change id */
+            validateDataChangeId(sellingAgentApproveRequest.getDataChangeId());
+
+            /* mapping from json data after to dto */
+            Long dataChangeId = Long.valueOf(sellingAgentApproveRequest.getDataChangeId());
+            BillingDataChangeDTO dataChangeDTO = dataChangeService.getById(dataChangeId);
+            sellingAgentDTO = objectMapper.readValue(dataChangeDTO.getJsonDataAfter(), SellingAgentDTO.class);
+
+            /* check validation code already exists */
+            validationCodeAlreadyExists(sellingAgentDTO.getCode(), validationErrors);
+
+            /* set data change for approve id and approve ip address */
+            dataChangeDTO.setApproveId(sellingAgentApproveRequest.getApproveId());
+            dataChangeDTO.setApproveIPAddress(clientIP);
+
+            /* check validation errors for custom response */
+            if (!validationErrors.isEmpty()) {
+                dataChangeDTO.setJsonDataAfter(JsonUtil.cleanedJsonData(objectMapper.writeValueAsString(sellingAgentDTO)));
+                dataChangeService.approvalStatusIsRejected(dataChangeDTO, validationErrors);
+                totalDataFailed++;
+            } else {
+                SellingAgent sellingAgent = sellingAgentMapper.createEntity(sellingAgentDTO, dataChangeDTO);
+                sellingAgentRepository.save(sellingAgent);
+                dataChangeDTO.setDescription("Successfully approve data change and save data selling agent with id: " + sellingAgent.getId());
+                dataChangeDTO.setJsonDataAfter(JsonUtil.cleanedJsonData(objectMapper.writeValueAsString(sellingAgent)));
+                dataChangeDTO.setEntityId(sellingAgent.getId().toString());
+                dataChangeService.approvalStatusIsApproved(dataChangeDTO);
+                totalDataSuccess++;
+            }
+        } catch (Exception e) {
+            handleGeneralError(sellingAgentDTO, e, validationErrors, errorMessageDTOList);
+            totalDataFailed++;
+        }
+        return new SellingAgentResponse(totalDataSuccess, totalDataFailed, errorMessageDTOList);
     }
 
     @Override
