@@ -9,18 +9,6 @@ import java.util.Optional;
 
 public interface SellingAgentRepository extends JpaRepository<SellingAgent, Long> {
 
-    // Boolean existsByCode(String code);
-
-//    @Query(value = "SELECT CASE WHEN COUNT(*) > 0 THEN true ELSE false END "
-//            + "FROM nama_tabel "
-//            + "WHERE kode = :code", nativeQuery = true)
-//    Boolean existsByCode(@Param("code") String code);
-
-//    @Query(value = "SELECT CASE WHEN COUNT(*) > 0 THEN true ELSE false END "
-//            + "FROM selling_agent "
-//            + "WHERE code = :code", nativeQuery = true)
-//    boolean existsByCode(@Param("code") String code);
-
     @Query(value = "SELECT COUNT(*) FROM selling_agent WHERE code = :code", nativeQuery = true)
     Integer countByCode(@Param("code") String code);
 
@@ -30,4 +18,5 @@ public interface SellingAgentRepository extends JpaRepository<SellingAgent, Long
             SELECT * FROM selling_agent WHERE code = :code
             """, nativeQuery = true)
     Optional<SellingAgent> findByCode(@Param("code") String sellingAgentCode);
+
 }
