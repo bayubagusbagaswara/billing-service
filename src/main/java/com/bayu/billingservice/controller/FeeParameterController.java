@@ -4,6 +4,8 @@ import com.bayu.billingservice.dto.ResponseDTO;
 import com.bayu.billingservice.dto.datachange.BillingDataChangeDTO;
 import com.bayu.billingservice.dto.feeparameter.*;
 import com.bayu.billingservice.service.FeeParameterService;
+import com.bayu.billingservice.util.ClientIPUtil;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpMethod;
@@ -15,18 +17,21 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
-@Slf4j
 @RestController
 @RequestMapping(path = "/api/fee-parameter")
 @RequiredArgsConstructor
+@Slf4j
 public class FeeParameterController {
 
-    private final FeeParameterService feeParameterService;
     private static final String MENU_FEE_PARAMETER = "Fee Parameter";
 
+    private final FeeParameterService feeParameterService;
+
     @PostMapping(path = "/create")
-    public ResponseEntity<ResponseDTO<FeeParameterResponse>> createSingleData(@RequestBody CreateFeeParameterRequest createFeeParameterRequest) {
+    public ResponseEntity<ResponseDTO<FeeParameterResponse>> createSingleData(@RequestBody CreateFeeParameterRequest createFeeParameterRequest, HttpServletRequest servletRequest) {
+        String clientIp = ClientIPUtil.getClientIp(servletRequest);
         BillingDataChangeDTO dataChangeDTO = BillingDataChangeDTO.builder()
+                .inputIPAddress(clientIp)
                 .methodHttp(HttpMethod.POST.name())
                 .endpoint("/api/fee-parameter/create/approve")
                 .isRequestBody(true)
@@ -44,8 +49,10 @@ public class FeeParameterController {
     }
 
     @PostMapping(path = "/create-list")
-    public ResponseEntity<ResponseDTO<FeeParameterResponse>> createList(@RequestBody FeeParameterListRequest createFeeParameterListRequest) {
+    public ResponseEntity<ResponseDTO<FeeParameterResponse>> createList(@RequestBody FeeParameterListRequest createFeeParameterListRequest, HttpServletRequest servletRequest) {
+        String clientIp = ClientIPUtil.getClientIp(servletRequest);
         BillingDataChangeDTO dataChangeDTO = BillingDataChangeDTO.builder()
+                .inputIPAddress(clientIp)
                 .methodHttp(HttpMethod.POST.name())
                 .endpoint("/api/fee-parameter/create/approve")
                 .isRequestBody(true)
@@ -53,7 +60,6 @@ public class FeeParameterController {
                 .isPathVariable(false)
                 .menu(MENU_FEE_PARAMETER)
                 .build();
-
         FeeParameterResponse list = feeParameterService.createMultipleData(createFeeParameterListRequest, dataChangeDTO);
         ResponseDTO<FeeParameterResponse> response = ResponseDTO.<FeeParameterResponse>builder()
                 .code(HttpStatus.OK.value())
@@ -64,8 +70,9 @@ public class FeeParameterController {
     }
 
     @PostMapping(path = "/create/approve")
-    public ResponseEntity<ResponseDTO<FeeParameterResponse>> createSingleApprove(@RequestBody FeeParameterApproveRequest createFeeParameterListRequest) {
-        FeeParameterResponse listApprove = feeParameterService.createSingleApprove(createFeeParameterListRequest);
+    public ResponseEntity<ResponseDTO<FeeParameterResponse>> createSingleApprove(@RequestBody FeeParameterApproveRequest createFeeParameterListRequest, HttpServletRequest servletRequest) {
+        String clientIp = ClientIPUtil.getClientIp(servletRequest);
+        FeeParameterResponse listApprove = feeParameterService.createSingleApprove(createFeeParameterListRequest, clientIp);
         ResponseDTO<FeeParameterResponse> response = ResponseDTO.<FeeParameterResponse>builder()
                 .code(HttpStatus.OK.value())
                 .message(HttpStatus.OK.getReasonPhrase())
@@ -76,8 +83,10 @@ public class FeeParameterController {
 
 
     @PutMapping(path = "/update")
-    public ResponseEntity<ResponseDTO<FeeParameterResponse>> updateSingleData(@RequestBody UpdateFeeParameterRequest updateFeeParameterRequest) {
+    public ResponseEntity<ResponseDTO<FeeParameterResponse>> updateSingleData(@RequestBody UpdateFeeParameterRequest updateFeeParameterRequest, HttpServletRequest servletRequest) {
+        String clientIp = ClientIPUtil.getClientIp(servletRequest);
         BillingDataChangeDTO dataChangeDTO = BillingDataChangeDTO.builder()
+                .inputIPAddress(clientIp)
                 .methodHttp(HttpMethod.PUT.name())
                 .endpoint("/api/fee-parameter/update/approve")
                 .isRequestBody(true)
@@ -96,8 +105,10 @@ public class FeeParameterController {
 
 
     @PutMapping(path = "/update-list")
-    public ResponseEntity<ResponseDTO<FeeParameterResponse>> updateMultipleData(@RequestBody FeeParameterListRequest updateFeeParameterListRequest) {
+    public ResponseEntity<ResponseDTO<FeeParameterResponse>> updateMultipleData(@RequestBody FeeParameterListRequest updateFeeParameterListRequest, HttpServletRequest servletRequest) {
+        String clientIp = ClientIPUtil.getClientIp(servletRequest);
         BillingDataChangeDTO dataChangeDTO = BillingDataChangeDTO.builder()
+                .inputIPAddress(clientIp)
                 .methodHttp(HttpMethod.PUT.name())
                 .endpoint("/api/fee-parameter/update/approve")
                 .isRequestBody(true)
@@ -115,8 +126,9 @@ public class FeeParameterController {
     }
 
     @PutMapping(path = "/update/approve")
-    public ResponseEntity<ResponseDTO<FeeParameterResponse>> updateSingleApprove(@RequestBody FeeParameterApproveRequest updateFeeParameterListRequest) {
-        FeeParameterResponse listApprove = feeParameterService.updateSingleApprove(updateFeeParameterListRequest);
+    public ResponseEntity<ResponseDTO<FeeParameterResponse>> updateSingleApprove(@RequestBody FeeParameterApproveRequest updateFeeParameterListRequest, HttpServletRequest servletRequest) {
+        String clientIp = ClientIPUtil.getClientIp(servletRequest);
+        FeeParameterResponse listApprove = feeParameterService.updateSingleApprove(updateFeeParameterListRequest, clientIp);
         ResponseDTO<FeeParameterResponse> response = ResponseDTO.<FeeParameterResponse>builder()
                 .code(HttpStatus.OK.value())
                 .message(HttpStatus.OK.getReasonPhrase())
@@ -128,26 +140,22 @@ public class FeeParameterController {
     @GetMapping(path = "/all")
     public ResponseEntity<ResponseDTO<List<FeeParameterDTO>>> getAll() {
         List<FeeParameterDTO> feeParameterDTOList = feeParameterService.getAll();
-
         ResponseDTO<List<FeeParameterDTO>> response = ResponseDTO.<List<FeeParameterDTO>>builder()
                 .code(HttpStatus.OK.value())
                 .message(HttpStatus.OK.getReasonPhrase())
                 .payload(feeParameterDTOList)
                 .build();
-
         return ResponseEntity.ok().body(response);
     }
 
     @GetMapping(path = "/name-list")
     public ResponseEntity<ResponseDTO<List<FeeParameterDTO>>> getByNameList(@RequestBody List<String> request) {
         List<FeeParameterDTO> feeParameterDTOList = feeParameterService.getByNameList(request);
-
         ResponseDTO<List<FeeParameterDTO>> response = ResponseDTO.<List<FeeParameterDTO>>builder()
                 .code(HttpStatus.OK.value())
                 .message(HttpStatus.OK.getReasonPhrase())
                 .payload(feeParameterDTOList)
                 .build();
-
         return ResponseEntity.ok().body(response);
     }
 
@@ -177,7 +185,6 @@ public class FeeParameterController {
                 .message(HttpStatus.OK.getReasonPhrase())
                 .payload(status)
                 .build();
-
         return ResponseEntity.ok().body(response);
     }
 
