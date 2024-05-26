@@ -112,7 +112,7 @@ public class FeeParameterServiceImpl implements FeeParameterService {
     }
 
     @Override
-    public FeeParameterResponse createSingleApprove(FeeParameterApproveRequest approveRequest) {
+    public FeeParameterResponse createSingleApprove(FeeParameterApproveRequest approveRequest, String clientIP) {
         log.info("Approve single fee parameter with request: {}", approveRequest);
         int totalDataSuccess = 0;
         int totalDataFailed = 0;
@@ -237,7 +237,7 @@ public class FeeParameterServiceImpl implements FeeParameterService {
 
 
     @Override
-    public FeeParameterResponse updateSingleApprove(FeeParameterApproveRequest approveRequest) {
+    public FeeParameterResponse updateSingleApprove(FeeParameterApproveRequest approveRequest, String clientIP) {
         log.info("Approve when update fee parameter with request: {}", approveRequest);
         int totalDataSuccess = 0;
         int totalDataFailed = 0;
