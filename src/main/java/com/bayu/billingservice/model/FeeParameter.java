@@ -20,16 +20,16 @@ public class FeeParameter extends Approval {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "code")
-    private String code;
+    @Column(name = "fee_code")
+    private String feeCode;
 
-    @Column(name = "name")
-    private String name;
+    @Column(name = "fee_name")
+    private String feeName;
 
-    @Column(name = "description")
-    private String description;
+    @Column(name = "fee_description")
+    private String feeDescription;
 
-    @Column(name = "value")
-    private BigDecimal value;
+    @Column(name = "fee_value")
+    private BigDecimal feeValue;
 
 }
