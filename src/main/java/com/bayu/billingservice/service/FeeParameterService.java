@@ -31,12 +31,12 @@ public interface FeeParameterService {
 
     FeeParameterResponse createMultipleData(FeeParameterListRequest createFeeParameterListRequest, BillingDataChangeDTO dataChangeDTO);
 
-    FeeParameterResponse createSingleApprove(FeeParameterApproveRequest createFeeParameterListRequest);
+    FeeParameterResponse createSingleApprove(FeeParameterApproveRequest createFeeParameterListRequest, String clientIP);
 
     FeeParameterResponse updateSingleData(UpdateFeeParameterRequest updateFeeParameterRequest, BillingDataChangeDTO dataChangeDTO);
 
     FeeParameterResponse updateMultipleData(FeeParameterListRequest updateFeeParameterListRequest, BillingDataChangeDTO dataChangeDTO);
 
-    FeeParameterResponse updateSingleApprove(FeeParameterApproveRequest updateFeeParameterListRequest);
+    FeeParameterResponse updateSingleApprove(FeeParameterApproveRequest updateFeeParameterListRequest, String clientIP);
 
 }
