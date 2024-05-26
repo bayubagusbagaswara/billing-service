@@ -1,7 +1,6 @@
 package com.bayu.billingservice.dto.customer;
 
 import com.bayu.billingservice.dto.approval.ApprovalDTO;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
@@ -60,14 +59,15 @@ public class CustomerDTO extends ApprovalDTO {
     @NotBlank(message = "GL Account Hasil cannot be empty")
     private String glAccountHasil;
 
-    @Pattern(regexp = "^\\d*$", message = "Customer Minimum Fee must contain only numeric digits")
+    @Pattern(regexp = "^\\d+(?:\\.\\d+)?$", message = "Customer Minimum Fee must be in decimal format")
     @NotBlank(message = "Customer Minimum Fee cannot be empty")
     private String customerMinimumFee;
 
+    @Pattern(regexp = "^\\d+(?:\\.\\d+)?$", message = "Customer Safekeeping Fee must be in decimal format")
     @NotEmpty(message = "Customer Safekeeping Fee cannot be empty")
     private String customerSafekeepingFee;
 
-    @Pattern(regexp = "^\\d*$", message = "Transaction Handling must contain only numeric digits")
+    @Pattern(regexp = "^\\d+(?:\\.\\d+)?$", message = "Transaction Handling must be in decimal format")
     private String customerTransactionHandling;
 
     @NotBlank(message = "NPWP Number cannot be empty")
