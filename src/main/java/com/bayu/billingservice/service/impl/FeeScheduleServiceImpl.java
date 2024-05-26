@@ -50,7 +50,7 @@ public class FeeScheduleServiceImpl implements FeeScheduleService {
     }
 
     @Override
-    public FeeScheduleResponse createSingleApprove(FeeScheduleApproveRequest approveRequest) {
+    public FeeScheduleResponse createSingleApprove(FeeScheduleApproveRequest approveRequest, String clientIP) {
         log.info("Approve when create investment management with request: {}", approveRequest);
         int totalDataSuccess = 0;
         int totalDataFailed = 0;
@@ -144,36 +144,7 @@ public class FeeScheduleServiceImpl implements FeeScheduleService {
     }
 
     @Override
-    public FeeScheduleResponse updateMultipleData(FeeScheduleListRequest updateListRequest, BillingDataChangeDTO dataChangeDTO) {
-        log.info("Update multiple data fee schedule with request: {}", updateListRequest);
-        dataChangeDTO.setInputId(updateListRequest.getInputId());
-        dataChangeDTO.setInputIPAddress(updateListRequest.getInputIPAddress());
-        int totalDataSuccess = 0;
-        int totalDataFailed = 0;
-        List<ErrorMessageDTO> errorMessageList = new ArrayList<>();
-
-        for (FeeScheduleDTO feeScheduleDTO : updateListRequest.getFeeScheduleDTOList()) {
-            try {
-                FeeSchedule feeSchedule = feeScheduleRepository.findById(feeScheduleDTO.getId())
-                        .orElseThrow(() -> new DataNotFoundException(ID_NOT_FOUND + feeScheduleDTO.getId()));
-
-                AtomicInteger successCounter = new AtomicInteger(totalDataSuccess);
-                AtomicInteger failedCounter = new AtomicInteger(totalDataFailed);
-
-                processUpdateFeeSchedule(feeSchedule, feeScheduleDTO, dataChangeDTO, errorMessageList, successCounter, failedCounter);
-
-                totalDataSuccess = successCounter.get();
-                totalDataFailed = failedCounter.get();
-            } catch (Exception e) {
-                handleGeneralError(feeScheduleDTO, e, errorMessageList);
-                totalDataFailed++;
-            }
-        }
-        return new FeeScheduleResponse(totalDataSuccess, totalDataFailed, errorMessageList);
-    }
-
-    @Override
-    public FeeScheduleResponse updateSingleApprove(FeeScheduleApproveRequest approveRequest) {
+    public FeeScheduleResponse updateSingleApprove(FeeScheduleApproveRequest approveRequest, String clientIP) {
         log.info("Approve when update fee schedule with request: {}", approveRequest);
         int totalDataSuccess = 0;
         int totalDataFailed = 0;
@@ -274,7 +245,7 @@ public class FeeScheduleServiceImpl implements FeeScheduleService {
     }
 
     @Override
-    public FeeScheduleResponse deleteSingleApprove(FeeScheduleApproveRequest approveRequest) {
+    public FeeScheduleResponse deleteSingleApprove(FeeScheduleApproveRequest approveRequest, String clientIP) {
         log.info("Approve when delete fee schedule t with request: {}", approveRequest);
         int totalDataSuccess = 0;
         int totalDataFailed = 0;
