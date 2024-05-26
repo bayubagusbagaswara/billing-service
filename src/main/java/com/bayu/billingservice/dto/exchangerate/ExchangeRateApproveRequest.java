@@ -11,6 +11,6 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 public class ExchangeRateApproveRequest extends ApprovalIdentifierRequest {
 
-    private Long dataChangeId;
+    private String dataChangeId;
 
 }

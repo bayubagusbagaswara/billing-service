@@ -7,13 +7,11 @@ import java.util.List;
 
 public interface ExchangeRateService {
 
-    ExchangeRateDTO create(CreateExchangeRateRequest request);
+    boolean isCurrencyAlreadyExists(String currency);
 
     List<ExchangeRateDTO> getAll();
 
-    ExchangeRateDTO getLatestDataByCurrency(String currency);
-
-    ExchangeRateDTO getLatestData();
+    ExchangeRateDTO getByCurrency(String currency);
 
     ExchangeRateResponse createSingleData(CreateExchangeRateRequest createExchangeRateRequest);
 
