@@ -6,7 +6,6 @@ import com.bayu.billingservice.dto.sellingagent.*;
 import com.bayu.billingservice.exception.DataNotFoundException;
 import com.bayu.billingservice.exception.GeneralException;
 import com.bayu.billingservice.mapper.SellingAgentMapper;
-import com.bayu.billingservice.model.InvestmentManagement;
 import com.bayu.billingservice.model.SellingAgent;
 import com.bayu.billingservice.repository.SellingAgentRepository;
 import com.bayu.billingservice.service.DataChangeService;
@@ -256,22 +255,88 @@ public class SellingAgentServiceImpl implements SellingAgentService {
 
     @Override
     public SellingAgentResponse deleteSingleData(DeleteSellingAgentRequest deleteSellingAgentRequest, BillingDataChangeDTO dataChangeDTO) {
-        return null;
+        log.info("Delete single selling agent with request: {}", deleteSellingAgentRequest);
+        int totalDataSuccess = 0;
+        int totalDataFailed = 0;
+        List<ErrorMessageDTO> errorMessageDTOList = new ArrayList<>();
+        List<String> validationErrors = new ArrayList<>();
+        SellingAgentDTO sellingAgentDTO = null;
+
+        try {
+            /* get selling agent by id */
+            Long id = deleteSellingAgentRequest.getId();
+            SellingAgent sellingAgent = sellingAgentRepository.findById(id)
+                    .orElseThrow(() -> new DataNotFoundException(ID_NOT_FOUND + id));
+
+            /* mapping entity to dto */
+            sellingAgentDTO = sellingAgentMapper.mapToDto(sellingAgent);
+
+            /* set data change */
+            dataChangeDTO.setInputId(deleteSellingAgentRequest.getInputId());
+            dataChangeDTO.setJsonDataBefore(JsonUtil.cleanedJsonData(objectMapper.writeValueAsString(sellingAgent)));
+            dataChangeDTO.setJsonDataAfter("");
+            dataChangeDTO.setEntityId(sellingAgent.getId().toString());
+            dataChangeService.createChangeActionDELETE(dataChangeDTO, SellingAgent.class);
+            totalDataSuccess++;
+        } catch (Exception e) {
+            handleGeneralError(sellingAgentDTO, e, validationErrors, errorMessageDTOList);
+            totalDataFailed++;
+        }
+        return new SellingAgentResponse(totalDataSuccess, totalDataFailed, errorMessageDTOList);
     }
 
     @Override
     public SellingAgentResponse deleteSingleApprove(SellingAgentApproveRequest approveRequest, String clientIP) {
-        return null;
+        log.info("Approve when delete selling agent with request: {}", approveRequest);
+        int totalDataSuccess = 0;
+        int totalDataFailed = 0;
+        List<ErrorMessageDTO> errorMessageDTOList = new ArrayList<>();
+        List<String> validationErrors = new ArrayList<>();
+        SellingAgentDTO sellingAgentDTO = null;
+
+        try {
+            /* validating data change id */
+            validateDataChangeId(approveRequest.getDataChangeId());
+
+            /* get data change by id and get Entity Id */
+            Long dataChangeId = Long.valueOf(approveRequest.getDataChangeId());
+            BillingDataChangeDTO dataChangeDTO = dataChangeService.getById(dataChangeId);
+            Long entityId = Long.valueOf(dataChangeDTO.getEntityId());
+
+            /* get entity by id */
+            SellingAgent sellingAgent = sellingAgentRepository.findById(entityId)
+                    .orElseThrow(() -> new DataNotFoundException(ID_NOT_FOUND + entityId));
+
+            /* mapping from entity to dto */
+            sellingAgentDTO = sellingAgentMapper.mapToDto(sellingAgent);
+
+            /* set data change for approve id and approve ip address */
+            dataChangeDTO.setApproveId(approveRequest.getApproveId());
+            dataChangeDTO.setApproveIPAddress(clientIP);
+            dataChangeDTO.setJsonDataBefore(JsonUtil.cleanedJsonData(objectMapper.writeValueAsString(sellingAgent)));
+            dataChangeDTO.setDescription("Successfully approve data change and delete selling agent with id: " + sellingAgent.getId());
+            dataChangeService.approvalStatusIsApproved(dataChangeDTO);
+
+            /* delete data entity in the database */
+            sellingAgentRepository.delete(sellingAgent);
+            totalDataSuccess++;
+        } catch (Exception e) {
+            handleGeneralError(sellingAgentDTO, e, validationErrors, errorMessageDTOList);
+            totalDataFailed++;
+        }
+        return new SellingAgentResponse(totalDataSuccess, totalDataFailed, errorMessageDTOList);
     }
 
     @Override
     public String deleteAll() {
-        return "";
+        sellingAgentRepository.deleteAll();
+        return "Successfully delete all selling agent";
     }
 
     @Override
     public List<SellingAgentDTO> getAll() {
-        return List.of();
+        List<SellingAgent> all = sellingAgentRepository.findAll();
+        return sellingAgentMapper.mapToDTOList(all);
     }
 
     public Errors validateSellingAgentUsingValidator(SellingAgentDTO dto) {
