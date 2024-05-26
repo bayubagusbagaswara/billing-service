@@ -56,7 +56,7 @@ public class FeeParameterServiceImpl implements FeeParameterService {
     @Override
     public FeeParameterResponse createSingleData(CreateFeeParameterRequest createFeeParameterRequest, BillingDataChangeDTO dataChangeDTO) {
         log.info("Create single data fee parameter with request: {}", createFeeParameterRequest);
-        FeeParameterDTO feeParameterDTO = feeParameterMapper.mapFromCreateRequestToDto(createFeeParameterRequest);
+        FeeParameterDTO feeParameterDTO = feeParameterMapper.mapCreateRequestToDto(createFeeParameterRequest);
         dataChangeDTO.setInputId(createFeeParameterRequest.getInputId());
         dataChangeDTO.setInputIPAddress(createFeeParameterRequest.getInputIPAddress());
         return processFeeParameterCreation(feeParameterDTO, dataChangeDTO);
@@ -167,7 +167,7 @@ public class FeeParameterServiceImpl implements FeeParameterService {
         int totalDataFailed = 0;
         List<ErrorMessageDTO> errorMessageList = new ArrayList<>();
 
-        FeeParameterDTO feeParameterDTO = feeParameterMapper.mapFromUpdateRequestToDto(updateFeeParameterRequest);
+        FeeParameterDTO feeParameterDTO = feeParameterMapper.mapUpdateRequestToDto(updateFeeParameterRequest);
         try {
             FeeParameter feeParameter = feeParameterRepository.findById(feeParameterDTO.getId())
                     .orElseThrow(() -> new DataNotFoundException(ID_NOT_FOUND + feeParameterDTO.getId()));

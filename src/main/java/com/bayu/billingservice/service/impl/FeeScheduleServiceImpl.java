@@ -43,7 +43,7 @@ public class FeeScheduleServiceImpl implements FeeScheduleService {
     @Override
     public FeeScheduleResponse createSingleData(CreateFeeScheduleRequest createRequest, BillingDataChangeDTO dataChangeDTO) {
         log.info("Create single data fee schedule with request: {}", createRequest);
-        FeeScheduleDTO feeScheduleDTO = feeScheduleMapper.mapFromCreateRequestToDto(createRequest);
+        FeeScheduleDTO feeScheduleDTO = feeScheduleMapper.mapCreateRequestToDto(createRequest);
         dataChangeDTO.setInputId(createRequest.getInputId());
         dataChangeDTO.setInputIPAddress(createRequest.getInputIPAddress());
         return processFeeScheduleCreation(feeScheduleDTO, dataChangeDTO);
@@ -124,7 +124,7 @@ public class FeeScheduleServiceImpl implements FeeScheduleService {
         int totalDataFailed = 0;
         List<ErrorMessageDTO> errorMessageList = new ArrayList<>();
 
-        FeeScheduleDTO feeScheduleDTO = feeScheduleMapper.mapFromUpdateRequestToDto(updateRequest);
+        FeeScheduleDTO feeScheduleDTO = feeScheduleMapper.mapUpdateRequestToDto(updateRequest);
         try {
             FeeSchedule feeSchedule = feeScheduleRepository.findById(feeScheduleDTO.getId())
                     .orElseThrow(() -> new DataNotFoundException(ID_NOT_FOUND + feeScheduleDTO.getId()));
