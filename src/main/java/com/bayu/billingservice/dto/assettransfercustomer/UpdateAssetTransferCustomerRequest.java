@@ -1,19 +1,15 @@
 package com.bayu.billingservice.dto.assettransfercustomer;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.bayu.billingservice.dto.InputIdentifierRequest;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
-@Builder
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UpdateAssetTransferCustomerRequest {
-
-    private String inputId;
-
-    private String inputIPAddress;
+public class UpdateAssetTransferCustomerRequest extends InputIdentifierRequest {
 
     private Long id;
 
@@ -27,6 +23,6 @@ public class UpdateAssetTransferCustomerRequest {
 
     private String transferAssetType;
 
-    private String isEnable;
+    private String enable;
 
 }

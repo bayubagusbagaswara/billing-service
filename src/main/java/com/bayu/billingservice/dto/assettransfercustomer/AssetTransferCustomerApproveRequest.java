@@ -1,20 +1,16 @@
 package com.bayu.billingservice.dto.assettransfercustomer;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.bayu.billingservice.dto.ApprovalIdentifierRequest;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
-@Data
+@EqualsAndHashCode(callSuper = true)
+@SuperBuilder
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class AssetTransferCustomerApproveRequest {
-
-    private String approveId;
-    private String approveIPAddress;
+public class AssetTransferCustomerApproveRequest extends ApprovalIdentifierRequest {
 
     private String dataChangeId;
 
-    private AssetTransferCustomerDTO data;
 }
