@@ -359,18 +359,20 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
         log.info("Delete single investment management with request: {}", deleteRequest);
         int totalDataSuccess = 0;
         int totalDataFailed = 0;
-        List<ErrorMessageDTO> errorMessageList = new ArrayList<>();
+        List<ErrorMessageDTO> errorMessageDTOList = new ArrayList<>();
         List<String> validationErrors = new ArrayList<>();
         InvestmentManagementDTO investmentManagementDTO = null;
 
         try {
-            /* get data by id */
+            /* get investment management by id */
             Long id = deleteRequest.getId();
             InvestmentManagement investmentManagement= investmentManagementRepository.findById(id)
                     .orElseThrow(() -> new DataNotFoundException(ID_NOT_FOUND + id));
 
+            /* mapping entity to dto */
             investmentManagementDTO = investmentManagementMapper.mapToDto(investmentManagement);
 
+            /* set data change */
             dataChangeDTO.setInputId(deleteRequest.getInputId());
             dataChangeDTO.setJsonDataBefore(JsonUtil.cleanedJsonData(objectMapper.writeValueAsString(investmentManagement)));
             dataChangeDTO.setJsonDataAfter("");
@@ -378,10 +380,10 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
             dataChangeService.createChangeActionDELETE(dataChangeDTO, InvestmentManagement.class);
             totalDataSuccess++;
         } catch (Exception e) {
-            handleGeneralError(investmentManagementDTO, e, validationErrors, errorMessageList);
+            handleGeneralError(investmentManagementDTO, e, validationErrors, errorMessageDTOList);
             totalDataFailed++;
         }
-        return new InvestmentManagementResponse(totalDataSuccess, totalDataFailed, errorMessageList);
+        return new InvestmentManagementResponse(totalDataSuccess, totalDataFailed, errorMessageDTOList);
     }
 
     @Override
@@ -389,7 +391,7 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
         log.info("Approve when delete investment management with request: {}", approveRequest);
         int totalDataSuccess = 0;
         int totalDataFailed = 0;
-        List<ErrorMessageDTO> errorMessageList = new ArrayList<>();
+        List<ErrorMessageDTO> errorMessageDTOList = new ArrayList<>();
         List<String> validationErrors = new ArrayList<>();
         InvestmentManagementDTO investmentManagementDTO = null;
 
@@ -420,10 +422,10 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
             investmentManagementRepository.delete(investmentManagement);
             totalDataSuccess++;
         } catch (Exception e) {
-            handleGeneralError(investmentManagementDTO, e, validationErrors, errorMessageList);
+            handleGeneralError(investmentManagementDTO, e, validationErrors, errorMessageDTOList);
             totalDataFailed++;
         }
-        return new InvestmentManagementResponse(totalDataSuccess, totalDataFailed, errorMessageList);
+        return new InvestmentManagementResponse(totalDataSuccess, totalDataFailed, errorMessageDTOList);
     }
 
     @Override
