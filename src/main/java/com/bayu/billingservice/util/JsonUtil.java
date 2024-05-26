@@ -52,6 +52,8 @@ public class JsonUtil {
         jsonNode.remove("code");
         jsonNode.remove("customerCode"); // for customer data cannot be updated
         jsonNode.remove("subCode"); // for customer data cannot be updated
+        jsonNode.remove("feeCode"); // for fee parameter data cannot be updated
+        jsonNode.remove("feeName"); // for fee parameter data cannot be updated
         jsonNode.remove("dataChangeId");
         jsonNode.remove("approvalStatus");
         jsonNode.remove("inputId");
