@@ -6,16 +6,17 @@ import com.bayu.billingservice.dto.sellingagent.*;
 import com.bayu.billingservice.exception.DataNotFoundException;
 import com.bayu.billingservice.exception.GeneralException;
 import com.bayu.billingservice.mapper.SellingAgentMapper;
+import com.bayu.billingservice.model.InvestmentManagement;
 import com.bayu.billingservice.model.SellingAgent;
 import com.bayu.billingservice.repository.SellingAgentRepository;
 import com.bayu.billingservice.service.DataChangeService;
 import com.bayu.billingservice.service.SellingAgentService;
+import com.bayu.billingservice.util.BeanUtil;
 import com.bayu.billingservice.util.JsonUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.beanutils.BeanUtils;
-import org.apache.xmlbeans.impl.xb.xsdschema.LocalSimpleType;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.Errors;
@@ -142,7 +143,53 @@ public class SellingAgentServiceImpl implements SellingAgentService {
 
     @Override
     public SellingAgentResponse updateSingleData(UpdateSellingAgentRequest updateSellingAgentRequest, BillingDataChangeDTO dataChangeDTO) {
-        return null;
+        log.info("Update single data selling agent with request: {}", updateSellingAgentRequest);
+        int totalDataSuccess = 0;
+        int totalDataFailed = 0;
+        List<ErrorMessageDTO> errorMessageDTOList = new ArrayList<>();
+        List<String> validationErrors = new ArrayList<>();
+        SellingAgentDTO clonedDTO = null;
+
+        try {
+            /* mapping data from request to dto */
+            SellingAgentDTO sellingAgentDTO = sellingAgentMapper.mapUpdateRequestToDto(updateSellingAgentRequest);
+            clonedDTO = new SellingAgentDTO();
+            BeanUtil.copyAllProperties(sellingAgentDTO, clonedDTO);
+            log.info("[Update Single] Result mapping request to dto: {}", sellingAgentDTO);
+
+            /* get selling agent by id */
+            SellingAgent sellingAgent = sellingAgentRepository.findById(sellingAgentDTO.getId())
+                    .orElseThrow(() -> new DataNotFoundException(ID_NOT_FOUND + sellingAgentDTO.getId()));
+
+            /* data yang akan di validator */
+            copyNonNullOrEmptyFields(sellingAgent, clonedDTO);
+            log.info("[Update Single] Result map object entity to dto: {}", clonedDTO);
+
+            /* check validator for data request after mapping to dto */
+            Errors errors = validateSellingAgentUsingValidator(clonedDTO);
+            if (errors.hasErrors()) {
+                errors.getAllErrors().forEach(error -> validationErrors.add(error.getDefaultMessage()));
+            }
+
+            /* set input id for data change */
+            dataChangeDTO.setInputId(updateSellingAgentRequest.getInputId());
+
+            /* check validation errors for custom response */
+            if (!validationErrors.isEmpty()) {
+                ErrorMessageDTO errorMessageDTO = new ErrorMessageDTO(sellingAgentDTO.getCode(), validationErrors);
+                errorMessageDTOList.add(errorMessageDTO);
+                totalDataFailed++;
+            } else {
+                dataChangeDTO.setJsonDataBefore(JsonUtil.cleanedJsonData(objectMapper.writeValueAsString(sellingAgent)));
+                dataChangeDTO.setJsonDataAfter(JsonUtil.cleanedJsonDataUpdate(objectMapper.writeValueAsString(sellingAgentDTO)));
+                dataChangeDTO.setEntityId(sellingAgent.getId().toString());
+                dataChangeService.createChangeActionEDIT(dataChangeDTO, SellingAgent.class);
+                totalDataSuccess++;
+            }
+        } catch (Exception e) {
+            handleGeneralError(clonedDTO, e, validationErrors, errorMessageDTOList);
+        }
+        return new SellingAgentResponse(totalDataSuccess, totalDataFailed, errorMessageDTOList);
     }
 
     @Override
