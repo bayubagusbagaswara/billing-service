@@ -790,3 +790,67 @@ String jsonDataAfter = "{\"code\":\"A002\",\"name\":\"PT Pacific Capital Investm
         validationErrors.add(e.getMessage());
         errorMessageList.add(new ErrorMessageDTO(investmentManagementDTO != null ? investmentManagementDTO.getCode() : UNKNOWN, validationErrors));
     }
+
+# Delete or Audit Trail
+
+public InvestmentManagementResponse deleteSingleApprove(InvestmentManagementApproveRequest approveRequest, String approveIPAddress) {
+log.info("Approve when delete investment management with request: {}", approveRequest);
+int totalDataSuccess = 0;
+int totalDataFailed = 0;
+List<ErrorMessageDTO> errorMessageDTOList = new ArrayList<>();
+List<String> validationErrors = new ArrayList<>();
+InvestmentManagementDTO investmentManagementDTO = null;
+
+    try {
+        /* validate dataChangeId whether it exists or not */
+        validateDataChangeId(approveRequest.getDataChangeId());
+
+        /* get data from DataChange */
+        Long dataChangeId = Long.valueOf(approveRequest.getDataChangeId());
+        BillingDataChangeDTO dataChangeDTO = dataChangeService.getById(dataChangeId);
+        Long entityId = Long.valueOf(dataChangeDTO.getEntityId());
+
+        /* get investment management by id */
+        InvestmentManagement investmentManagement = investmentManagementRepository.findById(entityId)
+                .orElseThrow(() -> new DataNotFoundException(ID_NOT_FOUND + entityId));
+
+        /* maps from entity to dto */
+        investmentManagementDTO = investmentManagementMapper.mapToDto(investmentManagement);
+
+        /* set data change for approve id and approve ip address */
+        dataChangeDTO.setApproveId(approveRequest.getApproveId());
+        dataChangeDTO.setApproveIPAddress(approveIPAddress);
+        dataChangeDTO.setJsonDataBefore(JsonUtil.cleanedJsonData(objectMapper.writeValueAsString(investmentManagement)));
+        dataChangeDTO.setDescription("Successfully approve data change and delete data entity with id: " + investmentManagement.getId());
+
+        /* delete data entity in the database */
+        try {
+            investmentManagementRepository.delete(investmentManagement);
+            totalDataSuccess++;
+            dataChangeService.approvalStatusIsApproved(dataChangeDTO); // Catat perubahan setelah penghapusan berhasil
+        } catch (Exception e) {
+            // Jika penghapusan gagal, catat perubahan tetapi tambahkan pesan ke dalam daftar kesalahan
+            handleDeletionError(dataChangeDTO, e, validationErrors, errorMessageDTOList);
+            totalDataFailed++;
+        }
+    } catch (DataNotFoundException ex) {
+        handleNotFoundError(ex, validationErrors, errorMessageDTOList);
+        totalDataFailed++;
+    } catch (Exception e) {
+        handleGeneralError(investmentManagementDTO, e, validationErrors, errorMessageDTOList);
+        totalDataFailed++;
+    }
+    return new InvestmentManagementResponse(totalDataSuccess, totalDataFailed, errorMessageDTOList);
+}
+
+private void handleDeletionError(BillingDataChangeDTO dataChangeDTO, Exception e, List<String> validationErrors, List<ErrorMessageDTO> errorMessageDTOList) {
+validationErrors.add("Failed to delete data: " + e.getMessage());
+// Log the error or perform additional handling if needed
+// Catat perubahan meskipun penghapusan gagal
+try {
+dataChangeService.approvalStatusIsApproved(dataChangeDTO);
+} catch (Exception ex) {
+validationErrors.add("Failed to record data change: " + ex.getMessage());
+// Log the error or perform additional handling if needed
+}
+}
