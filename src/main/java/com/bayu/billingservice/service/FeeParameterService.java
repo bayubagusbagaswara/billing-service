@@ -29,13 +29,13 @@ public interface FeeParameterService {
 
     FeeParameterResponse createSingleData(CreateFeeParameterRequest createFeeParameterRequest, BillingDataChangeDTO dataChangeDTO);
 
-    FeeParameterResponse createMultipleData(FeeParameterListRequest createFeeParameterListRequest, BillingDataChangeDTO dataChangeDTO);
+    FeeParameterResponse createMultipleData(CreateFeeParameterListRequest createFeeParameterListRequest, BillingDataChangeDTO dataChangeDTO);
 
     FeeParameterResponse createSingleApprove(FeeParameterApproveRequest createFeeParameterListRequest, String clientIP);
 
     FeeParameterResponse updateSingleData(UpdateFeeParameterRequest updateFeeParameterRequest, BillingDataChangeDTO dataChangeDTO);
 
-    FeeParameterResponse updateMultipleData(FeeParameterListRequest updateFeeParameterListRequest, BillingDataChangeDTO dataChangeDTO);
+    FeeParameterResponse updateMultipleData(UpdateFeeParameterListRequest updateFeeParameterListRequest, BillingDataChangeDTO dataChangeDTO);
 
     FeeParameterResponse updateSingleApprove(FeeParameterApproveRequest updateFeeParameterListRequest, String clientIP);
 
