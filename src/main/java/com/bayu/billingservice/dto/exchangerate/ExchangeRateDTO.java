@@ -25,7 +25,7 @@ public class ExchangeRateDTO extends ApprovalDTO {
     @NotBlank(message = "Currency cannot be empty")
     private String currency;
 
-    @Pattern(regexp = "^\\d+(?:\\.\\d+)?$", message = "Value must be in decimal format")
+    @Pattern(regexp = "^\\d+(?:\\.\\d+)?$", message = "Rate Value must be in decimal format")
     @NotBlank(message = "Value cannot be empty")
     private String value;
 }
