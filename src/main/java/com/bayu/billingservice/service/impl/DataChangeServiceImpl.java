@@ -199,7 +199,7 @@ public class DataChangeServiceImpl implements DataChangeService {
 
     @Override
     public boolean existById(Long id) {
-        return dataChangeRepository.existsById(id);
+        return !dataChangeRepository.existsById(id);
     }
 
     @Override
