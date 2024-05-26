@@ -1,20 +1,17 @@
 package com.bayu.billingservice.dto.feeparameter;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.bayu.billingservice.dto.ApprovalIdentifierRequest;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
+import org.modelmapper.internal.bytebuddy.implementation.bind.annotation.Super;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
-@Builder
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class FeeParameterApproveRequest {
-
-    private String approveId;
-    private String approveIPAddress;
+public class FeeParameterApproveRequest extends ApprovalIdentifierRequest {
 
     private String dataChangeId;
 
-    private FeeParameterDTO data;
 }

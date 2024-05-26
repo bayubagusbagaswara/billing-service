@@ -1,7 +1,6 @@
 package com.bayu.billingservice.dto.feeparameter;
 
 import com.bayu.billingservice.dto.approval.ApprovalDTO;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
@@ -10,19 +9,18 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class FeeParameterDTO extends ApprovalDTO {
 
     private Long id;
 
-    @NotBlank(message = "Code cannot be blank")
-    private String code;
+    @NotBlank(message = "Fee Code cannot be empty")
+    private String feeCode;
 
-    @NotBlank(message = "Name cannot be blank")
-    private String name;
+    @NotBlank(message = "Fee Name cannot be empty")
+    private String feeName;
 
-    private String description;
+    private String feeDescription;
 
-    @NotBlank(message = "Value cannot be blank")
-    private String value;
+    @NotBlank(message = "Fee Value cannot be empty")
+    private String feeValue;
 }

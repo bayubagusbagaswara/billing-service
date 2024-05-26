@@ -1,30 +1,26 @@
 package com.bayu.billingservice.dto.feeparameter;
 
+import com.bayu.billingservice.dto.InputIdentifierRequest;
 import jakarta.validation.constraints.NotBlank;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
-@Builder
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateFeeParameterRequest {
+public class CreateFeeParameterRequest extends InputIdentifierRequest {
 
-    private String inputId;
+    @NotBlank(message = "Fee Code cannot be empty")
+    private String feeCode;
 
-    private String inputIPAddress;
+    @NotBlank(message = "Fee Name cannot be empty")
+    private String feeName;
 
-    @NotBlank(message = "Code cannot be blank")
-    private String code;
+    private String feeDescription;
 
-    @NotBlank(message = "Name cannot be blank")
-    private String name;
-
-    private String description;
-
-    @NotBlank(message = "Value cannot be blank")
-    private String value;
+    @NotBlank(message = "Fee Value cannot be empty")
+    private String feeValue;
 
 }

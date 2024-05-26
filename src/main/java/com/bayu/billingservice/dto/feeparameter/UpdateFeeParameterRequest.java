@@ -1,28 +1,26 @@
 package com.bayu.billingservice.dto.feeparameter;
 
-import jakarta.validation.constraints.NotBlank;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.bayu.billingservice.dto.InputIdentifierRequest;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
-@Builder
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UpdateFeeParameterRequest {
-
-    private String inputId;
-    private String inputIPAddress;
+public class UpdateFeeParameterRequest extends InputIdentifierRequest {
 
     private Long id;
 
-    private String code;
+    /* fee code cannot be updated */
+    private String feeCode;
 
-    private String name;
+    /* fee name cannot be updated */
+    private String feeName;
 
-    private String description;
+    private String feeDescription;
 
-    private String value;
+    private String feeValue;
 
 }
