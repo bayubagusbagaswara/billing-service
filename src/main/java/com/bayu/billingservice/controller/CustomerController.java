@@ -4,6 +4,7 @@ import com.bayu.billingservice.dto.ResponseDTO;
 import com.bayu.billingservice.dto.customer.*;
 import com.bayu.billingservice.dto.datachange.BillingDataChangeDTO;
 import com.bayu.billingservice.service.CustomerService;
+import com.bayu.billingservice.util.ClientIPUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +27,7 @@ public class CustomerController {
 
     @PostMapping(path = "/create")
     public ResponseEntity<ResponseDTO<CustomerResponse>> create(@RequestBody CreateCustomerRequest request, HttpServletRequest servletRequest) {
-        String clientIp = getClientIp(servletRequest);
+        String clientIp = ClientIPUtil.getClientIp(servletRequest);
         BillingDataChangeDTO dataChangeDTO = BillingDataChangeDTO.builder()
                 .inputIPAddress(clientIp)
                 .methodHttp(HttpMethod.POST.name())
@@ -48,7 +49,7 @@ public class CustomerController {
 
     @PostMapping(path = "/create-list")
     public ResponseEntity<ResponseDTO<CustomerResponse>> createList(@RequestBody CreateCustomerListRequest request, HttpServletRequest servletRequest) {
-        String clientIp = getClientIp(servletRequest);
+        String clientIp = ClientIPUtil.getClientIp(servletRequest);
         BillingDataChangeDTO dataChangeDTO = BillingDataChangeDTO.builder()
                 .inputIPAddress(clientIp)
                 .methodHttp(HttpMethod.POST.name())
@@ -69,7 +70,7 @@ public class CustomerController {
 
     @PostMapping(path = "/create/approve")
     public ResponseEntity<ResponseDTO<CustomerResponse>> createApprove(@RequestBody CustomerApproveRequest request, HttpServletRequest servletRequest) {
-        String clientIp = getClientIp(servletRequest);
+        String clientIp = ClientIPUtil.getClientIp(servletRequest);
         CustomerResponse createCustomerListResponse = customerService.createSingleApprove(request, clientIp);
         ResponseDTO<CustomerResponse> response = ResponseDTO.<CustomerResponse>builder()
                 .code(HttpStatus.OK.value())
@@ -81,7 +82,7 @@ public class CustomerController {
 
     @PutMapping(path = "/updateById")
     public ResponseEntity<ResponseDTO<CustomerResponse>> updateById(@RequestBody UpdateCustomerRequest updateCustomerRequest, HttpServletRequest servletRequest) {
-        String clientIp = getClientIp(servletRequest);
+        String clientIp = ClientIPUtil.getClientIp(servletRequest);
         BillingDataChangeDTO dataChangeDTO = BillingDataChangeDTO.builder()
                 .inputIPAddress(clientIp)
                 .methodHttp(HttpMethod.PUT.name())
@@ -102,7 +103,7 @@ public class CustomerController {
 
     @PutMapping(path = "/update-list")
     public ResponseEntity<ResponseDTO<CustomerResponse>> updateList(@RequestBody UpdateCustomerListRequest updateCustomerListRequest, HttpServletRequest servletRequest) {
-        String clientIp = getClientIp(servletRequest);
+        String clientIp = ClientIPUtil.getClientIp(servletRequest);
         BillingDataChangeDTO dataChangeDTO = BillingDataChangeDTO.builder()
                 .inputIPAddress(clientIp)
                 .methodHttp(HttpMethod.PUT.name())
@@ -123,7 +124,7 @@ public class CustomerController {
 
     @PutMapping(path = "/update/approve")
     public ResponseEntity<ResponseDTO<CustomerResponse>> updateApprove(@RequestBody CustomerApproveRequest request, HttpServletRequest servletRequest) {
-        String clientIp = getClientIp(servletRequest);
+        String clientIp = ClientIPUtil.getClientIp(servletRequest);
         CustomerResponse customerResponse = customerService.updateSingleApprove(request, clientIp);
         ResponseDTO<CustomerResponse> response = ResponseDTO.<CustomerResponse>builder()
                 .code(HttpStatus.OK.value())
@@ -135,7 +136,7 @@ public class CustomerController {
 
     @DeleteMapping(path = "/deleteById")
     public ResponseEntity<ResponseDTO<CustomerResponse>> deleteById(@RequestBody DeleteCustomerRequest deleteCustomerRequest, HttpServletRequest servletRequest) {
-        String clientIp = getClientIp(servletRequest);
+        String clientIp = ClientIPUtil.getClientIp(servletRequest);
         BillingDataChangeDTO dataChangeDTO = BillingDataChangeDTO.builder()
                 .inputIPAddress(clientIp)
                 .methodHttp(HttpMethod.DELETE.name())
@@ -156,7 +157,7 @@ public class CustomerController {
 
     @DeleteMapping(path = "/delete/approve")
     public ResponseEntity<ResponseDTO<CustomerResponse>> deleteApprove(@RequestBody CustomerApproveRequest approveRequest, HttpServletRequest servletRequest) {
-        String clientIp = getClientIp(servletRequest);
+        String clientIp = ClientIPUtil.getClientIp(servletRequest);
         CustomerResponse customerResponse = customerService.deleteSingleApprove(approveRequest, clientIp);
         ResponseDTO<CustomerResponse> response = ResponseDTO.<CustomerResponse>builder()
                 .code(HttpStatus.OK.value())
@@ -186,18 +187,6 @@ public class CustomerController {
                 .payload(status)
                 .build();
         return ResponseEntity.ok().body(response);
-    }
-
-    public String getClientIp(HttpServletRequest request) {
-        String clientIp = request.getHeader("X-Forwarded-For");
-        if (clientIp == null || clientIp.isEmpty()) {
-            clientIp = request.getHeader("X-Real-IP");
-        }
-        if (clientIp == null || clientIp.isEmpty()) {
-            clientIp = request.getRemoteAddr();
-        }
-        log.info("Client IP Address: {}", clientIp);
-        return clientIp;
     }
 
 }
