@@ -188,13 +188,70 @@ public class SellingAgentServiceImpl implements SellingAgentService {
             }
         } catch (Exception e) {
             handleGeneralError(clonedDTO, e, validationErrors, errorMessageDTOList);
+            totalDataFailed++;
         }
         return new SellingAgentResponse(totalDataSuccess, totalDataFailed, errorMessageDTOList);
     }
 
     @Override
     public SellingAgentResponse updateSingleApprove(SellingAgentApproveRequest sellingAgentApproveRequest, String clientIP) {
-        return null;
+        log.info("Approve when update selling agent with request: {}", sellingAgentApproveRequest);
+        int totalDataSuccess = 0;
+        int totalDataFailed = 0;
+        List<ErrorMessageDTO> errorMessageDTOList = new ArrayList<>();
+        List<String> validationErrors = new ArrayList<>();
+        SellingAgentDTO sellingAgentDTO = null;
+
+        try {
+            /* validating data change id */
+            validateDataChangeId(sellingAgentApproveRequest.getDataChangeId());
+
+            /* get data change by id and get json data after */
+            Long dataChangeId = Long.valueOf(sellingAgentApproveRequest.getDataChangeId());
+            BillingDataChangeDTO dataChangeDTO = dataChangeService.getById(dataChangeId);
+            Long entityId = Long.valueOf(dataChangeDTO.getEntityId());
+            SellingAgentDTO dto = objectMapper.readValue(dataChangeDTO.getJsonDataAfter(), SellingAgentDTO.class);
+            log.info("[Update Approve] Map data from JSON data after: {}", dto);
+
+            /* get selling agent entity by id */
+            SellingAgent sellingAgent = sellingAgentRepository.findById(entityId)
+                    .orElseThrow(() -> new DataNotFoundException(ID_NOT_FOUND + entityId));
+
+            sellingAgentMapper.mapObjectsDtoToEntity(dto, sellingAgent);
+            log.info("[Update Approve] Map object dto to entity: {}", sellingAgent);
+
+            sellingAgentDTO = sellingAgentMapper.mapToDto(sellingAgent);
+            log.info("[Update Approve] Map from entity to dto: {}", sellingAgentDTO);
+
+            /* check validation each column dto */
+            Errors errors = validateSellingAgentUsingValidator(sellingAgentDTO);
+            if (errors.hasErrors()) {
+                errors.getAllErrors().forEach(error -> validationErrors.add(error.getDefaultMessage()));
+            }
+
+            /* set data change approve id and approve ip address */
+            dataChangeDTO.setApproveId(sellingAgentApproveRequest.getApproveId());
+            dataChangeDTO.setApproveIPAddress(clientIP);
+            dataChangeDTO.setEntityId(sellingAgent.getId().toString());
+
+            /* check validation error for customer response */
+            if (!validationErrors.isEmpty()) {
+                dataChangeDTO.setJsonDataAfter(JsonUtil.cleanedJsonData(objectMapper.writeValueAsString(sellingAgentDTO)));
+                dataChangeService.approvalStatusIsRejected(dataChangeDTO, validationErrors);
+                totalDataFailed++;
+            } else {
+                SellingAgent sellingAgentUpdated = sellingAgentMapper.updateEntity(sellingAgent, dataChangeDTO);
+                SellingAgent sellingAgentSaved = sellingAgentRepository.save(sellingAgentUpdated);
+                dataChangeDTO.setJsonDataAfter(JsonUtil.cleanedJsonData(objectMapper.writeValueAsString(sellingAgentSaved)));
+                dataChangeDTO.setDescription("Successfully approve data change and update selling agent entity with id: " + sellingAgentSaved.getId());
+                dataChangeService.approvalStatusIsApproved(dataChangeDTO);
+                totalDataSuccess++;
+            }
+        } catch (Exception e) {
+            handleGeneralError(sellingAgentDTO, e, validationErrors, errorMessageDTOList);
+            totalDataFailed++;
+        }
+        return new SellingAgentResponse(totalDataSuccess, totalDataFailed, errorMessageDTOList);
     }
 
     @Override
