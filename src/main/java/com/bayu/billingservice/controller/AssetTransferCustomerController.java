@@ -4,6 +4,8 @@ import com.bayu.billingservice.dto.ResponseDTO;
 import com.bayu.billingservice.dto.assettransfercustomer.*;
 import com.bayu.billingservice.dto.datachange.BillingDataChangeDTO;
 import com.bayu.billingservice.service.AssetTransferCustomerService;
+import com.bayu.billingservice.util.ClientIPUtil;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpMethod;
@@ -24,12 +26,11 @@ public class AssetTransferCustomerController {
 
     private final AssetTransferCustomerService assetTransferCustomerService;
 
-    // TIDAK ADA CREATE LIST
-
-    // Create Single Data
     @PostMapping(path = "/create")
-    public ResponseEntity<ResponseDTO<AssetTransferCustomerResponse>> createSingleData(@RequestBody CreateAssetTransferCustomerRequest createAssetTransferCustomerRequest) {
+    public ResponseEntity<ResponseDTO<AssetTransferCustomerResponse>> createSingleData(@RequestBody CreateAssetTransferCustomerRequest createAssetTransferCustomerRequest, HttpServletRequest servletRequest) {
+        String clientIp = ClientIPUtil.getClientIp(servletRequest);
         BillingDataChangeDTO dataChangeDTO = BillingDataChangeDTO.builder()
+                .inputIPAddress(clientIp)
                 .methodHttp(HttpMethod.POST.name())
                 .endpoint(URL_ASSET_TRANSFER_CUSTOMER + "/create/approve")
                 .isRequestBody(true)
@@ -46,10 +47,10 @@ public class AssetTransferCustomerController {
         return ResponseEntity.ok(response);
     }
 
-    // Create Multiple Approve
     @PostMapping(path = "/create/approve")
-    public ResponseEntity<ResponseDTO<AssetTransferCustomerResponse>> createSingleApprove(@RequestBody AssetTransferCustomerApproveRequest createAssetTransferCustomerListRequest) {
-        AssetTransferCustomerResponse listApprove = assetTransferCustomerService.createSingleApprove(createAssetTransferCustomerListRequest);
+    public ResponseEntity<ResponseDTO<AssetTransferCustomerResponse>> createSingleApprove(@RequestBody AssetTransferCustomerApproveRequest createAssetTransferCustomerListRequest, HttpServletRequest servletRequest) {
+        String clientIp = ClientIPUtil.getClientIp(servletRequest);
+        AssetTransferCustomerResponse listApprove = assetTransferCustomerService.createSingleApprove(createAssetTransferCustomerListRequest, clientIp);
         ResponseDTO<AssetTransferCustomerResponse> response = ResponseDTO.<AssetTransferCustomerResponse>builder()
                 .code(HttpStatus.OK.value())
                 .message(HttpStatus.OK.getReasonPhrase())
@@ -58,10 +59,11 @@ public class AssetTransferCustomerController {
         return ResponseEntity.ok(response);
     }
 
-    // Update Single Data
     @PutMapping(path = "/update")
-    public ResponseEntity<ResponseDTO<AssetTransferCustomerResponse>> updateSingleData(@RequestBody UpdateAssetTransferCustomerRequest updateAssetTransferCustomerRequest) {
+    public ResponseEntity<ResponseDTO<AssetTransferCustomerResponse>> updateSingleData(@RequestBody UpdateAssetTransferCustomerRequest updateAssetTransferCustomerRequest, HttpServletRequest servletRequest) {
+        String clientIp = ClientIPUtil.getClientIp(servletRequest);
         BillingDataChangeDTO dataChangeDTO = BillingDataChangeDTO.builder()
+                .inputId(clientIp)
                 .methodHttp(HttpMethod.PUT.name())
                 .endpoint(URL_ASSET_TRANSFER_CUSTOMER + "/update/approve")
                 .isRequestBody(true)
@@ -78,10 +80,11 @@ public class AssetTransferCustomerController {
         return ResponseEntity.ok(response);
     }
 
-    // Update Multiple Data
     @PutMapping(path = "/update-list")
-    public ResponseEntity<ResponseDTO<AssetTransferCustomerResponse>> updateMultipleData(@RequestBody AssetTransferCustomerListRequest updateAssetTransferCustomerListRequest) {
+    public ResponseEntity<ResponseDTO<AssetTransferCustomerResponse>> updateMultipleData(@RequestBody AssetTransferCustomerListRequest updateAssetTransferCustomerListRequest, HttpServletRequest servletRequest) {
+        String clientIp = ClientIPUtil.getClientIp(servletRequest);
         BillingDataChangeDTO dataChangeDTO = BillingDataChangeDTO.builder()
+                .inputId(clientIp)
                 .methodHttp(HttpMethod.PUT.name())
                 .endpoint(URL_ASSET_TRANSFER_CUSTOMER + "/update/approve")
                 .isRequestBody(true)
@@ -98,10 +101,10 @@ public class AssetTransferCustomerController {
         return ResponseEntity.ok(response);
     }
 
-    // Update Multiple Approve
     @PutMapping(path = "/update/approve")
-    public ResponseEntity<ResponseDTO<AssetTransferCustomerResponse>> updateSingleApprove(@RequestBody AssetTransferCustomerApproveRequest updateAssetTransferCustomerListRequest) {
-        AssetTransferCustomerResponse updateListResponse = assetTransferCustomerService.updateSingleApprove(updateAssetTransferCustomerListRequest);
+    public ResponseEntity<ResponseDTO<AssetTransferCustomerResponse>> updateSingleApprove(@RequestBody AssetTransferCustomerApproveRequest updateAssetTransferCustomerListRequest, HttpServletRequest servletRequest) {
+        String clientIp = ClientIPUtil.getClientIp(servletRequest);
+        AssetTransferCustomerResponse updateListResponse = assetTransferCustomerService.updateSingleApprove(updateAssetTransferCustomerListRequest, clientIp);
         ResponseDTO<AssetTransferCustomerResponse> response = ResponseDTO.<AssetTransferCustomerResponse>builder()
                 .code(HttpStatus.OK.value())
                 .message(HttpStatus.OK.getReasonPhrase())
@@ -110,10 +113,11 @@ public class AssetTransferCustomerController {
         return ResponseEntity.ok(response);
     }
 
-    // Delete Single Data
     @DeleteMapping(path = "/delete")
-    public ResponseEntity<ResponseDTO<AssetTransferCustomerResponse>> deleteSingleData(@RequestBody DeleteAssetTransferCustomerRequest deleteAssetTransferCustomerRequest) {
+    public ResponseEntity<ResponseDTO<AssetTransferCustomerResponse>> deleteSingleData(@RequestBody DeleteAssetTransferCustomerRequest deleteAssetTransferCustomerRequest, HttpServletRequest servletRequest) {
+        String clientIp = ClientIPUtil.getClientIp(servletRequest);
         BillingDataChangeDTO dataChangeDTO = BillingDataChangeDTO.builder()
+                .inputId(clientIp)
                 .methodHttp(HttpMethod.DELETE.name())
                 .endpoint(URL_ASSET_TRANSFER_CUSTOMER + "/delete/approve")
                 .isRequestBody(true)
@@ -130,10 +134,10 @@ public class AssetTransferCustomerController {
         return ResponseEntity.ok(response);
     }
 
-    // Delete Multiple Approve
     @DeleteMapping(path = "/delete/approve")
-    public ResponseEntity<ResponseDTO<AssetTransferCustomerResponse>> deleteSingleData(@RequestBody AssetTransferCustomerApproveRequest deleteAssetTransferCustomerListRequest) {
-        AssetTransferCustomerResponse deleteResponse = assetTransferCustomerService.deleteSingleApprove(deleteAssetTransferCustomerListRequest);
+    public ResponseEntity<ResponseDTO<AssetTransferCustomerResponse>> deleteSingleData(@RequestBody AssetTransferCustomerApproveRequest deleteAssetTransferCustomerListRequest, HttpServletRequest servletRequest) {
+        String clientIp = ClientIPUtil.getClientIp(servletRequest);
+        AssetTransferCustomerResponse deleteResponse = assetTransferCustomerService.deleteSingleApprove(deleteAssetTransferCustomerListRequest, clientIp);
         ResponseDTO<AssetTransferCustomerResponse> response = ResponseDTO.<AssetTransferCustomerResponse>builder()
                 .code(HttpStatus.OK.value())
                 .message(HttpStatus.OK.getReasonPhrase())
@@ -142,7 +146,6 @@ public class AssetTransferCustomerController {
         return ResponseEntity.ok(response);
     }
 
-    // hard delete all
     @DeleteMapping(path = "/all")
     public ResponseEntity<ResponseDTO<String>> deleteAll() {
         String deleteStatus = assetTransferCustomerService.deleteAll();
@@ -154,7 +157,6 @@ public class AssetTransferCustomerController {
         return ResponseEntity.ok(response);
     }
 
-    // get all
     @GetMapping(path = "/all")
     public ResponseEntity<ResponseDTO<List<AssetTransferCustomerDTO>>> getAll() {
         List<AssetTransferCustomerDTO> assetTransferCustomerDTOList = assetTransferCustomerService.getAll();
