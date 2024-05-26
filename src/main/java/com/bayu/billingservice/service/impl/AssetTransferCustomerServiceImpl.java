@@ -23,7 +23,7 @@ public class AssetTransferCustomerServiceImpl implements AssetTransferCustomerSe
     }
 
     @Override
-    public AssetTransferCustomerResponse createSingleApprove(AssetTransferCustomerApproveRequest createAssetTransferCustomerListRequest) {
+    public AssetTransferCustomerResponse createSingleApprove(AssetTransferCustomerApproveRequest createAssetTransferCustomerListRequest, String clientIP) {
         return null;
     }
 
@@ -33,12 +33,7 @@ public class AssetTransferCustomerServiceImpl implements AssetTransferCustomerSe
     }
 
     @Override
-    public AssetTransferCustomerResponse updateMultipleData(AssetTransferCustomerListRequest updateAssetTransferCustomerListRequest, BillingDataChangeDTO dataChangeDTO) {
-        return null;
-    }
-
-    @Override
-    public AssetTransferCustomerResponse updateSingleApprove(AssetTransferCustomerApproveRequest updateAssetTransferCustomerListRequest) {
+    public AssetTransferCustomerResponse updateSingleApprove(AssetTransferCustomerApproveRequest updateAssetTransferCustomerListRequest, String clientIP) {
         return null;
     }
 
@@ -48,17 +43,17 @@ public class AssetTransferCustomerServiceImpl implements AssetTransferCustomerSe
     }
 
     @Override
-    public AssetTransferCustomerResponse deleteSingleApprove(AssetTransferCustomerApproveRequest deleteAssetTransferCustomerListRequest) {
+    public AssetTransferCustomerResponse deleteSingleApprove(AssetTransferCustomerApproveRequest deleteAssetTransferCustomerListRequest, String clientIP) {
         return null;
-    }
-
-    @Override
-    public List<AssetTransferCustomerDTO> getAll() {
-        return List.of();
     }
 
     @Override
     public String deleteAll() {
         return "";
+    }
+
+    @Override
+    public List<AssetTransferCustomerDTO> getAll() {
+        return List.of();
     }
 }
