@@ -145,11 +145,11 @@ public class CustomerServiceImpl implements CustomerService {
         int totalDataSuccess = 0;
         int totalDataFailed = 0;
         List<ErrorMessageDTO> errorMessageDTOList = new ArrayList<>();
-        List<String> validationErrors = new ArrayList<>();
-        CustomerDTO customerDTO = null;
 
         /* repeat data one by one */
         for (CreateCustomerDataListRequest createCustomerDataListRequest : createCustomerListRequest.getCreateCustomerDataListRequests()) {
+            List<String> validationErrors = new ArrayList<>();
+            CustomerDTO customerDTO = null;
             try {
                 /* mapping data from request to dto */
                 customerDTO = customerMapper.mapCreateListRequestToDTO(createCustomerDataListRequest);
@@ -346,10 +346,10 @@ public class CustomerServiceImpl implements CustomerService {
         int totalDataSuccess = 0;
         int totalDataFailed = 0;
         List<ErrorMessageDTO> errorMessageDTOList = new ArrayList<>();
-        List<String> validationErrors = new ArrayList<>();
-        CustomerDTO customerDTO = null;
 
         for (UpdateCustomerDataListRequest updateCustomerDataListRequest : updateCreateCustomerListRequest.getUpdateCustomerDataListRequests()) {
+            List<String> validationErrors = new ArrayList<>();
+            CustomerDTO customerDTO = null;
             try {
                 /* mapping data from request to dto */
                 customerDTO = customerMapper.mapUpdateListRequestToDTO(updateCustomerDataListRequest);
