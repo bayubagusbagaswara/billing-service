@@ -1,18 +1,15 @@
 package com.bayu.billingservice.dto.sellingagent;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.bayu.billingservice.dto.InputIdentifierRequest;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
-@Builder
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UpdateSellingAgentRequest {
-
-    private String inputId;
-    private String inputIPAddress;
+public class UpdateSellingAgentRequest extends InputIdentifierRequest {
 
     private Long id;
 

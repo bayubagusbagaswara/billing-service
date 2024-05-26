@@ -1,23 +1,22 @@
 package com.bayu.billingservice.dto.sellingagent;
 
+import com.bayu.billingservice.dto.InputIdentifierRequest;
 import jakarta.validation.constraints.NotBlank;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import jakarta.validation.constraints.Pattern;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
-@Builder
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateSellingAgentRequest {
+public class CreateSellingAgentRequest extends InputIdentifierRequest {
 
-    private String inputId;
-    private String inputIPAddress;
-
-    @NotBlank(message = "Code cannot be blank")
+    @Pattern(regexp = "^[a-zA-Z0-9]*$", message = "Code must contain only alphanumeric characters")
+    @NotBlank(message = "Code cannot be empty")
     private String code;
 
-    @NotBlank(message = "Name cannot be blank")
+    @NotBlank(message = "Name cannot be empty")
     private String name;
 }

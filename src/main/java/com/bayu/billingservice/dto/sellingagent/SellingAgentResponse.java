@@ -15,6 +15,7 @@ import java.util.List;
 public class SellingAgentResponse {
 
     private Integer totalDataSuccess;
+
     private Integer totalDataFailed;
 
     private List<ErrorMessageDTO> errorMessageDTOList;
