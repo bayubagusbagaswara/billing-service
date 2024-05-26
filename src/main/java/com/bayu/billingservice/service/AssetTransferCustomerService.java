@@ -9,17 +9,17 @@ public interface AssetTransferCustomerService {
 
     AssetTransferCustomerResponse createSingleData(CreateAssetTransferCustomerRequest createAssetTransferCustomerRequest, BillingDataChangeDTO dataChangeDTO);
 
-    AssetTransferCustomerResponse createSingleApprove(AssetTransferCustomerApproveRequest createAssetTransferCustomerListRequest);
+    AssetTransferCustomerResponse createSingleApprove(AssetTransferCustomerApproveRequest createAssetTransferCustomerListRequest, String clientIP);
 
     AssetTransferCustomerResponse updateSingleData(UpdateAssetTransferCustomerRequest updateAssetTransferCustomerRequest, BillingDataChangeDTO dataChangeDTO);
 
     AssetTransferCustomerResponse updateMultipleData(AssetTransferCustomerListRequest updateAssetTransferCustomerListRequest, BillingDataChangeDTO dataChangeDTO);
 
-    AssetTransferCustomerResponse updateSingleApprove(AssetTransferCustomerApproveRequest updateAssetTransferCustomerListRequest);
+    AssetTransferCustomerResponse updateSingleApprove(AssetTransferCustomerApproveRequest updateAssetTransferCustomerListRequest, String clientIP);
 
     AssetTransferCustomerResponse deleteSingleData(DeleteAssetTransferCustomerRequest deleteAssetTransferCustomerRequest, BillingDataChangeDTO dataChangeDTO);
 
-    AssetTransferCustomerResponse deleteSingleApprove(AssetTransferCustomerApproveRequest deleteAssetTransferCustomerListRequest);
+    AssetTransferCustomerResponse deleteSingleApprove(AssetTransferCustomerApproveRequest deleteAssetTransferCustomerListRequest, String clientIP);
 
     String deleteAll();
 
