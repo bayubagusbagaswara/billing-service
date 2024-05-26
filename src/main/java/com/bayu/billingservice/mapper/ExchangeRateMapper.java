@@ -5,12 +5,9 @@ import com.bayu.billingservice.dto.exchangerate.ExchangeRateDTO;
 import com.bayu.billingservice.model.ExchangeRate;
 import com.bayu.billingservice.model.enumerator.ApprovalStatus;
 import com.bayu.billingservice.util.ConvertDateUtil;
-import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
 
 @Component
 public class ExchangeRateMapper extends BaseMapper<ExchangeRate, ExchangeRateDTO> {
@@ -40,12 +37,12 @@ public class ExchangeRateMapper extends BaseMapper<ExchangeRate, ExchangeRateDTO
 
     @Override
     protected Class<ExchangeRate> getEntityClass() {
-        return null;
+        return ExchangeRate.class;
     }
 
     @Override
     protected Class<ExchangeRateDTO> getDtoClass() {
-        return null;
+        return ExchangeRateDTO.class;
     }
 
     @Override
