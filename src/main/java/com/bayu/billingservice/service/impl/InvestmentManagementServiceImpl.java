@@ -60,7 +60,7 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
             List<String> validationErrors = new ArrayList<>();
 
             /* mapping data from request to dto */
-            InvestmentManagementDTO investmentManagementDTO = investmentManagementMapper.mapFromCreateRequestToDto(createRequest);
+            InvestmentManagementDTO investmentManagementDTO = investmentManagementMapper.mapCreateRequestToDto(createRequest);
 
             /* validation for each column dto */
             Errors errors = validateInvestmentManagementUsingValidator(investmentManagementDTO);
@@ -102,7 +102,7 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
         for (CreateInvestmentManagementDataListRequest createInvestmentManagementDataListRequest : createListRequest.getCreateInvestmentManagementDataListRequests()) {
             try {
                 /* mapping data from request to dto */
-                InvestmentManagementDTO investmentManagementDTO = investmentManagementMapper.mapFromDataListToDTO(createInvestmentManagementDataListRequest);
+                InvestmentManagementDTO investmentManagementDTO = investmentManagementMapper.mapCreateListRequestToDTO(createInvestmentManagementDataListRequest);
                 log.info("[Create Multiple] Result mapping request to dto: {}", investmentManagementDTO);
 
                 /* validation for each column dto */
@@ -186,7 +186,7 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
 
         try {
             /* mapping data from request to dto */
-            InvestmentManagementDTO investmentManagementDTO = investmentManagementMapper.mapFromUpdateRequestToDto(updateRequest);
+            InvestmentManagementDTO investmentManagementDTO = investmentManagementMapper.mapUpdateRequestToDto(updateRequest);
             InvestmentManagementDTO clonedDTO = new InvestmentManagementDTO();
             BeanUtil.copyAllProperties(investmentManagementDTO, clonedDTO);
             log.info("[Update Single] Result mapping request to dto: {}", investmentManagementDTO);
@@ -239,16 +239,17 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
         for (UpdateInvestmentManagementDataListRequest updateInvestmentManagementDataListRequest : updateListRequest.getUpdateInvestmentManagementDataListRequests()) {
             try {
                 /* mapping data from request to dto */
-                InvestmentManagementDTO investmentManagementDTO = investmentManagementMapper.mapFromDataListToDTO(updateInvestmentManagementDataListRequest);
+                InvestmentManagementDTO investmentManagementDTO = investmentManagementMapper.mapUpdateListRequestToDTO(updateInvestmentManagementDataListRequest);
                 log.info("[Update Multiple] Result mapping from request to dto: {}", investmentManagementDTO);
 
                 /* get data by code */
                 InvestmentManagement investmentManagement = investmentManagementRepository.findByCode(investmentManagementDTO.getCode())
                         .orElseThrow(() -> new DataNotFoundException(CODE_NOT_FOUND + investmentManagementDTO.getCode()));
+                log.info("Entity: {}", investmentManagement);
 
                 /* map data from dto to entity, to overwrite new data */
                 investmentManagementMapper.mapObjectsDtoToEntity(investmentManagementDTO, investmentManagement);
-                log.info("[Update Multiple] Result map object dto to entity: {}", investmentManagement); // disini sudah gabung semua
+                log.info("[Update Multiple] Result map object dto to entity: {}", investmentManagement);
                 InvestmentManagementDTO dto = investmentManagementMapper.mapToDto(investmentManagement);
                 log.info("[Update Multiple] Result map object entity to dto: {}", dto);
 
