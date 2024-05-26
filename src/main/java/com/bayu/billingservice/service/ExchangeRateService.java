@@ -15,11 +15,11 @@ public interface ExchangeRateService {
 
     ExchangeRateDTO getLatestData();
 
-    ExchangeRateResponse createSingleData(CreateExchangeRateRequest createExchangeRateRequest, BillingDataChangeDTO dataChangeDTO);
+    ExchangeRateResponse createSingleData(CreateExchangeRateRequest createExchangeRateRequest);
 
     ExchangeRateResponse updateSingleData(UpdateExchangeRateRequest updateExchangeRateRequest, BillingDataChangeDTO dataChangeDTO);
 
-    ExchangeRateResponse updateApprove(ExchangeRateApproveRequest approveRequest);
+    ExchangeRateResponse updateApprove(ExchangeRateApproveRequest approveRequest, String clientIP);
 
     String deleteAll();
 }
