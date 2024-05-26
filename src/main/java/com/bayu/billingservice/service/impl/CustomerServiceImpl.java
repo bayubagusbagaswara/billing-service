@@ -80,7 +80,7 @@ public class CustomerServiceImpl implements CustomerService {
 
         try {
             /* mapping data from request to dto */
-            customerDTO = customerMapper.mapFromCreateRequestToDto(createCustomerRequest);
+            customerDTO = customerMapper.mapCreateRequestToDto(createCustomerRequest);
             log.info("[Create Single] Map from request to dto: {}", customerDTO);
 
             /* validation for each column dto */
@@ -152,7 +152,7 @@ public class CustomerServiceImpl implements CustomerService {
         for (CreateCustomerDataListRequest createCustomerDataListRequest : createCustomerListRequest.getCreateCustomerDataListRequests()) {
             try {
                 /* mapping data from request to dto */
-                customerDTO = customerMapper.mapFromDataListToDTO(createCustomerDataListRequest);
+                customerDTO = customerMapper.mapCreateListRequestToDTO(createCustomerDataListRequest);
                 log.info("[Create Multiple] mapper from create request to dto: {}", customerDTO);
 
                 /* validating for each column dto */
@@ -268,7 +268,7 @@ public class CustomerServiceImpl implements CustomerService {
 
         try {
             /* map data from request to dto */
-            CustomerDTO customerDTO = customerMapper.mapFromUpdateRequestToDto(updateCustomerRequest);
+            CustomerDTO customerDTO = customerMapper.mapUpdateRequestToDto(updateCustomerRequest);
             clonedDTO = new CustomerDTO();
             BeanUtil.copyAllProperties(customerDTO, clonedDTO);
             log.info("[Update Single] Result mapping request to dto: {}", customerDTO);
@@ -346,7 +346,7 @@ public class CustomerServiceImpl implements CustomerService {
         for (UpdateCustomerDataListRequest updateCustomerDataListRequest : updateCreateCustomerListRequest.getUpdateCustomerDataListRequests()) {
             try {
                 /* mapping data from request to dto */
-                customerDTO = customerMapper.mapFromUpdateRequestToDto(updateCustomerDataListRequest);
+                customerDTO = customerMapper.mapUpdateListRequestToDTO(updateCustomerDataListRequest);
                 log.info("[Update Multiple] Result mapping from request to dto: {}", customerDTO);
 
                 /* get data by code and sub code */
