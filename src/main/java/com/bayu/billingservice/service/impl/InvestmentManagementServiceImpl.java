@@ -188,7 +188,7 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
         log.info("Update single data investment management with request: {}", updateRequest);
         int totalDataSuccess = 0;
         int totalDataFailed = 0;
-        List<ErrorMessageDTO> errorMessageList = new ArrayList<>();
+        List<ErrorMessageDTO> errorMessageDTOList = new ArrayList<>();
         List<String> validationErrors = new ArrayList<>();
         InvestmentManagementDTO clonedDTO = null;
 
@@ -216,10 +216,10 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
             /* set input id for data change */
             dataChangeDTO.setInputId(updateRequest.getInputId());
 
-            /* check validation errors to custom response */
+            /* check validation errors for custom response */
             if (!validationErrors.isEmpty()) {
                 ErrorMessageDTO errorMessageDTO = new ErrorMessageDTO(investmentManagementDTO.getCode(), validationErrors);
-                errorMessageList.add(errorMessageDTO);
+                errorMessageDTOList.add(errorMessageDTO);
                 totalDataFailed++;
             } else {
                 dataChangeDTO.setJsonDataBefore(JsonUtil.cleanedJsonData(objectMapper.writeValueAsString(investmentManagement)));
@@ -229,10 +229,10 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
                 totalDataSuccess++;
             }
         } catch (Exception e) {
-            handleGeneralError(clonedDTO, e, validationErrors, errorMessageList);
+            handleGeneralError(clonedDTO, e, validationErrors, errorMessageDTOList);
             totalDataFailed++;
         }
-        return new InvestmentManagementResponse(totalDataSuccess, totalDataFailed, errorMessageList);
+        return new InvestmentManagementResponse(totalDataSuccess, totalDataFailed, errorMessageDTOList);
     }
 
     @Override
