@@ -97,11 +97,11 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
         int totalDataSuccess = 0;
         int totalDataFailed = 0;
         List<ErrorMessageDTO> errorMessageDTOList = new ArrayList<>();
-        List<String> validationErrors = new ArrayList<>();
-        InvestmentManagementDTO investmentManagementDTO = null;
 
         /* repeat data one by one */
         for (CreateInvestmentManagementDataListRequest createInvestmentManagementDataListRequest : createListRequest.getCreateInvestmentManagementDataListRequests()) {
+            List<String> validationErrors = new ArrayList<>();
+            InvestmentManagementDTO investmentManagementDTO = null;
             try {
                 /* mapping data from request to dto */
                 investmentManagementDTO = investmentManagementMapper.mapCreateListRequestToDTO(createInvestmentManagementDataListRequest);
@@ -241,11 +241,11 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
         int totalDataSuccess = 0;
         int totalDataFailed = 0;
         List<ErrorMessageDTO> errorMessageList = new ArrayList<>();
-        List<String> validationErrors = new ArrayList<>();
-        InvestmentManagementDTO investmentManagementDTO = null;
 
         /* repeat data one by one */
         for (UpdateInvestmentManagementDataListRequest updateInvestmentManagementDataListRequest : updateListRequest.getUpdateInvestmentManagementDataListRequests()) {
+            List<String> validationErrors = new ArrayList<>();
+            InvestmentManagementDTO investmentManagementDTO = null;
             try {
                 /* mapping data from request to dto */
                 investmentManagementDTO = investmentManagementMapper.mapUpdateListRequestToDTO(updateInvestmentManagementDataListRequest);
