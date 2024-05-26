@@ -120,14 +120,14 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
                 dataChangeDTO.setInputId(createListRequest.getInputId());
 
                 /* check validation error for custom response */
-                if (validationErrors.isEmpty()) {
-                    dataChangeDTO.setJsonDataAfter(JsonUtil.cleanedJsonData(objectMapper.writeValueAsString(investmentManagementDTO)));
-                    dataChangeService.createChangeActionADD(dataChangeDTO, InvestmentManagement.class);
-                    totalDataSuccess++;
-                } else {
+                if (!validationErrors.isEmpty()) {
                     ErrorMessageDTO errorMessageDTO = new ErrorMessageDTO(investmentManagementDTO.getCode(), validationErrors);
                     errorMessageDTOList.add(errorMessageDTO);
                     totalDataFailed++;
+                } else {
+                    dataChangeDTO.setJsonDataAfter(JsonUtil.cleanedJsonData(objectMapper.writeValueAsString(investmentManagementDTO)));
+                    dataChangeService.createChangeActionADD(dataChangeDTO, InvestmentManagement.class);
+                    totalDataSuccess++;
                 }
             } catch (Exception e) {
                 handleGeneralError(investmentManagementDTO, e, validationErrors, errorMessageDTOList);
@@ -147,7 +147,7 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
         InvestmentManagementDTO investmentManagementDTO = null;
 
         try {
-            /* validate data change id */
+            /* validating data change id */
             validateDataChangeId(approveRequest.getDataChangeId());
 
             /* mapping from JSON DATA After to class dto InvestmentManagement */
@@ -303,7 +303,7 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
         InvestmentManagementDTO investmentManagementDTO = null;
 
         try {
-            /* validate data change id */
+            /* validating data change id */
             validateDataChangeId(approveRequest.getDataChangeId());
 
             /* get data change by id and get json data after data */
@@ -394,24 +394,29 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
         InvestmentManagementDTO investmentManagementDTO = null;
 
         try {
-            /* validate data change id */
+            /* validating data change id */
             validateDataChangeId(approveRequest.getDataChangeId());
 
-            /* get data change by id and get Entity ID */
+            /* get data change by id and get Entity Id */
             Long dataChangeId = Long.valueOf(approveRequest.getDataChangeId());
             BillingDataChangeDTO dataChangeDTO = dataChangeService.getById(dataChangeId);
             Long entityId = Long.valueOf(dataChangeDTO.getEntityId());
 
+            /* get entity by id */
             InvestmentManagement investmentManagement = investmentManagementRepository.findById(entityId)
                     .orElseThrow(() -> new DataNotFoundException(ID_NOT_FOUND + entityId));
 
+            /* mapping from entity to dto */
             investmentManagementDTO = investmentManagementMapper.mapToDto(investmentManagement);
 
+            /* set data change for approve id and approve ip address */
             dataChangeDTO.setApproveId(approveRequest.getApproveId());
             dataChangeDTO.setApproveIPAddress(approveIPAddress);
             dataChangeDTO.setJsonDataBefore(JsonUtil.cleanedJsonData(objectMapper.writeValueAsString(investmentManagement)));
             dataChangeDTO.setDescription("Successfully approve data change and delete data entity with id: " + investmentManagement.getId());
             dataChangeService.approvalStatusIsApproved(dataChangeDTO);
+
+            /* delete data entity in the database */
             investmentManagementRepository.delete(investmentManagement);
             totalDataSuccess++;
         } catch (Exception e) {
