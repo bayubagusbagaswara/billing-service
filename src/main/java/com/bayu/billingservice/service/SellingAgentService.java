@@ -13,21 +13,15 @@ public interface SellingAgentService {
 
     SellingAgentResponse createSingleData(CreateSellingAgentRequest createSellingAgentRequest, BillingDataChangeDTO dataChangeDTO);
 
-    // create approve approve
-    SellingAgentResponse createSingleApprove(SellingAgentApproveRequest sellingAgentApproveRequest);
+    SellingAgentResponse createSingleApprove(SellingAgentApproveRequest sellingAgentApproveRequest, String clientIP);
 
-    // update single data
     SellingAgentResponse updateSingleData(UpdateSellingAgentRequest updateSellingAgentRequest, BillingDataChangeDTO dataChangeDTO);
 
-    // update multiple data
-    SellingAgentResponse updateMultipleData(SellingAgentListRequest listRequest, BillingDataChangeDTO dataChangeDTO);
-
-    // update single approve
-    SellingAgentResponse updateSingleApprove(SellingAgentApproveRequest sellingAgentApproveRequest);
+    SellingAgentResponse updateSingleApprove(SellingAgentApproveRequest sellingAgentApproveRequest, String clientIP);
 
     SellingAgentResponse deleteSingleData(DeleteSellingAgentRequest deleteSellingAgentRequest, BillingDataChangeDTO dataChangeDTO);
 
-    SellingAgentResponse deleteSingleApprove(SellingAgentApproveRequest approveRequest);
+    SellingAgentResponse deleteSingleApprove(SellingAgentApproveRequest approveRequest, String clientIP);
 
     String deleteAll();
 
