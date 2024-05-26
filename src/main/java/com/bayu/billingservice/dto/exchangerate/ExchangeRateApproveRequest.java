@@ -1,20 +1,16 @@
 package com.bayu.billingservice.dto.exchangerate;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.bayu.billingservice.dto.ApprovalIdentifierRequest;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
-@Builder
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ExchangeRateApproveRequest {
-
-    private String approveId;
-    private String approveIPAddress;
+public class ExchangeRateApproveRequest extends ApprovalIdentifierRequest {
 
     private Long dataChangeId;
 
-    private ExchangeRateDTO data;
 }

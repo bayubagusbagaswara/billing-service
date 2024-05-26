@@ -1,26 +1,23 @@
 package com.bayu.billingservice.dto.exchangerate;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.bayu.billingservice.dto.InputIdentifierRequest;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
-import java.math.BigDecimal;
+import java.time.LocalDate;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
-@Builder
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UpdateExchangeRateRequest {
+public class UpdateExchangeRateRequest extends InputIdentifierRequest {
 
-    private String inputId;
-    private String inputIPAddress;
-    // data-data exchange rate yang akan diupdate
     private Long id;
 
-    private String date;
+    private LocalDate date;
 
     private String currency;
 
-    private BigDecimal value;
+    private String value;
 }

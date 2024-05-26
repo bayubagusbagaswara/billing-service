@@ -4,6 +4,8 @@ import com.bayu.billingservice.dto.ResponseDTO;
 import com.bayu.billingservice.dto.datachange.BillingDataChangeDTO;
 import com.bayu.billingservice.dto.exchangerate.*;
 import com.bayu.billingservice.service.ExchangeRateService;
+import com.bayu.billingservice.util.ClientIPUtil;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpMethod;
@@ -24,10 +26,10 @@ public class ExchangeRateController {
 
     private final ExchangeRateService exchangeRateService;
 
-    // create single data
-    @PostMapping(path = "create")
+    @PostMapping(path = "/create")
     public ResponseEntity<ResponseDTO<ExchangeRateResponse>> createSingleData(@RequestBody CreateExchangeRateRequest createExchangeRateRequest) {
         BillingDataChangeDTO dataChangeDTO = BillingDataChangeDTO.builder()
+                .
                 .methodHttp(HttpMethod.POST.name())
                 .endpoint(URL_EXCHANGE_RATE + "/create/approve")
                 .isRequestBody(true)
@@ -44,7 +46,6 @@ public class ExchangeRateController {
         return ResponseEntity.ok(response);
     }
 
-    // update single data
     @PutMapping(path = "/update")
     public ResponseEntity<ResponseDTO<ExchangeRateResponse>> updateSingleData(@RequestBody UpdateExchangeRateRequest updateExchangeRateRequest) {
         BillingDataChangeDTO dataChangeDTO = BillingDataChangeDTO.builder()
