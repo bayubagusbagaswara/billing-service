@@ -1,12 +1,16 @@
 package com.bayu.billingservice.mapper;
 
 import com.bayu.billingservice.dto.datachange.BillingDataChangeDTO;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
 
+import java.lang.reflect.Method;
 import java.util.List;
 
+@Slf4j
 public abstract class BaseMapper<E, D> {
+
     protected final ModelMapper modelMapper;
 
     protected BaseMapper(ModelMapper modelMapper) {
@@ -72,7 +76,29 @@ public abstract class BaseMapper<E, D> {
     protected abstract void setCommonProperties(E entity, BillingDataChangeDTO dataChangeDTO);
 
     public D mapFromDataListToDTO(Object listRequest) {
-        return modelMapper.map(listRequest, getDtoClass());
+        Class<D> dtoClass = getDtoClass();
+        D dto = modelMapper.map(listRequest, dtoClass);
+
+        try {
+            Method[] methods = dtoClass.getDeclaredMethods();
+            for (Method method : methods) {
+                if (method.getName().startsWith("get")) {
+                    String methodName = method.getName().substring(3);
+                    if (methodName.equalsIgnoreCase("id")) continue;
+                    Object value = method.invoke(dto);
+                    if (value == null) {
+                        String setterName = "set" + methodName;
+                        log.info("Setter Name: {}", setterName);
+                        Method setter = dtoClass.getDeclaredMethod(setterName, method.getReturnType());
+                        setter.invoke(dto, "");
+                    }
+                }
+            }
+        } catch (Exception e) {
+            log.error("Error while processing map from data list to dto: {}", e.getMessage(), e);
+        }
+
+        return dto;
     }
 
 }
