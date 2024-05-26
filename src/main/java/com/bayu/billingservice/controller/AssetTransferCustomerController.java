@@ -80,27 +80,6 @@ public class AssetTransferCustomerController {
         return ResponseEntity.ok(response);
     }
 
-    @PutMapping(path = "/update-list")
-    public ResponseEntity<ResponseDTO<AssetTransferCustomerResponse>> updateMultipleData(@RequestBody AssetTransferCustomerListRequest updateAssetTransferCustomerListRequest, HttpServletRequest servletRequest) {
-        String clientIp = ClientIPUtil.getClientIp(servletRequest);
-        BillingDataChangeDTO dataChangeDTO = BillingDataChangeDTO.builder()
-                .inputId(clientIp)
-                .methodHttp(HttpMethod.PUT.name())
-                .endpoint(URL_ASSET_TRANSFER_CUSTOMER + "/update/approve")
-                .isRequestBody(true)
-                .isRequestParam(false)
-                .isPathVariable(false)
-                .menu(MENU_ASSET_TRANSFER_CUSTOMER)
-                .build();
-        AssetTransferCustomerResponse updateListResponse = assetTransferCustomerService.updateMultipleData(updateAssetTransferCustomerListRequest, dataChangeDTO);
-        ResponseDTO<AssetTransferCustomerResponse> response = ResponseDTO.<AssetTransferCustomerResponse>builder()
-                .code(HttpStatus.OK.value())
-                .message(HttpStatus.OK.getReasonPhrase())
-                .payload(updateListResponse)
-                .build();
-        return ResponseEntity.ok(response);
-    }
-
     @PutMapping(path = "/update/approve")
     public ResponseEntity<ResponseDTO<AssetTransferCustomerResponse>> updateSingleApprove(@RequestBody AssetTransferCustomerApproveRequest updateAssetTransferCustomerListRequest, HttpServletRequest servletRequest) {
         String clientIp = ClientIPUtil.getClientIp(servletRequest);
