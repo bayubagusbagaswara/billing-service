@@ -4,6 +4,8 @@ import com.bayu.billingservice.dto.ResponseDTO;
 import com.bayu.billingservice.dto.datachange.BillingDataChangeDTO;
 import com.bayu.billingservice.dto.feeschedule.*;
 import com.bayu.billingservice.service.FeeScheduleService;
+import com.bayu.billingservice.util.ClientIPUtil;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpMethod;
@@ -23,12 +25,11 @@ public class FeeScheduleController {
 
     private final FeeScheduleService feeScheduleService;
 
-    // TIDAK ADA CREATE LIST
-
-    // Create Single Data
     @PostMapping(path = "/create")
-    public ResponseEntity<ResponseDTO<FeeScheduleResponse>> create(@RequestBody CreateFeeScheduleRequest createFeeScheduleRequest) {
+    public ResponseEntity<ResponseDTO<FeeScheduleResponse>> create(@RequestBody CreateFeeScheduleRequest createFeeScheduleRequest, HttpServletRequest servletRequest) {
+        String clientIp = ClientIPUtil.getClientIp(servletRequest);
         BillingDataChangeDTO dataChangeDTO = BillingDataChangeDTO.builder()
+                .inputIPAddress(clientIp)
                 .methodHttp(HttpMethod.POST.name())
                 .endpoint("/api/fee-schedule/create/approve")
                 .isRequestBody(true)
@@ -45,10 +46,10 @@ public class FeeScheduleController {
         return ResponseEntity.ok(response);
     }
 
-    // Create Multiple Approve
     @PostMapping(path = "/create/approve")
-    public ResponseEntity<ResponseDTO<FeeScheduleResponse>> createSingleApprove(@RequestBody FeeScheduleApproveRequest createFeeScheduleListRequest) {
-        FeeScheduleResponse listApprove = feeScheduleService.createSingleApprove(createFeeScheduleListRequest);
+    public ResponseEntity<ResponseDTO<FeeScheduleResponse>> createSingleApprove(@RequestBody FeeScheduleApproveRequest createFeeScheduleListRequest, HttpServletRequest servletRequest) {
+        String clientIp = ClientIPUtil.getClientIp(servletRequest);
+        FeeScheduleResponse listApprove = feeScheduleService.createSingleApprove(createFeeScheduleListRequest, clientIp);
         ResponseDTO<FeeScheduleResponse> response = ResponseDTO.<FeeScheduleResponse>builder()
                 .code(HttpStatus.OK.value())
                 .message(HttpStatus.OK.getReasonPhrase())
@@ -57,10 +58,11 @@ public class FeeScheduleController {
         return ResponseEntity.ok(response);
     }
 
-    // Update Single Data by Id
-    @PutMapping(path = "/update")
-    public ResponseEntity<ResponseDTO<FeeScheduleResponse>> updateSingleData(@RequestBody UpdateFeeScheduleRequest updateFeeScheduleRequest) {
+    @PutMapping(path = "/updateById")
+    public ResponseEntity<ResponseDTO<FeeScheduleResponse>> updateSingleData(@RequestBody UpdateFeeScheduleRequest updateFeeScheduleRequest, HttpServletRequest servletRequest) {
+        String clientIp = ClientIPUtil.getClientIp(servletRequest);
         BillingDataChangeDTO dataChangeDTO = BillingDataChangeDTO.builder()
+                .inputIPAddress(clientIp)
                 .methodHttp(HttpMethod.PUT.name())
                 .endpoint("/api/fee-schedule/update/approve")
                 .isRequestBody(true)
@@ -77,30 +79,10 @@ public class FeeScheduleController {
         return ResponseEntity.ok(response);
     }
 
-    // Update Multiple Data
-    @PutMapping(path = "/update-list")
-    public ResponseEntity<ResponseDTO<FeeScheduleResponse>> updateMultipleData(@RequestBody FeeScheduleListRequest updateFeeScheduleListRequest) {
-        BillingDataChangeDTO dataChangeDTO = BillingDataChangeDTO.builder()
-                .methodHttp(HttpMethod.PUT.name())
-                .endpoint("/api/fee-schedule/update/approve")
-                .isRequestBody(true)
-                .isRequestParam(false)
-                .isPathVariable(false)
-                .menu(MENU_FEE_SCHEDULE)
-                .build();
-        FeeScheduleResponse updateResponse = feeScheduleService.updateMultipleData(updateFeeScheduleListRequest, dataChangeDTO);
-        ResponseDTO<FeeScheduleResponse> response = ResponseDTO.<FeeScheduleResponse>builder()
-                .code(HttpStatus.OK.value())
-                .message(HttpStatus.OK.getReasonPhrase())
-                .payload(updateResponse)
-                .build();
-        return ResponseEntity.ok(response);
-    }
-
-    // Update Multiple Approve
     @PutMapping(path = "/update/approve")
-    public ResponseEntity<ResponseDTO<FeeScheduleResponse>> updateSingleApprove(@RequestBody FeeScheduleApproveRequest updateFeeScheduleListRequest) {
-        FeeScheduleResponse listApprove = feeScheduleService.updateSingleApprove(updateFeeScheduleListRequest);
+    public ResponseEntity<ResponseDTO<FeeScheduleResponse>> updateSingleApprove(@RequestBody FeeScheduleApproveRequest updateFeeScheduleListRequest, HttpServletRequest servletRequest) {
+        String clientIp = ClientIPUtil.getClientIp(servletRequest);
+        FeeScheduleResponse listApprove = feeScheduleService.updateSingleApprove(updateFeeScheduleListRequest, clientIp);
         ResponseDTO<FeeScheduleResponse> response = ResponseDTO.<FeeScheduleResponse>builder()
                 .code(HttpStatus.OK.value())
                 .message(HttpStatus.OK.getReasonPhrase())
@@ -109,10 +91,11 @@ public class FeeScheduleController {
         return ResponseEntity.ok(response);
     }
 
-    // Delete Single Data
-    @DeleteMapping(path = "/delete")
-    public ResponseEntity<ResponseDTO<FeeScheduleResponse>> deleteSingleData(@RequestBody DeleteFeeScheduleRequest deleteFeeScheduleRequest) {
+    @DeleteMapping(path = "/deleteById")
+    public ResponseEntity<ResponseDTO<FeeScheduleResponse>> deleteSingleData(@RequestBody DeleteFeeScheduleRequest deleteFeeScheduleRequest, HttpServletRequest servletRequest) {
+        String clientIp = ClientIPUtil.getClientIp(servletRequest);
         BillingDataChangeDTO dataChangeDTO = BillingDataChangeDTO.builder()
+                .inputIPAddress(clientIp)
                 .methodHttp(HttpMethod.DELETE.name())
                 .endpoint("/api/fee-schedule/delete/approve")
                 .isRequestBody(true)
@@ -129,10 +112,10 @@ public class FeeScheduleController {
         return ResponseEntity.ok(response);
     }
 
-    // Delete Multiple Approve
     @DeleteMapping(path = "/delete/approve")
-    public ResponseEntity<ResponseDTO<FeeScheduleResponse>> deleteMultipleApprove(@RequestBody FeeScheduleApproveRequest deleteFeeScheduleListRequest) {
-        FeeScheduleResponse listApprove = feeScheduleService.deleteSingleApprove(deleteFeeScheduleListRequest);
+    public ResponseEntity<ResponseDTO<FeeScheduleResponse>> deleteMultipleApprove(@RequestBody FeeScheduleApproveRequest deleteFeeScheduleListRequest, HttpServletRequest servletRequest) {
+        String clientIp = ClientIPUtil.getClientIp(servletRequest);
+        FeeScheduleResponse listApprove = feeScheduleService.deleteSingleApprove(deleteFeeScheduleListRequest, clientIp);
         ResponseDTO<FeeScheduleResponse> response = ResponseDTO.<FeeScheduleResponse>builder()
                 .code(HttpStatus.OK.value())
                 .message(HttpStatus.OK.getReasonPhrase())
@@ -141,7 +124,6 @@ public class FeeScheduleController {
         return ResponseEntity.ok(response);
     }
 
-    // delete all hard delete
     @DeleteMapping(path = "/all")
     public ResponseEntity<ResponseDTO<String>> deleteAll() {
         String deleteStatus = feeScheduleService.deleteAll();
@@ -153,7 +135,6 @@ public class FeeScheduleController {
         return ResponseEntity.ok(response);
     }
 
-    // get all
     @GetMapping(path = "/all")
     public ResponseEntity<ResponseDTO<List<FeeScheduleDTO>>> getAll() {
         List<FeeScheduleDTO> feeScheduleDTOList = feeScheduleService.getAll();
