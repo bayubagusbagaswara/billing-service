@@ -12,14 +12,19 @@ public interface InvestmentManagementService {
     boolean isCodeAlreadyExists(String code);
 
     InvestmentManagementResponse createSingleData(CreateInvestmentManagementRequest request, BillingDataChangeDTO dataChangeDTO);
+
     InvestmentManagementResponse createMultipleData(CreateInvestmentManagementListRequest requestList, BillingDataChangeDTO dataChangeDTO);
+
     InvestmentManagementResponse createSingleApprove(InvestmentManagementApproveRequest approveRequest, String approveIPAddress);
 
     InvestmentManagementResponse updateSingleData(UpdateInvestmentManagementRequest request, BillingDataChangeDTO dataChangeDTO);
+
     InvestmentManagementResponse updateMultipleData(UpdateInvestmentManagementListRequest requestList, BillingDataChangeDTO dataChangeDTO);
+
     InvestmentManagementResponse updateSingleApprove(InvestmentManagementApproveRequest approveRequest, String approveIPAddress);
 
     InvestmentManagementResponse deleteSingleData(DeleteInvestmentManagementRequest request, BillingDataChangeDTO dataChangeDTO);
+
     InvestmentManagementResponse deleteSingleApprove(InvestmentManagementApproveRequest approveRequest, String approveIPAddress);
 
     String deleteAll();
