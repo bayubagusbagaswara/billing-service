@@ -1,19 +1,16 @@
 package com.bayu.billingservice.dto.feeschedule;
 
+import com.bayu.billingservice.dto.InputIdentifierRequest;
 import jakarta.validation.constraints.NotBlank;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
-@Builder
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateFeeScheduleRequest {
-
-    private String inputId;
-    private String inputIPAddress;
+public class CreateFeeScheduleRequest extends InputIdentifierRequest {
 
     @NotBlank(message = "Fee Minimum cannot be blank")
     private String feeMinimum;

@@ -1,18 +1,15 @@
 package com.bayu.billingservice.dto.feeschedule;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.bayu.billingservice.dto.InputIdentifierRequest;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
-@Builder
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class DeleteFeeScheduleRequest {
-
-    private String inputId;
-    private String inputIPAddress;
+public class DeleteFeeScheduleRequest extends InputIdentifierRequest {
 
     private Long id;
 

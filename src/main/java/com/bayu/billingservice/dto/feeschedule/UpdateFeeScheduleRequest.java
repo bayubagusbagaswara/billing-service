@@ -1,28 +1,24 @@
 package com.bayu.billingservice.dto.feeschedule;
 
-import jakarta.validation.constraints.NotBlank;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.bayu.billingservice.dto.InputIdentifierRequest;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
+/**
+ * jangan taruh validation di update request, karena bisa null atau string kosong
+ */
+@EqualsAndHashCode(callSuper = true)
 @Data
-@Builder
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UpdateFeeScheduleRequest {
-
-    private String inputId;
-    private String inputIPAddress;
+public class UpdateFeeScheduleRequest extends InputIdentifierRequest {
 
     private Long id;
 
-    @NotBlank(message = "Fee Minimum cannot be blank")
     private String feeMinimum;
 
-    @NotBlank(message = "Fee Maximum cannot be blank")
     private String feeMaximum;
 
-    @NotBlank(message = "Fee Amount cannot be blank")
     private String feeAmount;
 }

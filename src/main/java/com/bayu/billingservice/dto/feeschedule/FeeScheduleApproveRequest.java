@@ -1,21 +1,16 @@
 package com.bayu.billingservice.dto.feeschedule;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.bayu.billingservice.dto.ApprovalIdentifierRequest;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
-@Builder
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class FeeScheduleApproveRequest {
-
-    private String approveId;
-
-    private String approveIPAddress;
+public class FeeScheduleApproveRequest extends ApprovalIdentifierRequest {
 
     private String dataChangeId;
 
-    private FeeScheduleDTO data;
 }
