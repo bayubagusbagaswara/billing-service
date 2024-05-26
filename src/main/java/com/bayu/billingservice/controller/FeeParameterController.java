@@ -49,7 +49,7 @@ public class FeeParameterController {
     }
 
     @PostMapping(path = "/create-list")
-    public ResponseEntity<ResponseDTO<FeeParameterResponse>> createList(@RequestBody FeeParameterListRequest createFeeParameterListRequest, HttpServletRequest servletRequest) {
+    public ResponseEntity<ResponseDTO<FeeParameterResponse>> createList(@RequestBody CreateFeeParameterListRequest createFeeParameterListRequest, HttpServletRequest servletRequest) {
         String clientIp = ClientIPUtil.getClientIp(servletRequest);
         BillingDataChangeDTO dataChangeDTO = BillingDataChangeDTO.builder()
                 .inputIPAddress(clientIp)
@@ -105,7 +105,7 @@ public class FeeParameterController {
 
 
     @PutMapping(path = "/update-list")
-    public ResponseEntity<ResponseDTO<FeeParameterResponse>> updateMultipleData(@RequestBody FeeParameterListRequest updateFeeParameterListRequest, HttpServletRequest servletRequest) {
+    public ResponseEntity<ResponseDTO<FeeParameterResponse>> updateMultipleData(@RequestBody UpdateFeeParameterListRequest updateFeeParameterListRequest, HttpServletRequest servletRequest) {
         String clientIp = ClientIPUtil.getClientIp(servletRequest);
         BillingDataChangeDTO dataChangeDTO = BillingDataChangeDTO.builder()
                 .inputIPAddress(clientIp)
