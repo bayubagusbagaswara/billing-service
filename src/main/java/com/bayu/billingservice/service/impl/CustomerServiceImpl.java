@@ -222,8 +222,10 @@ public class CustomerServiceImpl implements CustomerService {
         List<String> validationErrors = new ArrayList<>();
         CustomerDTO customerDTO = null;
 
-        validateDataChangeId(approveRequest.getDataChangeId());
         try {
+            /* validate data change id */
+            validateDataChangeId(approveRequest.getDataChangeId());
+
             /* mapping from data JSON data after to class dto */
             Long dataChangeId = Long.valueOf(approveRequest.getDataChangeId());
             BillingDataChangeDTO dataChangeDTO = dataChangeService.getById(dataChangeId);
@@ -279,7 +281,7 @@ public class CustomerServiceImpl implements CustomerService {
 
             /* data yang akan di validator */
             copyNonNullOrEmptyFields(customer, clonedDTO);
-            log.info("[Update Single] Result map object entity to dto: {}", clonedDTO); // harapannya clonedDTO yang nilainya string kosong atau null, akan diisi oleh data entity
+            log.info("[Update Single] Result map object entity to dto: {}", clonedDTO);
 
             /* check validator for data request after mapping to dto */
             Errors errors = validateCustomerUsingValidator(clonedDTO);
@@ -303,7 +305,6 @@ public class CustomerServiceImpl implements CustomerService {
             if (Boolean.FALSE.toString().equalsIgnoreCase(clonedDTO.getGl())) {
                 clonedDTO.setDebitTransfer("");
             }
-
             validateGLForCostCenterDebit(Boolean.parseBoolean(clonedDTO.getGl()), clonedDTO.getDebitTransfer(), validationErrors);
 
             /* validating data billing template */
@@ -359,10 +360,14 @@ public class CustomerServiceImpl implements CustomerService {
                 Customer customer = customerRepository.findByCustomerCodeAndOptionalSubCode(customerDTO.getCustomerCode(), customerDTO.getSubCode())
                         .orElseThrow(() -> new DataNotFoundException(CODE_NOT_FOUND + finalCustomerDTO.getCustomerCode() + SUB_CODE_NOT_FOUND + finalCustomerDTO.getSubCode()));
 
+                /* cloned data customer entity */
+                Customer clonedCustomer = new Customer();
+                BeanUtil.copyAllProperties(customer, clonedCustomer);
+
                 /* map data from dto entity, to overwrite new data */
-                customerMapper.mapObjectsDtoToEntity(customerDTO, customer);
-                log.info("[Update Multiple] Result map object dto to entity: {}", customer);
-                CustomerDTO dto = customerMapper.mapToDto(customer);
+                customerMapper.mapObjectsDtoToEntity(customerDTO, clonedCustomer);
+                log.info("[Update Multiple] Result map object dto to entity: {}", clonedCustomer);
+                CustomerDTO dto = customerMapper.mapToDto(clonedCustomer);
                 log.info("[Update Multiple] Result map object entity to dto: {}", dto);
 
                 /* validating for each column dto */
@@ -381,9 +386,12 @@ public class CustomerServiceImpl implements CustomerService {
                         validationErrors);
 
                 /* validation value GL must be true or false */
-                validateIsGL(dto, validationErrors);
+                validateIsGL(customerDTO, validationErrors);
 
                 /* validating Cost Center Debit */
+                if (Boolean.FALSE.toString().equalsIgnoreCase(dto.getGl())) {
+                    dto.setDebitTransfer("");
+                }
                 validateGLForCostCenterDebit(Boolean.parseBoolean(dto.getGl()), dto.getDebitTransfer(), validationErrors);
 
                 /* validating data billing template */
@@ -394,13 +402,14 @@ public class CustomerServiceImpl implements CustomerService {
                         dto.getBillingTemplate(),
                         validationErrors);
 
-                /* validating data Investment Management */
-                InvestmentManagementDTO investmentManagementDTO = investmentManagementService.getByCode(dto.getMiCode());
-                log.info("Investment Management code: {}", investmentManagementDTO.getCode());
+                /* validating data Investment Management is available or not */
+                validateIsExistsInvestmentManagement(dto, validationErrors);
 
                 /* set input id for data change */
-                dataChangeDTO.setInputId(dataChangeDTO.getInputId());
+                dataChangeDTO.setInputId(updateCreateCustomerListRequest.getInputId());
+                dataChangeDTO.setEntityId(customer.getId().toString());
 
+                /* check validation errors for custom response */
                 if (!validationErrors.isEmpty()) {
                     ErrorMessageDTO errorMessageDTO = new ErrorMessageDTO(customerDTO.getCustomerCode(), validationErrors);
                     errorMessageDTOList.add(errorMessageDTO);
@@ -428,8 +437,10 @@ public class CustomerServiceImpl implements CustomerService {
         List<String> validationErrors = new ArrayList<>();
         CustomerDTO customerDTO = null;
 
-        validateDataChangeId(approveRequest.getDataChangeId());
         try {
+            /* validate data change id */
+            validateDataChangeId(approveRequest.getDataChangeId());
+
             /* get data change by id and get json data after data */
             Long dataChangeId = Long.valueOf(approveRequest.getDataChangeId());
             BillingDataChangeDTO dataChangeDTO = dataChangeService.getById(dataChangeId);
@@ -526,8 +537,10 @@ public class CustomerServiceImpl implements CustomerService {
         List<String> validationErrors = new ArrayList<>();
         CustomerDTO customerDTO = null;
 
-        validateDataChangeId(approveRequest.getDataChangeId());
         try {
+            /* validate data change id */
+            validateDataChangeId(approveRequest.getDataChangeId());
+
             /* get data change by id and get Entity ID */
             Long dataChangeId = Long.valueOf(approveRequest.getDataChangeId());
             BillingDataChangeDTO dataChangeDTO = dataChangeService.getById(dataChangeId);
@@ -580,7 +593,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     private void validateDataChangeId(String dataChangeId) {
-        if (!dataChangeService.existById(Long.valueOf(dataChangeId))) {
+        if (dataChangeService.existById(Long.valueOf(dataChangeId))) {
             log.info("Data Change ids not found");
             throw new DataNotFoundException("Data Change ids not found");
         }
@@ -611,14 +624,11 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     private void validateGLForCostCenterDebit(boolean isGL, String debitTransfer, List<String> validationErrors) {
-        // Improved readability with comments
         if (isGL) {
-            // Check if costCenterDebit is null or blank (empty string)
             if (debitTransfer == null || debitTransfer.isEmpty()) {
                 validationErrors.add("Cost Center Debit is required when GL is true");
             }
         } else {
-            // Check if costCenterDebit is not null or blank (for readability)
             if (!StringUtils.isEmpty(debitTransfer)) {
                 validationErrors.add("Cost Center Debit must be blank when GL is false");
             }
@@ -635,7 +645,6 @@ public class CustomerServiceImpl implements CustomerService {
         return !"TRUE".equalsIgnoreCase(isGL) && !"FALSE".equalsIgnoreCase(isGL);
     }
 
-    // Method to copy non-null and non-empty fields
     public void copyNonNullOrEmptyFields(Customer customer, CustomerDTO customerDTO) {
         try {
             Map<String, String> entityProperties = BeanUtils.describe(customer);
@@ -644,10 +653,8 @@ public class CustomerServiceImpl implements CustomerService {
                 String propertyName = entry.getKey();
                 String entityValue = entry.getValue();
 
-                // Get the current value in the DTO
                 String dtoValue = BeanUtils.getProperty(customerDTO, propertyName);
 
-                // Copy value from entity to DTO if DTO's value is null or empty
                 if (isNullOrEmpty(dtoValue) && entityValue != null) {
                     BeanUtils.setProperty(customerDTO, propertyName, entityValue);
                 }
