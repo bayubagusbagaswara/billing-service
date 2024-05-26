@@ -10,6 +10,8 @@ import org.springframework.context.annotation.Configuration;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
 @Configuration
@@ -23,6 +25,7 @@ public class ApplicationConfig {
         modelMapper.getConfiguration().isSkipNullEnabled();
 
         modelMapper.addConverter(stringToBigDecimalConverter());
+        modelMapper.addConverter(stringToLocalDateConverter());
 
         return modelMapper;
     }
@@ -69,4 +72,16 @@ public class ApplicationConfig {
     public Converter<String, String> nullToEmptyStringConverter() {
         return context -> context.getSource() == null ? "" : context.getSource();
     }
+
+    @Bean
+    public Converter<String, LocalDate> stringToLocalDateConverter() {
+        return new  AbstractConverter<String, LocalDate>() {
+            @Override
+            protected LocalDate convert(String source) {
+                return LocalDate.parse(source, DateTimeFormatter.ISO_DATE);
+            }
+        };
+    }
+
+
 }
