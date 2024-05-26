@@ -59,22 +59,22 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
         InvestmentManagementDTO investmentManagementDTO = null;
 
         try {
-            /* mapping data from request to dto */
+            /* maps request data to dto */
             investmentManagementDTO = investmentManagementMapper.mapCreateRequestToDto(createRequest);
 
-            /* validation for each column dto */
+            /* validation for each dto field */
             Errors errors = validateInvestmentManagementUsingValidator(investmentManagementDTO);
             if (errors.hasErrors()) {
                 errors.getAllErrors().forEach(error-> validationErrors.add(error.getDefaultMessage()));
             }
 
-            /* validation code already exists */
+            /* validate whether the code already exists */
             validationCodeAlreadyExists(investmentManagementDTO.getCode(), validationErrors);
 
-            /* set data input id for data change */
+            /* sets inputId to a DataChange object */
             dataChangeDTO.setInputId(createRequest.getInputId());
 
-            /* check validation errors for custom response */
+            /* check the number of contents of the ValidationErrors object, then map it to the response */
             if (!validationErrors.isEmpty()) {
                 ErrorMessageDTO errorMessageDTO = new ErrorMessageDTO(investmentManagementDTO.getCode(), validationErrors);
                 errorMessageDTOList.add(errorMessageDTO);
@@ -103,23 +103,23 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
             List<String> validationErrors = new ArrayList<>();
             InvestmentManagementDTO investmentManagementDTO = null;
             try {
-                /* mapping data from request to dto */
+                /* maps request data to dto */
                 investmentManagementDTO = investmentManagementMapper.mapCreateListRequestToDTO(createInvestmentManagementDataListRequest);
                 log.info("[Create Multiple] Result mapping request to dto: {}", investmentManagementDTO);
 
-                /* validating for each column dto */
+                /* validation for each dto field */
                 Errors errors = validateInvestmentManagementUsingValidator(investmentManagementDTO);
                 if (errors.hasErrors()) {
                     errors.getAllErrors().forEach(error-> validationErrors.add(error.getDefaultMessage()));
                 }
 
-                /* validation code already exists */
+                /* validate whether the code already exists */
                 validationCodeAlreadyExists(investmentManagementDTO.getCode(), validationErrors);
 
-                /* set data input id to data change */
+                /* sets inputId to a DataChange object */
                 dataChangeDTO.setInputId(createListRequest.getInputId());
 
-                /* check validation error for custom response */
+                /* check the number of contents of the ValidationErrors object, then map it to the response */
                 if (!validationErrors.isEmpty()) {
                     ErrorMessageDTO errorMessageDTO = new ErrorMessageDTO(investmentManagementDTO.getCode(), validationErrors);
                     errorMessageDTOList.add(errorMessageDTO);
@@ -147,22 +147,22 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
         InvestmentManagementDTO investmentManagementDTO = null;
 
         try {
-            /* validating data change id */
+            /* validate dataChangeId whether it exists or not */
             validateDataChangeId(approveRequest.getDataChangeId());
 
-            /* mapping from JSON DATA After to class dto InvestmentManagement */
+            /* get data from DataChange, then map the JsonDataAfter data to the InvestmentManagement dto class */
             Long dataChangeId = Long.valueOf(approveRequest.getDataChangeId());
             BillingDataChangeDTO dataChangeDTO = dataChangeService.getById(dataChangeId);
             investmentManagementDTO = objectMapper.readValue(dataChangeDTO.getJsonDataAfter(), InvestmentManagementDTO.class);
 
-            /* check validation code already exists */
+            /* validate whether the code already exists */
             validationCodeAlreadyExists(investmentManagementDTO.getCode(), validationErrors);
 
-            /* set data change for approve id and approve ip address */
+            /* sets approveId and approveIPAddress to a DataChange object */
             dataChangeDTO.setApproveId(approveRequest.getApproveId());
             dataChangeDTO.setApproveIPAddress(approveIPAddress);
 
-            /* check validation errors for custom response */
+            /* check the number of contents of the ValidationErrors object, then map it to the response */
             if (!validationErrors.isEmpty()) {
                 dataChangeDTO.setJsonDataAfter(JsonUtil.cleanedJsonData(objectMapper.writeValueAsString(investmentManagementDTO)));
                 dataChangeService.approvalStatusIsRejected(dataChangeDTO, validationErrors);
@@ -193,8 +193,10 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
         InvestmentManagementDTO clonedDTO = null;
 
         try {
-            /* mapping data from request to dto */
+            /* maps request data to dto */
             InvestmentManagementDTO investmentManagementDTO = investmentManagementMapper.mapUpdateRequestToDto(updateRequest);
+
+            /* clone dto */
             clonedDTO = new InvestmentManagementDTO();
             BeanUtil.copyAllProperties(investmentManagementDTO, clonedDTO);
             log.info("[Update Single] Result mapping request to dto: {}", investmentManagementDTO);
@@ -203,20 +205,20 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
             InvestmentManagement investmentManagement = investmentManagementRepository.findById(investmentManagementDTO.getId())
                     .orElseThrow(() -> new DataNotFoundException(ID_NOT_FOUND + investmentManagementDTO.getId()));
 
-            /* data yang akan di validator */
+            /* copy non null or empty fields from entity data to dto */
             copyNonNullOrEmptyFields(investmentManagement, clonedDTO);
             log.info("[Update Single] Result map object entity to dto: {}", clonedDTO);
 
-            /* check validator for data request after mapping to dto */
+            /* validation for each dto field */
             Errors errors = validateInvestmentManagementUsingValidator(clonedDTO);
             if (errors.hasErrors()) {
                 errors.getAllErrors().forEach(error -> validationErrors.add(error.getDefaultMessage()));
             }
 
-            /* set input id for data change */
+            /* sets inputId to a DataChange object */
             dataChangeDTO.setInputId(updateRequest.getInputId());
 
-            /* check validation errors for custom response */
+            /* check the number of contents of the ValidationErrors object, then map it to the response */
             if (!validationErrors.isEmpty()) {
                 ErrorMessageDTO errorMessageDTO = new ErrorMessageDTO(investmentManagementDTO.getCode(), validationErrors);
                 errorMessageDTOList.add(errorMessageDTO);
@@ -247,11 +249,11 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
             List<String> validationErrors = new ArrayList<>();
             InvestmentManagementDTO investmentManagementDTO = null;
             try {
-                /* mapping data from request to dto */
+                /* maps request data to dto */
                 investmentManagementDTO = investmentManagementMapper.mapUpdateListRequestToDTO(updateInvestmentManagementDataListRequest);
                 log.info("[Update Multiple] Result mapping from request to dto: {}", investmentManagementDTO);
 
-                /* get data by code */
+                /* get investment management by code */
                 InvestmentManagementDTO finalInvestmentManagementDTO = investmentManagementDTO;
                 InvestmentManagement investmentManagement = investmentManagementRepository.findByCode(investmentManagementDTO.getCode())
                         .orElseThrow(() -> new DataNotFoundException(CODE_NOT_FOUND + finalInvestmentManagementDTO.getCode()));
@@ -260,19 +262,21 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
                 /* map data from dto to entity, to overwrite new data */
                 investmentManagementMapper.mapObjectsDtoToEntity(investmentManagementDTO, investmentManagement);
                 log.info("[Update Multiple] Result map object dto to entity: {}", investmentManagement);
+
+                /* map from entity to dto */
                 InvestmentManagementDTO dto = investmentManagementMapper.mapToDto(investmentManagement);
                 log.info("[Update Multiple] Result map object entity to dto: {}", dto);
 
-                /* check validation data dto */
+                /* validation for each dto field */
                 Errors errors = validateInvestmentManagementUsingValidator(dto);
                 if (errors.hasErrors()) {
                     errors.getAllErrors().forEach(error -> validationErrors.add(error.getDefaultMessage()));
                 }
 
-                /* set input id to data change */
+                /* sets inputId to a DataChange object */
                 dataChangeDTO.setInputId(updateListRequest.getInputId());
 
-                /* check validation errors for custom response */
+                /* check the number of contents of the ValidationErrors object, then map it to the response */
                 if (!validationErrors.isEmpty()) {
                     ErrorMessageDTO errorMessageDTO = new ErrorMessageDTO(investmentManagementDTO.getCode(), validationErrors);
                     errorMessageList.add(errorMessageDTO);
@@ -292,7 +296,6 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
         return new InvestmentManagementResponse(totalDataSuccess, totalDataFailed, errorMessageList);
     }
 
-
     @Override
     public InvestmentManagementResponse updateSingleApprove(InvestmentManagementApproveRequest approveRequest, String approveIPAddress) {
         log.info("Approve when update investment management with request: {}", approveRequest);
@@ -303,10 +306,10 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
         InvestmentManagementDTO investmentManagementDTO = null;
 
         try {
-            /* validating data change id */
+            /* validate dataChangeId whether it exists or not */
             validateDataChangeId(approveRequest.getDataChangeId());
 
-            /* get data change by id and get json data after */
+            /* get data from DataChange, then map the JsonDataAfter data to the InvestmentManagement dto class */
             Long dataChangeId = Long.valueOf(approveRequest.getDataChangeId());
             BillingDataChangeDTO dataChangeDTO = dataChangeService.getById(dataChangeId);
             Long entityId = Long.valueOf(dataChangeDTO.getEntityId());
@@ -317,9 +320,11 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
             InvestmentManagement investmentManagement = investmentManagementRepository.findById(entityId)
                     .orElseThrow(() -> new DataNotFoundException(ID_NOT_FOUND + entityId));
 
+            /* map data from dto to entity, to overwrite new data */
             investmentManagementMapper.mapObjectsDtoToEntity(dto, investmentManagement);
             log.info("[Update Approve] Map object dto to entity: {}", investmentManagement);
 
+            /* map from entity to dto */
             investmentManagementDTO = investmentManagementMapper.mapToDto(investmentManagement);
             log.info("[Update Approve] Map from entity to dto: {}", investmentManagementDTO);
 
@@ -329,12 +334,12 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
                 errors.getAllErrors().forEach(error -> validationErrors.add(error.getDefaultMessage()));
             }
 
-            /* set data change approve id and approve ip address */
+            /* sets approveId, approveIPAddress, and entityId to a DataChange object */
             dataChangeDTO.setApproveId(approveRequest.getApproveId());
             dataChangeDTO.setApproveIPAddress(approveIPAddress);
             dataChangeDTO.setEntityId(investmentManagement.getId().toString());
 
-            /* check validation errors for custom response */
+            /* check the number of contents of the ValidationErrors object, then map it to the response */
             if (!validationErrors.isEmpty()) {
                 dataChangeDTO.setJsonDataAfter(JsonUtil.cleanedJsonData(objectMapper.writeValueAsString(investmentManagementDTO)));
                 dataChangeService.approvalStatusIsRejected(dataChangeDTO, validationErrors);
@@ -369,7 +374,7 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
             InvestmentManagement investmentManagement= investmentManagementRepository.findById(id)
                     .orElseThrow(() -> new DataNotFoundException(ID_NOT_FOUND + id));
 
-            /* mapping entity to dto */
+            /* maps entity to dto */
             investmentManagementDTO = investmentManagementMapper.mapToDto(investmentManagement);
 
             /* set data change */
@@ -396,19 +401,19 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
         InvestmentManagementDTO investmentManagementDTO = null;
 
         try {
-            /* validating data change id */
+            /*  validate dataChangeId whether it exists or not */
             validateDataChangeId(approveRequest.getDataChangeId());
 
-            /* get data change by id and get Entity Id */
+            /* get data from DataChange */
             Long dataChangeId = Long.valueOf(approveRequest.getDataChangeId());
             BillingDataChangeDTO dataChangeDTO = dataChangeService.getById(dataChangeId);
             Long entityId = Long.valueOf(dataChangeDTO.getEntityId());
 
-            /* get entity by id */
+            /* get investment management by id */
             InvestmentManagement investmentManagement = investmentManagementRepository.findById(entityId)
                     .orElseThrow(() -> new DataNotFoundException(ID_NOT_FOUND + entityId));
 
-            /* mapping from entity to dto */
+            /* maps from entity to dto */
             investmentManagementDTO = investmentManagementMapper.mapToDto(investmentManagement);
 
             /* set data change for approve id and approve ip address */
