@@ -50,8 +50,8 @@ public class JsonUtil {
         // Remove the "id" property
         jsonNode.remove("id");
         jsonNode.remove("code");
-        jsonNode.remove("customerCode"); // for customer data
-        jsonNode.remove("subCode"); // for customer data
+        jsonNode.remove("customerCode"); // for customer data cannot be updated
+        jsonNode.remove("subCode"); // for customer data cannot be updated
         jsonNode.remove("dataChangeId");
         jsonNode.remove("approvalStatus");
         jsonNode.remove("inputId");
