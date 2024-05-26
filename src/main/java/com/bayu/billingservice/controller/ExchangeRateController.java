@@ -28,16 +28,7 @@ public class ExchangeRateController {
 
     @PostMapping(path = "/create")
     public ResponseEntity<ResponseDTO<ExchangeRateResponse>> createSingleData(@RequestBody CreateExchangeRateRequest createExchangeRateRequest) {
-        BillingDataChangeDTO dataChangeDTO = BillingDataChangeDTO.builder()
-                .
-                .methodHttp(HttpMethod.POST.name())
-                .endpoint(URL_EXCHANGE_RATE + "/create/approve")
-                .isRequestBody(true)
-                .isRequestParam(false)
-                .isPathVariable(false)
-                .menu(MENU_EXCHANGE_RATE)
-                .build();
-        ExchangeRateResponse createResponse = exchangeRateService.createSingleData(createExchangeRateRequest, dataChangeDTO);
+        ExchangeRateResponse createResponse = exchangeRateService.createSingleData(createExchangeRateRequest);
         ResponseDTO<ExchangeRateResponse> response = ResponseDTO.<ExchangeRateResponse>builder()
                 .code(HttpStatus.OK.value())
                 .message(HttpStatus.OK.getReasonPhrase())
@@ -47,8 +38,10 @@ public class ExchangeRateController {
     }
 
     @PutMapping(path = "/update")
-    public ResponseEntity<ResponseDTO<ExchangeRateResponse>> updateSingleData(@RequestBody UpdateExchangeRateRequest updateExchangeRateRequest) {
+    public ResponseEntity<ResponseDTO<ExchangeRateResponse>> updateSingleData(@RequestBody UpdateExchangeRateRequest updateExchangeRateRequest, HttpServletRequest servletRequest) {
+        String clientIp = ClientIPUtil.getClientIp(servletRequest);
         BillingDataChangeDTO dataChangeDTO = BillingDataChangeDTO.builder()
+                .inputIPAddress(clientIp)
                 .methodHttp(HttpMethod.PUT.name())
                 .endpoint(URL_EXCHANGE_RATE + "/update/approve")
                 .isRequestBody(true)
@@ -65,10 +58,10 @@ public class ExchangeRateController {
         return ResponseEntity.ok(response);
     }
 
-    // update approve
     @PutMapping(path = "/update/approve")
-    public ResponseEntity<ResponseDTO<ExchangeRateResponse>> updateApprove(@RequestBody ExchangeRateApproveRequest updateExchangeRateRequest) {
-        ExchangeRateResponse exchangeRateApprove = exchangeRateService.updateApprove(updateExchangeRateRequest);
+    public ResponseEntity<ResponseDTO<ExchangeRateResponse>> updateApprove(@RequestBody ExchangeRateApproveRequest updateExchangeRateRequest, HttpServletRequest servletRequest) {
+        String clientIp = ClientIPUtil.getClientIp(servletRequest);
+        ExchangeRateResponse exchangeRateApprove = exchangeRateService.updateApprove(updateExchangeRateRequest, clientIp);
         ResponseDTO<ExchangeRateResponse> response = ResponseDTO.<ExchangeRateResponse>builder()
                 .code(HttpStatus.OK.value())
                 .message(HttpStatus.OK.getReasonPhrase())
@@ -77,7 +70,6 @@ public class ExchangeRateController {
         return ResponseEntity.ok(response);
     }
 
-    // delete all
     @DeleteMapping(path = "/all")
     public ResponseEntity<ResponseDTO<String>> deleteAll() {
         String deleteStatus = exchangeRateService.deleteAll();
@@ -89,7 +81,6 @@ public class ExchangeRateController {
         return ResponseEntity.ok(response);
     }
 
-    // get all
     @GetMapping(path = "/all")
     public ResponseEntity<ResponseDTO<List<ExchangeRateDTO>>> getAll() {
         List<ExchangeRateDTO> exchangeRateDTOList = exchangeRateService.getAll();
