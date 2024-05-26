@@ -158,7 +158,7 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
             /* check validation code already exists */
             validationCodeAlreadyExists(investmentManagementDTO.getCode(), validationErrors);
 
-            /* set data change for approveId and approveIPAddress */
+            /* set data change for approve id and approve ip address */
             dataChangeDTO.setApproveId(approveRequest.getApproveId());
             dataChangeDTO.setApproveIPAddress(approveIPAddress);
 
