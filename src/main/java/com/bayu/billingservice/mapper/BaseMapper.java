@@ -40,11 +40,11 @@ public abstract class BaseMapper<E, D> {
                 .toList();
     }
 
-    public D mapFromCreateRequestToDto(Object createRequest) {
+    public D mapCreateRequestToDto(Object createRequest) {
         return modelMapper.map(createRequest, getDtoClass());
     }
 
-    public D mapFromUpdateRequestToDto(Object updateRequest) {
+    public D mapUpdateRequestToDto(Object updateRequest) {
         return modelMapper.map(updateRequest, getDtoClass());
     }
 
@@ -75,9 +75,9 @@ public abstract class BaseMapper<E, D> {
 
     protected abstract void setCommonProperties(E entity, BillingDataChangeDTO dataChangeDTO);
 
-    public D mapFromDataListToDTO(Object listRequest) {
+    public D mapCreateListRequestToDTO(Object createListRequest) {
         Class<D> dtoClass = getDtoClass();
-        D dto = modelMapper.map(listRequest, dtoClass);
+        D dto = modelMapper.map(createListRequest , dtoClass);
 
         try {
             Method[] methods = dtoClass.getDeclaredMethods();
@@ -97,8 +97,11 @@ public abstract class BaseMapper<E, D> {
         } catch (Exception e) {
             log.error("Error while processing map from data list to dto: {}", e.getMessage(), e);
         }
-
         return dto;
+    }
+
+    public D mapUpdateListRequestToDTO(Object updateListRequest) {
+        return modelMapper.map(updateListRequest, getDtoClass());
     }
 
 }
