@@ -338,7 +338,7 @@ public class FeeScheduleServiceImpl implements FeeScheduleService {
     }
 
     private void validateDataChangeId(String dataChangeId) {
-        if (!dataChangeService.existById(Long.valueOf(dataChangeId))) {
+        if (dataChangeService.existById(Long.valueOf(dataChangeId))) {
             log.info("Data Change not found with id: {}", dataChangeId);
             throw new DataNotFoundException("Data Change id not found with id: " + dataChangeId);
         }

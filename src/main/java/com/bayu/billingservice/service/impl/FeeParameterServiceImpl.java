@@ -376,7 +376,7 @@ public class FeeParameterServiceImpl implements FeeParameterService {
     }
 
     private void validateDataChangeId(String dataChangeId) {
-        if (!dataChangeService.existById(Long.valueOf(dataChangeId))) {
+        if (dataChangeService.existById(Long.valueOf(dataChangeId))) {
             log.info("Data Change ids not found");
             throw new DataNotFoundException("Data Change ids not found");
         }
