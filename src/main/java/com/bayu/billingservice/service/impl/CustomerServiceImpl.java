@@ -513,6 +513,7 @@ public class CustomerServiceImpl implements CustomerService {
             Long id = deleteCustomerRequest.getId();
             Customer customer = customerRepository.findById(id)
                     .orElseThrow(() -> new DataNotFoundException(ID_NOT_FOUND + id));
+
             customerDTO = customerMapper.mapToDto(customer);
 
             dataChangeDTO.setInputId(deleteCustomerRequest.getInputId());
