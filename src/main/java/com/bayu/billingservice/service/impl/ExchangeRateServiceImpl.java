@@ -4,7 +4,6 @@ import com.bayu.billingservice.dto.ErrorMessageDTO;
 import com.bayu.billingservice.dto.datachange.BillingDataChangeDTO;
 import com.bayu.billingservice.dto.exchangerate.*;
 import com.bayu.billingservice.exception.DataNotFoundException;
-import com.bayu.billingservice.exception.GeneralException;
 import com.bayu.billingservice.mapper.ExchangeRateMapper;
 import com.bayu.billingservice.model.ExchangeRate;
 import com.bayu.billingservice.repository.ExchangeRateRepository;
@@ -15,18 +14,13 @@ import com.bayu.billingservice.util.JsonUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
-import java.lang.reflect.InvocationTargetException;
-import java.math.BigDecimal;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @Service
@@ -35,7 +29,6 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
 
     private static final String ID_NOT_FOUND = "Exchange Rate not found with id: ";
     private static final String UNKNOWN = "unknown";
-    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     private final ExchangeRateRepository exchangeRateRepository;
     private final DataChangeService dataChangeService;
@@ -73,6 +66,7 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
         try {
             /* mapping data from request to dto */
             exchangeRateDTO = exchangeRateMapper.mapCreateRequestToDto(createExchangeRateRequest);
+            log.info("Exchange Rate DTO: {}", exchangeRateDTO);
 
             /* validation for each column dto */
             Errors errors = validateExchangeRateUsingValidator(exchangeRateDTO);
@@ -89,11 +83,8 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
                 errorMessageDTOList.add(errorMessageDTO);
                 totalDataFailed++;
             } else {
-                ExchangeRate exchangeRate = ExchangeRate.builder()
-                        .date(exchangeRateDTO.getDate())
-                        .currency(exchangeRateDTO.getCurrency())
-                        .value(new BigDecimal(exchangeRateDTO.getValue()))
-                        .build();
+                ExchangeRate exchangeRate = exchangeRateMapper.createEntity(exchangeRateDTO, new BillingDataChangeDTO());
+                log.info("Entity: {}", exchangeRate);
                 exchangeRateRepository.save(exchangeRate);
                 totalDataSuccess++;
             }
@@ -124,8 +115,19 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
             ExchangeRate exchangeRate = exchangeRateRepository.findById(exchangeRateDTO.getId())
                     .orElseThrow(() -> new DataNotFoundException(ID_NOT_FOUND + exchangeRateDTO.getId()));
 
-            /* data yang akan di validator */
-            copyNonNullOrEmptyFields(exchangeRate, clonedDTO);
+            /* data yang akan di validator*/
+            if (clonedDTO.getDate() == null) {
+                clonedDTO.setDate(exchangeRate.getDate());
+            }
+
+            if (clonedDTO.getCurrency() == null || clonedDTO.getCurrency().isEmpty()) {
+                clonedDTO.setCurrency(exchangeRate.getCurrency());
+            }
+
+            if (clonedDTO.getValue() == null || clonedDTO.getValue().isEmpty()) {
+                clonedDTO.setValue(exchangeRate.getValue().toPlainString());
+            }
+
             log.info("[Update Single] Result map object entity to dto: {}", clonedDTO);
 
             /* check validator for data request after mapping to dto */
@@ -231,7 +233,7 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
 
     private void validationCurrencyAlreadyExists(String currency, List<String> errorMessages) {
         if (isCurrencyAlreadyExists(currency)) {
-            errorMessages.add("Investment Management is already taken with currency: " + currency);
+            errorMessages.add("Exchange Rate is already taken with currency: " + currency);
         }
     }
 
@@ -245,30 +247,7 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
     private void handleGeneralError(ExchangeRateDTO exchangeRateDTO, Exception e, List<String> validationErrors, List<ErrorMessageDTO> errorMessageList) {
         log.error("An unexpected error occurred: {}", e.getMessage(), e);
         validationErrors.add(e.getMessage());
-        errorMessageList.add(new ErrorMessageDTO(exchangeRateDTO != null ? exchangeRateDTO.getId().toString() : UNKNOWN, validationErrors));
-    }
-
-    public void copyNonNullOrEmptyFields(ExchangeRate exchangeRate, ExchangeRateDTO exchangeRateDTO) {
-        try {
-            Map<String, String> entityProperties = BeanUtils.describe(exchangeRate);
-
-            for (Map.Entry<String, String> entry : entityProperties.entrySet()) {
-                String propertyName = entry.getKey();
-                String entityValue = entry.getValue();
-
-                String dtoValue = BeanUtils.getProperty(exchangeRateDTO, propertyName);
-
-                if (isNullOrEmpty(dtoValue) && entityValue != null) {
-                    BeanUtils.setProperty(exchangeRateDTO, propertyName, entityValue);
-                }
-            }
-        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            throw new GeneralException("Failed while processing copy non null or empty fields", e);
-        }
-    }
-
-    private boolean isNullOrEmpty(String str) {
-        return str == null || str.trim().isEmpty();
+        errorMessageList.add(new ErrorMessageDTO(exchangeRateDTO != null ? exchangeRateDTO.getCurrency() : UNKNOWN, validationErrors));
     }
 
 }
