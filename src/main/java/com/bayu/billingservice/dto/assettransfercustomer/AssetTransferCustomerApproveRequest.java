@@ -5,8 +5,8 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 @EqualsAndHashCode(callSuper = true)
+@Data
 @SuperBuilder
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class AssetTransferCustomerApproveRequest extends ApprovalIdentifierRequest {
