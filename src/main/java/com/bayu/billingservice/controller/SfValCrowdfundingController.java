@@ -19,7 +19,8 @@ import java.util.List;
 @RequestMapping(path = "/api/crowdfunding")
 @RequiredArgsConstructor
 public class SfValCrowdfundingController {
-    @Value("${file.path.crowdfunding}")
+
+    @Value("file.path.crowd.funding")
     private String filePath;
 
     private final SfValCrowdfundingService sfValCrowdfundingService;
