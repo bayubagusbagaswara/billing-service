@@ -9,4 +9,9 @@ public class ReadExcelException extends RuntimeException {
     public ReadExcelException(String message) {
         super(message);
     }
+
+    public ReadExcelException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
 }
