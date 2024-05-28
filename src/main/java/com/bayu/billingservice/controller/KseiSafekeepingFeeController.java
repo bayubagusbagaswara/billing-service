@@ -41,10 +41,10 @@ public class KseiSafekeepingFeeController {
     }
 
     @GetMapping(path = "/read-insert")
-    public ResponseEntity<ResponseDTO<String>> readAndInsert() {
-        log.info("File Path : {}", filePath);
+    public ResponseEntity<ResponseDTO<String>> readAndInsert(@RequestParam("monthYear") String monthYear) {
+        log.info("Month Year: {}", monthYear);
 
-        String status = kseiSafekeepingFeeService.readAndInsertToDB(filePath);
+        String status = kseiSafekeepingFeeService.readAndInsertToDB(filePath, monthYear);
 
         ResponseDTO<String> response = ResponseDTO.<String>builder()
                 .code(HttpStatus.OK.value())

@@ -14,10 +14,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.*;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.TextStyle;
@@ -29,6 +32,7 @@ import java.util.*;
 @RequiredArgsConstructor
 public class KseiSafekeepingFeeServiceImpl implements KseiSafekeepingFeeService {
 
+    private static final String BASE_FILE_NAME = "Ksei_Safe_";
     private static final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MMM-yyyy");
 
     private final KseiSafekeepingFeeRepository kseiSafekeepingFeeRepository;
@@ -61,26 +65,55 @@ public class KseiSafekeepingFeeServiceImpl implements KseiSafekeepingFeeService 
     }
 
     @Override
-    public String readAndInsertToDB(String filePath) {
-        log.info("File Path: {}", filePath);
+    public String readAndInsertToDB(String filePath, String monthYear) {
+        log.info("File Path: {}, and Month Year: {}", filePath, monthYear);
 
-        if (StringUtils.isBlank(filePath)) {
-            throw new IllegalArgumentException("File path cannot be null or empty");
-        }
+        log.info("File Path: {}, and Month Year: {}", filePath, monthYear);
 
-        List<KseiSafekeepingFee> kseiSafekeepingFeeList = new ArrayList<>();
+        try {
+            Map<String, String> monthMinus1 = convertDateUtil.getMonthMinus1();
+            String monthName = monthMinus1.get("monthName");
+            String monthValue = monthMinus1.get("monthValue");
+            int year = Integer.parseInt(monthMinus1.get("year"));
 
-        try (Workbook workbook = WorkbookFactory.create(new FileInputStream(filePath))) {
-            processSheets(workbook, kseiSafekeepingFeeList);
+            String fileName = BASE_FILE_NAME + year + monthValue + ".xlsx";
+            String filePathNew = filePath + fileName;
+
+            if (StringUtils.isBlank(filePathNew)) {
+                throw new InvalidInputException("File path cannot be null or empty");
+            }
+
+            // Check if the file exists
+            File file = new File(filePathNew);
+            if (!file.exists()) {
+                log.error("File not found: {}", filePathNew);
+                throw new DataNotFoundException("KSEI Safe Fee file not found with path: " + filePathNew);
+            }
+
+            // Find and delete existing data for the specified month and year
+            kseiSafekeepingFeeRepository.deleteByMonthAndYear(monthName, year);
+
+            List<KseiSafekeepingFee> kseiSafekeepingFeeList = readDataFromFile(file);
             kseiSafekeepingFeeRepository.saveAll(kseiSafekeepingFeeList);
             return "Excel data processed and saved successfully";
+        } catch (DataNotFoundException e) {
+          log.error("Data not found: {}", e.getMessage());
+          throw new DataNotFoundException(e.getMessage());
+        } catch (Exception e) {
+            log.error("An unexpected error occurred: {}", e.getMessage(), e);
+            throw new GeneralException(e.getMessage());
+        }
+    }
+
+    private List<KseiSafekeepingFee> readDataFromFile(File file) {
+        List<KseiSafekeepingFee> kseiSafekeepingFeeList = new ArrayList<>();
+        try (Workbook workbook = WorkbookFactory.create(new FileInputStream(file))) {
+            processSheets(workbook, kseiSafekeepingFeeList);
         } catch (IOException e) {
             log.error("Error reading the Excel file: {}", e.getMessage());
-            throw new ReadExcelException("Failed to process Excel file. Error reading the Excel file : " + e.getMessage());
-        } catch (Exception e) {
-            log.error("An unexpected error occurred: {}", e.getMessage());
-            throw new UnexpectedException("Failed to process Excel file. An unexpected error occurred : " + e.getMessage());
+            throw new ReadExcelException("Failed to process Excel file. Error reading the Excel file: " + e.getMessage());
         }
+        return kseiSafekeepingFeeList;
     }
 
     @Override
@@ -150,7 +183,6 @@ public class KseiSafekeepingFeeServiceImpl implements KseiSafekeepingFeeService 
 
     private static void processSheets(Workbook workbook, List<KseiSafekeepingFee> kseiSafekeepingFeeList) {
         Iterator<Sheet> sheetIterator = workbook.sheetIterator();
-
         while (sheetIterator.hasNext()) {
             Sheet sheet = sheetIterator.next();
             processRows(sheet, kseiSafekeepingFeeList);
@@ -159,7 +191,6 @@ public class KseiSafekeepingFeeServiceImpl implements KseiSafekeepingFeeService 
 
     private static void processRows(Sheet sheet, List<KseiSafekeepingFee> kseiSafekeepingFeeList) {
         Iterator<Row> rowIterator = sheet.rowIterator();
-
         // Skip the first row (header)
         if (rowIterator.hasNext()) {
             rowIterator.next(); // move to the next row
@@ -173,7 +204,7 @@ public class KseiSafekeepingFeeServiceImpl implements KseiSafekeepingFeeService 
             } catch (Exception e) {
                 log.error("Error processing a row: {}", e.getMessage());
                 // You may choose to continue processing other rows or break the loop
-                throw new ExcelProcessingException("Failed to process Excel file: " + e.getMessage(), e);
+                throw new GeneralException("Failed to process Excel file: " + e.getMessage(), e);
             }
         }
     }
@@ -182,33 +213,33 @@ public class KseiSafekeepingFeeServiceImpl implements KseiSafekeepingFeeService 
         KseiSafekeepingFee kseiSafekeepingFee = new KseiSafekeepingFee();
         Cell cell3 = row.getCell(2);
         kseiSafekeepingFee.setCreatedDate(parseDateOrDefault(cell3.toString(), dateFormatter));
-        log.info("Created Date : {}", cell3.toString());
+        // log.info("Created Date : {}", cell3.toString());
 
         LocalDate date = ConvertDateUtil.parseDateOrDefault(cell3.toString(), dateFormatter);
         Integer year = date != null ? date.getYear() : null;
         String monthName = date != null ? date.getMonth().getDisplayName(TextStyle.FULL, Locale.ENGLISH) : "";
 
         kseiSafekeepingFee.setCreatedDate(date);
-        log.info("Created Date : {}", cell3.toString());
+//        log.info("Created Date : {}", cell3.toString());
 
         kseiSafekeepingFee.setMonth(monthName);
-        log.info("Month : {}", monthName);
+//        log.info("Month : {}", monthName);
 
         kseiSafekeepingFee.setYear(year);
-        log.info("Year : {}", year);
+//        log.info("Year : {}", year);
 
         Cell cell14 = row.getCell(14);
         kseiSafekeepingFee.setFeeDescription(cell14.toString());
-        log.info("Fee Description : {}", cell14.toString());
+//        log.info("Fee Description : {}", cell14.toString());
 
         String customerCode = checkContainsSafekeeping(cell14.toString());
         kseiSafekeepingFee.setCustomerCode(customerCode);
-        log.info("Customer Code : {}", customerCode);
+//        log.info("Customer Code : {}", customerCode);
 
         Cell cell15 = row.getCell(15);
         BigDecimal amountFee = parseBigDecimalOrDefault(cell15.toString());
         kseiSafekeepingFee.setAmountFee(amountFee);
-        log.info("Amount Fee : {}", amountFee);
+//        log.info("Amount Fee : {}", amountFee);
 
         return kseiSafekeepingFee;
     }
@@ -217,7 +248,7 @@ public class KseiSafekeepingFeeServiceImpl implements KseiSafekeepingFeeService 
         try {
             return new BigDecimal(value);
         } catch (Exception e) {
-            log.error("Parse BigDecimal is Failed : " + e.getMessage(), e);
+            log.error("Parse BigDecimal is Failed: {}",  e.getMessage(), e);
             return null;
         }
     }
@@ -226,7 +257,7 @@ public class KseiSafekeepingFeeServiceImpl implements KseiSafekeepingFeeService 
         try {
             return LocalDate.parse(value, dateFormatter);
         } catch (Exception e) {
-            log.error("Parse Local Date is Failed : " + e.getMessage(), e);
+            log.error("Parse Local Date is Failed: {}", e.getMessage(), e);
             return null;
         }
     }
@@ -246,9 +277,9 @@ public class KseiSafekeepingFeeServiceImpl implements KseiSafekeepingFeeService 
     }
 
     private static String cleanedDescription(String inputContainsSafekeeping) {
-        log.info("Input contains safekeeping : {}", inputContainsSafekeeping);
+//        log.info("Input contains safekeeping : {}", inputContainsSafekeeping);
         String cleanedDescription = inputContainsSafekeeping.replace("Safekeeping fee for account", "").trim();
-        log.info("Cleaned Description : {}", cleanedDescription);
+//        log.info("Cleaned Description : {}", cleanedDescription);
         return cleanedDescription;
     }
 

@@ -10,7 +10,7 @@ public interface KseiSafekeepingFeeService {
 
     List<KseiSafekeepingFee> create(List<CreateKseiSafeRequest> request);
 
-    String readAndInsertToDB(String filePath);
+    String readAndInsertToDB(String filePath, String monthYear);
 
     List<KseiSafekeepingFee> getAll();
 
