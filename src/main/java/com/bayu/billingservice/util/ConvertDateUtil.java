@@ -25,11 +25,9 @@ public class ConvertDateUtil {
 
     public static LocalDate parseDateOrDefault(String value, DateTimeFormatter dateTimeFormatter) {
         try {
-            LocalDate parse = LocalDate.parse(value, dateTimeFormatter);
-            log.info("Result Parse Date : {}", parse);
-            return parse;
+            return LocalDate.parse(value, dateTimeFormatter);
         } catch (Exception e) {
-            log.error("Parse Date is Failed : " + e.getMessage(), e);
+            log.error("Parse Date is Failed: {}", e.getMessage(), e);
             return null;
         }
     }
@@ -43,10 +41,7 @@ public class ConvertDateUtil {
         TemporalAccessor temporalAccessor = formatter.parse(monthYear);
         LocalDate parsedDate = LocalDate.from(new MonthYearQuery().queryFrom(temporalAccessor));
 
-        LocalDate latestDateOfMonth = parsedDate.with(TemporalAdjusters.lastDayOfMonth());
-        log.info("Latest Date of Month Year : {}", latestDateOfMonth);
-
-        return latestDateOfMonth;
+        return parsedDate.with(TemporalAdjusters.lastDayOfMonth());
     }
 
     public LocalDate getFirstDateOfMonthYear(String monthYear) {
@@ -58,10 +53,7 @@ public class ConvertDateUtil {
         TemporalAccessor temporalAccessor = formatter.parse(monthYear);
         LocalDate parsedDate = LocalDate.from(new MonthYearQuery().queryFrom(temporalAccessor));
 
-        LocalDate firstDateOfMonth = parsedDate.with(TemporalAdjusters.firstDayOfMonth());
-        log.info("First Date of Month Year : {}", firstDateOfMonth);
-
-        return firstDateOfMonth;
+        return parsedDate.with(TemporalAdjusters.firstDayOfMonth());
     }
 
     public Map<String, String> extractMonthYearInformation(String monthYear) {
@@ -103,7 +95,7 @@ public class ConvertDateUtil {
         return formatLatestMonth + " " + latestYear + " - " + formatCurrentlyMonth + " " + currentlyYear;
     }
 
-    public class MonthYearQuery implements TemporalQuery<LocalDate> {
+    public static class MonthYearQuery implements TemporalQuery<LocalDate> {
         @Override
         public LocalDate queryFrom(TemporalAccessor temporal) {
             int year = temporal.get(ChronoField.YEAR);
@@ -119,7 +111,7 @@ public class ConvertDateUtil {
                 .toFormatter(getLocaleEN());
 
         TemporalAccessor temporalAccessor = formatter.parse(monthYear);
-        LocalDate parsedDate = LocalDate.from(new ConvertDateUtil.MonthYearQuery().queryFrom(temporalAccessor));
+        LocalDate parsedDate = LocalDate.from(new MonthYearQuery().queryFrom(temporalAccessor));
 
         // Format the parsed date into the desired output format
         DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("MMMM-yyyy", Locale.ENGLISH);
@@ -136,10 +128,7 @@ public class ConvertDateUtil {
 
         ZoneId jakartaZone = ZoneId.of("Asia/Jakarta");
 
-        String formattedString = formatter.format(instant.atZone(jakartaZone));
-        log.info("Formatted Instant to String : {}", formattedString);
-
-        return formattedString;
+        return formatter.format(instant.atZone(jakartaZone));
     }
 
     public static String convertInstantToStringPlus14Days(Instant instant) {
@@ -150,10 +139,7 @@ public class ConvertDateUtil {
 
         ZoneId jakartaZone = ZoneId.of("Asia/Jakarta");
 
-        String formattedString = formatter.format(newInstant.atZone(jakartaZone));
-        log.info("Formatted Instant to String : {}", formattedString);
-
-        return formattedString;
+        return formatter.format(newInstant.atZone(jakartaZone));
     }
 
     public static Locale getLocaleID() {
@@ -210,13 +196,36 @@ public class ConvertDateUtil {
         if (localDateTime == null) {
             return null;
         }
-        log.info("Time Zone: {}", timeZone);
         ZoneId jakartaZoneId = ZoneId.of(timeZone);
         return Date.from(localDateTime.atZone(jakartaZoneId).toInstant());
     }
 
     public Date getDate() {
         return convertLocalDateTimeToDate(LocalDateTime.now());
+    }
+
+    public Map<String, String> getMonthMinus1() {
+        LocalDate currentDate = LocalDate.now();
+        int currentMonth = currentDate.getMonthValue();
+        int currentYear = currentDate.getYear();
+
+        int newMonth = currentMonth - 1;
+        if (newMonth == 0) {
+            newMonth = 12;
+            currentYear--;
+        }
+
+        LocalDate previousMonthYear = LocalDate.of(currentYear, newMonth, 1);
+        String monthName = previousMonthYear.getMonth().getDisplayName(TextStyle.FULL, getLocaleEN());
+        int monthValue = previousMonthYear.getMonth().getValue();
+        String formattedMonthValue = (monthValue < 10) ? "0" + monthValue : String.valueOf(monthValue);
+        int year = previousMonthYear.getYear();
+
+        Map<String, String> monthYear = new HashMap<>();
+        monthYear.put("monthName", monthName);
+        monthYear.put("monthValue", formattedMonthValue);
+        monthYear.put("year", String.valueOf(year));
+        return monthYear;
     }
 
 }
