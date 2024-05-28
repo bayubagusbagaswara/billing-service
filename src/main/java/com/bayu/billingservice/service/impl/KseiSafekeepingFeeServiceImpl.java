@@ -68,8 +68,6 @@ public class KseiSafekeepingFeeServiceImpl implements KseiSafekeepingFeeService 
     public String readAndInsertToDB(String filePath, String monthYear) {
         log.info("File Path: {}, and Month Year: {}", filePath, monthYear);
 
-        log.info("File Path: {}, and Month Year: {}", filePath, monthYear);
-
         try {
             Map<String, String> monthMinus1 = convertDateUtil.getMonthMinus1();
             String monthName = monthMinus1.get("monthName");
@@ -97,8 +95,8 @@ public class KseiSafekeepingFeeServiceImpl implements KseiSafekeepingFeeService 
             kseiSafekeepingFeeRepository.saveAll(kseiSafekeepingFeeList);
             return "Excel data processed and saved successfully";
         } catch (DataNotFoundException e) {
-          log.error("Data not found: {}", e.getMessage());
-          throw new DataNotFoundException(e.getMessage());
+            log.error("Data not found: {}", e.getMessage());
+            throw new DataNotFoundException(e.getMessage());
         } catch (Exception e) {
             log.error("An unexpected error occurred: {}", e.getMessage(), e);
             throw new GeneralException(e.getMessage());
@@ -202,9 +200,9 @@ public class KseiSafekeepingFeeServiceImpl implements KseiSafekeepingFeeService 
                 KseiSafekeepingFee kseiSafekeepingFee = createEntityFromRow(row);
                 kseiSafekeepingFeeList.add(kseiSafekeepingFee);
             } catch (Exception e) {
-                log.error("Error processing a row: {}", e.getMessage());
+                log.error("Error processing a row: {}", e.getMessage(), e);
                 // You may choose to continue processing other rows or break the loop
-                throw new GeneralException("Failed to process Excel file: " + e.getMessage(), e);
+                throw new GeneralException("Failed to process Excel file: " + e.getMessage());
             }
         }
     }
