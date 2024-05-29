@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface SfValRgDailyService {
 
-    String readFileAndInsertToDB(String filePath);
+    String readFileAndInsertToDB(String filePath, String monthYear);
 
     List<SfValRgDaily> getAll();
 

@@ -24,8 +24,8 @@ public class SfValRgDailyController {
     private final SfValRgDailyService sfValRgDailyService;
 
     @GetMapping(path = "/read-insert")
-    public ResponseEntity<ResponseDTO<String>> readAndInsertToDB() {
-        String status = sfValRgDailyService.readFileAndInsertToDB(filePath);
+    public ResponseEntity<ResponseDTO<String>> readAndInsertToDB(@RequestParam("monthYear") String monthYear) {
+        String status = sfValRgDailyService.readFileAndInsertToDB(filePath, monthYear);
 
         ResponseDTO<String> response = ResponseDTO.<String>builder()
                 .code(HttpStatus.OK.value())

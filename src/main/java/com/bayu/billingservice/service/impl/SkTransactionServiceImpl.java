@@ -46,13 +46,13 @@ public class SkTransactionServiceImpl implements SkTransactionService {
 
             String fileName = BASE_FILE_NAME + year + monthValue + ".csv";
             String filePathNew = filePath + fileName;
-            log.info("File path new RG Monthly: {}", filePathNew);
+            log.info("File path new Sk Transaction: {}", filePathNew);
 
             // Check if the file exists
             File file = new File(filePathNew);
             if (!file.exists()) {
                 log.error("File not found: {}", filePathNew);
-                throw new DataNotFoundException("RG Monthly file not found with path: " + filePathNew);
+                throw new DataNotFoundException("Sk Transaction file not found with path: " + filePathNew);
             }
 
             skTransactionRepository.deleteByMonthAndYear(monthName, year);

@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface SfValCrowdfundingService {
 
-    String readAndInsertToDB(String filePath);
+    String readAndInsertToDB(String filePath, String monthYear);
 
     List<SfValCrowdfunding> getAll();
 

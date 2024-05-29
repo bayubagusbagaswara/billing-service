@@ -8,14 +8,13 @@ import lombok.experimental.SuperBuilder;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-@EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "sf_val_crowdfunding")
 @SuperBuilder
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class SfValCrowdfunding extends BaseAudit {
+public class SfValCrowdfunding {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

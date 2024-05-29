@@ -51,19 +51,15 @@ public class SfValRgMonthlyServiceImpl implements SfValRgMonthlyService {
             sfValRgMonthlyRepository.deleteByMonthAndYear(monthName, year);
 
             List<String[]> rows = CsvReaderUtil.readCsvFile(filePathNew);
-
             List<SfValRgMonthly> sfValRgMonthlyList = CsvDataMapper.mapCsvSfValRgMonthly(rows);
-
             sfValRgMonthlyRepository.saveAll(sfValRgMonthlyList);
+
             return "RG Monthly CSV data processed and saved successfully";
         } catch (DataNotFoundException e) {
-            log.error("RG Monthly not found: {}", e.getMessage(), e);
+            log.error("RG Monthly file not found: {}", e.getMessage(), e);
             throw new DataNotFoundException(e.getMessage());
-        } catch (IOException e) {
-            log.error("Failed to read CSV file: {}", filePath, e);
-            throw new InvalidInputException("SfVal RG Monthly failed to read CSV file: ", e);
-        } catch (CsvException e) {
-            log.error("Failed to process CSV data from file: {}", filePath, e);
+        } catch (IOException | CsvException e) {
+            log.error("RG Monthly failed to process CSV data from file: {}", filePath, e);
             throw new CsvProcessingException("SfVal RG Monthly failed to process CSV data: ", e);
         } catch (Exception e) {
             log.error("Unexpected error occurred while processing file: {}", filePath, e);
