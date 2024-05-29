@@ -9,10 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.List;
@@ -29,9 +26,9 @@ public class SkTransactionController {
     private final SkTransactionService skTransactionService;
 
     @GetMapping(path = "/read-insert")
-    public ResponseEntity<ResponseDTO<String>> readAndInsert() throws IOException, CsvException {
+    public ResponseEntity<ResponseDTO<String>> readAndInsert(@RequestParam("monthYear") String monthYear) {
         log.info("File Path : {}", filePath);
-        String status = skTransactionService.readFileAndInsertToDB(filePath);
+        String status = skTransactionService.readFileAndInsertToDB(filePath, monthYear);
 
         ResponseDTO<String> response = ResponseDTO.<String>builder()
                 .code(HttpStatus.OK.value())

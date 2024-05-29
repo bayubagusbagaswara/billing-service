@@ -2,9 +2,13 @@ package com.bayu.billingservice.service.impl;
 
 import com.bayu.billingservice.dto.SkTransactionDTO;
 import com.bayu.billingservice.exception.ConnectionDatabaseException;
+import com.bayu.billingservice.exception.CsvProcessingException;
+import com.bayu.billingservice.exception.DataNotFoundException;
+import com.bayu.billingservice.exception.GeneralException;
 import com.bayu.billingservice.model.SkTransaction;
 import com.bayu.billingservice.repository.SkTransactionRepository;
 import com.bayu.billingservice.service.SkTransactionService;
+import com.bayu.billingservice.util.ConvertDateUtil;
 import com.bayu.billingservice.util.CsvDataMapper;
 import com.bayu.billingservice.util.CsvReaderUtil;
 import com.opencsv.exceptions.CsvException;
@@ -13,8 +17,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 import static com.bayu.billingservice.model.enumerator.SkTransactionType.TRANSACTION_BI_SSSS;
 import static com.bayu.billingservice.model.enumerator.SkTransactionType.TRANSACTION_CBEST;
@@ -24,22 +30,47 @@ import static com.bayu.billingservice.model.enumerator.SkTransactionType.TRANSAC
 @RequiredArgsConstructor
 public class SkTransactionServiceImpl implements SkTransactionService {
 
+    private static final String BASE_FILE_NAME = "Sktrans_";
     private final SkTransactionRepository skTransactionRepository;
+    private final ConvertDateUtil convertDateUtil;
 
     @Transactional
     @Override
-    public String readFileAndInsertToDB(String filePath) throws IOException, CsvException {
+    public String readFileAndInsertToDB(String filePath, String monthYear) {
         log.info("Start read and insert SkTransaction to the database : {}", filePath);
         try {
-            List<String[]> rows = CsvReaderUtil.readCsvFile(filePath);
+            Map<String, String> monthMinus1 = convertDateUtil.getMonthMinus1();
+            String monthName = monthMinus1.get("monthName");
+            String monthValue = monthMinus1.get("monthValue");
+            int year = Integer.parseInt(monthMinus1.get("year"));
 
+            String fileName = BASE_FILE_NAME + year + monthValue + ".csv";
+            String filePathNew = filePath + fileName;
+            log.info("File path new RG Monthly: {}", filePathNew);
+
+            // Check if the file exists
+            File file = new File(filePathNew);
+            if (!file.exists()) {
+                log.error("File not found: {}", filePathNew);
+                throw new DataNotFoundException("RG Monthly file not found with path: " + filePathNew);
+            }
+
+            skTransactionRepository.deleteByMonthAndYear(monthName, year);
+
+            List<String[]> rows = CsvReaderUtil.readCsvFile(filePathNew);
             List<SkTransaction> skTransactionList = CsvDataMapper.mapCsvSkTransaction(rows);
-
             skTransactionRepository.saveAll(skTransactionList);
 
-            return "[SK Transaction] CSV data processed and saved successfully";
+            return "SK Transaction CSV data processed and saved successfully";
+        }  catch (DataNotFoundException e) {
+            log.error("Sk Transaction file not found: {}", e.getMessage(), e);
+            throw new DataNotFoundException(e.getMessage());
         } catch (IOException | CsvException e) {
-            return "[SK Transaction] Failed to process CSV file: " + e.getMessage();
+            log.error("Sk Transaction Failed to process CSV data from file: {}", filePath, e);
+            throw new CsvProcessingException("SfVal RG Monthly failed to process CSV data: ", e);
+        } catch (Exception e) {
+            log.error("Unexpected error occurred while processing file: {}", filePath, e);
+            throw new GeneralException("Unexpected error: ", e);
         }
     }
 

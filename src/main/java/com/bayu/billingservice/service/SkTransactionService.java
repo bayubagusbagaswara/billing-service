@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface SkTransactionService {
 
-    String readFileAndInsertToDB(String filePath) throws IOException, CsvException;
+    String readFileAndInsertToDB(String filePath, String monthYear);
     List<SkTransaction> getAll();
     List<SkTransaction> getAllByPortfolioCode(String portfolioCode);
     List<SkTransaction> getAllByPortfolioCodeAndSystem(String portfolioCode, String system);
