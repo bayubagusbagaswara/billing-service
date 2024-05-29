@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -17,10 +18,9 @@ public interface SfValRgMonthlyRepository extends JpaRepository<SfValRgMonthly, 
 
     Optional<SfValRgMonthly> findByAidAndSecurityName(String aid, String securityName);
 
-    void deleteByMonthAndYear(String month, Integer year);
-
+    @Transactional
     @Modifying
-    @Query(value = "DELETE FROM sf_val_rg_monthly WHERE month = :month AND year = :year", nativeQuery = true)
-    void deleteByMonthAndYearNative(@Param("month") String month, @Param("year") Integer year);
+    @Query(value = "DELETE FROM SfValRgMonthly s WHERE s.month = :month AND s.year = :year")
+    void deleteByMonthAndYear(@Param("month") String month, @Param("year") Integer year);
 
 }

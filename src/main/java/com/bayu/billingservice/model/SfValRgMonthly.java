@@ -8,14 +8,13 @@ import lombok.experimental.SuperBuilder;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-@EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "sf_val_rg_monthly")
 @Data
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class SfValRgMonthly extends BaseAudit {
+public class SfValRgMonthly {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

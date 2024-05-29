@@ -1,7 +1,6 @@
 package com.bayu.billingservice.service.impl;
 
-import com.bayu.billingservice.exception.ConnectionDatabaseException;
-import com.bayu.billingservice.exception.DataNotFoundException;
+import com.bayu.billingservice.exception.*;
 import com.bayu.billingservice.model.SfValRgMonthly;
 import com.bayu.billingservice.repository.SfValRgMonthlyRepository;
 import com.bayu.billingservice.service.SfValRgMonthlyService;
@@ -14,16 +13,17 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class SfValRgMonthlyServiceImpl implements SfValRgMonthlyService {
 
+    private static final String BASE_FILE_NAME = "RG_Monthly_";
     private final SfValRgMonthlyRepository sfValRgMonthlyRepository;
     private final ConvertDateUtil convertDateUtil;
 
@@ -32,33 +32,42 @@ public class SfValRgMonthlyServiceImpl implements SfValRgMonthlyService {
     public String readFileAndInsertToDB(String filePath, String monthYear) {
         log.info("Start read and insert SfVal RG Monthly to the database : {}", filePath);
         try {
+            Map<String, String> monthMinus1 = convertDateUtil.getMonthMinus1();
+            String monthName = monthMinus1.get("monthName");
+            String monthValue = monthMinus1.get("monthValue");
+            int year = Integer.parseInt(monthMinus1.get("year"));
+
+            String fileName = BASE_FILE_NAME + year + monthValue + ".csv";
+            String filePathNew = filePath + fileName;
+            log.info("File path new RG Monthly: {}", filePathNew);
+
             // Check if the file exists
-            if (!Files.exists(Paths.get(filePath))) {
-                log.error("File not found: {}", filePath);
-                throw new DataNotFoundException("[SfVal RG Monthly] File not found: " + filePath);
+            File file = new File(filePathNew);
+            if (!file.exists()) {
+                log.error("File not found: {}", filePathNew);
+                throw new DataNotFoundException("RG Monthly file not found with path: " + filePathNew);
             }
 
-            String[] monthFormat = convertDateUtil.convertToYearMonthFormat(monthYear);
-            String monthName = monthFormat[0];
-            int year = Integer.parseInt(monthFormat[1]);
-            sfValRgMonthlyRepository.deleteByMonthAndYearNative(monthName, year);
+            sfValRgMonthlyRepository.deleteByMonthAndYear(monthName, year);
 
-            List<String[]> rows = CsvReaderUtil.readCsvFile(filePath);
+            List<String[]> rows = CsvReaderUtil.readCsvFile(filePathNew);
 
             List<SfValRgMonthly> sfValRgMonthlyList = CsvDataMapper.mapCsvSfValRgMonthly(rows);
 
             sfValRgMonthlyRepository.saveAll(sfValRgMonthlyList);
-
-            return "[SfVal RG Monthly] CSV data processed and saved successfully";
-        }  catch (IOException e) {
+            return "RG Monthly CSV data processed and saved successfully";
+        } catch (DataNotFoundException e) {
+            log.error("RG Monthly not found: {}", e.getMessage(), e);
+            throw new DataNotFoundException(e.getMessage());
+        } catch (IOException e) {
             log.error("Failed to read CSV file: {}", filePath, e);
-            return "[SfVal RG Monthly] Failed to read CSV File: " + e.getMessage();
+            throw new InvalidInputException("SfVal RG Monthly failed to read CSV file: ", e);
         } catch (CsvException e) {
             log.error("Failed to process CSV data from file: {}", filePath, e);
-            return "[SfVal RG Monthly] Failed to process CSV data: " + e.getMessage();
+            throw new CsvProcessingException("SfVal RG Monthly failed to process CSV data: ", e);
         } catch (Exception e) {
             log.error("Unexpected error occurred while processing file: {}", filePath, e);
-            return "[SfVal RG Monthly] Unexpected error: " + e.getMessage();
+            throw new GeneralException("Unexpected error: ", e);
         }
     }
 
