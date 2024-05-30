@@ -5,7 +5,4 @@ import com.bayu.billingservice.dto.CoreCalculateRequest;
 public interface Core1CalculateService {
 
     String calculate(CoreCalculateRequest request);
-
-
-
 }
