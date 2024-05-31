@@ -895,3 +895,133 @@ public CalculateBillingResponse calculateV2(CoreCalculateRequest request) {
             .errorMessageDTOList(errorMessageDTOList)
             .build();
 }
+
+## Refactor
+
+  public CalculateBillingResponse calculateV2(CoreCalculateRequest request) {
+        log.info("Start calculate Billing Core type 1 V2 with request : {}", request);
+        int totalDataSuccess = 0;
+        int totalDataFailed = 0;
+        List<ErrorMessageDTO> errorMessageDTOList = new ArrayList<>();
+
+        try {
+            String categoryUpperCase = request.getCategory().toUpperCase();
+            String typeUpperCase = StringUtil.replaceBlanksWithUnderscores(request.getType());
+
+            Map<String, String> monthMinus1 = convertDateUtil.getMonthMinus1();
+            String monthName = monthMinus1.get("monthName");
+            int year = Integer.parseInt(monthMinus1.get("year"));
+
+            Map<String, String> monthNow = convertDateUtil.getMonthNow();
+            String monthNameNow = monthNow.get("monthName");
+            int yearNow = Integer.parseInt(monthNow.get("year"));
+
+            // Initialization variable
+            int transactionHandlingValueFrequency;
+            BigDecimal transactionHandlingAmountDue;
+            BigDecimal safekeepingValueFrequency;
+            BigDecimal safekeepingAmountDue;
+            BigDecimal subTotal;
+            BigDecimal vatAmountDue;
+            BigDecimal totalAmountDue;
+            Instant dateNow = Instant.now();
+
+            BigDecimal vatFee = feeParamService.getValueByName(VAT.name());
+
+            List<BillingCustomer> billingCustomerList = billingCustomerService.getAllByBillingCategoryAndBillingType(categoryUpperCase, typeUpperCase);
+
+            for (BillingCustomer billingCustomer : billingCustomerList) {
+                try {
+                    String aid = billingCustomer.getCustomerCode();
+                    BigDecimal customerMinimumFee = billingCustomer.getCustomerMinimumFee();
+                    BigDecimal customerSafekeepingFee = billingCustomer.getCustomerSafekeepingFee();
+                    BigDecimal transactionHandlingFee = billingCustomer.getCustomerTransactionHandling();
+                    String billingCategory = billingCustomer.getBillingCategory();
+                    String billingType = billingCustomer.getBillingType();
+                    String miCode = billingCustomer.getMiCode();
+
+                    // check and delete existing billing data with the same month and year
+                    coreGeneralService.checkingExistingBillingCore(monthName, year, aid, billingCategory, billingType);
+
+                    InvestmentManagementDTO billingMIDTO = billingMIService.getByCode(miCode);
+
+                    List<SkTransaction> skTransactionList = skTranService.getAllByAidAndMonthAndYear(aid, monthName, year);
+
+                    List<SfValRgDaily> sfValRgDailyList = sfValRgDailyService.getAllByAidAndMonthAndYear(aid, monthName, year);
+
+                    transactionHandlingValueFrequency = calculateTransactionHandlingValueFrequency(aid, skTransactionList);
+
+                    transactionHandlingAmountDue = calculateTransactionHandlingAmountDue(aid, transactionHandlingFee, transactionHandlingValueFrequency);
+
+                    safekeepingValueFrequency = calculateSafekeepingValueFrequency(aid, sfValRgDailyList);
+
+                    safekeepingAmountDue = calculateSafekeepingAmountDue(aid, sfValRgDailyList);
+
+                    subTotal = calculateSubTotalAmountDue(aid, transactionHandlingAmountDue, safekeepingAmountDue);
+
+                    vatAmountDue = calculateVATAmountDue(aid, subTotal, vatFee);
+
+                    totalAmountDue = calculateTotalAmountDue(aid, subTotal, vatAmountDue);
+
+                    BillingCore billingCore = BillingCore.builder()
+                            .createdAt(dateNow)
+                            .updatedAt(dateNow)
+                            .approvalStatus(ApprovalStatus.Pending)
+                            .billingStatus(BillingStatus.Generated)
+                            .customerCode(billingCustomer.getCustomerCode())
+                            .customerName(billingCustomer.getCustomerName())
+                            .month(monthName)
+                            .year(year)
+                            .billingPeriod(monthName + " " + year)
+                            .billingStatementDate(ConvertDateUtil.convertInstantToString(dateNow))
+                            .billingPaymentDueDate(ConvertDateUtil.convertInstantToStringPlus14Days(dateNow))
+                            .billingCategory(billingCustomer.getBillingCategory())
+                            .billingType(billingCustomer.getBillingType())
+                            .billingTemplate(billingCustomer.getBillingTemplate())
+                            .investmentManagementName(billingMIDTO.getName())
+                            .investmentManagementAddress1(billingMIDTO.getAddress1())
+                            .investmentManagementAddress2(billingMIDTO.getAddress2())
+                            .investmentManagementAddress3(billingMIDTO.getAddress3())
+                            .investmentManagementAddress4(billingMIDTO.getAddress4())
+                            .investmentManagementEmail(billingMIDTO.getEmail())
+                            .investmentManagementUniqueKey(billingMIDTO.getUniqueKey())
+
+                            .customerMinimumFee(customerMinimumFee)
+                            .customerSafekeepingFee(customerSafekeepingFee)
+
+                            .gefuCreated(false)
+                            .paid(false)
+                            .accountName(billingCustomer.getAccountName())
+                            .account(billingCustomer.getAccount())
+                            .currency(billingCustomer.getCurrency())
+
+                            .transactionHandlingValueFrequency(transactionHandlingValueFrequency)
+                            .transactionHandlingFee(transactionHandlingFee)
+                            .transactionHandlingAmountDue(transactionHandlingAmountDue)
+                            .safekeepingValueFrequency(safekeepingValueFrequency)
+                            .safekeepingFee(customerSafekeepingFee)
+                            .safekeepingAmountDue(safekeepingAmountDue)
+                            .subTotal(subTotal)
+                            .vatFee(vatFee)
+                            .vatAmountDue(vatAmountDue)
+                            .totalAmountDue(totalAmountDue)
+                            .build();
+
+                    String number = billingNumberService.generateSingleNumber(monthNameNow, yearNow);
+                    billingCore.setBillingNumber(number);
+                    billingCoreRepository.save(billingCore);
+                    billingNumberService.saveSingleNumber(number);
+                    totalDataSuccess++;
+                } catch (Exception e) { ;
+                    handleGeneralError(billingCustomer, e, errorMessageDTOList);
+                    totalDataFailed++;
+                }
+            }
+        } catch (Exception e) {
+            handleGeneralError(null, e, errorMessageDTOList);
+            totalDataFailed++;
+        }
+        return new CalculateBillingResponse(totalDataSuccess, totalDataFailed, errorMessageDTOList);
+    }
+
+
