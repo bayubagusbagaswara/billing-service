@@ -854,3 +854,44 @@ validationErrors.add("Failed to record data change: " + ex.getMessage());
 // Log the error or perform additional handling if needed
 }
 }
+
+public CalculateBillingResponse calculateV2(CoreCalculateRequest request) {
+    log.info("Start calculate Billing Core type 1 V2 with request : {}", request);
+
+    int totalDataSuccess = 0;
+    int totalDataFailed = 0;
+    List<ErrorMessageDTO> errorMessageDTOList = new ArrayList<>();
+
+    try {
+        String categoryUpperCase = request.getCategory().toUpperCase();
+        String typeUpperCase = StringUtil.replaceBlanksWithUnderscores(request.getType());
+
+        // ... rest of the code ...
+
+        for (BillingCustomer billingCustomer : billingCustomerList) {
+            try {
+                // ... customer processing logic ...
+            } catch (Exception e) {
+                // Handle specific error for this customer and increment totalDataFailed
+                String errorMessage = "Error processing customer " + aid + ": " + e.getMessage();
+                log.error(errorMessage, e);
+                errorMessageDTOList.add(new ErrorMessageDTO(aid, errorMessage));
+                totalDataFailed++;
+            }
+        }
+    } catch (Exception e) {
+        // Handle general error during overall processing
+        String errorMessage = "Unexpected error during Billing Core type 1 V2 calculation: " + e.getMessage();
+        log.error(errorMessage, e);
+        errorMessageDTOList.add(new ErrorMessageDTO(null, errorMessage)); // Set aid to null for general error
+        throw new CalculateBillingException(errorMessage);
+    } finally {
+        // Close resources if needed
+    }
+
+    return CalculateBillingResponse.builder()
+            .totalDataSuccess(totalDataSuccess)
+            .totalDataFailed(totalDataFailed)
+            .errorMessageDTOList(errorMessageDTOList)
+            .build();
+}
