@@ -8,11 +8,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.math.BigDecimal;
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Locale;
 
 @Configuration
 public class ApplicationConfig {
@@ -25,6 +22,7 @@ public class ApplicationConfig {
         modelMapper.getConfiguration().isSkipNullEnabled();
 
         modelMapper.addConverter(stringToBigDecimalConverter());
+        modelMapper.addConverter(bigDecimalToStringConverter());
         modelMapper.addConverter(stringToLocalDateConverter());
 
         return modelMapper;
@@ -46,13 +44,8 @@ public class ApplicationConfig {
                 if (BigDecimal.ZERO.compareTo(value) == 0) {
                     return "0";
                 } else {
-                    DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.getDefault());
-                    symbols.setGroupingSeparator(',');
-                    symbols.setDecimalSeparator('.');
-
-                    DecimalFormat decimalFormat = new DecimalFormat("#,##0.00", symbols);
-
-                    return decimalFormat.format(value);
+                    BigDecimal bigDecimal = value.stripTrailingZeros();
+                    return bigDecimal.toPlainString();
                 }
             }
         };
