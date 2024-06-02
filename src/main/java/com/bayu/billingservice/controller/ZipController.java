@@ -1,7 +1,7 @@
 package com.bayu.billingservice.controller;
 
 import com.bayu.billingservice.dto.ResponseDTO;
-import com.bayu.billingservice.dto.ZipRequest;
+import com.bayu.billingservice.dto.zip.ZipRequest;
 import com.bayu.billingservice.service.ZipService;
 import com.bayu.billingservice.util.ConvertDateUtil;
 import lombok.RequiredArgsConstructor;

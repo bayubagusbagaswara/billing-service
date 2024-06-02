@@ -1,7 +1,7 @@
 package com.bayu.billingservice.service.impl;
 
-import com.bayu.billingservice.dto.BillingCalculationErrorMessageDTO;
-import com.bayu.billingservice.dto.BillingCalculationResponse;
+import com.bayu.billingservice.dto.billing.BillingCalculationErrorMessageDTO;
+import com.bayu.billingservice.dto.billing.BillingCalculationResponse;
 import com.bayu.billingservice.dto.fund.BillingFundParameter;
 import com.bayu.billingservice.dto.fund.FeeReportRequest;
 import com.bayu.billingservice.dto.investmentmanagement.InvestmentManagementDTO;

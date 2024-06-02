@@ -1,6 +1,6 @@
 package com.bayu.billingservice.service.impl;
 
-import com.bayu.billingservice.dto.SkTransactionDTO;
+import com.bayu.billingservice.dto.sktransaction.SkTransactionDTO;
 import com.bayu.billingservice.exception.ConnectionDatabaseException;
 import com.bayu.billingservice.exception.CsvProcessingException;
 import com.bayu.billingservice.exception.DataNotFoundException;

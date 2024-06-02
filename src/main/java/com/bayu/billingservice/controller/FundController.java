@@ -1,6 +1,6 @@
 package com.bayu.billingservice.controller;
 
-import com.bayu.billingservice.dto.BillingCalculationResponse;
+import com.bayu.billingservice.dto.billing.BillingCalculationResponse;
 import com.bayu.billingservice.dto.ResponseDTO;
 import com.bayu.billingservice.dto.fund.FeeReportRequest;
 import com.bayu.billingservice.model.BillingFund;

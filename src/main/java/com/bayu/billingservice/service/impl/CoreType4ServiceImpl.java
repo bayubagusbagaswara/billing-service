@@ -1,6 +1,6 @@
 package com.bayu.billingservice.service.impl;
 
-import com.bayu.billingservice.dto.CoreCalculateRequest;
+import com.bayu.billingservice.dto.core.CoreCalculateRequest;
 import com.bayu.billingservice.model.BillingCore;
 import com.bayu.billingservice.model.SfValRgDaily;
 import com.bayu.billingservice.model.SkTransaction;

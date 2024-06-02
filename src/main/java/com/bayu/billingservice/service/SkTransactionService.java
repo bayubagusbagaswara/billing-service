@@ -1,10 +1,8 @@
 package com.bayu.billingservice.service;
 
-import com.bayu.billingservice.dto.SkTransactionDTO;
+import com.bayu.billingservice.dto.sktransaction.SkTransactionDTO;
 import com.bayu.billingservice.model.SkTransaction;
-import com.opencsv.exceptions.CsvException;
 
-import java.io.IOException;
 import java.util.List;
 
 public interface SkTransactionService {

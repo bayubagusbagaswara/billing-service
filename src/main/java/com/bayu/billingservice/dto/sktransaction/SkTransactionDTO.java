@@ -1,6 +1,5 @@
-package com.bayu.billingservice.dto;
+package com.bayu.billingservice.dto.sktransaction;
 
-import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

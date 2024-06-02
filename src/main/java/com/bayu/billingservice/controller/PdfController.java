@@ -1,9 +1,8 @@
 package com.bayu.billingservice.controller;
 
-import com.bayu.billingservice.dto.PdfRequest;
+import com.bayu.billingservice.dto.pdf.PdfRequest;
 import com.bayu.billingservice.util.PdfGenerator;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;

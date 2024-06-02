@@ -1,11 +1,10 @@
 package com.bayu.billingservice.controller;
 
-import com.bayu.billingservice.dto.BillingCalculationResponse;
-import com.bayu.billingservice.dto.CoreCalculateRequest;
+import com.bayu.billingservice.dto.billing.BillingCalculationResponse;
+import com.bayu.billingservice.dto.core.CoreCalculateRequest;
 import com.bayu.billingservice.dto.ResponseDTO;
 import com.bayu.billingservice.model.BillingCore;
 import com.bayu.billingservice.service.CoreType1Service;
-import jakarta.persistence.Cache;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

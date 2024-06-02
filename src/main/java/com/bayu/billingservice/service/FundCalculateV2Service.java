@@ -1,6 +1,6 @@
 package com.bayu.billingservice.service;
 
-import com.bayu.billingservice.dto.BillingCalculationResponse;
+import com.bayu.billingservice.dto.billing.BillingCalculationResponse;
 import com.bayu.billingservice.dto.fund.FeeReportRequest;
 
 import java.util.List;

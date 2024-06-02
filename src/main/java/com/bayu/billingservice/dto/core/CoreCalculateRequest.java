@@ -1,4 +1,4 @@
-package com.bayu.billingservice.dto;
+package com.bayu.billingservice.dto.core;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
