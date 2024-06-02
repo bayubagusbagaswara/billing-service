@@ -52,7 +52,7 @@ public class FundCalculateV2ServiceImpl implements FundCalculateV2Service {
         /* initialize response */
         Integer totalDataSuccess = 0;
         Integer totalDataFailed = 0;
-        List<BillingCalculationErrorMessageDTO> calculationErrorMessages = new ArrayList<>();
+        List<BillingCalculationErrorMessageDTO> errorMessageList = new ArrayList<>();
 
         /* get data month minus 1 */
         Map<String, String> monthMinus1 = convertDateUtil.getMonthMinus1();
@@ -97,22 +97,22 @@ public class FundCalculateV2ServiceImpl implements FundCalculateV2Service {
                         billingNumberService.saveSingleNumber(number);
                         totalDataSuccess++;
                     } else {
-                        addErrorMessage(calculationErrorMessages, customer.getCustomerCode(), "Billing already paid for period " + month + " " + year);
+                        addErrorMessage(errorMessageList, customer.getCustomerCode(), "Billing already paid for period " + month + " " + year);
                         totalDataFailed++;
                     }
                 } else {
-                    addErrorMessage(calculationErrorMessages, customer.getCustomerCode(), "No transaction data from SkTrans for period " + month + " " + year);
+                    addErrorMessage(errorMessageList, customer.getCustomerCode(), "No transaction data from SkTrans for period " + month + " " + year);
                     totalDataFailed++;
                 }
             } catch(Exception e) {
                 log.error("Error processing customer code {}: {}", aid, e.getMessage(), e);
-                handleGeneralError(aid, e, validationErrors, calculationErrorMessages);
+                handleGeneralError(aid, e, validationErrors, errorMessageList);
                 totalDataFailed++;
             }
         }
 
         log.info("Total successful calculations: {}, total failed calculations: {}", totalDataSuccess, totalDataFailed);
-        return new BillingCalculationResponse(totalDataSuccess, totalDataFailed, calculationErrorMessages);
+        return new BillingCalculationResponse(totalDataSuccess, totalDataFailed, errorMessageList);
     }
 
     private BillingFund createBillingFund(BillingFundParameter params) {
