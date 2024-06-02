@@ -59,6 +59,12 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
+    public Customer getByCustomerCodeAndSubCodeAndBillingCategoryAndBillingType(String customerCode, String subCode, String billingCategory, String billingType) {
+        return customerRepository.findByCustomerCodeAndSubCodeAndBillingCategoryAndBillingType(customerCode, subCode, billingCategory, billingType)
+                .orElseThrow(() -> new DataNotFoundException("Customer not found with customer code: " + customerCode + ", sub code: " + subCode + ", billing category: " + billingCategory + ", and billing type: " + billingType));
+    }
+
+    @Override
     public List<Customer> getAllByBillingCategoryAndBillingType(String billingCategory, String billingType) {
         return customerRepository.findAllByBillingCategoryAndBillingType(billingCategory, billingType);
     }

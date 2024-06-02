@@ -12,6 +12,8 @@ public interface CustomerService {
 
     List<CustomerDTO> getAll();
 
+    Customer getByCustomerCodeAndSubCodeAndBillingCategoryAndBillingType(String customerCode, String subCode, String billingCategory, String billingType);
+
     List<Customer> getAllByBillingCategoryAndBillingType(String billingCategory, String billingType);
 
     String deleteAll();
