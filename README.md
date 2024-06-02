@@ -1025,3 +1025,29 @@ public CalculateBillingResponse calculateV2(CoreCalculateRequest request) {
     }
 
 
+else {
+if (billingFundRepository.findByCustomerCodeAndBillingCategoryAndBillingTypeAndMonthAndYearAndPaid(aid, FUND.getValue(), TYPE_1.getValue(), month, year, true).isPresent()) {
+List<String> errorMessages = new ArrayList<>();
+errorMessages.add("Billing with customer code " + customer.getCustomerCode() + " period "+ month + " " + year + " has already been paid and cannot be regenerated.");
+BillingCalculationErrorMessageDTO calculationErrorMessageDTO = new BillingCalculationErrorMessageDTO(customer.getCustomerCode(), errorMessages);
+calculationErrorMessages.add(calculationErrorMessageDTO);
+totalDataFailed++;
+}
+}
+
+
+# Format Billing Number
+C001/SS-BS/0624
+C002/SS-BS/0624
+C003/SS-BS/0624
+C004/SS-BS/0624
+
+C100/SS-BS/0624
+C101/SS-BS/0624
+C102/SS-BS/0624
+C103/SS-BS/0624
+
+C1000/SS-BS/0624
+C1001/SS-BS/0624
+C1002/SS-BS/0624
+C1003/SS-BS/0624
