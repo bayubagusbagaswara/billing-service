@@ -29,7 +29,7 @@ import static com.bayu.billingservice.model.enumerator.FeeParameter.*;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class FundCalculateCalculateServiceImpl implements FundCalculateService {
+public class FundCalculateServiceImpl implements FundCalculateService {
 
     private final CustomerService customerService;
     private final SkTransactionService skTransactionService;
@@ -141,7 +141,6 @@ public class FundCalculateCalculateServiceImpl implements FundCalculateService {
                                     .accountName(billingCustomer.getAccountName())
 
                                     .currency(billingCustomer.getCurrency())
-                                    .customerFee(customerFee)
 
                                     .accrualCustodialFee(accrualCustodialFee)
                                     .bis4TransactionValueFrequency(transactionBISSSSTotal)
