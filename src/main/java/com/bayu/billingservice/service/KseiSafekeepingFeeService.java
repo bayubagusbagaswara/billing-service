@@ -16,7 +16,7 @@ public interface KseiSafekeepingFeeService {
 
     List<KseiSafekeepingFee> getByCustomerCode(String customerCode);
 
-    BigDecimal calculateAmountFeeByCustomerCodeAndMonthAndYear(String customerCode, String month, int year);
+    BigDecimal calculateAmountFeeByKseiSafeCodeAndMonthAndYear(String kseiSafeCode, String month, int year);
 
     BigDecimal calculateAmountFeeForLast3Months(String customerCode, String month, int year);
 

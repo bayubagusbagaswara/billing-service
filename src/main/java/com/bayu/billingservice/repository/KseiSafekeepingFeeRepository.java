@@ -32,4 +32,15 @@ public interface KseiSafekeepingFeeRepository extends JpaRepository<KseiSafekeep
     @Query("DELETE FROM KseiSafekeepingFee k WHERE k.month = :month AND k.year = :year")
     void deleteByMonthAndYear(@Param("month") String month, @Param("year") Integer year);
 
+    @Query(value = "SELECT * FROM ksei_safekeeping_fee " +
+            "WHERE ksei_safe_code = :kseiSafeCode " +
+            "AND month = :month " +
+            "AND year = :year " +
+            "AND ksei_safe_code <> ''", nativeQuery = true)
+    Optional<KseiSafekeepingFee> findByKseiSafeCodeAndMonthAndYear(
+            @Param("kseiSafeCode") String kseiSafeCode,
+            @Param("month") String monthName,
+            @Param("year") int year
+    );
+
 }

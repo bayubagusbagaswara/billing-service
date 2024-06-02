@@ -125,23 +125,19 @@ public class KseiSafekeepingFeeServiceImpl implements KseiSafekeepingFeeService 
     }
 
     @Override
-    public BigDecimal calculateAmountFeeByCustomerCodeAndMonthAndYear(String customerCode, String month, int year) {
+    public BigDecimal calculateAmountFeeByKseiSafeCodeAndMonthAndYear(String kseiSafeCode, String monthName, int year) {
         BigDecimal vatFee = feeParameterService.getValueByName(FeeParameter.VAT.getValue());
-        log.info("[Ksei Safe Service] VAT Fee : {}", vatFee);
 
-        KseiSafekeepingFee kseiSafekeepingFee = kseiSafekeepingFeeRepository.findByCustomerCodeAndMonthAndYear(customerCode, month, year)
-                .orElseThrow(() -> new DataNotFoundException("KSEI Safe with customer code '" + customerCode + "' and Month Year '" + month + year + "' not found."));
+        KseiSafekeepingFee kseiSafekeepingFee = kseiSafekeepingFeeRepository.findByKseiSafeCodeAndMonthAndYear(kseiSafeCode, monthName, year)
+                .orElseThrow(() -> new DataNotFoundException("KSEI Safekeeping Fee not found with ksei safe code " + kseiSafeCode + ", month " + monthName + ", and year " + year));
 
         BigDecimal amountFee = kseiSafekeepingFee.getAmountFee();
-        log.info("Customer Code: {}, Amount Fee: {}", kseiSafekeepingFee.getCustomerCode(), amountFee);
 
-        BigDecimal valueAfterVAT = amountFee.multiply(vatFee).setScale(0, RoundingMode.HALF_UP);
-        log.info("Value after VAT : {}", valueAfterVAT);
+        BigDecimal valueAfterVAT = amountFee.multiply(vatFee)
+                .divide(new BigDecimal(100), 0, RoundingMode.HALF_UP)
+                .setScale(0, RoundingMode.HALF_UP);
 
-        BigDecimal totalAmount = amountFee.add(valueAfterVAT).setScale(0, RoundingMode.HALF_UP);
-        log.info("Total Amount : {}", totalAmount);
-
-        return totalAmount;
+        return amountFee.add(valueAfterVAT).setScale(0, RoundingMode.HALF_UP);
     }
 
     @Override

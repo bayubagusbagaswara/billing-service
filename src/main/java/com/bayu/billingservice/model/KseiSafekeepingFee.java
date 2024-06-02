@@ -33,8 +33,8 @@ public class KseiSafekeepingFee {
     @Column(name = "fee_description")
     private String feeDescription;
 
-    @Column(name = "customer_code")
-    private String customerCode;
+    @Column(name = "ksei_safe_code")
+    private String kseiSafeCode;
 
     @Column(name = "amount_fee")
     private BigDecimal amountFee;
