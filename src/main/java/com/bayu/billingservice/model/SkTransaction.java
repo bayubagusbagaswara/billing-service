@@ -1,6 +1,5 @@
 package com.bayu.billingservice.model;
 
-import com.bayu.billingservice.model.base.BaseAudit;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -8,14 +7,13 @@ import lombok.experimental.SuperBuilder;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-@EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "sk_trans")
 @Data
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class SkTransaction extends BaseAudit {
+public class SkTransaction {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
