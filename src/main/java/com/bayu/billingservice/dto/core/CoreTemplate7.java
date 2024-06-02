@@ -16,7 +16,14 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 public class CoreTemplate7 {
 
-    private Integer transactionHandlingValueFrequency;
-    private BigDecimal transactionHandlingFee;
-    private BigDecimal transactionHandlingAmountDue;
+    private String accountCostCenterDebit;
+
+    private BigDecimal safekeepingValueFrequency;
+
+    private BigDecimal safekeepingFee;
+
+    private BigDecimal safekeepingAmountDue;
+
+    private String safekeepingJournal;
+
 }
