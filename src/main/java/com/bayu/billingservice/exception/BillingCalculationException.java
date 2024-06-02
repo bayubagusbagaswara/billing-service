@@ -4,13 +4,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-public class CalculateBillingException extends RuntimeException {
+public class BillingCalculationException extends RuntimeException {
 
-    public CalculateBillingException() {
+    public BillingCalculationException() {
         super();
     }
 
-    public CalculateBillingException(String message) {
+    public BillingCalculationException(String message) {
         super(message);
     }
 }

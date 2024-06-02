@@ -50,9 +50,9 @@ public class GlobalExceptionHandler {
         return ResponseEntity.ok().body(response);
     }
 
-    @ExceptionHandler(CalculateBillingException.class)
+    @ExceptionHandler(BillingCalculationException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ResponseEntity<ErrorResponseDTO> handleCalculateBillingException(CalculateBillingException ex) {
+    public ResponseEntity<ErrorResponseDTO> handleCalculateBillingException(BillingCalculationException ex) {
         ErrorResponseDTO response = ErrorResponseDTO.builder()
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .errorCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
