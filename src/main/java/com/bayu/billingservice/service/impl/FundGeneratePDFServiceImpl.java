@@ -59,7 +59,7 @@ public class FundGeneratePDFServiceImpl implements FundGeneratePDFService {
             String month = "";
             Integer year = 1;
 
-            List<BillingFund> billingFundList = billingFundRepository.findAllByBillingCategoryAndMonthAndYearAndApprovalStatus(
+            List<BillingFund> billingFundList = billingFundRepository.findAllByBillingCategoryAndMonthAndYearAndApprovalStatusIsApproved(
                     category, month, year, approvalStatus
             );
 
