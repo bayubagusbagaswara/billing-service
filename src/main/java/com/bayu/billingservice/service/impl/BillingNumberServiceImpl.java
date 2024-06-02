@@ -60,8 +60,16 @@ public class BillingNumberServiceImpl implements BillingNumberService {
     }
 
     @Override
-    public String generateSingleNumber(String month, int year) {
-        return "";
+    public String generateSingleNumber(String monthName, int year) {
+        Integer maxSequenceNumberByMonthAndYear = getMaxSequenceNumberByMonthAndYear(monthName, year);
+
+        int currentBillingNumber = (maxSequenceNumberByMonthAndYear != null ? maxSequenceNumberByMonthAndYear + 1 : 1); //C0001
+
+        Month month = Month.valueOf(monthName.toUpperCase());
+        String monthFormat = String.format("%02d", month.getValue());
+        int lastTwoDigits = year % 100;
+
+        return String.format("C%03d/SS-BS/%s%d", currentBillingNumber, monthFormat, lastTwoDigits);
     }
 
     @Override
@@ -83,7 +91,6 @@ public class BillingNumberServiceImpl implements BillingNumberService {
 
         for (int i = 0; i < billingSize; i++) {
 
-            // int currentBillingNumber = (maxSequenceNumberByMonthAndYear != null ? maxSequenceNumberByMonthAndYear : 0) + i + 1;
             int currentBillingNumber = (maxSequenceNumberByMonthAndYear != null ? maxSequenceNumberByMonthAndYear + 1 : 1) + i;
 
             Month month = Month.valueOf(monthName.toUpperCase());
@@ -104,7 +111,6 @@ public class BillingNumberServiceImpl implements BillingNumberService {
         BillingNumber billingNumber = billingNumberRepository.findByNumber(number)
                 .orElseThrow(() -> new DataNotFoundException("Billing Number with number '" + number + "' is not found"));
         billingNumberRepository.delete(billingNumber);
-        // return "Successfully delete billing number with number : " + number;
     }
 
     public static BillingNumber parseBillingNumber(String billingNumber) {
