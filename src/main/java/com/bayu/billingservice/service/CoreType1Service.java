@@ -2,7 +2,7 @@ package com.bayu.billingservice.service;
 
 import com.bayu.billingservice.dto.CoreCalculateRequest;
 
-public interface Core1CalculateService {
+public interface CoreType1Service {
 
     String calculate(CoreCalculateRequest request);
 }

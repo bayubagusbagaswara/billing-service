@@ -2,15 +2,12 @@ package com.bayu.billingservice.controller;
 
 import com.bayu.billingservice.dto.CoreCalculateRequest;
 import com.bayu.billingservice.dto.ResponseDTO;
-import com.bayu.billingservice.dto.core.Core1DTO;
-import com.bayu.billingservice.service.Core1CalculateService;
+import com.bayu.billingservice.service.CoreType1Service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @Slf4j
 @RestController
@@ -18,7 +15,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class Core1Controller {
 
-    private final Core1CalculateService calculateService;
+    private final CoreType1Service calculateService;
 
     @PostMapping(path = "/calculate")
     public ResponseEntity<ResponseDTO<String>> calculate(@RequestBody CoreCalculateRequest request) {
