@@ -18,6 +18,7 @@ import lombok.experimental.SuperBuilder;
 public abstract class BaseBilling extends BaseAudit {
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "billing_status")
     private BillingStatus billingStatus;
 
     @Column(name = "customer_code")
@@ -36,7 +37,7 @@ public abstract class BaseBilling extends BaseAudit {
     private String billingNumber;
 
     @Column(name = "bill_period")
-    private String billingPeriod; // November 2023
+    private String billingPeriod;
 
     @Column(name = "bill_statement_date")
     private String billingStatementDate;
@@ -52,10 +53,6 @@ public abstract class BaseBilling extends BaseAudit {
 
     @Column(name = "bill_template")
     private String billingTemplate;
-
-    // Data Investment Management in PDF Template
-    @Column(name = "mi_code")
-    private String investmentManagementCode;
 
     @Column(name = "mi_name")
     private String investmentManagementName;
@@ -87,7 +84,14 @@ public abstract class BaseBilling extends BaseAudit {
     @Column(name = "account_name")
     private String accountName;
 
+    // formatAccountAndCostCenterDebit
     @Column(name = "account_cost_center_debit")
-    private String accountCostCenterDebit;
+    private String accountCostCenterDebit; // yg atas : payment
+
+    @Column(name = "paid")
+    private Boolean paid;
+
+    @Column(name = "gefu_created")
+    private Boolean gefuCreated;
 
 }
