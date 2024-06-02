@@ -1,6 +1,6 @@
 package com.bayu.billingservice.controller;
 
-import com.bayu.billingservice.dto.BillingNumberDTO;
+import com.bayu.billingservice.dto.billingnumber.BillingNumberDTO;
 import com.bayu.billingservice.dto.ResponseDTO;
 import com.bayu.billingservice.service.BillingNumberService;
 import lombok.RequiredArgsConstructor;

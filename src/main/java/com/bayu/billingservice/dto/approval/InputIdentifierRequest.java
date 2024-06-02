@@ -1,4 +1,4 @@
-package com.bayu.billingservice.dto;
+package com.bayu.billingservice.dto.approval;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;

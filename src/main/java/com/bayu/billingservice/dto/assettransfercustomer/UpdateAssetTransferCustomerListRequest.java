@@ -1,6 +1,6 @@
 package com.bayu.billingservice.dto.assettransfercustomer;
 
-import com.bayu.billingservice.dto.InputIdentifierRequest;
+import com.bayu.billingservice.dto.approval.InputIdentifierRequest;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

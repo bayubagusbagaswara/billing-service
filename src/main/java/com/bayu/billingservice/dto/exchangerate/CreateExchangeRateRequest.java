@@ -1,6 +1,6 @@
 package com.bayu.billingservice.dto.exchangerate;
 
-import com.bayu.billingservice.dto.InputIdentifierRequest;
+import com.bayu.billingservice.dto.approval.InputIdentifierRequest;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

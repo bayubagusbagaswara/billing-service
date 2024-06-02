@@ -1,6 +1,6 @@
 package com.bayu.billingservice.dto.feeschedule;
 
-import com.bayu.billingservice.dto.InputIdentifierRequest;
+import com.bayu.billingservice.dto.approval.InputIdentifierRequest;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import lombok.experimental.SuperBuilder;

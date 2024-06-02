@@ -1,9 +1,8 @@
 package com.bayu.billingservice.dto.feeparameter;
 
-import com.bayu.billingservice.dto.ApprovalIdentifierRequest;
+import com.bayu.billingservice.dto.approval.ApprovalIdentifierRequest;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-import org.modelmapper.internal.bytebuddy.implementation.bind.annotation.Super;
 
 @EqualsAndHashCode(callSuper = true)
 @Data

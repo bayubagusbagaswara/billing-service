@@ -1,6 +1,6 @@
 package com.bayu.billingservice.dto.investmentmanagement;
 
-import com.bayu.billingservice.dto.InputIdentifierRequest;
+import com.bayu.billingservice.dto.approval.InputIdentifierRequest;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 

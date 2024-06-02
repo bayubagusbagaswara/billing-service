@@ -1,6 +1,6 @@
 package com.bayu.billingservice.service;
 
-import com.bayu.billingservice.dto.BillingNumberDTO;
+import com.bayu.billingservice.dto.billingnumber.BillingNumberDTO;
 
 import java.util.List;
 

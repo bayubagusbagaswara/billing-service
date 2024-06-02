@@ -1,6 +1,6 @@
 package com.bayu.billingservice.dto.exchangerate;
 
-import com.bayu.billingservice.dto.ApprovalIdentifierRequest;
+import com.bayu.billingservice.dto.approval.ApprovalIdentifierRequest;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 

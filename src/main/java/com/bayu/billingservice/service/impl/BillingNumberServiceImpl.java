@@ -1,6 +1,6 @@
 package com.bayu.billingservice.service.impl;
 
-import com.bayu.billingservice.dto.BillingNumberDTO;
+import com.bayu.billingservice.dto.billingnumber.BillingNumberDTO;
 import com.bayu.billingservice.exception.DataNotFoundException;
 import com.bayu.billingservice.exception.GeneralException;
 import com.bayu.billingservice.model.BillingNumber;
