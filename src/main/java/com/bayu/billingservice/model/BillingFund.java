@@ -19,9 +19,6 @@ public class BillingFund extends BaseBilling {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "customer_fee")
-    private BigDecimal customerFee;
-
     @Column(name = "accrual_custodial_fee")
     private BigDecimal accrualCustodialFee;
 
