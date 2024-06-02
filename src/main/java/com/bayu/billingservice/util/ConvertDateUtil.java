@@ -1,5 +1,6 @@
 package com.bayu.billingservice.util;
 
+import com.bayu.billingservice.exception.GeneralException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -205,27 +206,48 @@ public class ConvertDateUtil {
     }
 
     public Map<String, String> getMonthMinus1() {
-        LocalDate currentDate = LocalDate.now();
-        int currentMonth = currentDate.getMonthValue();
-        int currentYear = currentDate.getYear();
+        try {
+            LocalDate currentDate = LocalDate.now();
+            int currentMonth = currentDate.getMonthValue();
+            int currentYear = currentDate.getYear();
 
-        int newMonth = currentMonth - 1;
-        if (newMonth == 0) {
-            newMonth = 12;
-            currentYear--;
+            int newMonth = currentMonth - 1;
+            if (newMonth == 0) {
+                newMonth = 12;
+                currentYear--;
+            }
+
+            LocalDate previousMonthYear = LocalDate.of(currentYear, newMonth, 1);
+            String monthName = previousMonthYear.getMonth().getDisplayName(TextStyle.FULL, getLocaleEN());
+            int monthValue = previousMonthYear.getMonth().getValue();
+            String formattedMonthValue = (monthValue < 10) ? "0" + monthValue : String.valueOf(monthValue);
+            int year = previousMonthYear.getYear();
+
+            Map<String, String> monthYear = new HashMap<>();
+            monthYear.put("monthName", monthName);
+            monthYear.put("monthValue", formattedMonthValue);
+            monthYear.put("year", String.valueOf(year));
+            return monthYear;
+        } catch (Exception e) {
+            log.error("Error when get month minus 1: {}", e.getMessage(), e);
+            throw new GeneralException(e.getMessage());
         }
+    }
 
-        LocalDate previousMonthYear = LocalDate.of(currentYear, newMonth, 1);
-        String monthName = previousMonthYear.getMonth().getDisplayName(TextStyle.FULL, getLocaleEN());
-        int monthValue = previousMonthYear.getMonth().getValue();
-        String formattedMonthValue = (monthValue < 10) ? "0" + monthValue : String.valueOf(monthValue);
-        int year = previousMonthYear.getYear();
+    public Map<String, String> getMonthNow() {
+        try {
+            LocalDate currentDate = LocalDate.now();
+            String monthName = currentDate.getMonth().getDisplayName(TextStyle.FULL, getLocaleEN());
+            int year = currentDate.getYear();
 
-        Map<String, String> monthYear = new HashMap<>();
-        monthYear.put("monthName", monthName);
-        monthYear.put("monthValue", formattedMonthValue);
-        monthYear.put("year", String.valueOf(year));
-        return monthYear;
+            Map<String, String> monthYear = new HashMap<>();
+            monthYear.put("monthName", monthName);
+            monthYear.put("year", String.valueOf(year));
+            return monthYear;
+        } catch (Exception e) {
+            log.error("Error when get month now: {}", e.getMessage(), e);
+            throw new GeneralException(e.getMessage());
+        }
     }
 
 }
