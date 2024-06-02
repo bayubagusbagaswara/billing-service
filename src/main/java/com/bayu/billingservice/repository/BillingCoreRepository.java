@@ -6,37 +6,21 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface BillingCoreRepository extends JpaRepository<BillingCore, Long> {
 
-    @Query(value = "SELECT * FROM billing_cores " +
-            "WHERE bill_category = :billingCategory " +
-            "AND bill_type = :billingType " +
-            "AND month = :month " +
-            "AND year = :year " +
-            "AND approval_status = :approvalStatus", nativeQuery = true)
-    List<BillingCore> findAllByBillingCategoryAndBillingTypeAndMonthAndYearAndApprovalStatus(
-            @Param("billingCategory") String billingCategory,
-            @Param("billingType") String billingType,
-            @Param("month") String month,
-            @Param("year") int year,
-            @Param("approvalStatus") String approvalStatus
-    );
-
-    @Query(value = "SELECT * FROM billing_cores " +
-            "WHERE aid = :aid " +
+    @Query(value = "SELECT * FROM billing_core WHERE customer_code = :customerCode " +
             "AND bill_category = :billingCategory " +
             "AND bill_type = :billingType " +
-            "AND month = :month " +
+            "AND month = :monthName " +
             "AND year = :year", nativeQuery = true)
-    Optional<BillingCore> findByAidAndBillingCategoryAndBillingTypeAndMonthAndYear(
-            @Param("aid") String aid,
+    Optional<BillingCore> findByCustomerCodeAndBillingCategoryAndBillingTypeAndMonthAndYear(
+            @Param("customerCode") String customerCode,
             @Param("billingCategory") String billingCategory,
             @Param("billingType") String billingType,
-            @Param("month") String monthName,
-            @Param("year") int year);
+            @Param("monthName") String monthName,
+            @Param("year") Integer year);
 
 }
