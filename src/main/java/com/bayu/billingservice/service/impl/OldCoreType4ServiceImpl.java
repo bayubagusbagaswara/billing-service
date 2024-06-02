@@ -74,7 +74,7 @@ public class OldCoreType4ServiceImpl implements OldCoreType4Service {
 //                    billingCore = calculateITAMA(aid, billingTemplate, customerSafekeepingFee, vatFee, sfValRgDailyList);
 //                }
 //
-//                // TODO: Set fields common to BillingCore, common to Core 4 (EB and ITAMA)
+//                // Set fields common to BillingCore, common to Core 4 (EB and ITAMA)
 //                billingCore.setApprovalStatus(ApprovalStatus.PENDING);
 //                billingCore.setMonth(monthName);
 //                billingCore.setYear(year);
@@ -114,7 +114,7 @@ public class OldCoreType4ServiceImpl implements OldCoreType4Service {
         return null;
     }
 
-    // TODO: [ITAMA] Calculate Safekeeping Value Frequency [DONE]
+    // [ITAMA] Calculate Safekeeping Value Frequency [DONE]
     private static BigDecimal calculateSafekeepingValueFrequency(String aid, List<SfValRgDaily> sfValRgDailyList) {
         // Find the latest entries
         List<SfValRgDaily> latestEntries = sfValRgDailyList.stream()
@@ -138,7 +138,7 @@ public class OldCoreType4ServiceImpl implements OldCoreType4Service {
         return safekeepingValueFrequency;
     }
 
-    // TODO: [ITAMA] Calculate Safekeeping Amount Due [DONE]
+    // [ITAMA] Calculate Safekeeping Amount Due [DONE]
     private static BigDecimal calculateSafekeepingAmountDue(String aid, List<SfValRgDaily> sfValRgDailyList) {
         BigDecimal safekeepingAmountDue = sfValRgDailyList.stream()
                 .map(SfValRgDaily::getEstimationSafekeepingFee)
@@ -150,21 +150,21 @@ public class OldCoreType4ServiceImpl implements OldCoreType4Service {
         return safekeepingAmountDue;
     }
 
-    // TODO: [ITAMA] Calculate VAT Amount Due [DONE]
+    // [ITAMA] Calculate VAT Amount Due [DONE]
     private static BigDecimal calculateVatAmountDue(String aid, BigDecimal subTotalAmountDue, BigDecimal vatFee) {
         BigDecimal vatAmountDue = subTotalAmountDue.multiply(vatFee).setScale(0, RoundingMode.HALF_UP);
         log.info("[Core Type 4 ITAMA] VAT amount due Aid '{}' is '{}'", aid, vatAmountDue);
         return vatAmountDue;
     }
 
-    // TODO: [ITAMA] Calculate Total Amount Due [DONE]
+    // [ITAMA] Calculate Total Amount Due [DONE]
     private static BigDecimal calculateTotalAmountDueITAMA(String aid, BigDecimal safekeepingAmountDue, BigDecimal vatAmountDue) {
         BigDecimal totalAmountDueITAMA = safekeepingAmountDue.add(vatAmountDue);
         log.info("[Core Type 4] Total amount due ITAMA Aid '{}' is '{}'", aid, vatAmountDue);
         return totalAmountDueITAMA;
     }
 
-    // TODO: [ITAMA] Create Object Itama to BilingCore model [DONE]
+    // [ITAMA] Create Object Itama to BilingCore model [DONE]
     private static BillingCore calculateITAMA(String aid, String billingTemplate, BigDecimal customerSafekeepingFee, BigDecimal vatFee, List<SfValRgDaily> sfValRgDailyList) {
         BigDecimal safekeepingValueFrequency = calculateSafekeepingValueFrequency(aid, sfValRgDailyList);
         BigDecimal safekeepingAmountDue = calculateSafekeepingAmountDue(aid, sfValRgDailyList);
@@ -183,14 +183,14 @@ public class OldCoreType4ServiceImpl implements OldCoreType4Service {
                 .build();
     }
 
-    // TODO: [EB] Calculate Transaction Value Frequency [DONE]
+    // [EB] Calculate Transaction Value Frequency [DONE]
     private static int calculateTransactionHandlingValueFrequency(String aid, List<SkTransaction> skTransactionList) {
         int totalTransactionHandling = skTransactionList.size();
         log.info("[Core Type 4 EB] Total transaction handling Aid '{}' is '{}'", aid, totalTransactionHandling);
         return totalTransactionHandling;
     }
 
-    // TODO: [EB] Calculate KSEI Transaction Amount Due [DONE]
+    // [EB] Calculate KSEI Transaction Amount Due [DONE]
     private static BigDecimal calculateKSEITransactionAmountDue(String aid, BigDecimal kseiTransactionFee, Integer transactionValueFrequency) {
         BigDecimal kseiTransactionAmountDue = kseiTransactionFee.multiply(new BigDecimal(transactionValueFrequency))
                 .setScale(0, RoundingMode.HALF_UP);
@@ -198,14 +198,14 @@ public class OldCoreType4ServiceImpl implements OldCoreType4Service {
         return kseiTransactionAmountDue;
     }
 
-    // TODO: [EB] Calculate Total Amount Due
+    // [EB] Calculate Total Amount Due
     private static BigDecimal calculateTotalAmountDueEB(String aid, BigDecimal kseiSafekeepingAmountDue, BigDecimal kseiTransactionAmountDue) {
         BigDecimal totalAmountDueEB = kseiSafekeepingAmountDue.add(kseiTransactionAmountDue);
         log.info("[Core Type 4 EB] Total amount due Aid '{}' is '{}'", aid, totalAmountDueEB);
         return totalAmountDueEB;
     }
 
-    // TODO: [EB] Create Object EB to BillingCore model [DONE]
+    // [EB] Create Object EB to BillingCore model [DONE]
     private static BillingCore calculateEB(String aid, String billingTemplate, BigDecimal kseiSafeFeeAmount, BigDecimal kseiTransactionFee, List<SkTransaction> skTransactionList) {
         int kseiTransactionValueFrequency = calculateTransactionHandlingValueFrequency(aid, skTransactionList);
         BigDecimal kseiTransactionAmountDue = calculateKSEITransactionAmountDue(aid, kseiTransactionFee, kseiTransactionValueFrequency);
