@@ -18,7 +18,7 @@ import java.util.*;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class Core4CalculateServiceImpl implements Core4CalculateService {
+public class CoreType4ServiceImpl implements CoreType4Service {
 
     private final FeeParameterService feeParameterService;
     private final SkTransactionService skTransactionService;
