@@ -13,7 +13,7 @@ public interface FeeParameterService {
 
     boolean isCodeAlreadyExists(String code);
 
-    public boolean isNameAlreadyExists(String name);
+    boolean isNameAlreadyExists(String name);
 
     List<FeeParameterDTO> getAll();
 
