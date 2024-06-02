@@ -1,151 +1,175 @@
 package com.bayu.billingservice.service.impl;
 
+import com.bayu.billingservice.dto.BillingCalculationErrorMessageDTO;
+import com.bayu.billingservice.dto.BillingCalculationResponse;
 import com.bayu.billingservice.dto.CoreCalculateRequest;
-import com.bayu.billingservice.model.SfValRgDaily;
-import com.bayu.billingservice.model.SkTransaction;
+import com.bayu.billingservice.dto.investmentmanagement.InvestmentManagementDTO;
+import com.bayu.billingservice.model.*;
+import com.bayu.billingservice.model.enumerator.ApprovalStatus;
+import com.bayu.billingservice.model.enumerator.BillingStatus;
+import com.bayu.billingservice.model.enumerator.FeeParameter;
 import com.bayu.billingservice.repository.BillingCoreRepository;
 import com.bayu.billingservice.service.*;
 import com.bayu.billingservice.util.ConvertDateUtil;
+import com.bayu.billingservice.util.StringUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.Instant;
 import java.util.*;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class CoreType1ServiceImpl implements CoreType1Service {
 
+    private final BillingCoreRepository billingCoreRepository;
+    private final CustomerService customerService;
+    private final InvestmentManagementService investmentManagementService;
     private final FeeParameterService feeParameterService;
     private final SkTransactionService skTransactionService;
     private final SfValRgDailyService sfValRgDailyService;
     private final BillingNumberService billingNumberService;
-    private final BillingCoreRepository billingCoreRepository;
     private final ConvertDateUtil convertDateUtil;
-    private final CustomerService customerService;
 
     @Override
-    public String calculate(CoreCalculateRequest request) {
-//        log.info("Start calculate Billing Core type 1 with request : {}", request);
-//        try {
-//            String categoryUpperCase = request.getCategory().toUpperCase();
-//            String typeUpperCase = StringUtil.replaceBlanksWithUnderscores(request.getType());
-//
-//            Map<String, String> monthMinus1 = convertDateUtil.getMonthMinus1();
-//            String monthName = monthMinus1.get("monthName");
-//            int year = Integer.parseInt(monthMinus1.get("year"));
-//
-//            // Initialization variable
-//            int transactionHandlingValueFrequency;
-//            BigDecimal transactionHandlingAmountDue;
-//            BigDecimal safekeepingValueFrequency;
-//            BigDecimal safekeepingAmountDue;
-//            BigDecimal subTotal;
-//            BigDecimal vatAmountDue;
-//            BigDecimal totalAmountDue;
-//            Instant dateNow = Instant.now();
-//            int totalDataSuccess = 0;
-//
-//            BigDecimal vatFee = feeParameterService.getValueByName(FeeParameter.VAT.name());
-//
-//            List<Customer> billingCustomerList = customerService.getAllByBillingCategoryAndBillingType(categoryUpperCase, typeUpperCase);
-//
-//            for (BillingCustomer billingCustomer : billingCustomerList) {
-//                String aid = billingCustomer.getCustomerCode();
-//                BigDecimal customerMinimumFee = billingCustomer.getCustomerMinimumFee();
-//                BigDecimal customerSafekeepingFee = billingCustomer.getCustomerSafekeepingFee();
-//                BigDecimal transactionHandlingFee = billingCustomer.getCustomerTransactionHandling();
-//                String billingCategory = billingCustomer.getBillingCategory();
-//                String billingType = billingCustomer.getBillingType();
-//                String miCode = billingCustomer.getMiCode();
-//
-//                // check and delete existing billing data with the same month and year
-//                coreGeneralService.checkingExistingBillingCore(monthName, year, aid, billingCategory, billingType);
-//
-//                InvestmentManagementDTO billingMIDTO = billingMIService.getByCode(miCode);
-//
-//                List<SkTransaction> skTransactionList = skTranService.getAllByAidAndMonthAndYear(aid, monthName, year);
-//
-//                List<SfValRgDaily> sfValRgDailyList = sfValRgDailyService.getAllByAidAndMonthAndYear(aid, monthName, year);
-//
-//                transactionHandlingValueFrequency = calculateTransactionHandlingValueFrequency(aid, skTransactionList);
-//
-//                transactionHandlingAmountDue = calculateTransactionHandlingAmountDue(aid, transactionHandlingFee, transactionHandlingValueFrequency);
-//
-//                safekeepingValueFrequency = calculateSafekeepingValueFrequency(aid, sfValRgDailyList);
-//
-//                safekeepingAmountDue = calculateSafekeepingAmountDue(aid, sfValRgDailyList);
-//
-//                subTotal = calculateSubTotalAmountDue(aid, transactionHandlingAmountDue, safekeepingAmountDue);
-//
-//                vatAmountDue = calculateVatAmountDue(aid, subTotal, vatFee);
-//
-//                totalAmountDue = calculateTotalAmountDue(aid, subTotal, vatAmountDue);
-//
-//                BillingCore billingCore = BillingCore.builder()
-//                        .createdAt(dateNow)
-//                        .updatedAt(dateNow)
-//                        .approvalStatus(ApprovalStatus.PENDING)
-//                        .billingStatus(BillingStatus.Generated)
-//                        .customerCode(billingCustomer.getCustomerCode())
-//                        .customerName(billingCustomer.getCustomerName())
-//                        .month(monthName)
-//                        .year(year)
-//                        .billingPeriod(monthName + " " + year)
-//                        .billingStatementDate(ConvertDateUtil.convertInstantToString(dateNow))
-//                        .billingPaymentDueDate(ConvertDateUtil.convertInstantToStringPlus14Days(dateNow))
-//                        .billingCategory(billingCustomer.getBillingCategory())
-//                        .billingType(billingCustomer.getBillingType())
-//                        .billingTemplate(billingCustomer.getBillingTemplate())
-//                        .investmentManagementName(billingMIDTO.getName())
-//                        .investmentManagementAddress1(billingMIDTO.getAddress1())
-//                        .investmentManagementAddress2(billingMIDTO.getAddress2())
-//                        .investmentManagementAddress3(billingMIDTO.getAddress3())
-//                        .investmentManagementAddress4(billingMIDTO.getAddress4())
-//                        .investmentManagementEmail(billingMIDTO.getEmail())
-//                        .investmentManagementUniqueKey(billingMIDTO.getUniqueKey())
-//
-//                        .customerMinimumFee(customerMinimumFee)
-//                        .customerSafekeepingFee(customerSafekeepingFee)
-//
-//                        .gefuCreated(false)
-//                        .paid(false)
-//                        .accountName(billingCustomer.getAccountName())
-//                        .account(billingCustomer.getAccount())
-//                        .currency(billingCustomer.getCurrency())
-//
-//                        .transactionHandlingValueFrequency(transactionHandlingValueFrequency)
-//                        .transactionHandlingFee(transactionHandlingFee)
-//                        .transactionHandlingAmountDue(transactionHandlingAmountDue)
-//                        .safekeepingValueFrequency(safekeepingValueFrequency)
-//                        .safekeepingFee(customerSafekeepingFee)
-//                        .safekeepingAmountDue(safekeepingAmountDue)
-//                        .subTotal(subTotal)
-//                        .vatFee(vatFee)
-//                        .vatAmountDue(vatAmountDue)
-//                        .totalAmountDue(totalAmountDue)
-//                        .build();
-//
-//                String number = billingNumberService.generateSingleNumber(monthName, year);
-//                billingCore.setBillingNumber(number);
-//                billingCoreRepository.save(billingCore);
-//                billingNumberService.saveSingleNumber(number);
-//                totalDataSuccess++;
-//            }
-//            log.info("Finished calculate Billing Core type 1 with month year: {}", request.getMonthYear());
-//            return "Successfully calculated Billing Core type 1 with total: " + totalDataSuccess;
-//        } catch (Exception e) {
-//            log.error("Error when calculate Billing Core type 1: {}", e.getMessage(), e);
-//            throw new CalculateBillingException("Error when calculate Billing Core type 1", e);
-//        }
-        return null;
+    public BillingCalculationResponse calculate(CoreCalculateRequest request) {
+        log.info("Start core billing calculation type 1 with a data request: {}", request);
+
+        /* initialize response */
+        Integer totalDataSuccess = 0;
+        Integer totalDataFailed = 0;
+        List<BillingCalculationErrorMessageDTO> errorMessageList = new ArrayList<>();
+
+        /* initialize billing variable */
+        Instant dateNow = Instant.now();
+        String categoryUpperCase = request.getCategory().toUpperCase();
+        String typeUpperCase = StringUtil.replaceBlanksWithUnderscores(request.getType());
+
+        /* get data data month minus 1 */
+        Map<String, String> monthMinus1 = convertDateUtil.getMonthMinus1();
+        String monthNameMinus1 = monthMinus1.get("monthName");
+        int yearMinus1 = Integer.parseInt(monthMinus1.get("year"));
+
+        /* get data month now */
+        Map<String, String> monthNow = convertDateUtil.getMonthNow();
+        String monthNameNow = monthNow.get("monthName");
+        int yearNow = Integer.parseInt(monthNow.get("year"));
+
+        /* get data fee parameter */
+        BigDecimal vatFee = feeParameterService.getValueByName(FeeParameter.VAT.getValue());
+
+        /* start calculation */
+
+        /* get all data customer Core Type 1*/
+        List<Customer> customerList = customerService.getAllByBillingCategoryAndBillingType(categoryUpperCase, typeUpperCase);
+
+        /* looping customer list */
+        for (Customer customer : customerList) {
+            /* Get all important data from customers */
+            String customerCode = customer.getCustomerCode();
+            String customerName = customer.getCustomerName();
+            BigDecimal customerMinimumFee = customer.getCustomerMinimumFee();
+            BigDecimal customerSafekeepingFee = customer.getCustomerSafekeepingFee();
+            BigDecimal transactionHandlingFee = customer.getCustomerTransactionHandling();
+            String billingCategory = customer.getBillingCategory();
+            String billingType = customer.getBillingType();
+            String billingTemplate = customer.getBillingTemplate();
+            String miCode = customer.getMiCode();
+            String account = customer.getAccount();
+            String accountName = customer.getAccountName();
+            String currency = customer.getCurrency();
+            List<String> validationErrors = new ArrayList<>();
+
+            try {
+                /* get data investment management */
+                InvestmentManagementDTO investmentManagementDTO = investmentManagementService.getByCode(miCode);
+
+                /* get data sk transaction */
+                List<SkTransaction> skTransactionList = skTransactionService.getAllByAidAndMonthAndYear(customerCode, monthNameMinus1, yearMinus1);
+
+                /* get data rg daily */
+                List<SfValRgDaily> sfValRgDailyList = sfValRgDailyService.getAllByAidAndMonthAndYear(customerCode, monthNameMinus1, yearMinus1);
+
+                Optional<BillingCore> existingBillingCore = billingCoreRepository.findByCustomerCodeAndBillingCategoryAndBillingTypeAndMonthAndYear(customerCode, billingCategory, billingType, monthNameMinus1, yearMinus1);
+                if (existingBillingCore.isEmpty() || Boolean.TRUE.equals(!existingBillingCore.get().getPaid())) {
+                    existingBillingCore.ifPresent(this::deleteExistingBillingCore);
+                    /* calculation process */
+                    Integer transactionHandlingValueFrequency = calculateTransactionHandlingValueFrequency(customerCode, skTransactionList);
+                    BigDecimal transactionHandlingAmountDue = calculateTransactionHandlingAmountDue(customerCode, transactionHandlingFee, transactionHandlingValueFrequency);
+                    BigDecimal safekeepingValueFrequency = calculateSafekeepingValueFrequency(customerCode, sfValRgDailyList);
+                    BigDecimal safekeepingAmountDue = calculateSafekeepingAmountDue(customerCode, sfValRgDailyList);
+                    BigDecimal subTotal = calculateSubTotalAmountDue(customerCode, transactionHandlingAmountDue, safekeepingAmountDue);
+                    BigDecimal vatAmountDue = calculateVatAmountDue(customerCode, subTotal, vatFee);
+                    BigDecimal totalAmountDue = calculateTotalAmountDue(customerCode, subTotal, vatAmountDue);
+
+                    /* build billing core */
+                    BillingCore billingCore = BillingCore.builder()
+                            .createdAt(dateNow)
+                            .updatedAt(dateNow)
+                            .approvalStatus(ApprovalStatus.PENDING)
+                            .billingStatus(BillingStatus.GENERATED)
+                            .customerCode(customerCode)
+                            .customerName(customerName)
+                            .month(monthNameMinus1)
+                            .year(yearMinus1)
+                            .billingPeriod(monthNameMinus1 + " " + yearMinus1)
+                            .billingStatementDate(ConvertDateUtil.convertInstantToString(dateNow))
+                            .billingPaymentDueDate(ConvertDateUtil.convertInstantToStringPlus14Days(dateNow))
+                            .billingCategory(billingCategory)
+                            .billingType(billingType)
+                            .billingTemplate(billingTemplate)
+                            .investmentManagementName(investmentManagementDTO.getName())
+                            .investmentManagementAddress1(investmentManagementDTO.getAddress1())
+                            .investmentManagementAddress2(investmentManagementDTO.getAddress2())
+                            .investmentManagementAddress3(investmentManagementDTO.getAddress3())
+                            .investmentManagementAddress4(investmentManagementDTO.getAddress4())
+                            .investmentManagementEmail(investmentManagementDTO.getEmail())
+                            .investmentManagementUniqueKey(investmentManagementDTO.getUniqueKey())
+                            .customerMinimumFee(customerMinimumFee)
+                            .customerSafekeepingFee(customerSafekeepingFee)
+                            .account(account)
+                            .accountName(accountName)
+                            .currency(currency)
+                            .transactionHandlingValueFrequency(transactionHandlingValueFrequency)
+                            .transactionHandlingFee(transactionHandlingFee)
+                            .transactionHandlingAmountDue(transactionHandlingAmountDue)
+                            .safekeepingValueFrequency(safekeepingValueFrequency)
+                            .safekeepingFee(customerSafekeepingFee)
+                            .safekeepingAmountDue(safekeepingAmountDue)
+                            .subTotal(subTotal)
+                            .vatFee(vatFee)
+                            .vatAmountDue(vatAmountDue)
+                            .totalAmountDue(totalAmountDue)
+                            .gefuCreated(false)
+                            .paid(false)
+                            .build();
+
+                    String number = billingNumberService.generateSingleNumber(monthNameNow, yearNow);
+                    billingCore.setBillingNumber(number);
+                    billingCoreRepository.save(billingCore);
+                    billingNumberService.saveSingleNumber(number);
+                    totalDataSuccess++;
+                } else {
+                    addErrorMessage(errorMessageList, customer.getCustomerCode(), "Billing already paid for period " + monthNameMinus1 + " " + yearMinus1);
+                    totalDataFailed++;
+                }
+            } catch (Exception e) {
+                log.error("Error processing customer code {}: {}", customerCode, e.getMessage(), e);
+                handleGeneralError(customerCode, e, validationErrors, errorMessageList);
+                totalDataFailed++;
+            }
+        }
+        log.info("Total successful calculations: {}, total failed calculations: {}", totalDataSuccess, totalDataFailed);
+        return new BillingCalculationResponse(totalDataSuccess, totalDataFailed, errorMessageList);
     }
 
-    private static int calculateTransactionHandlingValueFrequency(String aid, List<SkTransaction> skTransactionList) {
-        int totalTransactionHandling = skTransactionList.size();
+
+    private static Integer calculateTransactionHandlingValueFrequency(String aid, List<SkTransaction> skTransactionList) {
+        Integer totalTransactionHandling = skTransactionList.size();
         log.info("[Core Type 1] Total transaction handling Aid '{}' is '{}'", aid, totalTransactionHandling);
         return totalTransactionHandling;
     }
@@ -206,6 +230,24 @@ public class CoreType1ServiceImpl implements CoreType1Service {
         BigDecimal totalAmountDue = subTotalAmountDue.add(vatAmountDue).setScale(0, RoundingMode.HALF_UP);
         log.info("[Core Type 1] Total amount due Aid '{}' is '{}'", aid, totalAmountDue);
         return totalAmountDue;
+    }
+
+    private void handleGeneralError(String string, Exception e, List<String> validationErrors, List<BillingCalculationErrorMessageDTO> errorMessageList) {
+        log.error("An unexpected error occurred: {}", e.getMessage(), e);
+        validationErrors.add(e.getMessage());
+        errorMessageList.add(new BillingCalculationErrorMessageDTO(string.isEmpty() ? "unknown" : string, validationErrors));
+    }
+
+    private void deleteExistingBillingCore(BillingCore existBillingCore) {
+        String billingNumber = existBillingCore.getBillingNumber();
+        billingCoreRepository.delete(existBillingCore);
+        billingNumberService.deleteByBillingNumber(billingNumber);
+    }
+
+    private void addErrorMessage(List<BillingCalculationErrorMessageDTO> calculationErrorMessages, String customerCode, String message) {
+        List<String> errorMessages = new ArrayList<>();
+        errorMessages.add(message);
+        calculationErrorMessages.add(new BillingCalculationErrorMessageDTO(customerCode, errorMessages));
     }
 
 }
