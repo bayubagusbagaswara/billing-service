@@ -17,43 +17,4 @@ public class Core1Controller {
 
     private final CoreType1Service calculateService;
 
-    @PostMapping(path = "/calculate")
-    public ResponseEntity<ResponseDTO<String>> calculate(@RequestBody CoreCalculateRequest request) {
-        String status = calculateService.calculate(request);
-
-        ResponseDTO<String> response = ResponseDTO.<String>builder()
-                .code(HttpStatus.OK.value())
-                .message(HttpStatus.OK.getReasonPhrase())
-                .payload(status)
-                .build();
-
-        return ResponseEntity.ok().body(response);
-    }
-
-//    @PostMapping(path = "/generate-pdf")
-//    public ResponseEntity<ResponseDTO<String>> generatePdf(@RequestBody CoreCalculateRequest request) {
-//        String status = generatePDFService.generatePDF(request);
-//
-//        ResponseDTO<String> response = ResponseDTO.<String>builder()
-//                .code(HttpStatus.OK.value())
-//                .message(HttpStatus.OK.getReasonPhrase())
-//                .payload(status)
-//                .build();
-//
-//        return ResponseEntity.ok().body(response);
-//    }
-
-//    @GetMapping(path = "/all")
-//    public ResponseEntity<ResponseDTO<List<Core1DTO>>> getAll() {
-//        List<Core1DTO> core1DTOList = generatePDFService.getAll();
-//
-//        ResponseDTO<List<Core1DTO>> response = ResponseDTO.<List<Core1DTO>>builder()
-//                .code(HttpStatus.OK.value())
-//                .message(HttpStatus.OK.getReasonPhrase())
-//                .payload(core1DTOList)
-//                .build();
-//
-//        return ResponseEntity.ok().body(response);
-//    }
-
 }

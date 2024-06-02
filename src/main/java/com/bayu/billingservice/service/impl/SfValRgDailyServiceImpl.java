@@ -53,7 +53,7 @@ public class SfValRgDailyServiceImpl implements SfValRgDailyService {
 
             sfValRgDailyRepository.deleteByMonthAndYear(monthName, year);
 
-            List<String[]> rows = CsvReaderUtil.readCsvFile(filePath);
+            List<String[]> rows = CsvReaderUtil.readCsvFile(filePathNew);
             List<SfValRgDaily> sfValRgDailyList = CsvDataMapper.mapCsvSfValRgDaily(rows);
             sfValRgDailyRepository.saveAll(sfValRgDailyList);
 

@@ -66,7 +66,12 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public List<Customer> getAllByBillingCategoryAndBillingType(String billingCategory, String billingType) {
-        return customerRepository.findAllByBillingCategoryAndBillingType(billingCategory, billingType);
+        try {
+            return customerRepository.findAllByBillingCategoryAndBillingType(billingCategory, billingType);
+        } catch (Exception e) {
+            log.error("Error when get all customer by billing category and billing type: {}", e.getMessage(),e );
+            throw new GeneralException("Error when get all customer by billing category and billing type: " + e.getMessage());
+        }
     }
 
     @Override

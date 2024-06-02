@@ -17,5 +17,5 @@ public class BillingCalculationResponse {
 
     private Integer totalDataFailed;
 
-    private List<BillingCalculationErrorMessageDTO> calculationErrorMessageList;
+    private List<BillingCalculationErrorMessageDTO> errorMessages;
 }

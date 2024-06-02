@@ -2,7 +2,7 @@ package com.bayu.billingservice.service.impl;
 
 import com.bayu.billingservice.dto.fund.FeeReportRequest;
 import com.bayu.billingservice.dto.investmentmanagement.InvestmentManagementDTO;
-import com.bayu.billingservice.exception.CalculateBillingException;
+import com.bayu.billingservice.exception.BillingCalculationException;
 import com.bayu.billingservice.model.BillingFund;
 import com.bayu.billingservice.model.Customer;
 import com.bayu.billingservice.model.SkTransaction;
@@ -178,7 +178,7 @@ public class FundCalculateServiceImpl implements FundCalculateService {
             return "Successfully calculated Billing Funds with a total : " + billingFundListSaved.size();
         } catch (Exception e) {
             log.error("Error when calculate Billing Funds : " + e.getMessage(), e);
-            throw new CalculateBillingException("Error when calculate Billing Funds : " + e.getMessage());
+            throw new BillingCalculationException("Error when calculate Billing Funds : " + e.getMessage());
         }
     }
 

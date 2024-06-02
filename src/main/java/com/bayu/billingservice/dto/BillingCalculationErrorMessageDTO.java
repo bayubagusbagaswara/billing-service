@@ -15,5 +15,5 @@ public class BillingCalculationErrorMessageDTO {
 
     private String customerCode; // aid
 
-    private List<String> errorMessages;
+    private List<String> errors;
 }
