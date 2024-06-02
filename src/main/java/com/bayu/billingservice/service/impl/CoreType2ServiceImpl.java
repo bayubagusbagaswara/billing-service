@@ -59,7 +59,7 @@ public class CoreType2ServiceImpl implements CoreType2Service {
         /* get fee parameter VAT fee */
         BigDecimal vatFee = feeParameterService.getValueByName(FeeParameter.VAT.getValue());
 
-        /* get all customer Core Type 1 */
+        /* get all customer Core Type 2 */
         List<Customer> customerList = customerService.getAllByBillingCategoryAndBillingType(categoryUpperCase, typeUpperCase);
 
         /* calculate billing for all customers */
@@ -93,6 +93,7 @@ public class CoreType2ServiceImpl implements CoreType2Service {
                     CoreTemplate3 coreTemplate3 = calculationResult(coreType2Parameter, transactionHandlingFee, customerSafekeepingFee, vatFee);
 
                     BillingCore billingCore = buildBillingCore(contextDate, customer, investmentManagementDTO, coreTemplate3);
+
                     String number = billingNumberService.generateSingleNumber(contextDate.getMonthNameNow(), contextDate.getYearNow());
                     billingCore.setBillingNumber(number);
                     billingCoreRepository.save(billingCore);
@@ -266,9 +267,9 @@ public class CoreType2ServiceImpl implements CoreType2Service {
 
     private void handleGeneralError(String string, Exception e, List<BillingCalculationErrorMessageDTO> errorMessageList) {
         log.error("An unexpected error occurred: {}", e.getMessage(), e);
-        List<String> validationErrors = new ArrayList<>();
-        validationErrors.add(e.getMessage());
-        errorMessageList.add(new BillingCalculationErrorMessageDTO(string.isEmpty() ? "unknown" : string, validationErrors));
+        List<String> stringList = new ArrayList<>();
+        stringList.add(e.getMessage());
+        errorMessageList.add(new BillingCalculationErrorMessageDTO(string.isEmpty() ? "unknown" : string, stringList));
     }
 
     private void addErrorMessage(List<BillingCalculationErrorMessageDTO> calculationErrorMessages, String customerCode, String message) {
