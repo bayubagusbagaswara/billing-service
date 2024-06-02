@@ -27,8 +27,18 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
     @Query(value = "SELECT * FROM customer WHERE customer_code = :customerCode AND (:subCode IS NULL OR sub_code = :subCode)", nativeQuery = true)
     Optional<Customer> findByCustomerCodeAndOptionalSubCode(@Param("customerCode") String customerCode, @Param("subCode") String subCode);
 
-    // if the sub code is null, change it to ""
     @Query("SELECT COUNT(c) > 0 FROM Customer c WHERE LOWER(c.customerCode) = LOWER(:customerCode) AND LOWER(COALESCE(c.subCode, '')) = LOWER(COALESCE(:subCode, ''))")
     boolean existsCustomerByCustomerCodeAndSubCode(@Param("customerCode") String customerCode, @Param("subCode") String subCode);
+
+    @Query(value = "SELECT * FROM customer WHERE customer_code = :customerCode " +
+            "AND sub_code = :subCode " +
+            "AND billing_category = :billingCategory " +
+            "AND billing_type = :billingType", nativeQuery = true)
+    Optional<Customer> findByCustomerCodeAndSubCodeAndBillingCategoryAndBillingType(
+            @Param("customerCode") String customerCode,
+            @Param("subCode") String subCode,
+            @Param("billingCategory") String billingCategory,
+            @Param("billingType") String billingType
+    );
 
 }
