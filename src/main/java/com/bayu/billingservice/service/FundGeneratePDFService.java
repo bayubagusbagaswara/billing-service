@@ -1,14 +1,10 @@
 package com.bayu.billingservice.service;
 
-import com.bayu.billingservice.dto.fund.BillingFundDTO;
 
-import java.util.List;
+import com.bayu.billingservice.dto.fund.FundCalculateRequest;
 
 public interface FundGeneratePDFService {
 
-//    List<BillingFundDTO> getAll();
+    String generatePDF(FundCalculateRequest request);
 
-    String generatePDF(String category, String monthYear);
-
-    String deleteAll();
 }
