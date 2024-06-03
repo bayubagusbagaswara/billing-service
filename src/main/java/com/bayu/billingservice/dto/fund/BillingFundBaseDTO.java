@@ -28,15 +28,13 @@ public abstract class BillingFundBaseDTO extends ApprovalDTO {
     private String billingTemplate;
 
     private String investmentManagementName;
-    private String investmentManagementAddressBuilding;
-    private String investmentManagementAddressStreet;
-    private String investmentManagementAddressCity;
-    private String investmentManagementAddressProvince;
+    private String investmentManagementAddress1;
+    private String investmentManagementAddress2;
+    private String investmentManagementAddress3;
+    private String investmentManagementAddress4;
 
-    private String productName; // or security name
 
+    private String account;
     private String accountName;
-    private String accountNumber;
-    private String accountBank;
 
 }
