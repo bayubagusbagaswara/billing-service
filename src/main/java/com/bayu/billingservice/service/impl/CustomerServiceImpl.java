@@ -92,6 +92,10 @@ public class CustomerServiceImpl implements CustomerService {
         try {
             /* mapping data from request to dto */
             customerDTO = customerMapper.mapCreateRequestToDto(createCustomerRequest);
+            customerDTO.setBillingCategory(customerDTO.getBillingCategory().toUpperCase());
+            customerDTO.setBillingType(customerDTO.getBillingType().toUpperCase());
+            customerDTO.setBillingTemplate(customerDTO.getBillingTemplate().toUpperCase());
+            customerDTO.setCurrency(customerDTO.getCurrency().toUpperCase());
             log.info("[Create Single] Map from request to dto: {}", customerDTO);
 
             /* validation for each column dto */
@@ -106,11 +110,9 @@ public class CustomerServiceImpl implements CustomerService {
             /* validating sales agent is available or not */
             validateSellingAgent(customerDTO, validationErrors);
 
-            /* validation enum data */
-            validateBillingEnums(customerDTO.getBillingCategory(),
-                    customerDTO.getBillingType(),
-                    customerDTO.getCurrency(),
-                    validationErrors);
+            /* validation enum data and set all data enum to uppercase */
+            validateBillingEnums(customerDTO.getBillingCategory(), customerDTO.getBillingType(), customerDTO.getCurrency(), validationErrors);
+
 
             /* validation value GL must be true or false */
             validateIsGL(customerDTO, validationErrors);
@@ -164,6 +166,10 @@ public class CustomerServiceImpl implements CustomerService {
             try {
                 /* mapping data from request to dto */
                 customerDTO = customerMapper.mapCreateListRequestToDTO(createCustomerDataListRequest);
+                customerDTO.setBillingCategory(customerDTO.getBillingCategory().toUpperCase());
+                customerDTO.setBillingType(customerDTO.getBillingType().toUpperCase());
+                customerDTO.setBillingTemplate(customerDTO.getBillingTemplate().toUpperCase());
+                customerDTO.setCurrency(customerDTO.getCurrency().toUpperCase());
                 log.info("[Create Multiple] mapper from create request to dto: {}", customerDTO);
 
                 /* validating for each column dto */
@@ -282,6 +288,10 @@ public class CustomerServiceImpl implements CustomerService {
         try {
             /* map data from request to dto */
             CustomerDTO customerDTO = customerMapper.mapUpdateRequestToDto(updateCustomerRequest);
+            customerDTO.setBillingCategory(customerDTO.getBillingCategory().toUpperCase());
+            customerDTO.setBillingType(customerDTO.getBillingType().toUpperCase());
+            customerDTO.setBillingTemplate(customerDTO.getBillingTemplate().toUpperCase());
+            customerDTO.setCurrency(customerDTO.getCurrency().toUpperCase());
             clonedDTO = new CustomerDTO();
             BeanUtil.copyAllProperties(customerDTO, clonedDTO);
             log.info("[Update Single] Result mapping request to dto: {}", customerDTO);
@@ -364,6 +374,10 @@ public class CustomerServiceImpl implements CustomerService {
             try {
                 /* mapping data from request to dto */
                 customerDTO = customerMapper.mapUpdateListRequestToDTO(updateCustomerDataListRequest);
+                customerDTO.setBillingCategory(customerDTO.getBillingCategory().toUpperCase());
+                customerDTO.setBillingType(customerDTO.getBillingType().toUpperCase());
+                customerDTO.setBillingTemplate(customerDTO.getBillingTemplate().toUpperCase());
+                customerDTO.setCurrency(customerDTO.getCurrency().toUpperCase());
                 log.info("[Update Multiple] Result mapping from request to dto: {}", customerDTO);
 
                 /* get data by code and sub code */
