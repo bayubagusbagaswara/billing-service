@@ -8,16 +8,23 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 public class BillingFundDTO extends BillingFundBaseDTO {
 
-    private String customerFee;
+    private String accrualCustodialValueFrequency;
+    private String accrualCustodialSafekeepingFee;
     private String accrualCustodialFee;
-    private String bis4ValueFrequency;
+
+    private String bis4TransactionValueFrequency;
     private String bis4TransactionFee;
-    private String bis4AmountDue;
+    private String bis4TransactionAmountDue;
+
     private String subTotal;
+
     private String vatFee;
     private String vatAmountDue;
-    private String kseiValueFrequency;
+
+    private String kseiTransactionValueFrequency;
     private String kseiTransactionFee;
-    private String kseiAmountDue;
+    private String kseiTransactionAmountDue;
+
     private String totalAmountDue;
+
 }
