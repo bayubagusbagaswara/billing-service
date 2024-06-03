@@ -15,17 +15,15 @@ import java.util.Optional;
 @Repository
 public interface KseiSafekeepingFeeRepository extends JpaRepository<KseiSafekeepingFee, Long> {
 
-    List<KseiSafekeepingFee> findByCustomerCodeContainingIgnoreCase(String feeAccount);
+    List<KseiSafekeepingFee> findByKseiSafeCodeContainingIgnoreCase(String feeAccount);
 
     @Query(value = "SELECT * FROM ksei_safekeeping_fee " +
-            "WHERE customer_code = :customerCode " +
+            "WHERE ksei_safe_code = :kseiSafeCode " +
             "AND created_date BETWEEN :startDate AND :endDate", nativeQuery = true)
     List<KseiSafekeepingFee> findByCustomerCodeAndDateBetweenNative(
-            @Param("customerCode") String customerCode,
+            @Param("kseiSafeCode") String kseiSafeCode,
             @Param("startDate") LocalDate startDate,
             @Param("endDate") LocalDate endDate);
-
-    Optional<KseiSafekeepingFee> findByCustomerCodeAndMonthAndYear(String customerCode, String month, int year);
 
     @Transactional
     @Modifying
