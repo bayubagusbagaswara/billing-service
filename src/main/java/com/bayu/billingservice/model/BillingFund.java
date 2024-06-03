@@ -19,6 +19,12 @@ public class BillingFund extends BaseBilling {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "accrual_custodial_value_frequency")
+    private BigDecimal accrualCustodialValueFrequency;
+
+    @Column(name = "accrual_custodial_safekeeping_fee")
+    private BigDecimal accrualCustodialSafekeepingFee;
+
     @Column(name = "accrual_custodial_fee")
     private BigDecimal accrualCustodialFee;
 
