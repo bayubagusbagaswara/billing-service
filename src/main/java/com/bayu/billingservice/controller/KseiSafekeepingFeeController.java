@@ -79,22 +79,22 @@ public class KseiSafekeepingFeeController {
         return ResponseEntity.ok().body(response);
     }
 
-    @GetMapping(path = "/calculate")
-    public ResponseEntity<ResponseDTO<BigDecimal>> calculateAmountFeeByCustomerCodeAndMonthAndYear(
-            @RequestParam("customerCode") String customerCode,
-            @RequestParam("month") String month,
-            @RequestParam("year") Integer year) {
-        BigDecimal amountFee = kseiSafekeepingFeeService.calculateAmountFeeByCustomerCodeAndMonthAndYear(
-                customerCode, month, year);
-
-        ResponseDTO<BigDecimal> response = ResponseDTO.<BigDecimal>builder()
-                .code(HttpStatus.OK.value())
-                .message(HttpStatus.OK.getReasonPhrase())
-                .payload(amountFee)
-                .build();
-
-        return ResponseEntity.ok().body(response);
-    }
+//    @GetMapping(path = "/calculate")
+//    public ResponseEntity<ResponseDTO<BigDecimal>> calculateAmountFeeByCustomerCodeAndMonthAndYear(
+//            @RequestParam("customerCode") String customerCode,
+//            @RequestParam("month") String month,
+//            @RequestParam("year") Integer year) {
+//        BigDecimal amountFee = kseiSafekeepingFeeService.calculateAmountFeeByCustomerCodeAndMonthAndYear(
+//                customerCode, month, year);
+//
+//        ResponseDTO<BigDecimal> response = ResponseDTO.<BigDecimal>builder()
+//                .code(HttpStatus.OK.value())
+//                .message(HttpStatus.OK.getReasonPhrase())
+//                .payload(amountFee)
+//                .build();
+//
+//        return ResponseEntity.ok().body(response);
+//    }
 
     @GetMapping(path = "/calculate/3month")
     public ResponseEntity<ResponseDTO<BigDecimal>> calculateAmountFeeForLast3Months(
