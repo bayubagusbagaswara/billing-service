@@ -19,14 +19,12 @@ public class FundConstant {
     public static final String INVESTMENT_MANAGEMENT_ADDRESS_3 = "investmentManagementAddress3";
     public static final String INVESTMENT_MANAGEMENT_ADDRESS_4 = "investmentManagementAddress4";
 
-    public static final String PRODUCT_NAME = "productName";
-    public static final String ACCOUNT_NAME = "accountName";
     public static final String ACCOUNT_NUMBER = "accountNumber";
+    public static final String ACCOUNT_NAME = "accountName";
     public static final String ACCOUNT_BANK = "accountBank";
 
-    public static final String CUSTOMER_FEE = "customerFee";
-
-    // TODO: tambahkan data accrual
+    public static final String ACCRUAL_CUSTODIAL_VALUE_FREQUENCY = "accrualCustodialValueFrequency";
+    public static final String ACCRUAL_CUSTODIAL_SAFEKEEPING_FEE = "accrualCustodialSafekeepingFee";
     public static final String ACCRUAL_CUSTODIAL_FEE = "accrualCustodialFee";
 
     public static final String BI_SSSS_TRANSACTION_VALUE_FREQUENCY = "bis4TransactionValueFrequency";
@@ -41,6 +39,7 @@ public class FundConstant {
     public static final String KSEI_TRANSACTION_VALUE_FREQUENCY = "kseiTransactionValueFrequency";
     public static final String KSEI_TRANSACTION_FEE = "kseiTransactionFee";
     public static final String KSEI_TRANSACTION_AMOUNT_DUE = "kseiTransactionAmountDue";
+
     public static final String TOTAL_AMOUNT_DUE = "totalAmountDue";
 
 }
