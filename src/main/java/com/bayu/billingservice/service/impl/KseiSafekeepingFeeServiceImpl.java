@@ -19,8 +19,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.TextStyle;
@@ -54,7 +52,7 @@ public class KseiSafekeepingFeeServiceImpl implements KseiSafekeepingFeeService 
                     .month(monthName)
                     .year(year)
                     .feeDescription(request.getFeeDescription())
-                    .customerCode(request.getCustomerCode())
+                    .kseiSafeCode(request.getCustomerCode())
                     .amountFee(new BigDecimal(request.getAmountFee()))
                     .build();
 
@@ -121,7 +119,7 @@ public class KseiSafekeepingFeeServiceImpl implements KseiSafekeepingFeeService 
 
     @Override
     public List<KseiSafekeepingFee> getByCustomerCode(String customerCode) {
-        return kseiSafekeepingFeeRepository.findByCustomerCodeContainingIgnoreCase(customerCode);
+        return kseiSafekeepingFeeRepository.findByKseiSafeCodeContainingIgnoreCase(customerCode);
     }
 
     @Override
@@ -207,33 +205,26 @@ public class KseiSafekeepingFeeServiceImpl implements KseiSafekeepingFeeService 
         KseiSafekeepingFee kseiSafekeepingFee = new KseiSafekeepingFee();
         Cell cell3 = row.getCell(2);
         kseiSafekeepingFee.setCreatedDate(parseDateOrDefault(cell3.toString(), dateFormatter));
-        // log.info("Created Date : {}", cell3.toString());
 
         LocalDate date = ConvertDateUtil.parseDateOrDefault(cell3.toString(), dateFormatter);
         Integer year = date != null ? date.getYear() : null;
         String monthName = date != null ? date.getMonth().getDisplayName(TextStyle.FULL, Locale.ENGLISH) : "";
 
         kseiSafekeepingFee.setCreatedDate(date);
-//        log.info("Created Date : {}", cell3.toString());
 
         kseiSafekeepingFee.setMonth(monthName);
-//        log.info("Month : {}", monthName);
 
         kseiSafekeepingFee.setYear(year);
-//        log.info("Year : {}", year);
 
         Cell cell14 = row.getCell(14);
         kseiSafekeepingFee.setFeeDescription(cell14.toString());
-//        log.info("Fee Description : {}", cell14.toString());
 
         String customerCode = checkContainsSafekeeping(cell14.toString());
-        kseiSafekeepingFee.setCustomerCode(customerCode);
-//        log.info("Customer Code : {}", customerCode);
+        kseiSafekeepingFee.setKseiSafeCode(customerCode);
 
         Cell cell15 = row.getCell(15);
         BigDecimal amountFee = parseBigDecimalOrDefault(cell15.toString());
         kseiSafekeepingFee.setAmountFee(amountFee);
-//        log.info("Amount Fee : {}", amountFee);
 
         return kseiSafekeepingFee;
     }
@@ -271,10 +262,7 @@ public class KseiSafekeepingFeeServiceImpl implements KseiSafekeepingFeeService 
     }
 
     private static String cleanedDescription(String inputContainsSafekeeping) {
-//        log.info("Input contains safekeeping : {}", inputContainsSafekeeping);
-        String cleanedDescription = inputContainsSafekeeping.replace("Safekeeping fee for account", "").trim();
-//        log.info("Cleaned Description : {}", cleanedDescription);
-        return cleanedDescription;
+        return inputContainsSafekeeping.replace("Safekeeping fee for account", "").trim();
     }
 
 }
