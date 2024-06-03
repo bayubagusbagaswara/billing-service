@@ -15,7 +15,12 @@ public abstract class BillingFundBaseDTO extends ApprovalDTO {
     private Instant createdAt;
     private Instant updatedAt;
 
-    private String aid;
+    private String approvalStatus;
+    private String billingStatus;
+
+    private String customerCode;
+    private String customerName;
+
     private String month;
     private String year;
 
@@ -33,8 +38,8 @@ public abstract class BillingFundBaseDTO extends ApprovalDTO {
     private String investmentManagementAddress3;
     private String investmentManagementAddress4;
 
-
     private String account;
     private String accountName;
+    private String currency;
 
 }
