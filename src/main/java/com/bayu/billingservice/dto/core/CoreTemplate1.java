@@ -16,8 +16,20 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 public class CoreTemplate1 {
 
-    private Integer transactionHandlingValueFrequency;
-    private BigDecimal transactionHandlingFee;
-    private BigDecimal transactionHandlingAmountDue;
+    private BigDecimal safekeepingValueFrequency;
+    private BigDecimal safekeepingFee;
+    private BigDecimal safekeepingAmountDue;
+
+    private Integer kseiTransactionValueFrequency;
+    private BigDecimal kseiTransactionFee;
+    private BigDecimal kseiTransactionAmountDue;
+
+    private Integer bis4TransactionValueFrequency;
+    private BigDecimal bis4TransactionFee;
+    private BigDecimal bis4TransactionAmountDue;
+
+    private BigDecimal kseiSafekeepingAmountDue;
+
+    private BigDecimal totalAmountDue;
 
 }
