@@ -1051,3 +1051,33 @@ C1000/SS-BS/0624
 C1001/SS-BS/0624
 C1002/SS-BS/0624
 C1003/SS-BS/0624
+
+# Generate Name PDF File MUFG
+  private String generateFileNameMUFG(String billingCategory, String billingType, String billingPeriod, String billingNumber) {
+        // Billing Period = Aug 2023 - Oct 2023
+        String[] split = billingPeriod.split(" - ");
+        String[] s = split[0].split(" ");
+
+        String monthString1 = s[0]; // OCTOBER
+        String s2 = s[1]; // 2023
+
+        Month month1 = MonthConverterUtil.getMonth(monthString1.toUpperCase());
+        int monthValue1 = month1.getValue();
+
+        String formattedMonth1 = (monthValue1 < 10) ? "0" + monthValue1 : String.valueOf(monthValue1);
+
+        String[] s3 = split[1].split(" ");
+        String monthString2 = s3[0]; // AUGUST
+
+        String s5 = s3[1]; // 2023
+
+        Month month2 = MonthConverterUtil.getMonth(monthString2.toUpperCase());
+
+        int monthValue2 = month2.getValue();
+        String formattedMonth2 = (monthValue2 < 10) ? "0" + monthValue2 : String.valueOf(monthValue2);
+
+        String replaceBillingNumber = billingNumber.replaceAll("/", "_")
+                .replaceAll("-", "_");
+        // return "MUFG_" + billingCategory + "_" + billingType + "_" + formattedMonth1 + s2 + "-" + formattedMonth2 + s5 + ".pdf";
+        return replaceBillingNumber + ".pdf";
+    }
