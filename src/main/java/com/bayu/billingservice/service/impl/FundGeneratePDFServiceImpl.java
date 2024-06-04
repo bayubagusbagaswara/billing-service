@@ -77,7 +77,6 @@ public class FundGeneratePDFServiceImpl implements FundGeneratePDFService {
 
     private GeneratePDFResponse generateAndSavePdfStatements(List<BillingFund> billingFundList) {
         log.info("Start generate and save pdf statements Billing Fund size: {}", billingFundList.size());
-
         int totalDataSuccess = 0;
         int totalDataFailed = 0;
         List<ErrorMessageDTO> errorMessageDTOList = new ArrayList<>();
