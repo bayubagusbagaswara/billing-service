@@ -82,7 +82,7 @@ public class FundCalculateV2ServiceImpl implements FundCalculateV2Service {
                 List<SkTransaction> skTransactionList = skTransactionService.getAllByAidAndMonthAndYear(aid, "November", 2023);
                 log.info("Customer code: {}, sk transaction size: {}", customer.getCustomerCode(), skTransactionList.size());
 
-                if (!skTransactionList.isEmpty()) {
+//                if (!skTransactionList.isEmpty()) {
                     Optional<BillingFund> existingBillingFund = billingFundRepository.findByCustomerCodeAndBillingCategoryAndBillingTypeAndMonthAndYear(aid, billingCategory, billingType, month, year);
                     if (existingBillingFund.isEmpty() || Boolean.TRUE.equals(!existingBillingFund.get().getPaid())) {
                         existingBillingFund.ifPresent(this::deleteExistingBillingFund);
@@ -100,10 +100,10 @@ public class FundCalculateV2ServiceImpl implements FundCalculateV2Service {
                         addErrorMessage(errorMessageList, customer.getCustomerCode(), "Billing already paid for period " + month + " " + year);
                         totalDataFailed++;
                     }
-                } else {
-                    addErrorMessage(errorMessageList, customer.getCustomerCode(), "No transaction data from SkTrans for period " + month + " " + year);
-                    totalDataFailed++;
-                }
+//                } else {
+//                    addErrorMessage(errorMessageList, customer.getCustomerCode(), "No transaction data from SkTrans for period " + month + " " + year);
+//                    totalDataFailed++;
+//                }
             } catch(Exception e) {
                 log.error("Error processing customer code {}: {}", aid, e.getMessage(), e);
                 handleGeneralError(aid, e, validationErrors, errorMessageList);
