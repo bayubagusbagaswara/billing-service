@@ -1,5 +1,6 @@
 package com.bayu.billingservice.util;
 
+import com.bayu.billingservice.dto.billing.BillingContextDate;
 import com.bayu.billingservice.exception.GeneralException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -248,6 +249,18 @@ public class ConvertDateUtil {
             log.error("Error when get month now: {}", e.getMessage(), e);
             throw new GeneralException(e.getMessage());
         }
+    }
+
+    public BillingContextDate getBillingContextDate(Instant dateNow) {
+        Map<String, String> monthMinus1 = getMonthMinus1();
+        String monthNameMinus1 = monthMinus1.get("monthName");
+        int yearMinus1 = Integer.parseInt(monthMinus1.get("year"));
+
+        Map<String, String> monthNow = getMonthNow();
+        String monthNameNow = monthNow.get("monthName");
+        int yearNow = Integer.parseInt(monthNow.get("year"));
+
+        return new BillingContextDate(dateNow, monthNameMinus1, yearMinus1, monthNameNow, yearNow);
     }
 
 }
