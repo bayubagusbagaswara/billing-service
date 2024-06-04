@@ -16,17 +16,18 @@ import java.util.List;
 @AllArgsConstructor
 public class CoreType4Parameter {
 
-    private String customerCode;
+    private BigDecimal customerSafekeepingFee; // ITAMA
 
-    private List<SkTransaction> skTransactionList;
+    private BigDecimal transactionHandlingFee; // ITAMA
 
-    private BigDecimal transactionHandlingFee;
+    private BigDecimal vatFee; // ITAMA
 
-    private List<SfValRgDaily> sfValRgDailyList;
+    private List<SfValRgDaily> sfValRgDailyList; // ITAMA
 
-    private BigDecimal vatFee;
 
-    private BigDecimal kseiTransactionFee;
+    private List<SkTransaction> skTransactionList; // EB
 
-    private BigDecimal kseiSafeFeeAmount;
+    private BigDecimal kseiTransactionFee; // EB
+
+    private BigDecimal kseiSafeFeeAmount; // EB
 }
