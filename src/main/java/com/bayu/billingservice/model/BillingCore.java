@@ -34,11 +34,11 @@ public class BillingCore extends BaseBilling {
 //    @Column(name = "account_number_cbest")
 //    private String accountNumberCBEST; // especially for core template 6
 
-    @Column(name = "customer_minimum_fee")
-    private BigDecimal customerMinimumFee; // minimum fee that customers have, 5.000.000, 500.000 etc
-
-    @Column(name = "customer_safekeeping_fee")
-    private BigDecimal customerSafekeepingFee;
+//    @Column(name = "customer_minimum_fee")
+//    private BigDecimal customerMinimumFee; // minimum fee that customers have, 5.000.000, 500.000 etc
+//
+//    @Column(name = "customer_safekeeping_fee")
+//    private BigDecimal customerSafekeepingFee;
 
     @Column(name = "safekeeping_journal")
     private String safekeepingJournal; // especially for core template 7
