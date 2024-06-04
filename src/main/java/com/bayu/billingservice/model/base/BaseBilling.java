@@ -24,6 +24,9 @@ public abstract class BaseBilling extends BaseAudit {
     @Column(name = "customer_code")
     private String customerCode;
 
+    @Column(name = "sub_code")
+    private String subCode;
+
     @Column(name = "customer_name")
     private String customerName;
 
@@ -53,6 +56,9 @@ public abstract class BaseBilling extends BaseAudit {
 
     @Column(name = "bill_template")
     private String billingTemplate;
+
+    @Column(name = "mi_code")
+    private String investmentManagementCode;
 
     @Column(name = "mi_name")
     private String investmentManagementName;
