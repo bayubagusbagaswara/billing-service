@@ -1081,3 +1081,12 @@ C1003/SS-BS/0624
         // return "MUFG_" + billingCategory + "_" + billingType + "_" + formattedMonth1 + s2 + "-" + formattedMonth2 + s5 + ".pdf";
         return replaceBillingNumber + ".pdf";
     }
+
+   if (billingType.equalsIgnoreCase(BillingType.TYPE_7.getValue())) {
+                String[] split = billingPeriod.split(" - ");
+                monthYearMap = convertDateUtil.extractMonthYearInformation(split[1]);
+                yearMonthFormat = monthYearMap.get("year") + monthYearMap.get("monthValue");
+            } else {
+                monthYearMap = convertDateUtil.extractMonthYearInformation(billingPeriod);
+                yearMonthFormat = monthYearMap.get("year") + monthYearMap.get("monthValue");
+            }
