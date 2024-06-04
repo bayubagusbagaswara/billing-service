@@ -717,6 +717,17 @@ String jsonDataAfter = "{\"code\":\"A002\",\"name\":\"PT Pacific Capital Investm
 ]
 ```
 
+        if (billingType.equalsIgnoreCase(BillingType.TYPE_4.getValue())) {
+                if (billingTemplate.equalsIgnoreCase(CORE_TEMPLATE_5.name())) {
+                    fileName = generateFileNameEB(customerCode, billingNumber);
+                } else if (billingTemplate.equalsIgnoreCase(CORE_TEMPLATE_3.name())) {
+                    fileName = generateFileNameITAMA(customerCode, billingNumber);
+                }
+            } else {
+                fileName = generateFileName(customerCode, subCode, billingNumber);
+            }
+
+
 1. Tambahkan data investment management
 2. Tambahkan data fee parameter
 3. Tambahkan data customer
