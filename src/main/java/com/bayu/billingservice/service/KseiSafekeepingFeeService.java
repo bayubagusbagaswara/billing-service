@@ -22,4 +22,5 @@ public interface KseiSafekeepingFeeService {
 
     String deleteAll();
 
+    KseiSafekeepingFee getByKseiSafeCodeAndMonthAndYear(String kseiSafeCode, String monthInput, Integer yearInput);
 }

@@ -173,6 +173,14 @@ public class KseiSafekeepingFeeServiceImpl implements KseiSafekeepingFeeService 
         }
     }
 
+    @Override
+    public KseiSafekeepingFee getByKseiSafeCodeAndMonthAndYear(String kseiSafeCode, String month, Integer year) {
+        return kseiSafekeepingFeeRepository.findByKseiSafeCodeAndMonthAndYear(kseiSafeCode, month, year)
+                .orElseThrow(() -> new DataNotFoundException("Ksei Safe Fee with ksei safe code '" + kseiSafeCode + "' " +
+                        "and month '" + month + "' " +
+                        "and year '" + year + "'"));
+    }
+
     private static void processSheets(Workbook workbook, List<KseiSafekeepingFee> kseiSafekeepingFeeList) {
         Iterator<Sheet> sheetIterator = workbook.sheetIterator();
         while (sheetIterator.hasNext()) {
