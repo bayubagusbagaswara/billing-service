@@ -79,7 +79,7 @@ public class ConvertDateUtil {
         return monthYearMap;
     }
 
-    public static String convertToRange3Months(String[][] previousMonthsAndYears) {
+    public String convertToRange3Months(String[][] previousMonthsAndYears) {
         String currentlyMonth = previousMonthsAndYears[0][0]; // October
         String currentlyYear = previousMonthsAndYears[0][1]; // 2023
 
