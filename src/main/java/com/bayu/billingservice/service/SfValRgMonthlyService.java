@@ -15,4 +15,6 @@ public interface SfValRgMonthlyService {
     SfValRgMonthly getByAidAndSecurityName(String aid, String securityName);
 
     String deleteAll();
+
+    List<SfValRgMonthly> getAllByCustomerCodeAndMonthAndYear(String customerCode, String month, Integer year);
 }

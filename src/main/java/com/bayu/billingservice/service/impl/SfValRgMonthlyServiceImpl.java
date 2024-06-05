@@ -98,4 +98,9 @@ public class SfValRgMonthlyServiceImpl implements SfValRgMonthlyService {
         }
     }
 
+    @Override
+    public List<SfValRgMonthly> getAllByCustomerCodeAndMonthAndYear(String customerCode, String month, Integer year) {
+        return sfValRgMonthlyRepository.findAllByCustomerCodeAndMonthAndYear(customerCode, month, year);
+    }
+
 }
