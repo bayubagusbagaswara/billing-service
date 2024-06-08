@@ -252,15 +252,25 @@ public class ConvertDateUtil {
     }
 
     public BillingContextDate getBillingContextDate(Instant dateNow) {
-        Map<String, String> monthMinus1 = getMonthMinus1();
-        String monthNameMinus1 = monthMinus1.get("monthName");
-        int yearMinus1 = Integer.parseInt(monthMinus1.get("year"));
+        try {
+            Map<String, String> monthMinus1 = getMonthMinus1();
+            String monthNameMinus1 = monthMinus1.get("monthName"); // month Name ini diganti dengan April
+            int yearMinus1 = Integer.parseInt(monthMinus1.get("year")); // year ini diganti dengan 2024
 
-        Map<String, String> monthNow = getMonthNow();
-        String monthNameNow = monthNow.get("monthName");
-        int yearNow = Integer.parseInt(monthNow.get("year"));
+//            String monthNameMinus1 = MONTH_TEST;
+//            Integer yearMinus1 = YEAR_TEST;
 
-        return new BillingContextDate(dateNow, monthNameMinus1, yearMinus1, monthNameNow, yearNow);
+            Map<String, String> monthNow = getMonthNow();
+            String monthNameNow = monthNow.get("monthName");
+            int yearNow = Integer.parseInt(monthNow.get("year"));
+
+            String billingPeriod = monthNameMinus1 + " " + yearMinus1;
+
+            return new BillingContextDate(dateNow, monthNameMinus1, yearMinus1, monthNameNow, yearNow, billingPeriod);
+        } catch (Exception e) {
+            log.error("Error when get billing context date: {}", e.getMessage(), e);
+            throw new GeneralException("Error when get billing context date: " + e.getMessage());
+        }
     }
 
 }
