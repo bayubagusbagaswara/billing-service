@@ -14,8 +14,6 @@ import com.bayu.billingservice.model.SfValRgDaily;
 import com.bayu.billingservice.model.SkTransaction;
 import com.bayu.billingservice.model.enumerator.ApprovalStatus;
 import com.bayu.billingservice.model.enumerator.BillingStatus;
-import com.bayu.billingservice.model.enumerator.BillingTemplate;
-import com.bayu.billingservice.model.enumerator.FeeParameter;
 import com.bayu.billingservice.repository.BillingCoreRepository;
 import com.bayu.billingservice.service.*;
 import com.bayu.billingservice.util.ConvertDateUtil;
@@ -28,6 +26,11 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.Instant;
 import java.util.*;
+
+import static com.bayu.billingservice.model.enumerator.BillingTemplate.CORE_TEMPLATE_3;
+import static com.bayu.billingservice.model.enumerator.BillingTemplate.CORE_TEMPLATE_5;
+import static com.bayu.billingservice.model.enumerator.FeeParameter.KSEI;
+import static com.bayu.billingservice.model.enumerator.FeeParameter.VAT;
 
 @Service
 @RequiredArgsConstructor
@@ -59,11 +62,11 @@ public class CoreType4ServiceImpl implements CoreType4Service {
         String typeUpperCase = StringUtil.replaceBlanksWithUnderscores(request.getType());
 
         /* generate billing context date */
-        BillingContextDate contextDate = getBillingContextDate(dateNow);
+        BillingContextDate contextDate = convertDateUtil.getBillingContextDate(dateNow);
 
         /* get data fee parameters */
-        BigDecimal kseiTransactionFee = feeParameterService.getValueByName(FeeParameter.KSEI.getValue());
-        BigDecimal vatFee = feeParameterService.getValueByName(FeeParameter.VAT.getValue());
+        BigDecimal kseiTransactionFee = feeParameterService.getValueByName(KSEI.getValue());
+        BigDecimal vatFee = feeParameterService.getValueByName(VAT.getValue());
 
         /* get all customer Core Type 3 */
         List<Customer> customerList = customerService.getAllByBillingCategoryAndBillingType(categoryUpperCase, typeUpperCase);
@@ -71,11 +74,9 @@ public class CoreType4ServiceImpl implements CoreType4Service {
         for (Customer customer : customerList) {
             try {
                 String customerCode = customer.getCustomerCode();
-                String kseiSafeCode = customer.getKseiSafeCode();
-                String investmentManagementCode = customer.getMiCode();
 
                 /* get data investment management */
-                InvestmentManagementDTO investmentManagementDTO = investmentManagementService.getByCode(investmentManagementCode);
+                InvestmentManagementDTO investmentManagementDTO = investmentManagementService.getByCode(customer.getMiCode());
 
                 /* get data sk transaction */
                 List<SkTransaction> skTransactionList = skTransactionService.getAllByAidAndMonthAndYear(customerCode, contextDate.getMonthNameMinus1(), contextDate.getYearMinus1());
@@ -84,31 +85,44 @@ public class CoreType4ServiceImpl implements CoreType4Service {
                 List<SfValRgDaily> sfValRgDailyList = sfValRgDailyService.getAllByAidAndMonthAndYear(customerCode, contextDate.getMonthNameMinus1(), contextDate.getYearMinus1());
 
                 /* get data KSEI safekeeping fee */
-                BigDecimal kseiSafeFeeAmount = kseiSafekeepingFeeService.calculateAmountFeeByKseiSafeCodeAndMonthAndYear(kseiSafeCode, contextDate.getMonthNameMinus1(), contextDate.getYearMinus1());
+                BigDecimal kseiSafeFeeAmount = kseiSafekeepingFeeService.calculateAmountFeeByKseiSafeCodeAndMonthAndYear(customer.getKseiSafeCode(), contextDate.getMonthNameMinus1(), contextDate.getYearMinus1());
 
-                /* check and delete existing billing data with the same month and year */
-                Optional<BillingCore> existingBillingCore = billingCoreRepository.findByCustomerCodeAndBillingCategoryAndBillingTypeAndMonthAndYear(
-                        customerCode, customer.getBillingCategory(), customer.getBillingType(), contextDate.getMonthNameMinus1(), contextDate.getYearMinus1());
+                /* get billing data to check whether the data is in the database or not */
+                Optional<BillingCore> existingBillingCore = billingCoreRepository.findByCustomerCodeAndSubCodeAndBillingCategoryAndBillingTypeAndMonthAndYear(
+                        customerCode, customer.getSubCode(), customer.getBillingCategory(), customer.getBillingType(), contextDate.getMonthNameMinus1(), contextDate.getYearMinus1());
 
+                /* check paid status. if it is FALSE, it can be regenerated */
                 if (existingBillingCore.isEmpty() || Boolean.TRUE.equals(!existingBillingCore.get().getPaid())) {
 
+                    /* delete billing data if it exists in the database */
                     existingBillingCore.ifPresent(this::deleteExistingBillingCore);
 
+                    /* create core type 4 parameter */
                     CoreType4Parameter coreType4Parameter = new CoreType4Parameter(
-                            customer.getCustomerSafekeepingFee(), customer.getCustomerTransactionHandling(), vatFee, sfValRgDailyList, skTransactionList, kseiTransactionFee, kseiSafeFeeAmount);
+                            customer.getCustomerSafekeepingFee(), customer.getCustomerTransactionHandling(), vatFee,
+                            sfValRgDailyList, skTransactionList, kseiTransactionFee, kseiSafeFeeAmount);
 
+                    /* create billing core */
                     BillingCore billingCore = createBillingCore(contextDate, customer, investmentManagementDTO);
 
-                    if (BillingTemplate.CORE_TEMPLATE_5.getValue().equalsIgnoreCase(customer.getBillingTemplate())) {
+                    /* check template, because type 4 has a different template */
+                    if (CORE_TEMPLATE_5.getValue().equalsIgnoreCase(customer.getBillingTemplate())) {
+                        /* calculation billing for EB */
                         CoreTemplate5 coreTemplate5 = calculateEB(coreType4Parameter);
+                        /* update billing core data to include calculated values */
                         updateBillingCoreForTemplate5(billingCore, coreTemplate5);
-                    } else if (BillingTemplate.CORE_TEMPLATE_3.getValue().equalsIgnoreCase(customer.getBillingTemplate())) {
+                    } else if (CORE_TEMPLATE_3.getValue().equalsIgnoreCase(customer.getBillingTemplate())) {
+                        /* calculation billing for ITAMA */
                         CoreTemplate3 coreTemplate3 = calculateITAMA(coreType4Parameter);
+                        /* update billing core data to include calculated values */
                         updateBillingCoreForTemplate3(billingCore, coreTemplate3);
                     }
 
+                    /* create a billing number then set it to the billing core */
                     String number = billingNumberService.generateSingleNumber(contextDate.getMonthNameNow(), contextDate.getYearNow());
                     billingCore.setBillingNumber(number);
+
+                    /* save to the database */
                     billingCoreRepository.save(billingCore);
                     billingNumberService.saveSingleNumber(number);
                     totalDataSuccess++;
@@ -126,10 +140,9 @@ public class CoreType4ServiceImpl implements CoreType4Service {
     }
 
     private BillingCore createBillingCore(BillingContextDate contextDate, Customer customer, InvestmentManagementDTO investmentManagementDTO) {
-        Instant dateNow = contextDate.getDateNow();
         return BillingCore.builder()
-                .createdAt(dateNow)
-                .updatedAt(dateNow)
+                .createdAt(contextDate.getDateNow())
+                .updatedAt(contextDate.getDateNow())
                 .approvalStatus(ApprovalStatus.PENDING)
                 .billingStatus(BillingStatus.GENERATED)
                 .customerCode(customer.getCustomerCode())
@@ -137,9 +150,9 @@ public class CoreType4ServiceImpl implements CoreType4Service {
                 .customerName(customer.getCustomerName())
                 .month(contextDate.getMonthNameMinus1())
                 .year(contextDate.getYearMinus1())
-                .billingPeriod(contextDate.getMonthNameMinus1() + " " + contextDate.getYearMinus1())
-                .billingStatementDate(ConvertDateUtil.convertInstantToString(dateNow))
-                .billingPaymentDueDate(ConvertDateUtil.convertInstantToStringPlus14Days(dateNow))
+                .billingPeriod(contextDate.getBillingPeriod())
+                .billingStatementDate(ConvertDateUtil.convertInstantToString(contextDate.getDateNow()))
+                .billingPaymentDueDate(ConvertDateUtil.convertInstantToStringPlus14Days(contextDate.getDateNow()))
                 .billingCategory(customer.getBillingCategory())
                 .billingType(customer.getBillingType())
                 .billingTemplate(customer.getBillingTemplate())
@@ -276,18 +289,6 @@ public class CoreType4ServiceImpl implements CoreType4Service {
                 .kseiSafekeepingAmountDue(param.getKseiSafeFeeAmount())
                 .totalAmountDue(totalAmountDueEB)
                 .build();
-    }
-
-    private BillingContextDate getBillingContextDate(Instant dateNow) {
-        Map<String, String> monthMinus1 = convertDateUtil.getMonthMinus1();
-        String monthNameMinus1 = monthMinus1.get("monthName");
-        int yearMinus1 = Integer.parseInt(monthMinus1.get("year"));
-
-        Map<String, String> monthNow = convertDateUtil.getMonthNow();
-        String monthNameNow = monthNow.get("monthName");
-        int yearNow = Integer.parseInt(monthNow.get("year"));
-
-        return new BillingContextDate(dateNow, monthNameMinus1, yearMinus1, monthNameNow, yearNow);
     }
 
     private void deleteExistingBillingCore(BillingCore existBillingCore) {
