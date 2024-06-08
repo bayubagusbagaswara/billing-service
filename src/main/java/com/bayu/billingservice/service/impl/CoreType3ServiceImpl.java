@@ -56,7 +56,7 @@ public class CoreType3ServiceImpl implements CoreType3Service {
         String typeUpperCase = StringUtil.replaceBlanksWithUnderscores(request.getType());
 
         /* generate billing context date */
-        BillingContextDate contextDate = getBillingContextDate(dateNow);
+        BillingContextDate contextDate = convertDateUtil.getBillingContextDate(dateNow);
 
         /* get all customer Core Type 3 */
         List<Customer> customerList = customerService.getAllByBillingCategoryAndBillingType(categoryUpperCase, typeUpperCase);
@@ -197,18 +197,6 @@ public class CoreType3ServiceImpl implements CoreType3Service {
 
         log.info("[Core Type 3] Safekeeping amount due Aid '{}' is '{}'", aid, safekeepingAmountDue);
         return safekeepingAmountDue;
-    }
-
-    private BillingContextDate getBillingContextDate(Instant dateNow) {
-        Map<String, String> monthMinus1 = convertDateUtil.getMonthMinus1();
-        String monthNameMinus1 = monthMinus1.get("monthName");
-        int yearMinus1 = Integer.parseInt(monthMinus1.get("year"));
-
-        Map<String, String> monthNow = convertDateUtil.getMonthNow();
-        String monthNameNow = monthNow.get("monthName");
-        int yearNow = Integer.parseInt(monthNow.get("year"));
-
-        return new BillingContextDate(dateNow, monthNameMinus1, yearMinus1, monthNameNow, yearNow);
     }
 
     private void deleteExistingBillingCore(BillingCore existBillingCore) {
