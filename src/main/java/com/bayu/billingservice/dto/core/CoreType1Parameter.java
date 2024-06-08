@@ -16,8 +16,6 @@ import java.util.List;
 @AllArgsConstructor
 public class CoreType1Parameter {
 
-    private String customerCode;
-
     private List<SkTransaction> skTransactionList;
 
     private BigDecimal transactionHandlingFee;
