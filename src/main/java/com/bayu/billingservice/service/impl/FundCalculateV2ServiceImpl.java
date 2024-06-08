@@ -2,8 +2,10 @@ package com.bayu.billingservice.service.impl;
 
 import com.bayu.billingservice.dto.billing.BillingCalculationErrorMessageDTO;
 import com.bayu.billingservice.dto.billing.BillingCalculationResponse;
+import com.bayu.billingservice.dto.billing.BillingContextDate;
 import com.bayu.billingservice.dto.fund.BillingFundParameter;
 import com.bayu.billingservice.dto.fund.FeeReportRequest;
+import com.bayu.billingservice.dto.fund.FundTemplate;
 import com.bayu.billingservice.dto.investmentmanagement.InvestmentManagementDTO;
 import com.bayu.billingservice.model.BillingFund;
 import com.bayu.billingservice.model.Customer;
@@ -22,7 +24,6 @@ import java.math.RoundingMode;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import static com.bayu.billingservice.model.enumerator.BillingCategory.*;
@@ -44,6 +45,8 @@ public class FundCalculateV2ServiceImpl implements FundCalculateV2Service {
 
     @Override
     public BillingCalculationResponse calculate(List<FeeReportRequest> feeReportRequests, String monthYear) {
+        log.info("Start calculate Billing Fund with request size: {}", feeReportRequests.size());
+
         /* initialize billing variable */
         Instant dateNow = Instant.now();
         String billingCategory = FUND.getValue();
@@ -54,15 +57,8 @@ public class FundCalculateV2ServiceImpl implements FundCalculateV2Service {
         Integer totalDataFailed = 0;
         List<BillingCalculationErrorMessageDTO> errorMessageList = new ArrayList<>();
 
-        /* get data month minus 1 */
-        Map<String, String> monthMinus1 = convertDateUtil.getMonthMinus1();
-        String month = monthMinus1.get("monthName");
-        int year = Integer.parseInt(monthMinus1.get("year"));
-
-        /* get data month now */
-        Map<String, String> monthNow = convertDateUtil.getMonthNow();
-        String monthNameNow = monthNow.get("monthName");
-        int yearNow = Integer.parseInt(monthNow.get("year"));
+        /* generate billing context date */
+        BillingContextDate contextDate = convertDateUtil.getBillingContextDate(dateNow);
 
         /* get all data fee parameter */
         BigDecimal bis4TransactionFee = feeParameterService.getValueByName(BI_SSSS.getValue());
@@ -73,105 +69,60 @@ public class FundCalculateV2ServiceImpl implements FundCalculateV2Service {
         for (FeeReportRequest feeReportRequest : feeReportRequests) {
             String aid = feeReportRequest.getPortfolioCode();
             BigDecimal customerFee = feeReportRequest.getCustomerFee();
-            List<String> validationErrors = new ArrayList<>();
 
             try {
+                /* get data customer by aid */
                 Customer customer = customerService.getByCustomerCodeAndSubCodeAndBillingCategoryAndBillingType(aid, "", billingCategory, billingType);
-                String miCode = customer.getMiCode();
-                InvestmentManagementDTO investmentManagementDTO = investmentManagementService.getByCode(miCode);
-                List<SkTransaction> skTransactionList = skTransactionService.getAllByAidAndMonthAndYear(aid, "November", 2023);
-                log.info("Customer code: {}, sk transaction size: {}", customer.getCustomerCode(), skTransactionList.size());
 
-//                if (!skTransactionList.isEmpty()) {
-                    Optional<BillingFund> existingBillingFund = billingFundRepository.findByCustomerCodeAndBillingCategoryAndBillingTypeAndMonthAndYear(aid, billingCategory, billingType, month, year);
-                    if (existingBillingFund.isEmpty() || Boolean.TRUE.equals(!existingBillingFund.get().getPaid())) {
-                        existingBillingFund.ifPresent(this::deleteExistingBillingFund);
-                        BillingFundParameter billingFundParams = new BillingFundParameter(
-                                customer, investmentManagementDTO, dateNow, month, year, skTransactionList,
-                                customerFee, bis4TransactionFee, kseiTransactionFee, vatFee
-                        );
-                        BillingFund billingFund = createBillingFund(billingFundParams);
-                        String number = billingNumberService.generateSingleNumber(monthNameNow, yearNow);
-                        billingFund.setBillingNumber(number);
-                        billingFundRepository.save(billingFund);
-                        billingNumberService.saveSingleNumber(number);
-                        totalDataSuccess++;
-                    } else {
-                        addErrorMessage(errorMessageList, customer.getCustomerCode(), "Billing already paid for period " + month + " " + year);
-                        totalDataFailed++;
-                    }
-//                } else {
-//                    addErrorMessage(errorMessageList, customer.getCustomerCode(), "No transaction data from SkTrans for period " + month + " " + year);
-//                    totalDataFailed++;
-//                }
-            } catch(Exception e) {
+                /* get data investment management */
+                InvestmentManagementDTO investmentManagementDTO = investmentManagementService.getByCode(customer.getMiCode());
+
+                /* get data sk transaction */
+                List<SkTransaction> skTransactionList = skTransactionService.getAllByAidAndMonthAndYear(aid, contextDate.getMonthNameMinus1(), contextDate.getYearMinus1());
+
+                /* get billing data to check whether the data is in the database or not */
+                Optional<BillingFund> existingBillingFund = billingFundRepository.findByCustomerCodeAndBillingCategoryAndBillingTypeAndMonthAndYear(aid, billingCategory, billingType, contextDate.getMonthNameMinus1(), contextDate.getYearMinus1());
+
+                /* check paid status. if it is FALSE, it can be regenerated */
+                if (existingBillingFund.isEmpty() || Boolean.TRUE.equals(!existingBillingFund.get().getPaid())) {
+
+                    /* delete billing data if it exists in the database */
+                    existingBillingFund.ifPresent(this::deleteExistingBillingFund);
+
+                    /* create billing fund */
+                    BillingFund billingFund = createBillingFund(contextDate, customer, investmentManagementDTO);
+
+                    /* create fund parameter */
+                    BillingFundParameter billingFundParameter = new BillingFundParameter(
+                            customerFee, skTransactionList, customer.getCustomerSafekeepingFee(),
+                            bis4TransactionFee, kseiTransactionFee, vatFee);
+
+                    /* calculation billing */
+                    FundTemplate fundTemplate1 = calculationFund(billingFundParameter);
+
+                    /* update billing core data to include calculated values */
+                    updateBillingFundForFundTemplate(billingFund, fundTemplate1);
+
+                    /* create a billing number then set it to the billing core */
+                    String number = billingNumberService.generateSingleNumber(contextDate.getMonthNameMinus1(), contextDate.getYearMinus1());
+                    billingFund.setBillingNumber(number);
+
+                    /* save to the database */
+                    billingFundRepository.save(billingFund);
+                    billingNumberService.saveSingleNumber(number);
+                    totalDataSuccess++;
+                } else {
+                    addErrorMessage(errorMessageList, customer.getCustomerCode(), "Billing already paid for period " + contextDate.getMonthNameMinus1() + " " + contextDate.getYearMinus1());
+                    totalDataFailed++;
+                }
+            } catch (Exception e) {
                 log.error("Error processing customer code {}: {}", aid, e.getMessage(), e);
-                handleGeneralError(aid, e, validationErrors, errorMessageList);
+                handleGeneralError(aid, e, errorMessageList);
                 totalDataFailed++;
             }
         }
-
         log.info("Total successful calculations: {}, total failed calculations: {}", totalDataSuccess, totalDataFailed);
         return new BillingCalculationResponse(totalDataSuccess, totalDataFailed, errorMessageList);
-    }
-
-    private BillingFund createBillingFund(BillingFundParameter params) {
-        int[] filteredTransactionsType = skTransactionService.filterTransactionsType(params.getSkTransactionList());
-        int transactionCBESTTotal = filteredTransactionsType[0];
-        int transactionBISSSSTotal = filteredTransactionsType[1];
-
-        BigDecimal accrualCustodialFee = calculateAccrualCustodialFee(params.getCustomerFee());
-        BigDecimal bis4AmountDue = calculateBis4AmountDue(transactionBISSSSTotal, params.getBis4TransactionFee());
-        BigDecimal subTotal = calculateSubTotal(accrualCustodialFee, bis4AmountDue);
-        BigDecimal vatAmountDue = calculateVATAmountDue(subTotal, params.getVatFee());
-        BigDecimal kseiAmountDue = calculateKSEIAmountDue(transactionCBESTTotal, params.getKseiTransactionFee());
-        BigDecimal totalAmountDue = calculateTotalAmountDue(subTotal, vatAmountDue, kseiAmountDue);
-
-        return BillingFund.builder()
-                .createdAt(params.getDateNow())
-                .updatedAt(params.getDateNow())
-                .approvalStatus(ApprovalStatus.PENDING)
-                .billingStatus(BillingStatus.GENERATED)
-                .customerCode(params.getCustomer().getCustomerCode())
-                .customerName(params.getCustomer().getCustomerName())
-                .month(params.getMonth())
-                .year(params.getYear())
-                .billingPeriod(params.getMonth() + " " + params.getYear())
-                .billingStatementDate(ConvertDateUtil.convertInstantToString(params.getDateNow()))
-                .billingPaymentDueDate(ConvertDateUtil.convertInstantToStringPlus14Days(params.getDateNow()))
-                .billingCategory(params.getCustomer().getBillingCategory())
-                .billingType(params.getCustomer().getBillingType())
-                .billingTemplate(params.getCustomer().getBillingTemplate())
-                .investmentManagementName(params.getInvestmentManagementDTO().getName())
-                .investmentManagementAddress1(params.getInvestmentManagementDTO().getAddress1())
-                .investmentManagementAddress2(params.getInvestmentManagementDTO().getAddress2())
-                .investmentManagementAddress3(params.getInvestmentManagementDTO().getAddress3())
-                .investmentManagementAddress4(params.getInvestmentManagementDTO().getAddress4())
-                .investmentManagementEmail(params.getInvestmentManagementDTO().getEmail())
-                .investmentManagementUniqueKey(params.getInvestmentManagementDTO().getUniqueKey())
-                .gefuCreated(false)
-                .paid(false)
-                .account(params.getCustomer().getAccount())
-                .accountName(params.getCustomer().getAccountName())
-                .currency(params.getCustomer().getCurrency())
-                .accrualCustodialFee(accrualCustodialFee)
-                .bis4TransactionValueFrequency(transactionBISSSSTotal)
-                .bis4TransactionFee(params.getBis4TransactionFee())
-                .bis4TransactionAmountDue(bis4AmountDue)
-                .subTotal(subTotal)
-                .vatFee(params.getVatFee())
-                .vatAmountDue(vatAmountDue)
-                .kseiTransactionValueFrequency(transactionCBESTTotal)
-                .kseiTransactionFee(params.getKseiTransactionFee())
-                .kseiTransactionAmountDue(kseiAmountDue)
-                .totalAmountDue(totalAmountDue)
-                .build();
-    }
-
-    private void addErrorMessage(List<BillingCalculationErrorMessageDTO> calculationErrorMessages, String customerCode, String message) {
-        List<String> errorMessages = new ArrayList<>();
-        errorMessages.add(message);
-        calculationErrorMessages.add(new BillingCalculationErrorMessageDTO(customerCode, errorMessages));
     }
 
     private static BigDecimal calculateAccrualCustodialFee(BigDecimal customerFee) {
@@ -210,16 +161,102 @@ public class FundCalculateV2ServiceImpl implements FundCalculateV2Service {
                 .setScale(0, RoundingMode.HALF_UP);
     }
 
-    private void handleGeneralError(String string, Exception e, List<String> validationErrors, List<BillingCalculationErrorMessageDTO> errorMessageList) {
-        log.error("An unexpected error occurred: {}", e.getMessage(), e);
-        validationErrors.add(e.getMessage());
-        errorMessageList.add(new BillingCalculationErrorMessageDTO(string.isEmpty() ? "unknown" : string, validationErrors));
+    private void handleGeneralError(String customerCode, Exception e, List<BillingCalculationErrorMessageDTO> errorMessageList) {
+        addErrorMessage(errorMessageList, customerCode, e.getMessage());
+    }
+
+    private void addErrorMessage(List<BillingCalculationErrorMessageDTO> calculationErrorMessages, String customerCode, String message) {
+        List<String> errorMessages = new ArrayList<>();
+        errorMessages.add(message);
+        calculationErrorMessages.add(new BillingCalculationErrorMessageDTO(customerCode, errorMessages));
     }
 
     private void deleteExistingBillingFund(BillingFund existBillingFund) {
         String billingNumber = existBillingFund.getBillingNumber();
         billingFundRepository.delete(existBillingFund);
         billingNumberService.deleteByBillingNumber(billingNumber);
+    }
+
+    private BillingFund createBillingFund(BillingContextDate contextDate, Customer customer, InvestmentManagementDTO investmentManagementDTO) {
+        return BillingFund.builder()
+                .createdAt(contextDate.getDateNow())
+                .updatedAt(contextDate.getDateNow())
+                .approvalStatus(ApprovalStatus.PENDING)
+                .billingStatus(BillingStatus.GENERATED)
+                .customerCode(customer.getCustomerCode())
+                .subCode(customer.getSubCode())
+                .customerName(customer.getCustomerName())
+                .month(contextDate.getMonthNameMinus1())
+                .year(contextDate.getYearMinus1())
+                .billingPeriod(contextDate.getBillingPeriod())
+                .billingStatementDate(ConvertDateUtil.convertInstantToString(contextDate.getDateNow()))
+                .billingPaymentDueDate(ConvertDateUtil.convertInstantToStringPlus14Days(contextDate.getDateNow()))
+                .billingCategory(customer.getBillingCategory())
+                .billingType(customer.getBillingType())
+                .billingTemplate(customer.getBillingTemplate())
+                .investmentManagementCode(investmentManagementDTO.getCode())
+                .investmentManagementName(investmentManagementDTO.getName())
+                .investmentManagementAddress1(investmentManagementDTO.getAddress1())
+                .investmentManagementAddress2(investmentManagementDTO.getAddress2())
+                .investmentManagementAddress3(investmentManagementDTO.getAddress3())
+                .investmentManagementAddress4(investmentManagementDTO.getAddress4())
+                .investmentManagementEmail(investmentManagementDTO.getEmail())
+                .investmentManagementUniqueKey(investmentManagementDTO.getUniqueKey())
+                .account(customer.getAccount())
+                .accountName(customer.getAccountName())
+                .currency(customer.getCurrency())
+                .gefuCreated(false)
+                .paid(false)
+                .build();
+    }
+
+    private FundTemplate calculationFund(BillingFundParameter param) {
+        int[] filteredTransactionsType = skTransactionService.filterTransactionsType(param.getSkTransactionList());
+        int transactionCBESTTotal = filteredTransactionsType[0];
+        int transactionBISSSSTotal = filteredTransactionsType[1];
+
+        BigDecimal accrualCustodialFee = calculateAccrualCustodialFee(param.getCustomerFee());
+        BigDecimal bis4AmountDue = calculateBis4AmountDue(transactionBISSSSTotal, param.getBis4TransactionFee());
+        BigDecimal subTotal = calculateSubTotal(accrualCustodialFee, bis4AmountDue);
+        BigDecimal vatAmountDue = calculateVATAmountDue(subTotal, param.getVatFee());
+        BigDecimal kseiAmountDue = calculateKSEIAmountDue(transactionCBESTTotal, param.getKseiTransactionFee());
+        BigDecimal totalAmountDue = calculateTotalAmountDue(subTotal, vatAmountDue, kseiAmountDue);
+
+        return FundTemplate.builder()
+                .accrualCustodialValueFrequency(param.getCustomerFee())
+                .accrualCustodialSafekeepingFee(param.getCustomerSafekeepingFee())
+                .accrualCustodialFee(accrualCustodialFee)
+                .bis4TransactionValueFrequency(transactionBISSSSTotal)
+                .bis4TransactionFee(param.getBis4TransactionFee())
+                .bis4TransactionAmountDue(bis4AmountDue)
+                .subTotal(subTotal)
+                .vatFee(param.getVatFee())
+                .vatAmountDue(vatAmountDue)
+                .kseiTransactionValueFrequency(transactionCBESTTotal)
+                .kseiTransactionFee(param.getKseiTransactionFee())
+                .kseiTransactionAmountDue(kseiAmountDue)
+                .totalAmountDue(totalAmountDue)
+                .build();
+    }
+
+    private void updateBillingFundForFundTemplate(BillingFund billingFund, FundTemplate fundTemplate) {
+        billingFund.setAccrualCustodialValueFrequency(fundTemplate.getAccrualCustodialValueFrequency());
+        billingFund.setAccrualCustodialSafekeepingFee(fundTemplate.getAccrualCustodialSafekeepingFee());
+        billingFund.setAccrualCustodialFee(fundTemplate.getAccrualCustodialFee());
+
+        billingFund.setBis4TransactionValueFrequency(fundTemplate.getBis4TransactionValueFrequency());
+        billingFund.setBis4TransactionFee(fundTemplate.getBis4TransactionFee());
+        billingFund.setBis4TransactionAmountDue(fundTemplate.getBis4TransactionAmountDue());
+
+        billingFund.setSubTotal(fundTemplate.getSubTotal());
+        billingFund.setVatFee(fundTemplate.getVatFee());
+        billingFund.setVatAmountDue(fundTemplate.getVatAmountDue());
+
+        billingFund.setKseiTransactionValueFrequency(fundTemplate.getKseiTransactionValueFrequency());
+        billingFund.setKseiTransactionFee(fundTemplate.getKseiTransactionFee());
+        billingFund.setKseiTransactionAmountDue(fundTemplate.getKseiTransactionAmountDue());
+
+        billingFund.setTotalAmountDue(fundTemplate.getTotalAmountDue());
     }
 
 }
