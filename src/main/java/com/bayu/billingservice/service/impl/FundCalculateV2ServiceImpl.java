@@ -81,7 +81,8 @@ public class FundCalculateV2ServiceImpl implements FundCalculateV2Service {
                 List<SkTransaction> skTransactionList = skTransactionService.getAllByAidAndMonthAndYear(aid, contextDate.getMonthNameMinus1(), contextDate.getYearMinus1());
 
                 /* get billing data to check whether the data is in the database or not */
-                Optional<BillingFund> existingBillingFund = billingFundRepository.findByCustomerCodeAndBillingCategoryAndBillingTypeAndMonthAndYear(aid, billingCategory, billingType, contextDate.getMonthNameMinus1(), contextDate.getYearMinus1());
+                Optional<BillingFund> existingBillingFund = billingFundRepository.findByCustomerCodeAndSubCodeAndBillingCategoryAndBillingTypeAndMonthAndYear(
+                        customer.getCustomerCode(), customer.getSubCode(), billingCategory, billingType, contextDate.getMonthNameMinus1(), contextDate.getYearMinus1());
 
                 /* check paid status. if it is FALSE, it can be regenerated */
                 if (existingBillingFund.isEmpty() || Boolean.TRUE.equals(!existingBillingFund.get().getPaid())) {
