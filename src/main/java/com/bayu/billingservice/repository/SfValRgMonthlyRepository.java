@@ -23,9 +23,9 @@ public interface SfValRgMonthlyRepository extends JpaRepository<SfValRgMonthly, 
     @Query(value = "DELETE FROM SfValRgMonthly s WHERE s.month = :month AND s.year = :year")
     void deleteByMonthAndYear(@Param("month") String month, @Param("year") Integer year);
 
-    @Query(value = "SELECT FROM SfValRgMonthly s WHERE s.aid = :customerCode " +
+    @Query(value = "SELECT FROM sf_val_rg_monthly as s WHERE s.aid = :customerCode " +
             "AND s.month = :month " +
-            "AND s.year = :year")
+            "AND s.year = :year", nativeQuery = true)
     List<SfValRgMonthly> findAllByCustomerCodeAndMonthAndYear(
             @Param("customerCode") String customerCode,
             @Param("month") String month,
