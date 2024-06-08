@@ -1101,3 +1101,7 @@ C1003/SS-BS/0624
                 monthYearMap = convertDateUtil.extractMonthYearInformation(billingPeriod);
                 yearMonthFormat = monthYearMap.get("year") + monthYearMap.get("monthValue");
             }
+
+# Test
+
+1. Test generate PDF billing with different month
