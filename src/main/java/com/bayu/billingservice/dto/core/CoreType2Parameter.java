@@ -16,15 +16,15 @@ import java.util.List;
 @AllArgsConstructor
 public class CoreType2Parameter {
 
-    private String customerCode;
+    private BigDecimal customerSafekeepingFee;
 
-    private List<SkTransaction> skTransactionList;
+    private BigDecimal customerMinimumFee;
 
     private BigDecimal transactionHandlingFee;
 
-    private List<SfValRgDaily> sfValRgDailyList;
+    private List<SkTransaction> skTransactionList;
 
-    private BigDecimal customerMinimumFee;
+    private List<SfValRgDaily> sfValRgDailyList;
 
     private BigDecimal vatFee;
 }
