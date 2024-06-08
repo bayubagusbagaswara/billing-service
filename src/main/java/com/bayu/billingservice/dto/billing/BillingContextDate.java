@@ -21,4 +21,6 @@ public class BillingContextDate {
 
     private Integer yearNow;
 
+    private String billingPeriod;
+
 }
