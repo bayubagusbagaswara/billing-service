@@ -1,5 +1,6 @@
 package com.bayu.billingservice.util;
 
+import com.bayu.billingservice.dto.MonthYearDTO;
 import com.bayu.billingservice.dto.billing.BillingContextDate;
 import com.bayu.billingservice.exception.GeneralException;
 import lombok.extern.slf4j.Slf4j;
@@ -271,6 +272,12 @@ public class ConvertDateUtil {
             log.error("Error when get billing context date: {}", e.getMessage(), e);
             throw new GeneralException("Error when get billing context date: " + e.getMessage());
         }
+    }
+
+    public MonthYearDTO parseBillingPeriodToLocalDate(String billingPeriod) {
+        Map<String, String> stringMap = extractMonthYearInformation(billingPeriod);
+
+        return new MonthYearDTO(stringMap.get("monthName"), stringMap.get("monthValue"), Integer.parseInt(stringMap.get("year")));
     }
 
 }
