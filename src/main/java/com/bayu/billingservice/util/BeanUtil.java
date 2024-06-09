@@ -5,6 +5,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 
+import java.lang.reflect.Field;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -49,4 +50,28 @@ public class BeanUtil {
             }
         }
     }
+
+    public static void convertNullToEmptyString(Object obj) {
+        if (obj == null) {
+            return;
+        }
+
+        Class<?> objClass = obj.getClass();
+        Field[] fields = objClass.getDeclaredFields();
+
+        for (Field field : fields) {
+            field.setAccessible(true);
+            try {
+                if (field.getType().equals(String.class)) {
+                    Object value = field.get(obj);
+                    if (value == null) {
+                        field.set(obj, "");
+                    }
+                }
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
 }
