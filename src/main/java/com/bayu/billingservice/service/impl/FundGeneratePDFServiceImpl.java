@@ -1,17 +1,23 @@
 package com.bayu.billingservice.service.impl;
 
 import com.bayu.billingservice.dto.ErrorMessageDTO;
+import com.bayu.billingservice.dto.ImageDTO;
 import com.bayu.billingservice.dto.MonthYearDTO;
 import com.bayu.billingservice.dto.fund.BillingFundDTO;
 import com.bayu.billingservice.dto.fund.FundCalculateRequest;
 import com.bayu.billingservice.dto.pdf.GeneratePDFResponse;
+import com.bayu.billingservice.dto.reportgenerator.CreateReportGeneratorRequest;
 import com.bayu.billingservice.exception.GeneratePDFBillingException;
 import com.bayu.billingservice.mapper.BillingFundMapper;
 import com.bayu.billingservice.model.BillingFund;
 import com.bayu.billingservice.model.enumerator.ApprovalStatus;
+import com.bayu.billingservice.model.enumerator.BillingTemplate;
+import com.bayu.billingservice.model.enumerator.ReportGeneratorStatus;
 import com.bayu.billingservice.repository.BillingFundRepository;
 import com.bayu.billingservice.service.FundGeneratePDFService;
+import com.bayu.billingservice.service.ReportGeneratorService;
 import com.bayu.billingservice.util.ConvertDateUtil;
+import com.bayu.billingservice.util.ImageUtil;
 import com.bayu.billingservice.util.PdfGenerator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,9 +31,9 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import static com.bayu.billingservice.constant.FundConstant.*;
 
@@ -39,9 +45,6 @@ public class FundGeneratePDFServiceImpl implements FundGeneratePDFService {
     @Value("${base.path.billing.fund}")
     private String basePathBillingFund;
 
-    @Value("${base.path.billing.image}")
-    private String folderPathImage;
-
     private static final String ACCOUNT_BANK_BDI = "PT Bank Danamon Indonesia";
     private static final String DELIMITER = "/";
 
@@ -50,6 +53,8 @@ public class FundGeneratePDFServiceImpl implements FundGeneratePDFService {
     private final PdfGenerator pdfGenerator;
     private final ConvertDateUtil convertDateUtil;
     private final BillingFundMapper fundMapper;
+    private final ImageUtil imageUtil;
+    private final ReportGeneratorService reportGeneratorService;
 
     @Override
     public String generatePDF(FundCalculateRequest fundCalculateRequest) {
@@ -78,6 +83,7 @@ public class FundGeneratePDFServiceImpl implements FundGeneratePDFService {
 
     private GeneratePDFResponse generateAndSavePdfStatements(List<BillingFund> billingFundList) {
         log.info("Start generate and save pdf statements Billing Fund size: {}", billingFundList.size());
+        Instant dateNow = Instant.now();
         int totalDataSuccess = 0;
         int totalDataFailed = 0;
         List<ErrorMessageDTO> errorMessageDTOList = new ArrayList<>();
@@ -85,39 +91,52 @@ public class FundGeneratePDFServiceImpl implements FundGeneratePDFService {
         List<BillingFundDTO> billingFundDTOList = fundMapper.mapToDTOList(billingFundList);
 
         for (BillingFundDTO fundDTO : billingFundDTOList) {
+            MonthYearDTO monthYearDTO = convertDateUtil.parseBillingPeriodToLocalDate(fundDTO.getBillingPeriod());
+            String yearMonthFormat = monthYearDTO.getYear() + monthYearDTO.getMonthValue();
+            String fileName = generateFileName(fundDTO.getCustomerCode(), fundDTO.getSubCode(), fundDTO.getBillingNumber());
+
+            /* get month and year */
+            Integer year = monthYearDTO.getYear();
+            String monthName = monthYearDTO.getMonthName();
+
+            String folderPath = basePathBillingFund + yearMonthFormat + DELIMITER + fundDTO.getInvestmentManagementCode();
+            String filePath = folderPath + DELIMITER + fileName;
+
             try {
-                log.info("Start generate PDF Billing Fund type '{}' and customer code '{}'", fundDTO.getBillingType(), fundDTO.getCustomerCode());
+                /* create folder to save pdf file */
+                Path folderPathObj = Paths.get(folderPath);
+                Files.createDirectories(folderPathObj);
 
-
-//                String billingNumber = fundDTO.getBillingNumber();
-//                String subCode = fundDTO.getSubCode();
-//                String customerCode = fundDTO.getCustomerCode();
-
-                MonthYearDTO monthYearDTO = convertDateUtil.parseBillingPeriodToLocalDate(fundDTO.getBillingPeriod());
-                String yearMonthFormat = monthYearDTO.getYear() + monthYearDTO.getMonthValue();
-                String filePath;
-                String fileName = generateFileName(fundDTO.getCustomerCode(), fundDTO.getSubCode(), fundDTO.getBillingNumber());
-
-                /* get month and year */
-                int year = monthYearDTO.getYear();
-                String monthName = monthYearDTO.getMonthName();
-
-                String folderPath = basePathBillingFund + yearMonthFormat + DELIMITER + fundDTO.getInvestmentManagementCode();
-
-                filePath = folderPath + DELIMITER + fileName;
-
-                deleteFilesWithCustomerCode(folderPathObj, customerCode);
+                /* delete pdf files with customer code */
+                deleteFilesWithCustomerCode(folderPathObj, fundDTO.getCustomerCode(), fundDTO.getSubCode());
 
                 String htmlContent = renderThymeleafTemplate(fundDTO);
                 byte[] pdfBytes = pdfGenerator.generatePdfFromHtml(htmlContent);
                 savePdf(pdfBytes, folderPath, fileName);
+
+                /* check and delete existing report generator */
+                reportGeneratorService.checkAndDeleteExisting(fundDTO.getCustomerCode(), fundDTO.getBillingCategory(),
+                        fundDTO.getBillingType(), fundDTO.getCurrency(), fundDTO.getBillingPeriod());
+
+                String description = "Successfully generate and save PDF statement with customer code: " + fundDTO.getCustomerCode();
+                CreateReportGeneratorRequest createReportGeneratorRequest = new CreateReportGeneratorRequest(
+                        dateNow, fundDTO.getInvestmentManagementCode(), fundDTO.getInvestmentManagementName(), fundDTO.getInvestmentManagementEmail(),
+                        fundDTO.getInvestmentManagementUniqueKey(), fundDTO.getCustomerCode(), fundDTO.getCustomerName(), fundDTO.getBillingCategory(),
+                        fundDTO.getBillingType(), fundDTO.getBillingPeriod(), monthName, year, fundDTO.getCurrency(),
+                        fileName, filePath, ReportGeneratorStatus.SUCCESS.getStatus(), description
+                );
+                reportGeneratorService.save(createReportGeneratorRequest);
                 totalDataSuccess++;
             } catch (Exception e) {
                 log.error("Error creating folder or saving PDF: {}", e.getMessage(), e);
-                List<String> stringList = new ArrayList<>();
-                stringList.add(e.getMessage());
-                ErrorMessageDTO errorMessageDTO = new ErrorMessageDTO(fundDTO.getCustomerCode(), stringList);
-                errorMessageDTOList.add(errorMessageDTO);
+                /* create report generator for saving failed process */
+                CreateReportGeneratorRequest createReportGeneratorRequest = new CreateReportGeneratorRequest(
+                        dateNow, fundDTO.getInvestmentManagementCode(), fundDTO.getInvestmentManagementName(), fundDTO.getInvestmentManagementEmail(),
+                        fundDTO.getInvestmentManagementUniqueKey(), fundDTO.getCustomerCode(), fundDTO.getCustomerName(), fundDTO.getBillingCategory(),
+                        fundDTO.getBillingType(), fundDTO.getBillingPeriod(), monthName, year, fundDTO.getCurrency(),
+                        fileName, folderPath, ReportGeneratorStatus.SUCCESS.getStatus(), e.getMessage()
+                );
+                reportGeneratorService.save(createReportGeneratorRequest);
                 totalDataFailed++;
             }
         }
@@ -125,6 +144,7 @@ public class FundGeneratePDFServiceImpl implements FundGeneratePDFService {
     }
 
     private String renderThymeleafTemplate(BillingFundDTO fundDTO) {
+        ImageDTO headerAndFooterImage = imageUtil.getHeaderAndFooterImage();
         Context context = new Context();
 
         context.setVariable(BILLING_NUMBER, fundDTO.getBillingNumber());
@@ -155,13 +175,10 @@ public class FundGeneratePDFServiceImpl implements FundGeneratePDFService {
         context.setVariable(KSEI_TRANSACTION_FEE, fundDTO.getKseiTransactionFee());
         context.setVariable(KSEI_TRANSACTION_AMOUNT_DUE, fundDTO.getKseiTransactionAmountDue());
         context.setVariable(TOTAL_AMOUNT_DUE, fundDTO.getTotalAmountDue());
+        context.setVariable(IMAGE_URL_HEADER, headerAndFooterImage.getImageUrlHeader());
+        context.setVariable(IMAGE_URL_FOOTER, headerAndFooterImage.getImageUrlFooter());
 
-        String imageUrlHeader = "file:///" + folderPathImage + "/logo.png";
-        String imageUrlFooter = "file:///" + folderPathImage + "/footer.png";
-        context.setVariable("imageUrlHeader", imageUrlHeader);
-        context.setVariable("imageUrlFooter", imageUrlFooter);
-
-        return templateEngine.process(fundDTO.getBillingTemplate(), context);
+        return templateEngine.process(BillingTemplate.FUND_TEMPLATE.getValue(), context);
     }
 
     private String generateFileName(String customerCode, String subCode, String billingNumber) {
@@ -171,17 +188,9 @@ public class FundGeneratePDFServiceImpl implements FundGeneratePDFService {
                 .replace("-", "_");
 
         if (subCode == null || subCode.isEmpty()) {
-            fileName = customerCode +
-                    "_" +
-                    replaceBillingNumber +
-                    ".pdf";
+            fileName = customerCode + "_" + replaceBillingNumber + ".pdf";
         } else {
-            fileName = customerCode +
-                    "_" +
-                    subCode +
-                    "_" +
-                    replaceBillingNumber +
-                    ".pdf";
+            fileName = customerCode + "_" + subCode + "_" + replaceBillingNumber + ".pdf";
         }
         return fileName;
     }
@@ -191,37 +200,30 @@ public class FundGeneratePDFServiceImpl implements FundGeneratePDFService {
         pdfGenerator.savePdfToFile(pdfBytes, outputPath);
     }
 
-//    private void deleteFilesWithCustomerCode(Path folderPathObj, String customerCode) throws IOException {
-//        try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(folderPathObj, "*.pdf")) {
-//            for (Path path : directoryStream) {
-//                if (path.getFileName().toString().contains(customerCode)) {
-//                    Files.delete(path);
-//                    log.info("Deleted file: {}", path.getFileName().toString());
-//                }
-//            }
-//        }
-//    }
-
     private void deleteFilesWithCustomerCode(Path folderPathObj, String customerCode, String subCode) throws IOException {
         try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(folderPathObj, "*.pdf")) {
             for (Path path : directoryStream) {
                 log.info("File Path Name: {}", path.getFileName());
-                if (Files.isRegularFile(path)) { // Check for regular file (not folder)
-                    String fileName = path.getFileName().toString();
-                    if (subCode == null || subCode.isEmpty()) {
-                        if (fileName.contains(customerCode)) {
-                            Files.delete(path);
-                            log.info("Deleted path: {}, file: {}", path, fileName);
-                        }
-                    } else {
-                        if (fileName.contains(subCode)) {
-                            Files.delete(path);
-                            log.info("Deleted path: {}, file: {}", path, fileName);
-                        }
-                    }
+                if (Files.isRegularFile(path)) {
+                    handleFile(path, customerCode, subCode);
                 }
             }
         }
+    }
+
+    private void handleFile(Path path, String customerCode, String subCode) throws IOException {
+        String fileName = path.getFileName().toString();
+        if (shouldDeleteFile(fileName, customerCode, subCode)) {
+            Files.delete(path);
+            log.info("Deleted path: {}, file: {}", path, fileName);
+        }
+    }
+
+    private boolean shouldDeleteFile(String fileName, String customerCode, String subCode) {
+        if (subCode == null || subCode.isEmpty()) {
+            return fileName.contains(customerCode);
+        }
+        return fileName.contains(subCode);
     }
 
 }
