@@ -1104,4 +1104,5 @@ C1003/SS-BS/0624
 
 # Test
 
-1. Test generate PDF billing with different month
+1. Test update list for customer
+2. Test generate PDF billing with different month
