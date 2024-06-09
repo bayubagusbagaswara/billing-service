@@ -51,7 +51,7 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
 
     @Override
     public InvestmentManagementResponse createSingleData(CreateInvestmentManagementRequest createRequest, BillingDataChangeDTO dataChangeDTO) {
-        log.info("Create single data investment management with request: {}", createRequest);
+        log.info("Create single data investment management with request: {}", createRequest); // disini ada data null
         int totalDataSuccess = 0;
         int totalDataFailed = 0;
         List<ErrorMessageDTO> errorMessageDTOList = new ArrayList<>();
@@ -59,7 +59,7 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
         InvestmentManagementDTO investmentManagementDTO = null;
 
         try {
-            /* maps request data to dto */
+            /* maps request data to dto and handle null properties to empty string */
             investmentManagementDTO = investmentManagementMapper.mapCreateRequestToDto(createRequest);
 
             /* validation for each dto field */
@@ -103,9 +103,8 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
             List<String> validationErrors = new ArrayList<>();
             InvestmentManagementDTO investmentManagementDTO = null;
             try {
-                /* maps request data to dto */
+                /* maps request data to dto and handle null properties to empty string */
                 investmentManagementDTO = investmentManagementMapper.mapCreateListRequestToDTO(createInvestmentManagementDataListRequest);
-                log.info("[Create Multiple] Result mapping request to dto: {}", investmentManagementDTO);
 
                 /* validation for each dto field */
                 Errors errors = validateInvestmentManagementUsingValidator(investmentManagementDTO);
@@ -171,7 +170,7 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
                 InvestmentManagement investmentManagement = investmentManagementMapper.createEntity(investmentManagementDTO, dataChangeDTO);
                 investmentManagementRepository.save(investmentManagement);
                 dataChangeDTO.setDescription("Successfully approve data change and save data investment management with id: " + investmentManagement.getId());
-                dataChangeDTO.setJsonDataAfter(JsonUtil.cleanedJsonData(objectMapper.writeValueAsString(investmentManagement)));
+                dataChangeDTO.setJsonDataAfter(JsonUtil.cleanedJsonData(objectMapper.writeValueAsString(investmentManagementMapper.mapToDto(investmentManagement))));
                 dataChangeDTO.setEntityId(investmentManagement.getId().toString());
                 dataChangeService.approvalStatusIsApproved(dataChangeDTO);
                 totalDataSuccess++;
