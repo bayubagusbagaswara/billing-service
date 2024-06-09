@@ -12,6 +12,8 @@ import java.time.Instant;
 @SuperBuilder
 public abstract class BillingFundBaseDTO extends ApprovalDTO {
 
+    private Long id;
+
     private Instant createdAt;
     private Instant updatedAt;
 
@@ -19,6 +21,7 @@ public abstract class BillingFundBaseDTO extends ApprovalDTO {
     private String billingStatus;
 
     private String customerCode;
+    private String subCode;
     private String customerName;
 
     private String month;
@@ -32,6 +35,7 @@ public abstract class BillingFundBaseDTO extends ApprovalDTO {
     private String billingType;
     private String billingTemplate;
 
+    private String investmentManagementCode;
     private String investmentManagementName;
     private String investmentManagementAddress1;
     private String investmentManagementAddress2;
