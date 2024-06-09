@@ -41,7 +41,10 @@ public abstract class BaseMapper<E, D> {
     }
 
     public D mapCreateRequestToDto(Object createRequest) {
-        return modelMapper.map(createRequest, getDtoClass());
+        Class<D> dtoClass = getDtoClass();
+        D dto = modelMapper.map(createRequest, dtoClass);
+        handleNullPropertiesForCreate(dto);
+        return dto;
     }
 
     public D mapUpdateRequestToDto(Object updateRequest) {
@@ -77,31 +80,33 @@ public abstract class BaseMapper<E, D> {
 
     public D mapCreateListRequestToDTO(Object createListRequest) {
         Class<D> dtoClass = getDtoClass();
-        D dto = modelMapper.map(createListRequest , dtoClass);
-
-        try {
-            Method[] methods = dtoClass.getDeclaredMethods();
-            for (Method method : methods) {
-                if (method.getName().startsWith("get")) {
-                    String methodName = method.getName().substring(3);
-                    if (methodName.equalsIgnoreCase("id")) continue;
-                    Object value = method.invoke(dto);
-                    if (value == null) {
-                        String setterName = "set" + methodName;
-                        log.info("Setter Name: {}", setterName);
-                        Method setter = dtoClass.getDeclaredMethod(setterName, method.getReturnType());
-                        setter.invoke(dto, "");
-                    }
-                }
-            }
-        } catch (Exception e) {
-            log.error("Error while processing map from data list to dto: {}", e.getMessage(), e);
-        }
+        D dto = modelMapper.map(createListRequest, dtoClass);
+        handleNullPropertiesForCreate(dto);
         return dto;
     }
 
     public D mapUpdateListRequestToDTO(Object updateListRequest) {
         return modelMapper.map(updateListRequest, getDtoClass());
+    }
+
+    public void handleNullPropertiesForCreate(D dto) {
+        try {
+            Method[] methods = dto.getClass().getDeclaredMethods();
+            for (Method method : methods) {
+                if (method.getName().startsWith("get")) {
+                    String methodName = method.getName().substring(3);
+                    if (methodName.equalsIgnoreCase("id")) continue;
+                    Object value = method.invoke(dto);
+                    if (value == null && method.getReturnType().equals(String.class)) {
+                        String setterName = "set" + methodName;
+                        Method setter = dto.getClass().getDeclaredMethod(setterName, method.getReturnType());
+                        setter.invoke(dto, "");
+                    }
+                }
+            }
+        } catch (Exception e) {
+            log.error("Error while handling null properties in DTO: {}", e.getMessage(), e);
+        }
     }
 
 }
