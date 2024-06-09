@@ -48,7 +48,10 @@ public abstract class BaseMapper<E, D> {
     }
 
     public D mapUpdateRequestToDto(Object updateRequest) {
-        return modelMapper.map(updateRequest, getDtoClass());
+        Class<D> dtoClass = getDtoClass();
+        D dto = modelMapper.map(updateRequest, dtoClass);
+        handleNullPropertiesForUpdate(dto);
+        return dto;
     }
 
 
@@ -89,13 +92,32 @@ public abstract class BaseMapper<E, D> {
         return modelMapper.map(updateListRequest, getDtoClass());
     }
 
-    public void handleNullPropertiesForCreate(D dto) {
+    private void handleNullPropertiesForCreate(D dto) {
         try {
             Method[] methods = dto.getClass().getDeclaredMethods();
             for (Method method : methods) {
                 if (method.getName().startsWith("get")) {
                     String methodName = method.getName().substring(3);
                     if (methodName.equalsIgnoreCase("id")) continue;
+                    Object value = method.invoke(dto);
+                    if (value == null && method.getReturnType().equals(String.class)) {
+                        String setterName = "set" + methodName;
+                        Method setter = dto.getClass().getDeclaredMethod(setterName, method.getReturnType());
+                        setter.invoke(dto, "");
+                    }
+                }
+            }
+        } catch (Exception e) {
+            log.error("Error while handling null properties in DTO: {}", e.getMessage(), e);
+        }
+    }
+
+    private void handleNullPropertiesForUpdate(D dto) {
+        try {
+            Method[] methods = dto.getClass().getDeclaredMethods();
+            for (Method method : methods) {
+                if (method.getName().startsWith("get")) {
+                    String methodName = method.getName().substring(3);
                     Object value = method.invoke(dto);
                     if (value == null && method.getReturnType().equals(String.class)) {
                         String setterName = "set" + methodName;
