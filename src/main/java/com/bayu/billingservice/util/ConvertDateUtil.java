@@ -255,11 +255,11 @@ public class ConvertDateUtil {
     public BillingContextDate getBillingContextDate(Instant dateNow) {
         try {
             Map<String, String> monthMinus1 = getMonthMinus1();
-            String monthNameMinus1 = monthMinus1.get("monthName"); // month Name ini diganti dengan April
-            int yearMinus1 = Integer.parseInt(monthMinus1.get("year")); // year ini diganti dengan 2024
+//            String monthNameMinus1 = monthMinus1.get("monthName"); // month Name ini diganti dengan April
+//            int yearMinus1 = Integer.parseInt(monthMinus1.get("year")); // year ini diganti dengan 2024
 
-//            String monthNameMinus1 = MONTH_TEST;
-//            Integer yearMinus1 = YEAR_TEST;
+            String monthNameMinus1 = "May";
+            Integer yearMinus1 = 2024;
 
             Map<String, String> monthNow = getMonthNow();
             String monthNameNow = monthNow.get("monthName");
