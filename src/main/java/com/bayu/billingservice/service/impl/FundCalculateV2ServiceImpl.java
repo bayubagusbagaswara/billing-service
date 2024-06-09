@@ -78,8 +78,11 @@ public class FundCalculateV2ServiceImpl implements FundCalculateV2Service {
                 InvestmentManagementDTO investmentManagementDTO = investmentManagementService.getByCode(customer.getMiCode());
 
                 /* get data sk transaction */
-                List<SkTransaction> skTransactionList = skTransactionService.getAllByAidAndMonthAndYear(aid, contextDate.getMonthNameMinus1(), contextDate.getYearMinus1());
+//                List<SkTransaction> skTransactionList = skTransactionService.getAllByAidAndMonthAndYear(aid, contextDate.getMonthNameMinus1(), contextDate.getYearMinus1());
+                List<SkTransaction> skTransactionList = skTransactionService.getAllByAidAndMonthAndYear(aid, "November", 2023);
 
+                /* billing akan digenerate dengan period May 2024, tapi menggunakan data November 2023 */
+                /* kita cuma ubah period billing nya dengan April 2024 */
                 /* get billing data to check whether the data is in the database or not */
                 Optional<BillingFund> existingBillingFund = billingFundRepository.findByCustomerCodeAndSubCodeAndBillingCategoryAndBillingTypeAndMonthAndYear(
                         customer.getCustomerCode(), customer.getSubCode(), billingCategory, billingType, contextDate.getMonthNameMinus1(), contextDate.getYearMinus1());
@@ -105,7 +108,7 @@ public class FundCalculateV2ServiceImpl implements FundCalculateV2Service {
                     updateBillingFundForFundTemplate(billingFund, fundTemplate1);
 
                     /* create a billing number then set it to the billing core */
-                    String number = billingNumberService.generateSingleNumber(contextDate.getMonthNameMinus1(), contextDate.getYearMinus1());
+                    String number = billingNumberService.generateSingleNumber(contextDate.getMonthNameNow(), contextDate.getYearNow());
                     billingFund.setBillingNumber(number);
 
                     /* save to the database */
