@@ -63,10 +63,10 @@ public class UpdateCustomerDataListRequest {
     @JsonProperty(value = "NPWP")
     private String npwpNumber;
 
-    @JsonProperty(value = "NPWP Name")
+    @JsonProperty(value = "Nama NPWP")
     private String npwpName;
 
-    @JsonProperty(value = "NPWP Address")
+    @JsonProperty(value = "Alamat NPWP")
     private String npwpAddress;
 
     @JsonProperty(value = "KSEI Safe Code")
