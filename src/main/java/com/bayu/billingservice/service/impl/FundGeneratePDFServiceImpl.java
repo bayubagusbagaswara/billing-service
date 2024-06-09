@@ -1,6 +1,7 @@
 package com.bayu.billingservice.service.impl;
 
 import com.bayu.billingservice.dto.ErrorMessageDTO;
+import com.bayu.billingservice.dto.MonthYearDTO;
 import com.bayu.billingservice.dto.fund.BillingFundDTO;
 import com.bayu.billingservice.dto.fund.FundCalculateRequest;
 import com.bayu.billingservice.dto.pdf.GeneratePDFResponse;
@@ -87,21 +88,24 @@ public class FundGeneratePDFServiceImpl implements FundGeneratePDFService {
             try {
                 log.info("Start generate PDF Billing Fund type '{}' and customer code '{}'", fundDTO.getBillingType(), fundDTO.getCustomerCode());
 
-                String investmentManagementName = fundDTO.getInvestmentManagementName();
-                String billingNumber = fundDTO.getBillingNumber();
-                String customerCode = fundDTO.getCustomerCode();
 
-                Map<String, String> monthYearMap = convertDateUtil.extractMonthYearInformation(fundDTO.getBillingPeriod());
-                int year = Integer.parseInt(monthYearMap.get("year"));
-                String yearMonthFormat = year + monthYearMap.get("monthValue");
+//                String billingNumber = fundDTO.getBillingNumber();
+//                String subCode = fundDTO.getSubCode();
+//                String customerCode = fundDTO.getCustomerCode();
 
-                String fileName = generateFileName(billingNumber);
-                String folderPath = basePathBillingFund + yearMonthFormat + DELIMITER + investmentManagementName;
+                MonthYearDTO monthYearDTO = convertDateUtil.parseBillingPeriodToLocalDate(fundDTO.getBillingPeriod());
+                String yearMonthFormat = monthYearDTO.getYear() + monthYearDTO.getMonthValue();
+                String filePath;
+                String fileName = generateFileName(fundDTO.getCustomerCode(), fundDTO.getSubCode(), fundDTO.getBillingNumber());
 
-                Path folderPathObj = Paths.get(folderPath);
-                Files.createDirectories(folderPathObj);
+                /* get month and year */
+                int year = monthYearDTO.getYear();
+                String monthName = monthYearDTO.getMonthName();
 
-                // Hapus file yang memiliki customerCode dalam nama file
+                String folderPath = basePathBillingFund + yearMonthFormat + DELIMITER + fundDTO.getInvestmentManagementCode();
+
+                filePath = folderPath + DELIMITER + fileName;
+
                 deleteFilesWithCustomerCode(folderPathObj, customerCode);
 
                 String htmlContent = renderThymeleafTemplate(fundDTO);
@@ -160,33 +164,61 @@ public class FundGeneratePDFServiceImpl implements FundGeneratePDFService {
         return templateEngine.process(fundDTO.getBillingTemplate(), context);
     }
 
-    private String generateFileName(String billingNumber) {
-        log.info("Billing Number: {}", billingNumber);
-
+    private String generateFileName(String customerCode, String subCode, String billingNumber) {
+        String fileName;
         String replaceBillingNumber = billingNumber
                 .replace("/", "_")
                 .replace("-", "_");
 
-        log.info("Replaced Billing Number: {}", replaceBillingNumber);
-
-        String fileName = String.format("%s.pdf", replaceBillingNumber);
-        log.info("Generated File Name: {}", fileName);
-
+        if (subCode == null || subCode.isEmpty()) {
+            fileName = customerCode +
+                    "_" +
+                    replaceBillingNumber +
+                    ".pdf";
+        } else {
+            fileName = customerCode +
+                    "_" +
+                    subCode +
+                    "_" +
+                    replaceBillingNumber +
+                    ".pdf";
+        }
         return fileName;
     }
-
     private void savePdf(byte[] pdfBytes, String folderPath, String fileName) throws IOException {
         Path outputPathObj = Paths.get(folderPath).resolve(fileName);
         String outputPath = outputPathObj.toString();
         pdfGenerator.savePdfToFile(pdfBytes, outputPath);
     }
 
-    private void deleteFilesWithCustomerCode(Path folderPathObj, String customerCode) throws IOException {
+//    private void deleteFilesWithCustomerCode(Path folderPathObj, String customerCode) throws IOException {
+//        try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(folderPathObj, "*.pdf")) {
+//            for (Path path : directoryStream) {
+//                if (path.getFileName().toString().contains(customerCode)) {
+//                    Files.delete(path);
+//                    log.info("Deleted file: {}", path.getFileName().toString());
+//                }
+//            }
+//        }
+//    }
+
+    private void deleteFilesWithCustomerCode(Path folderPathObj, String customerCode, String subCode) throws IOException {
         try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(folderPathObj, "*.pdf")) {
             for (Path path : directoryStream) {
-                if (path.getFileName().toString().contains(customerCode)) {
-                    Files.delete(path);
-                    log.info("Deleted file: {}", path.getFileName().toString());
+                log.info("File Path Name: {}", path.getFileName());
+                if (Files.isRegularFile(path)) { // Check for regular file (not folder)
+                    String fileName = path.getFileName().toString();
+                    if (subCode == null || subCode.isEmpty()) {
+                        if (fileName.contains(customerCode)) {
+                            Files.delete(path);
+                            log.info("Deleted path: {}, file: {}", path, fileName);
+                        }
+                    } else {
+                        if (fileName.contains(subCode)) {
+                            Files.delete(path);
+                            log.info("Deleted path: {}, file: {}", path, fileName);
+                        }
+                    }
                 }
             }
         }
