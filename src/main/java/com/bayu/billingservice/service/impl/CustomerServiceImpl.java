@@ -26,6 +26,9 @@ import org.springframework.validation.Validator;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
+import static com.bayu.billingservice.model.enumerator.BillingCategory.CORE;
+import static com.bayu.billingservice.model.enumerator.BillingType.*;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -37,6 +40,7 @@ public class CustomerServiceImpl implements CustomerService {
     private static final String UNKNOWN = "unknown";
     private static final String INVALID_VALUE_TRUE_OR_FALSE = "Invalid value for 'Is GL'. Value must be 'TRUE' or 'FALSE'.";
     private static final String INVESTMENT_MANAGEMENT_NOT_FOUND_WITH_CODE = "Investment Management not found with code: ";
+    private static final String KSEI_SAFE_CODE_REQUIRED = "Ksei Safe Code is required when Billing Type is ";
 
     private final CustomerRepository customerRepository;
     private final DataChangeService dataChangeService;
@@ -113,7 +117,6 @@ public class CustomerServiceImpl implements CustomerService {
             /* validation enum data and set all data enum to uppercase */
             validateBillingEnums(customerDTO.getBillingCategory(), customerDTO.getBillingType(), customerDTO.getCurrency(), validationErrors);
 
-
             /* validation value GL must be true or false */
             validateIsGL(customerDTO, validationErrors);
 
@@ -127,6 +130,9 @@ public class CustomerServiceImpl implements CustomerService {
                     customerDTO.getSubCode(),
                     customerDTO.getBillingTemplate(),
                     validationErrors);
+
+            /* validating Ksei Safe Code for some Billing Type, especially CORE TYPE 4, TYPE, 5, TYPE 6, TYPE 7 */
+            validationKseiSafeCode(customerDTO, validationErrors);
 
             /* validating data Investment Management is available or not */
             InvestmentManagementDTO investmentManagementDTO = investmentManagementService.getByCode(customerDTO.getMiCode());
@@ -204,7 +210,7 @@ public class CustomerServiceImpl implements CustomerService {
                         customerDTO.getBillingTemplate(),
                         validationErrors);
 
-                /* validating data Investment Management is available or not*/
+                /* validating data Investment Management is available or not */
                 InvestmentManagementDTO investmentManagementDTO = investmentManagementService.getByCode(customerDTO.getMiCode());
                 customerDTO.setMiName(investmentManagementDTO.getName());
 
@@ -264,7 +270,7 @@ public class CustomerServiceImpl implements CustomerService {
                 Customer customer = customerMapper.createEntity(customerDTO, dataChangeDTO);
                 customerRepository.save(customer);
                 dataChangeDTO.setDescription("Successfully approve data change and save data investment management with id: " + customer.getId());
-                dataChangeDTO.setJsonDataAfter(JsonUtil.cleanedJsonData(objectMapper.writeValueAsString(customer)));
+                dataChangeDTO.setJsonDataAfter(JsonUtil.cleanedJsonData(objectMapper.writeValueAsString(customerMapper.mapToDto(customer))));
                 dataChangeDTO.setEntityId(customer.getId().toString());
                 dataChangeService.approvalStatusIsApproved(dataChangeDTO);
                 totalDataSuccess++;
@@ -349,7 +355,7 @@ public class CustomerServiceImpl implements CustomerService {
                 errorMessageDTOList.add(errorMessageDTO);
                 totalDataFailed++;
             } else {
-                dataChangeDTO.setJsonDataBefore(JsonUtil.cleanedJsonData(objectMapper.writeValueAsString(customer)));
+                dataChangeDTO.setJsonDataBefore(JsonUtil.cleanedJsonData(objectMapper.writeValueAsString(customerMapper.mapToDto(customer))));
                 dataChangeDTO.setJsonDataAfter(JsonUtil.cleanedJsonDataUpdate(objectMapper.writeValueAsString(customerDTO)));
                 dataChangeService.createChangeActionEDIT(dataChangeDTO, Customer.class);
                 totalDataSuccess++;
@@ -370,65 +376,59 @@ public class CustomerServiceImpl implements CustomerService {
 
         for (UpdateCustomerDataListRequest updateCustomerDataListRequest : updateCreateCustomerListRequest.getUpdateCustomerDataListRequests()) {
             List<String> validationErrors = new ArrayList<>();
-            CustomerDTO customerDTO = null;
+            CustomerDTO clonedDTO = null;
             try {
                 /* mapping data from request to dto */
-                customerDTO = customerMapper.mapUpdateListRequestToDTO(updateCustomerDataListRequest);
+                CustomerDTO customerDTO = customerMapper.mapUpdateListRequestToDTO(updateCustomerDataListRequest);
                 customerDTO.setBillingCategory(customerDTO.getBillingCategory().toUpperCase());
                 customerDTO.setBillingType(customerDTO.getBillingType().toUpperCase());
                 customerDTO.setBillingTemplate(customerDTO.getBillingTemplate().toUpperCase());
                 customerDTO.setCurrency(customerDTO.getCurrency().toUpperCase());
-                log.info("[Update Multiple] Result mapping from request to dto: {}", customerDTO);
+                log.info("[Update Multiple] Result mapping from request to dto: {}", customerDTO); // ini sudah handle null
+
+                /* create cloned dto */
+                clonedDTO = new CustomerDTO();
+                BeanUtil.copyAllProperties(customerDTO, clonedDTO);
 
                 /* get data by code and sub code */
-                CustomerDTO finalCustomerDTO = customerDTO;
                 Customer customer = customerRepository.findByCustomerCodeAndOptionalSubCode(customerDTO.getCustomerCode(), customerDTO.getSubCode())
-                        .orElseThrow(() -> new DataNotFoundException(CODE_NOT_FOUND + finalCustomerDTO.getCustomerCode() + SUB_CODE_NOT_FOUND + finalCustomerDTO.getSubCode()));
+                        .orElseThrow(() -> new DataNotFoundException(CODE_NOT_FOUND + customerDTO.getCustomerCode() + SUB_CODE_NOT_FOUND + customerDTO.getSubCode()));
 
-                /* cloned data customer entity */
-                Customer clonedCustomer = new Customer();
-                BeanUtil.copyAllProperties(customer, clonedCustomer);
-
-                /* map data from dto entity, to overwrite new data */
-                customerMapper.mapObjectsDtoToEntity(customerDTO, clonedCustomer);
-                log.info("[Update Multiple] Result map object dto to entity: {}", clonedCustomer);
-                CustomerDTO dto = customerMapper.mapToDto(clonedCustomer);
-                log.info("[Update Multiple] Result map object entity to dto: {}", dto);
+                /* data yang akan di validator */
+                copyNonNullOrEmptyFields(customer, clonedDTO);
+                log.info("Combines Entity data and Request data: {}", clonedDTO);
 
                 /* validating for each column dto */
-                Errors errors = validateCustomerUsingValidator(dto);
+                Errors errors = validateCustomerUsingValidator(clonedDTO);
                 if (errors.hasErrors()) {
                     errors.getAllErrors().forEach(error -> validationErrors.add(error.getDefaultMessage()));
                 }
 
                 /* validating selling agent is available or not */
-                validateSellingAgent(dto, validationErrors);
+                validateSellingAgent(clonedDTO, validationErrors);
 
                 /* validating enums data */
-                validateBillingEnums(dto.getBillingCategory(),
-                        dto.getBillingType(),
-                        dto.getCurrency(),
+                validateBillingEnums(clonedDTO.getBillingCategory(),
+                        clonedDTO.getBillingType(),
+                        clonedDTO.getCurrency(),
                         validationErrors);
 
                 /* validation value GL must be true or false */
                 validateIsGL(customerDTO, validationErrors);
 
                 /* validating Cost Center Debit */
-                if (Boolean.FALSE.toString().equalsIgnoreCase(dto.getGl())) {
-                    dto.setDebitTransfer("");
+                if (Boolean.FALSE.toString().equalsIgnoreCase(clonedDTO.getGl())) {
+                    clonedDTO.setDebitTransfer(""); // if the gl of the request is false, then the debit transfer set is an empty string
                 }
-                validateGLForCostCenterDebit(Boolean.parseBoolean(dto.getGl()), dto.getDebitTransfer(), validationErrors);
+                validateGLForCostCenterDebit(Boolean.parseBoolean(clonedDTO.getGl()), clonedDTO.getDebitTransfer(), validationErrors);
 
                 /* validating data billing template */
-                validationBillingTemplate(dto.getBillingCategory(),
-                        dto.getBillingType(),
-                        dto.getCurrency(),
-                        dto.getSubCode(),
-                        dto.getBillingTemplate(),
-                        validationErrors);
+                validationBillingTemplate(clonedDTO.getBillingCategory(),
+                        clonedDTO.getBillingType(), clonedDTO.getCurrency(), clonedDTO.getSubCode(),
+                        clonedDTO.getBillingTemplate(), validationErrors);
 
                 /* validating data Investment Management is available or not */
-                validateIsExistsInvestmentManagement(dto, validationErrors);
+                validateIsExistsInvestmentManagement(clonedDTO, validationErrors);
 
                 /* set input id for data change */
                 dataChangeDTO.setInputId(updateCreateCustomerListRequest.getInputId());
@@ -440,13 +440,13 @@ public class CustomerServiceImpl implements CustomerService {
                     errorMessageDTOList.add(errorMessageDTO);
                     totalDataFailed++;
                 } else {
-                    dataChangeDTO.setJsonDataBefore(JsonUtil.cleanedJsonData(objectMapper.writeValueAsString(customer)));
+                    dataChangeDTO.setJsonDataBefore(JsonUtil.cleanedJsonData(objectMapper.writeValueAsString(customerMapper.mapToDto(customer))));
                     dataChangeDTO.setJsonDataAfter(JsonUtil.cleanedJsonDataUpdate(objectMapper.writeValueAsString(customerDTO)));
                     dataChangeService.createChangeActionEDIT(dataChangeDTO, Customer.class);
                     totalDataSuccess++;
                 }
             } catch (Exception e) {
-                handleGeneralError(customerDTO, e, validationErrors, errorMessageDTOList);
+                handleGeneralError(clonedDTO, e, validationErrors, errorMessageDTOList);
                 totalDataFailed++;
             }
         }
@@ -692,6 +692,19 @@ public class CustomerServiceImpl implements CustomerService {
 
     private boolean isNullOrEmpty(String str) {
         return str == null || str.trim().isEmpty();
+    }
+
+    private void validationKseiSafeCode(CustomerDTO customerDTO, List<String> validationErrors) {
+        String kseiSafeCodeTrim = customerDTO.getKseiSafeCode() != null ? customerDTO.getKseiSafeCode().trim() : null;
+        log.info("KSEI Safe Code: {}", kseiSafeCodeTrim);
+
+        if (CORE.name().equalsIgnoreCase(customerDTO.getBillingCategory())) {
+            Set<String> billingTypes = Set.of(TYPE_4.name(), TYPE_5.name(), TYPE_6.name(), TYPE_7.name());
+
+            if (billingTypes.contains(customerDTO.getBillingType()) && (kseiSafeCodeTrim == null || kseiSafeCodeTrim.isEmpty())) {
+                validationErrors.add(KSEI_SAFE_CODE_REQUIRED + customerDTO.getBillingType());
+            }
+        }
     }
 
 }
