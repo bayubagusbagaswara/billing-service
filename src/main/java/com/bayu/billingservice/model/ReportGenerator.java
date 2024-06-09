@@ -1,13 +1,12 @@
 package com.bayu.billingservice.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.time.Instant;
 
 @Entity
 @Table(name = "report_generator")
@@ -18,10 +17,14 @@ import lombok.NoArgsConstructor;
 public class ReportGenerator {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "created_at")
-    private String createdAt;
+    private Instant createdAt;
+
+    @Column(name = "investment_management_code")
+    private String investmentManagementCode;
 
     @Column(name = "investment_management_name")
     private String investmentManagementName;
@@ -62,10 +65,10 @@ public class ReportGenerator {
     @Column(name = "year")
     private Integer year;
 
-    @Column(name = "billing_status")
-    private String billingStatus;
+    @Column(name = "status")
+    private String status;
 
-    @Column(name = "billing_description")
-    private String billingDescription;
+    @Column(name = "description")
+    private String description;
 
 }
