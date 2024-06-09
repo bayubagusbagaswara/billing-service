@@ -198,7 +198,6 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
             /* clone dto */
             clonedDTO = new InvestmentManagementDTO();
             BeanUtil.copyAllProperties(investmentManagementDTO, clonedDTO);
-            log.info("[Update Single] Result mapping request to dto: {}", investmentManagementDTO);
 
             /* get investment management by id */
             InvestmentManagement investmentManagement = investmentManagementRepository.findById(investmentManagementDTO.getId())
@@ -206,7 +205,6 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
 
             /* copy non null or empty fields from entity data to dto */
             copyNonNullOrEmptyFields(investmentManagement, clonedDTO);
-            log.info("[Update Single] Result map object entity to dto: {}", clonedDTO);
 
             /* validation for each dto field */
             Errors errors = validateInvestmentManagementUsingValidator(clonedDTO);
@@ -223,7 +221,7 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
                 errorMessageDTOList.add(errorMessageDTO);
                 totalDataFailed++;
             } else {
-                dataChangeDTO.setJsonDataBefore(JsonUtil.cleanedJsonData(objectMapper.writeValueAsString(investmentManagement)));
+                dataChangeDTO.setJsonDataBefore(JsonUtil.cleanedJsonData(objectMapper.writeValueAsString(investmentManagementMapper.mapToDto(investmentManagement))));
                 dataChangeDTO.setJsonDataAfter(JsonUtil.cleanedJsonDataUpdate(objectMapper.writeValueAsString(investmentManagementDTO)));
                 dataChangeDTO.setEntityId(investmentManagement.getId().toString());
                 dataChangeService.createChangeActionEDIT(dataChangeDTO, InvestmentManagement.class);
@@ -246,28 +244,26 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
         /* repeat data one by one */
         for (UpdateInvestmentManagementDataListRequest updateInvestmentManagementDataListRequest : updateListRequest.getUpdateInvestmentManagementDataListRequests()) {
             List<String> validationErrors = new ArrayList<>();
-            InvestmentManagementDTO investmentManagementDTO = null;
+            InvestmentManagementDTO clonedDTO = null;
             try {
                 /* maps request data to dto */
-                investmentManagementDTO = investmentManagementMapper.mapUpdateListRequestToDTO(updateInvestmentManagementDataListRequest);
-                log.info("[Update Multiple] Result mapping from request to dto: {}", investmentManagementDTO);
+                InvestmentManagementDTO investmentManagementDTO = investmentManagementMapper.mapUpdateRequestToDto(updateInvestmentManagementDataListRequest);
+                log.info("DTO after handle null properties: {}", investmentManagementDTO);
+
+                /* clone dto */
+                clonedDTO = new InvestmentManagementDTO();
+                BeanUtil.copyAllProperties(investmentManagementDTO, clonedDTO);
 
                 /* get investment management by code */
-                InvestmentManagementDTO finalInvestmentManagementDTO = investmentManagementDTO;
                 InvestmentManagement investmentManagement = investmentManagementRepository.findByCode(investmentManagementDTO.getCode())
-                        .orElseThrow(() -> new DataNotFoundException(CODE_NOT_FOUND + finalInvestmentManagementDTO.getCode()));
-                log.info("Entity: {}", investmentManagement);
+                        .orElseThrow(() -> new DataNotFoundException(CODE_NOT_FOUND + investmentManagementDTO.getCode()));
 
-                /* map data from dto to entity, to overwrite new data */
-                investmentManagementMapper.mapObjectsDtoToEntity(investmentManagementDTO, investmentManagement);
-                log.info("[Update Multiple] Result map object dto to entity: {}", investmentManagement);
-
-                /* map from entity to dto */
-                InvestmentManagementDTO dto = investmentManagementMapper.mapToDto(investmentManagement);
-                log.info("[Update Multiple] Result map object entity to dto: {}", dto);
+                /* copy non null or empty fields from entity data to dto */
+                copyNonNullOrEmptyFields(investmentManagement, clonedDTO);
+                log.info("Combines Entity data and Request data: {}", clonedDTO);
 
                 /* validation for each dto field */
-                Errors errors = validateInvestmentManagementUsingValidator(dto);
+                Errors errors = validateInvestmentManagementUsingValidator(clonedDTO);
                 if (errors.hasErrors()) {
                     errors.getAllErrors().forEach(error -> validationErrors.add(error.getDefaultMessage()));
                 }
@@ -281,14 +277,14 @@ public class InvestmentManagementServiceImpl implements InvestmentManagementServ
                     errorMessageList.add(errorMessageDTO);
                     totalDataFailed++;
                 } else {
-                    dataChangeDTO.setJsonDataBefore(JsonUtil.cleanedJsonData(objectMapper.writeValueAsString(investmentManagement)));
+                    dataChangeDTO.setJsonDataBefore(JsonUtil.cleanedJsonData(objectMapper.writeValueAsString(investmentManagementMapper.mapToDto(investmentManagement))));
                     dataChangeDTO.setJsonDataAfter(JsonUtil.cleanedJsonDataUpdate(objectMapper.writeValueAsString(investmentManagementDTO)));
                     dataChangeDTO.setEntityId(investmentManagement.getId().toString());
                     dataChangeService.createChangeActionEDIT(dataChangeDTO, InvestmentManagement.class);
                    totalDataSuccess++;
                 }
             } catch (Exception e) {
-                handleGeneralError(investmentManagementDTO, e, validationErrors, errorMessageList);
+                handleGeneralError(clonedDTO, e, validationErrors, errorMessageList);
                 totalDataFailed++;
             }
         }
