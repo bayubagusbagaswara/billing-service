@@ -42,4 +42,7 @@ public class FundConstant {
 
     public static final String TOTAL_AMOUNT_DUE = "totalAmountDue";
 
+    public static final String IMAGE_URL_HEADER = "imageUrlHeader";
+    public static final String IMAGE_URL_FOOTER = "imageUrlFooter";
+
 }
