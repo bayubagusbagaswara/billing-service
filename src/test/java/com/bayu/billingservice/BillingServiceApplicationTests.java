@@ -18,6 +18,16 @@ class BillingServiceApplicationTests {
 
 	}
 
+	@Test
+	void multiplyDecimal() {
+		BigDecimal safekeepingFee = new BigDecimal("0.00020");
+		BigDecimal bigDecimal = safekeepingFee.multiply(new BigDecimal(100))
+				.setScale(5, RoundingMode.HALF_UP);
+		System.out.println(bigDecimal);
+		String plainString = bigDecimal.stripTrailingZeros().toPlainString();
+		System.out.println(plainString);
+	}
+
 	private static BigDecimal cleanedTransactionAmountToBigDecimal(String value) {
 		value = value==null?"0":value;
 		String cleanedInput = value.replace(".", "").replace(",", ".");
