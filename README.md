@@ -1106,3 +1106,32 @@ C1003/SS-BS/0624
 
 1. Test update list for customer
 2. Test generate PDF billing with different month
+3. 
+# Footer Template
+<!-- Footer -->
+<footer style="position: fixed; bottom: 0;">
+    <!--<table>-->
+        <!--<tbody>-->
+        <!--<tr style="text-align: left">-->
+            <!--<td style="padding: 10px 0 0 20px;; font-size: 12px; color: gray;">-->
+                <!--PT Bank Danamon Indonesia, Tbk.-->
+            <!--</td>-->
+        <!--</tr>-->
+        <!--<tr style="text-align: center">-->
+            <!--<td>-->
+                <!--<div>-->
+                    <!--<img-->
+                            <!--th:src="${imageUrlFooter}"-->
+                            <!--style="margin-left: 20px"-->
+                            <!--alt="Image"-->
+                    <!--/>-->
+                <!--</div>-->
+            <!--</td>-->
+        <!--</tr>-->
+        <!--</tbody>-->
+    <!--</table>-->
+    <footer style="position: fixed; bottom: 0; display: flex; justify-content: space-between; align-items: center; padding: 10px 20px; margin-left: 20px;">
+        <span style="font-size: 12px; color: gray;">PT Bank Danamon Indonesia, Tbk.</span>
+        <img th:src="${imageUrlFooter}" alt="Image" />
+    </footer>
+</footer>
