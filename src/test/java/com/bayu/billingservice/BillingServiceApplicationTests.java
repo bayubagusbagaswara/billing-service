@@ -28,6 +28,17 @@ class BillingServiceApplicationTests {
 		System.out.println(plainString);
 	}
 
+	// ini digunakan ketika akan generate pdf
+	public static String calculateAndReturnFee(BigDecimal safekeepingFee) {
+		BigDecimal bigDecimal = safekeepingFee.multiply(new BigDecimal(100))
+				.setScale(5, RoundingMode.HALF_UP);
+
+		// Remove trailing zeros and convert to plain string
+
+        // Return the resulting string
+		return bigDecimal.stripTrailingZeros().toPlainString();
+	}
+
 	private static BigDecimal cleanedTransactionAmountToBigDecimal(String value) {
 		value = value==null?"0":value;
 		String cleanedInput = value.replace(".", "").replace(",", ".");
