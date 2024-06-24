@@ -1135,3 +1135,17 @@ C1003/SS-BS/0624
         <img th:src="${imageUrlFooter}" alt="Image" />
     </footer>
 </footer>
+
+untuk UAT Release 8 masih berjalan, per jumat kemarin User sudah masuk phase generate billing category CORE. Dan juga sudah memvalidasi hasil kalkulasi sistem dengan manual dari User. karena di category CORE ini ada 11 type dan masing-masing tipe memiliki banyak customer, User butuh waktu lebih untuk validasi satu per satu billing customer. 
+
+========================================
+
+
+Untuk update per Jumat kemarin progress UAT saat ini di angkat 63% persen.
+
+dan untuk catatan dari User sudah kita tambahkan dan kita juga sudah update di hari jumat. Catatan terkait content yang ada di file PDF, misalnya logo header atau footer.
+
+
+Dan Hasil validasi yg dilakukan oleh User untuk category CORE juga sudah sesuai dengan manual User.
+
+Sekaran user akan mulai testing terkait negative test.
