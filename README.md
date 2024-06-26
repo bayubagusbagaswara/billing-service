@@ -1149,3 +1149,12 @@ dan untuk catatan dari User sudah kita tambahkan dan kita juga sudah update di h
 Dan Hasil validasi yg dilakukan oleh User untuk category CORE juga sudah sesuai dengan manual User.
 
 Sekaran user akan mulai testing terkait negative test.
+
+//        BigDecimal safekeepingAmountDue = sfValRgDailyList.stream()
+//                .map(SfValRgDaily::getEstimationSafekeepingFee)
+//                .filter(Objects::nonNull)
+//                .reduce(BigDecimal.ZERO, BigDecimal::add)
+//                .setScale(0, RoundingMode.HALF_UP);
+//
+//        log.info("[Core Type 4 ITAMA] Safekeeping amount due: {}", safekeepingAmountDue);
+//        return safekeepingAmountDue;
