@@ -17,11 +17,14 @@ import com.bayu.billingservice.util.StringUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.Instant;
 import java.util.*;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import static com.bayu.billingservice.model.enumerator.FeeParameter.VAT;
 
@@ -39,8 +42,9 @@ public class CoreType1ServiceImpl implements CoreType1Service {
     private final BillingNumberService billingNumberService;
     private final ConvertDateUtil convertDateUtil;
 
+    @Transactional
     @Override
-    public BillingCalculationResponse calculate(CoreCalculateRequest request) {
+    public synchronized BillingCalculationResponse calculate(CoreCalculateRequest request) {
         /* initialize data response */
         Integer totalDataSuccess = 0;
         Integer totalDataFailed = 0;
