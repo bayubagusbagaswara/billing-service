@@ -178,6 +178,9 @@ public class FundGeneratePDFServiceImpl implements FundGeneratePDFService {
         context.setVariable(IMAGE_URL_HEADER, headerAndFooterImage.getImageUrlHeader());
         context.setVariable(IMAGE_URL_FOOTER, headerAndFooterImage.getImageUrlFooter());
 
+        // Gunakan htmlContent yang diambil dari database untuk merender template
+//        return templateEngine.process(htmlContent, context);
+
         return templateEngine.process(BillingTemplate.FUND_TEMPLATE.getValue(), context);
     }
 
